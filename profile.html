@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Profile</title>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0f23;
+    color: #e6f0ff;
+    user-select: none;
+    overflow: hidden;
+    font-size: calc(12px + 0.8vw);
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  #bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .profile-container {
+    width: 90vw;
+    max-width: 650px;
+    max-height: 85vh;
+    padding: 2.5rem 2rem;
+    background: rgba(230, 240, 255, 0.18);
+    border-radius: 16px;
+    box-shadow:
+      0 0 15px rgba(102, 178, 255, 0.4),
+      0 10px 30px rgba(102, 178, 255, 0.2);
+    overflow: visible;
+    text-align: center;
+    user-select: text;
+    backdrop-filter: blur(14px) saturate(120%);
+    border: 2px solid rgba(102, 178, 255, 0.45);
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transition:
+      opacity 1.5s ease-in-out,
+      transform 0.3s ease;
+    will-change: opacity, transform;
+    cursor: default;
+  }
+
+  .profile-container:hover {
+    transform: scale(1.02);
+    box-shadow:
+      0 0 25px rgba(102, 178, 255, 0.7),
+      0 15px 40px rgba(102, 178, 255, 0.35);
+  }
+
+  .banner {
+    width: 100%;
+    height: 200px;
+    background: url('https://i.postimg.cc/wvDcv5R1/78a5117a5cdd1dae9fc8da85cd0dd6d4.jpg') no-repeat center/cover;
+    filter: none;
+    border-radius: 12px 12px 0 0;
+    transition: filter 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .banner:hover {
+    filter: brightness(1.1) saturate(1.1);
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: -70px auto 1rem auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #e6f0ff;
+    box-shadow: 0 0 20px #66b2ffaa;
+    background: #0a0f23;
+    transition: filter 0.3s ease, transform 0.3s ease;
+    z-index: 20;
+    animation: avatar-pulse 4s ease-in-out infinite;
+    cursor: default;
+  }
+
+  .avatar-wrapper:hover {
+    filter: drop-shadow(0 0 15px #99ccff);
+    animation-play-state: paused;
+  }
+
+  .avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
+
+  .avatar-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: url('https://upload.wikimedia.org/wikipedia/en/e/e7/Jurassic_World_Reborn_Logo.png') no-repeat center/contain;
+    box-shadow: 0 0 10px #4caf5088, 0 0 25px #81c784cc;
+    pointer-events: none;
+    z-index: 25;
+  }
+
+  @keyframes avatar-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 20px #66b2ffaa;
+    }
+    50% {
+      box-shadow: 0 0 35px #99ccffcc;
+    }
+  }
+
+  h1 {
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    letter-spacing: 1.4px;
+    color: #e6f0ff;
+    text-shadow: 0 0 12px #99ccff;
+    user-select: text;
+  }
+
+  a.discord-invite {
+    display: inline-block;
+    margin: 0 0 2rem 0;
+    color: #cce5ff;
+    text-decoration: none;
+    font-weight: 600;
+    border: 2px solid #66b2ff;
+    padding: 12px 24px;
+    border-radius: 14px;
+    box-shadow: 0 0 18px #66b2ffaa;
+    transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  a.discord-invite:hover {
+    background: #66b2ff;
+    color: #0a0f23;
+    box-shadow: 0 0 40px #3399ffcc;
+    transform: scale(1.05);
+  }
+
+  .progress-section {
+    position: relative;
+    margin: auto 50px 50px 50px;
+    text-align: left;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .progress-section > div {
+    margin-bottom: 1rem;
+  }
+
+  .progress-section label {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #aaddff;
+    text-shadow: 0 0 8px #3399ffcc;
+    letter-spacing: 0.03em;
+    user-select: none;
+    transition: color 0.3s ease;
+  }
+
+  .progress-section label:hover {
+    color: #66b2ff;
+    cursor: default;
+  }
+
+  .progress-bar {
+    background: rgba(230, 240, 255, 0.1);
+    border-radius: 14px;
+    overflow: hidden;
+    height: 20px;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .progress-bar > div {
+  height: 100%;
+  width: 0;
+  border-radius: 14px;
+  box-shadow: 0 0 12px #3399ffcc;
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  background: linear-gradient(
+    270deg,
+    #3399ff,
+    #66b2ff,
+    #3399ff,
+    #66b2ff
+  );
+  background-size: 400% 400%;
+  animation: gradientMove 8s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+  .progress-bar > div::after {
+    content: attr(data-progress) '%';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    text-shadow:
+      0 0 6px rgba(51, 153, 255, 0.8),
+      0 0 10px rgba(51, 153, 255, 0.6);
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 480px) {
+    .progress-bar > div::after {
+      font-size: 0.75rem;
+      right: 8px;
+    }
+    .profile-container {
+      width: 100vw;
+      height: 100vh;
+      max-height: none;
+      padding: 1rem;
+      background: rgba(230, 240, 255, 0.15);
+      border-radius: 0;
+      border-width: 1px;
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(102, 178, 255, 0.3);
+    }
+    .banner {
+      height: 150px;
+      border-radius: 0;
+    }
+    .avatar-wrapper {
+      width: 110px;
+      height: 110px;
+      margin: -55px auto 0.75rem auto;
+      border-radius: 50%;
+      border-width: 3px;
+      box-shadow: 0 0 15px #66b2ffaa;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+    a.discord-invite {
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+    .progress-section {
+      margin: 0 1rem 1.5rem 1rem;
+      top: 0;
+    }
+  }
+</style>
+</head>
+
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <main class="profile-container" role="main" aria-label="Discord Profile of YANZZ#6079">
+    <div class="banner" aria-hidden="true"></div>
+
+    <div
+      class="avatar-wrapper"
+      aria-label="Profile Picture of YANZZ#6079"
+      role="img"
+      aria-describedby="profileName"
+    >
+      <img
+        src="https://i.postimg.cc/d1ktN272/Save-Clip-App-500232681-18028341608674987-1241090586010467464-n.jpg"
+        alt="Discord Profile Picture of ! CEO YANZZ#6079"
+        class="avatar"
+        loading="lazy"
+        onerror="this.src='https://cdn-icons-png.flaticon.com/512/2111/2111370.png'"
+      />
+      <div class="avatar-badge" aria-label="Jurassic World Rebirth Logo"></div>
+    </div>
+
+    <h1 id="profileName">! CEO YANZZ#6079</h1>
+
+    <a
+      href="https://discord.com/invite/mNGeUVcjKB"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="discord-invite"
+      aria-label="Invite link to join YANZZ's Discord Server"
+    >
+      Join My Discord Server
+    </a>
+
+    <section class="progress-section" aria-label="Skill Progress Bars">
+      <div>
+        <label for="bdfdscript-progress">
+          <i class="fa-solid fa-code" aria-hidden="true"></i> BDFDSCRIPT 100%
+        </label>
+        <div
+          class="progress-bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="bdfdscript-progress"
+        >
+          <div style="width: 0%;" data-progress="0"></div>
+        </div>
+      </div>
+      <div>
+        <label for="html-progress">
+          <i class="fa-brands fa-html5" aria-hidden="true"></i> HTML 97%
+        </label>
+        <div
+          class="progress-bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="html-progress"
+        >
+          <div style="width: 0%;" data-progress="0"></div>
+        </div>
+      </div>
+      <div>
+        <label for="js-progress">
+          <i class="fa-brands fa-js-square" aria-hidden="true"></i> JAVASCRIPT 55%
+        </label>
+        <div
+          class="progress-bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="js-progress"
+        >
+          <div style="width: 0%;" data-progress="0"></div>
+        </div>
+      </div>
+      <div>
+        <label for="python-progress">
+          <i class="fa-brands fa-python" aria-hidden="true"></i> PYTHON 44%
+        </label>
+        <div
+          class="progress-bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="python-progress"
+        >
+          <div style="width: 0%;" data-progress="0"></div>
+        </div>
+      </div>
+      <div>
+        <label for="php-progress">
+          <i class="fa-brands fa-php" aria-hidden="true"></i> PHP 7%
+        </label>
+        <div
+          class="progress-bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="php-progress"
+        >
+          <div style="width: 0%;" data-progress="0"></div>
+        </div>
+      </div>
+      <div>
+        <label for="java-progress">
+          <i class="fa-brands fa-java" aria-hidden="true"></i> Java 12%
+        </label>
+        <div
+          class="progress-bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="java-progress"
+        >
+          <div style="width: 0%;" data-progress="0"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="alert-box" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <script>
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let width, height;
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = random(0, width);
+        this.y = random(0, height);
+        this.size = random(1, 2);
+        this.speed = random(0.5, 1.5);
+        this.length = random(80, 150);
+        this.angle = Math.PI / 4;
+        this.opacity = 0;
+        this.opacitySpeed = 0.02;
+      }
+      update() {
+        this.x += this.speed * Math.cos(this.angle);
+        this.y += this.speed * Math.sin(this.angle);
+        this.opacity += this.opacitySpeed;
+        if (this.opacity >= 1 || this.opacity <= 0) this.opacitySpeed *= -1;
+
+        if (this.x > width || this.y > height) {
+          this.reset();
+          this.x = 0;
+          this.y = random(0, height / 2);
+        }
+      }
+      draw() {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity.toFixed(2)})`;
+        ctx.lineWidth = this.size;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(
+          this.x - this.length * Math.cos(this.angle),
+          this.y - this.length * Math.sin(this.angle)
+        );
+        ctx.stroke();
+      }
+    }
+
+    function init() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * devicePixelRatio;
+      canvas.height = height * devicePixelRatio;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+      stars = [];
+      for (let i = 0; i < 40; i++) {
+        stars.push(new Star());
+      }
+    }
+
+    let lastTime = 0;
+    const fpsInterval = 1000 / 165;
+    let animationId;
+
+    function animate(time = 0) {
+      animationId = requestAnimationFrame(animate);
+      const elapsed = time - lastTime;
+      if (elapsed > fpsInterval) {
+        lastTime = time - (elapsed % fpsInterval);
+        ctx.clearRect(0, 0, width, height);
+        stars.forEach((star) => {
+          star.update();
+          star.draw();
+        });
+}
+    }
+
+    window.addEventListener('resize', () => {
+      init();
+    });
+
+    init();
+    animate();
+
+    const progressData = [
+      { id: 'bdfdscript-progress', target: 100 },
+      { id: 'html-progress', target: 97 },
+      { id: 'js-progress', target: 55 },
+      { id: 'python-progress', target: 44 },
+      { id: 'php-progress', target: 7 },
+      { id: 'java-progress', target: 12 }
+    ];
+
+    progressData.forEach(({ id, target }) => {
+      const progressBar = document.getElementById(id);
+      const barInner = progressBar.querySelector('div');
+      let current = 0;
+      function animateProgress() {
+        if (current < target) {
+          current += Math.min(1, (target - current) / 10);
+          barInner.style.width = current.toFixed(1) + '%';
+          barInner.setAttribute('data-progress', Math.round(current));
+          progressBar.setAttribute('aria-valuenow', Math.round(current));
+          requestAnimationFrame(animateProgress);
+        } else {
+          barInner.style.width = target + '%';
+          barInner.setAttribute('data-progress', target);
+          progressBar.setAttribute('aria-valuenow', target);
+        }
+      }
+      animateProgress();
+    });
+
+    (function blockDevTools() {
+      const threshold = 160;
+      setInterval(() => {
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        if (widthThreshold || heightThreshold) {
+          document.body.innerHTML = '<h1 style="color:red; text-align:center; margin-top:20vh;">⚠️ DevTools are blocked on this page.</h1>';
+          document.body.style.background = '#000';
+          cancelAnimationFrame(animationId);
+        }
+      }, 1000);
+      window.addEventListener('keydown', (e) => {
+        if ((e.key === 'F12') || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'))) {
+          e.preventDefault();
+          alert('Developer tools are disabled.');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
