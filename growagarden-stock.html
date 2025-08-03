@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Grow A Garden – Stock</title>
+  <style>
+    :root {
+      --primary: #2b6cb0;
+      --primary-light: #e6f0fa;
+      --primary-dark: #1a4971;
+      --bg: #f7fafc;
+      --text: #1a202c;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --hover: #edf2f7;
+      --shadow: rgba(0, 0, 0, 0.05);
+      --radius: clamp(8px, 1vw, 10px);
+      --transition: 0.3s ease;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-size-base: clamp(14px, 3.5vw, 16px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text);
+      padding: clamp(1rem, 3vw, 1.5rem);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: var(--font-size-base);
+    }
+
+    header {
+      text-align: center;
+      padding: clamp(0.8rem, 2vw, 1rem);
+      background: var(--primary-light);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-logo-name {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(0.5rem, 1.5vw, 0.75rem);
+    }
+
+    .tab-logo {
+      width: clamp(36px, 5vw, 60px);
+      height: auto;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      transition: var(--transition);
+    }
+
+    .tab-logo:hover {
+      transform: scale(1.1);
+    }
+
+    .tab-name {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    #tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(0.4rem, 1vw, 0.5rem);
+      padding: clamp(0.6rem, 2vw, 0.75rem);
+      margin: clamp(0.8rem, 2vw, 1rem) 0;
+      justify-content: center;
+      background: var(--primary-light);
+      border-radius: var(--radius);
+    }
+
+    .tab {
+      padding: clamp(0.5rem, 1.5vw, 0.7rem) clamp(0.8rem, 2.5vw, 1.2rem);
+      font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+      font-weight: 600;
+      color: var(--primary-dark);
+      background: white;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+      flex: 1;
+      min-width: clamp(80px, 20vw, 120px);
+      text-align: center;
+    }
+
+    .tab:hover {
+      background: var(--hover);
+      transform: translateY(-2px);
+    }
+
+    .tab.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    main {
+      max-width: clamp(800px, 90vw, 1000px);
+      margin: auto;
+      flex: 1;
+    }
+
+    .category {
+      margin-bottom: clamp(1rem, 3vw, 1.5rem);
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px var(--shadow);
+      overflow: hidden;
+    }
+
+    .category-header {
+      padding: clamp(0.8rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+      background: var(--primary);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .category-header small {
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      font-weight: 500;
+      color: var(--primary-light);
+    }
+
+    .items {
+      padding: clamp(0.8rem, 2vw, 1rem);
+      display: grid;
+      gap: clamp(0.6rem, 1.5vw, 0.75rem);
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.8rem, 2vw, 1rem);
+      padding: clamp(0.6rem, 1.5vw, 0.75rem);
+      background: var(--hover);
+      border-radius: clamp(6px, 1vw, 8px);
+      transition: var(--transition);
+    }
+
+    .item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px var(--shadow);
+    }
+
+    .item img,
+    .item .emoji {
+      width: clamp(40px, 6vw, 48px);
+      height: clamp(40px, 6vw, 48px);
+      border-radius: clamp(6px, 1vw, 8px);
+      background: var(--primary-light);
+      object-fit: contain;
+    }
+
+    .item .emoji {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px, 4vw, 24px);
+    }
+
+    .item .name {
+      flex: 1;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .item .quantity {
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    #status {
+      text-align: center;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      color: var(--muted);
+      margin: clamp(0.8rem, 2vw, 1rem) 0;
+    }
+
+    #notification-container {
+      position: fixed;
+      bottom: clamp(0.8rem, 2vw, 1rem);
+      right: clamp(0.8rem, 2vw, 1rem);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.4rem, 1vw, 0.5rem);
+      max-width: clamp(280px, 90vw, 400px);
+    }
+
+    .notification {
+      background: var(--primary);
+      color: white;
+      padding: clamp(0.6rem, 1.5vw, 0.75rem) clamp(0.8rem, 2vw, 1rem);
+      border-radius: clamp(6px, 1vw, 8px);
+      box-shadow: 0 4px 12px var(--shadow);
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .notification.error {
+      background: #e53e3e;
+    }
+
+    .notification .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+    }
+
+    #next-page-container {
+      text-align: center;
+      padding: clamp(1rem, 3vw, 1.5rem) 0;
+    }
+
+    .next-button {
+      padding: clamp(0.6rem, 2vw, 0.75rem) clamp(1.5rem, 4vw, 2rem);
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .next-button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      to { transform: translateX(100%); opacity: 0; }
+    }
+
+    /* High DPI adjustments */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      :root {
+        --font-size-base: clamp(15px, 3.5vw, 17px);
+        --radius: clamp(9px, 1vw, 11px);
+      }
+      .tab-logo {
+        width: clamp(38px, 5vw, 62px);
+      }
+      .item img,
+      .item .emoji {
+        width: clamp(42px, 6vw, 50px);
+        height: clamp(42px, 6vw, 50px);
+      }
+      .tab {
+        font-size: clamp(0.9rem, 2.2vw, 1rem);
+        min-width: clamp(90px, 18vw, 130px);
+      }
+    }
+
+    /* Responsive for smaller screens */
+    @media (max-width: 600px) {
+      body { padding: clamp(0.8rem, 2vw, 1rem); }
+      .tab {
+        padding: clamp(0.4rem, 1.2vw, 0.5rem) clamp(0.6rem, 2vw, 0.8rem);
+        font-size: clamp(0.75rem, 2vw, 0.85rem);
+        min-width: clamp(70px, 18vw, 100px);
+      }
+      .category-header { font-size: clamp(1rem, 2vw, 1.1rem); }
+      .category-header small { font-size: clamp(0.7rem, 1.8vw, 0.8rem); }
+      .item { padding: clamp(0.5rem, 1.2vw, 0.6rem); gap: clamp(0.6rem, 1.5vw, 0.8rem); }
+      .item img, .item .emoji { width: clamp(36px, 5vw, 40px); height: clamp(36px, 5vw, 40px); }
+      .notification { font-size: clamp(0.7rem, 1.8vw, 0.8rem); }
+    }
+
+    /* Ultra-small screens */
+    @media (max-width: 400px) {
+      .tab {
+        padding: clamp(0.3rem, 1vw, 0.4rem) clamp(0.5rem, 1.8vw, 0.7rem);
+        font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+        min-width: clamp(60px, 15vw, 90px);
+      }
+    }
+
+    /* Ultra-wide or large screens */
+    @media (min-width: 1200px) {
+      main { max-width: clamp(900px, 80vw, 1100px); }
+      .tab { font-size: clamp(0.95rem, 2vw, 1.05rem); min-width: clamp(100px, 15vw, 140px); }
+      .category-header { font-size: clamp(1.2rem, 2vw, 1.3rem); }
+      .item img, .item .emoji { width: clamp(44px, 5vw, 52px); height: clamp(44px, 5vw, 52px); }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-tab-header">
+    <div class="tab-logo-name">
+      <img src="https://i.postimg.cc/VLZkfgGL/images.jpg" alt="Grow a Garden Logo" class="tab-logo" />
+      <span class="tab-name">Grow A Garden</span>
+    </div>
+  </header>
+  <main>
+    <div id="tabs"></div>
+    <div id="content"></div>
+    <div id="status"></div>
+    <div id="notification-container"></div>
+  </main>
+  <div id="next-page-container">
+    <a href="https://yanzz-ios.github.io/main/weather" class="next-button">WEATHER</a>
+  </div>
+  <script>
+    const API = 'https://api.joshlei.com/v2/growagarden/stock';
+    const JSTUDIO_KEY = 'js_bfbf185548d8ea2b648c6d971833bbecdcc70a896575b193444af969ecfbaf69';
+    const PLACEHOLDER_IMG = 'https://via.placeholder.com/44?text=No+Img';
+
+    let data = {}, current = '__all__';
+    let countdowns = {};
+
+    function cap(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ');
+    }
+
+    function formatSecondsToTimeString(seconds) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return [
+        h > 0 ? String(h).padStart(2, '0') : null,
+        String(m).padStart(2, '0'),
+        String(s).padStart(2, '0'),
+      ].filter(Boolean).join(':');
+    }
+
+    function calculateRestockIn(startUnix, endUnix) {
+      const now = Math.floor(Date.now() / 1000);
+      if (now < startUnix) {
+        return `Starting in: ${formatSecondsToTimeString(startUnix - now)}`;
+      } else if (now >= startUnix && now <= endUnix) {
+        return `Restocking: ${formatSecondsToTimeString(endUnix - now)}`;
+      } else {
+        return 'Restock ended';
+      }
+    }
+
+    function loadImage(url, altText) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.src = url || PLACEHOLDER_IMG;
+        img.alt = altText;
+        img.width = clamp(40, 6, 48);
+        img.height = clamp(40, 6, 48);
+        img.style.objectFit = 'contain';
+        img.onload = () => resolve(img);
+        img.onerror = () => {
+          const placeholder = new Image();
+          placeholder.src = PLACEHOLDER_IMG;
+          placeholder.alt = 'No Image';
+          placeholder.width = clamp(40, 6, 48);
+          placeholder.height = clamp(40, 6, 48);
+          placeholder.style.objectFit = 'contain';
+          resolve(placeholder);
+        };
+      });
+    }
+
+    function getEmojiByName(name) {
+      name = name.toLowerCase();
+      const map = [
+        [/carrot/, "🥕"], [/strawberry/, "🍓"], [/blueberry/, "🫐"], [/banana/, "🍌"],
+        [/tomato/, "🍅"], [/watermelon/, "🍉"], [/lemon/, "🍋"], [/peach/, "🍑"],
+        [/grape/, "🍇"], [/avocado/, "🥑"], [/corn/, "🌽"], [/mushroom/, "🍄"],
+        [/onion/, "🧅"], [/garlic/, "🧄"], [/potato/, "🥔"], [/eggplant/, "🍆"],
+        [/egg/, "🥚"], [/campfire/, "🔥"], [/torch/, "🔦"], [/lamp/, "💡"],
+        [/tv|mini tv/, "📺"], [/cooler/, "🧊"], [/sign crate/, "📦"], [/sign/, "🪧"],
+        [/cleaning/, "🧼"], [/flower/, "🌸"], [/vine/, "🌿"], [/bee/, "🐝"],
+        [/butterfly/, "🦋"], [/bird/, "🐦"], [/cat/, "🐱"], [/dog/, "🐶"],
+        [/cow/, "🐄"], [/chicken/, "🐔"], [/wrench/, "🔧"], [/trowel/, "🔨"],
+        [/shovel/, "⛏️"], [/rake/, "🧹"], [/tool/, "🛠️"], [/watering/, "💧"],
+        [/spray/, "🧴"], [/sprinkler/, "💦"], [/wood/, "🪵"], [/stone/, "🪨"],
+        [/table/, "🪑"], [/tile/, "⬜"], [/brick/, "🧱"], [/flooring/, "🧱"],
+        [/path/, "🛤️"], [/pillar/, "🗿"], [/pad/, "🟫"], [/stack/, "📚"],
+        [/compost/, "♻️"], [/recall/, "🔄"], [/favorite/, "⭐"], [/common/, "🔰"],
+        [/advanced/, "🚀"], [/long/, "📏"], [/medium/, "📐"], [/small/, "🔹"],
+        [/hammock/, "🛏️"], [/pricklypear/, "🏜️"], [/honey comb/, "🍯"], [/lavender/, "🪻"],
+        [/cabana/, "🏖️"], [/bookshelf/, "📚"], [/brown bench/, "🪑"], [/beach crate/, "📦"],
+        [/log bench/, "🪵"], [/rafflesia/, "🌺"], [/prickly pear/, "🏜️"], [/magnifying/, "🔍"],
+        [/market cart/, "🛒"], [/yellow umbrella/, "🌂"], [/hay bale/, "🌾"], [/mango/, "🥭"],
+        [/zen/, "🪴"], [/sakura/, "🌸"], [/radar/, "📡"], [/sand/, "🏖️"]
+      ];
+      for (const [regex, emoji] of map) {
+        if (regex.test(name)) return emoji;
+      }
+      return "❓";
+    }
+
+    function clamp(min, vw, max) {
+      return Math.min(Math.max(window.innerWidth * (vw / 100), min), max);
+    }
+
+    function showNotification(message, type = 'success') {
+      const container = document.getElementById('notification-container');
+      const notif = document.createElement('div');
+      notif.className = `notification ${type}`;
+      notif.innerHTML = `
+        ${message}
+        <button class="close-btn">×</button>
+      `;
+      container.appendChild(notif);
+      setTimeout(() => {
+        notif.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => notif.remove(), 300);
+      }, 5000);
+      notif.querySelector('.close-btn').addEventListener('click', () => {
+        notif.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => notif.remove(), 300);
+      });
+    }
+
+    function updateTabsVisibility() {
+      const tabsDiv = document.getElementById('tabs');
+      [...tabsDiv.children].forEach(tab => {
+        const cat = tab.dataset.cat;
+        if (cat === '__all__') {
+          tab.style.display = 'flex';
+          return;
+        }
+        const items = data[cat]?.items || [];
+        const hasNA = items.some(i => i.quantity === 'N/A' || i.quantity == null || i.quantity === '');
+        tab.style.display = hasNA ? 'none' : 'flex';
+      });
+    }
+
+    async function renderCategory(cat) {
+      const cont = document.getElementById('content');
+      let div = cont.querySelector(`.category[data-cat="${cat}"]`);
+      const items = data[cat]?.items || [];
+      const total = items.some(i => i.quantity === 'N/A') ? 'N/A' : items.reduce((s, i) => s + (+i.quantity || 0), 0);
+
+      const validEndTimes = items.map(i => i.end_unix).filter(e => e);
+      const nextEndUnix = validEndTimes.length > 0 ? Math.min(...validEndTimes) : null;
+      countdowns[cat] = nextEndUnix ? nextEndUnix - Math.floor(Date.now() / 1000) : 0;
+
+      if (!div) {
+        div = document.createElement('div');
+        div.className = 'category';
+        div.dataset.cat = cat;
+        cont.appendChild(div);
+      }
+      div.innerHTML = '';
+
+      const hdr = document.createElement('div');
+      hdr.className = 'category-header';
+      hdr.innerHTML = `<span>${cat === '__all__' ? 'All' : cap(cat)} (Total: ${total})</span>
+                      <small data-cat="${cat}">${nextEndUnix ? calculateRestockIn(nextEndUnix) : 'N/A'}</small>`;
+
+      const itmDiv = document.createElement('div');
+      itmDiv.className = 'items';
+
+      const images = await Promise.all(items.map(i => loadImage(i.image_url, i.name)));
+
+      items.forEach((i, idx) => {
+        const it = document.createElement('div');
+        it.className = 'item';
+
+        const img = images[idx];
+        if (img.src === PLACEHOLDER_IMG) {
+          const emojiDiv = document.createElement('div');
+          emojiDiv.className = 'emoji';
+          emojiDiv.textContent = getEmojiByName(i.name);
+          it.appendChild(emojiDiv);
+        } else {
+          it.appendChild(img);
+        }
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'name';
+        nameSpan.textContent = i.name;
+
+        const qtySpan = document.createElement('span');
+        qtySpan.className = 'quantity';
+        qtySpan.textContent = i.quantity;
+
+        it.append(nameSpan, qtySpan);
+        itmDiv.appendChild(it);
+      });
+
+      hdr.onclick = () => {
+        itmDiv.style.display = itmDiv.style.display === 'none' ? 'grid' : 'none';
+      };
+
+      div.appendChild(hdr);
+      div.appendChild(itmDiv);
+    }
+
+    async function render() {
+      const cont = document.getElementById('content');
+      cont.innerHTML = '';
+
+      try {
+        if (current === '__all__') {
+          const categories = Object.keys(data);
+          await Promise.all(categories.map(cat => renderCategory(cat)));
+        } else {
+          await renderCategory(current);
+        }
+      } catch (err) {
+        console.error('Render error:', err);
+        cont.innerHTML = '<p style="text-align: center; color: #e53e3e;">Error loading data. Please try again later.</p>';
+        showNotification('Failed to load data', 'error');
+      }
+
+      const lastUpdated = new Date().toLocaleString();
+      document.getElementById('status').textContent = `Last updated: ${lastUpdated}`;
+    }
+
+    function updateRestockDisplays() {
+      document.querySelectorAll('.category-header small').forEach(small => {
+        const cat = small.dataset.cat;
+        if (countdowns[cat] !== undefined) {
+          let sec = countdowns[cat];
+          if (sec < 0) sec = 0;
+          small.textContent = sec === 0 ? 'Restocking now!' : calculateRestockIn(0, sec + Math.floor(Date.now() / 1000));
+        }
+      });
+    }
+
+    function startCountdowns() {
+      const refreshed = {};
+      setInterval(async () => {
+        let anyUpdate = false;
+
+        for (const cat in countdowns) {
+          if (countdowns[cat] > 0) {
+            countdowns[cat]--;
+            anyUpdate = true;
+          }
+
+          if (countdowns[cat] <= 0 && !refreshed[cat]) {
+            refreshed[cat] = true;
+            try {
+              const res = await fetch(API, {
+                headers: { 'JStudio-key': JSTUDIO_KEY }
+              });
+              if (!res.ok) throw new Error(`API request failed with status ${res.status}`);
+
+              const json = await res.json();
+
+              const mapStockArray = arr => arr.map(i => ({
+                name: i.display_name || i.item_id,
+                quantity: i.quantity ?? 'N/A',
+                image_url: i.icon || null,
+                end_unix: i.end_date_unix || null,
+                start_unix: i.start_date_unix || null,
+              }));
+
+              const newItems = mapStockArray(json[`${cat}_stock`] || (cat === 'travelingmerchant' ? json[`${cat}_stock`]?.stock : []));
+              const oldJson = JSON.stringify(data[cat]?.items || []);
+              const newJson = JSON.stringify(newItems);
+
+              if (newJson !== oldJson) {
+                data[cat] = { items: newItems };
+                const validEnds = newItems.map(i => i.end_unix).filter(e => e);
+                const nextEnd = validEnds.length ? Math.min(...validEnds) : null;
+                countdowns[cat] = nextEnd ? nextEnd - Math.floor(Date.now() / 1000) : 0;
+                await renderCategory(cat);
+                updateTabsVisibility();
+                showNotification(`${cap(cat)} stock updated!`, 'success');
+              }
+            } catch (e) {
+              console.error(`Failed to auto-refresh "${cat}":`, e);
+              showNotification(`Failed to refresh ${cap(cat)}`, 'error');
+            } finally {
+              refreshed[cat] = false;
+            }
+          }
+        }
+
+        if (anyUpdate) updateRestockDisplays();
+      }, 1000);
+    }
+
+    function updateTabsActive() {
+      const tabsDiv = document.getElementById('tabs');
+      [...tabsDiv.children].forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.cat === current);
+        tab.setAttribute('aria-selected', tab.dataset.cat === current ? 'true' : 'false');
+        tab.setAttribute('tabindex', tab.dataset.cat === current ? '0' : '-1');
+      });
+    }
+
+    function buildTabs() {
+      const tabsDiv = document.getElementById('tabs');
+      tabsDiv.innerHTML = '';
+      tabsDiv.setAttribute('role', 'tablist');
+      tabsDiv.setAttribute('aria-label', 'Category Tabs');
+
+      const fragment = document.createDocumentFragment();
+
+      const allTab = document.createElement('div');
+      allTab.classList.add('tab');
+      if (current === '__all__') allTab.classList.add('active');
+      allTab.textContent = 'All';
+      allTab.dataset.cat = '__all__';
+      allTab.setAttribute('role', 'tab');
+      allTab.setAttribute('tabindex', current === '__all__' ? '0' : '-1');
+      allTab.setAttribute('aria-selected', current === '__all__' ? 'true' : 'false');
+      allTab.addEventListener('click', () => selectTab('__all__'));
+      allTab.addEventListener('keydown', handleTabKeydown);
+      fragment.appendChild(allTab);
+
+      Object.keys(data).forEach(cat => {
+        if (!data[cat]?.items) return;
+
+        const tab = document.createElement('div');
+        tab.classList.add('tab');
+        if (current === cat) tab.classList.add('active');
+        tab.textContent = cap(cat);
+        tab.dataset.cat = cat;
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('tabindex', current === cat ? '0' : '-1');
+        tab.setAttribute('aria-selected', current === cat ? 'true' : 'false');
+        tab.addEventListener('click', () => selectTab(cat));
+        tab.addEventListener('keydown', handleTabKeydown);
+        fragment.appendChild(tab);
+      });
+
+      tabsDiv.appendChild(fragment);
+      updateTabsVisibility();
+
+      // Adjust tab sizes dynamically based on screen width
+      adjustTabSizes();
+
+      function selectTab(cat) {
+        if (current === cat) return;
+        current = cat;
+        updateTabsActive();
+        render();
+        focusActiveTab();
+      }
+
+      function handleTabKeydown(e) {
+        const tabs = Array.from(tabsDiv.querySelectorAll('[role="tab"]'));
+        const currentIndex = tabs.indexOf(document.activeElement);
+
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const nextIndex = (currentIndex + 1) % tabs.length;
+          tabs[nextIndex].focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+          tabs[prevIndex].focus();
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const cat = document.activeElement.dataset.cat;
+          selectTab(cat);
+        }
+      }
+
+      function focusActiveTab() {
+        const activeTab = tabsDiv.querySelector('[role="tab"].active');
+        if (activeTab) activeTab.focus();
+      }
+    }
+
+    function adjustTabSizes() {
+      const tabsDiv = document.getElementById('tabs');
+      const tabs = tabsDiv.querySelectorAll('.tab');
+      const containerWidth = tabsDiv.offsetWidth;
+      const tabCount = tabs.length;
+      const minTabWidth = clamp(60, 15, 90);
+      const maxTabsPerRow = Math.floor(containerWidth / minTabWidth);
+      const tabsPerRow = Math.min(tabCount, maxTabsPerRow);
+
+      if (tabsPerRow > 0) {
+        const tabWidth = containerWidth / tabsPerRow - clamp(8, 2, 10);
+        tabs.forEach(tab => {
+          tab.style.minWidth = `${tabWidth}px`;
+          tab.style.flex = 'none';
+        });
+      }
+    }
+
+    window.addEventListener('resize', adjustTabSizes);
+
+    async function initialLoad() {
+      try {
+        const statusEl = document.getElementById('status');
+        statusEl.textContent = 'Loading data...';
+
+        const res = await fetch(API, {
+          headers: { 'JStudio-key': JSTUDIO_KEY }
+        });
+        if (!res.ok) throw new Error(`API request failed with status ${res.status}`);
+
+        const json = await res.json();
+
+        data = {};
+        countdowns = {};
+
+        const categories = ['seed', 'gear', 'egg', 'cosmetic', 'eventshop', 'travelingmerchant'];
+
+        categories.forEach(cat => {
+          const rawItems = json[`${cat}_stock`]?.stock || json[`${cat}_stock`] || [];
+          const items = rawItems.map(i => ({
+            name: i.display_name || i.item_id || 'Unknown',
+            quantity: (typeof i.quantity === 'number' || typeof i.quantity === 'string') ? i.quantity : 'N/A',
+            image_url: i.icon || null,
+            end_unix: i.end_date_unix || null,
+            start_unix: i.start_date_unix || null,
+          }));
+
+          data[cat] = { items };
+
+          const validEnds = items.map(i => i.end_unix).filter(Boolean);
+          countdowns[cat] = validEnds.length ? Math.min(...validEnds) - Math.floor(Date.now() / 1000) : 0;
+        });
+
+        json.notification?.forEach(n => {
+          const now = Math.floor(Date.now() / 1000);
+          if (now >= n.timestamp && now <= n.end_timestamp) {
+            showNotification(n.message, 'warning');
+          }
+        });
+
+        buildTabs();
+        await render();
+        startCountdowns();
+
+        statusEl.textContent = `Last updated: ${new Date().toLocaleString()}`;
+      } catch (err) {
+        console.error('Initial load failed:', err);
+        document.getElementById('status').textContent = 'Failed to load data. Please try again later.';
+        showNotification('Failed to load data', 'error');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initialLoad();
+    });
+  </script>
+</body>
+</html>
