@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="YANZZ API HUB - Manage and explore APIs with ease">
+  <title>YANZZ API HUB</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+    :root {
+      --bg-dark: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      --bg-light: #f0f0f0;
+      --text-dark: #fff;
+      --text-light: #000;
+      --card-dark: rgba(255, 255, 255, 0.1);
+      --card-light: rgba(0, 0, 0, 0.05);
+      --blur: blur(5px);
+      --radius: 10px;
+      --highlight: #00e0ff;
+      --error: #ff4d4d;
+      --success: #00ff88;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      font-family: 'Orbitron', sans-serif, system-ui;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.light { background: var(--bg-light); color: var(--text-light); }
+    header {
+      width: 100%;
+      text-align: center;
+      padding: 2rem;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      background: linear-gradient(90deg, #ff00cc, #3333ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .container {
+      width: 95%;
+      max-width: 900px;
+      margin-bottom: 1.5rem;
+    }
+    .form-container {
+      background: var(--card-dark);
+      backdrop-filter: var(--blur);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    body.light .form-container { background: var(--card-light); }
+    .form-container input, .form-container textarea {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #444;
+      background: rgba(255, 255, 255, 0.05);
+      color: inherit;
+      backdrop-filter: var(--blur);
+      transition: border-color 0.3s;
+    }
+    body.light .form-container input, body.light .form-container textarea {
+      background: #fff;
+      border-color: #ccc;
+    }
+    .form-container input:focus, .form-container textarea:focus {
+      outline: none;
+      border-color: var(--highlight);
+    }
+    .error { color: var(--error); font-size: 0.85rem; min-height: 1.2rem; }
+    .char-counter { font-size: 0.8rem; color: #888; text-align: right; }
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .form-row button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #00f2ff, #ff00f2, #00f2ff);
+      background-size: 300% 100%;
+      animation: glow 3s linear infinite;
+      color: #fff;
+      will-change: background-position;
+    }
+    .form-row button:hover { opacity: 0.9; }
+    @keyframes glow { 0% { background-position: 0 0; } 100% { background-position: 300% 0; } }
+    .search-bar {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #444;
+      background: rgba(255, 255, 255, 0.05);
+      color: inherit;
+      backdrop-filter: var(--blur);
+    }
+    body.light .search-bar input { background: #fff; border-color: #ccc; }
+    #apiList { width: 100%; }
+    .category-group { margin-bottom: 1.5rem; }
+    .category-header {
+      font-size: 1.3rem;
+      margin: 1rem 0;
+      cursor: pointer;
+      color: var(--highlight);
+      text-shadow: 0 0 10px var(--highlight);
+      user-select: none;
+    }
+    .card-grid { display: grid; gap: 1rem; }
+    @media (min-width: 768px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 767px) { .card-grid { grid-template-columns: 1fr; } }
+    .card {
+      position: relative;
+      background: var(--card-dark);
+      backdrop-filter: var(--blur);
+      border-radius: var(--radius);
+      padding: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+    body.light .card { background: var(--card-light); box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 0 20px rgba(0, 255, 255, 0.4); }
+    .card h3 { margin: 0 0 0.5rem; font-size: 1.2rem; }
+    .card p { font-size: 0.9rem; margin: 0.3rem 0; word-break: break-word; }
+    .card a { color: var(--highlight); text-decoration: none; }
+    .card a:hover { text-decoration: underline; }
+    .pin-btn {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      background: gold;
+      color: black;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .card-actions {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .card-actions button {
+      flex: 1 1 auto;
+      min-width: 100px;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      background: #333;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .card-actions button:hover { background: #555; }
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      margin: 0.2rem 0.2rem 0.2rem 0;
+      background: #0088ff;
+      color: white;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    .delete-btn, .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      font-size: 0.8rem;
+      border: none;
+      padding: 0.2rem 0.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+    }
+    .delete-btn { right: 0.5rem; background: #ff0040; }
+    .copy-btn { right: 4rem; background: #0088ff; }
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 1000;
+      text-align: center;
+      max-width: 90%;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: auto;
+    }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    .loading::after {
+      content: "⏳";
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <header role="banner">🚀 YANZZ API HUB</header>
+  <main class="container">
+    <section class="form-container" role="form" aria-labelledby="form-title">
+      <h2 id="form-title" class="visually-hidden">Add or Update API</h2>
+      <input type="text" id="name" placeholder="API Name" aria-required="true" maxlength="100">
+      <div class="error" id="name-error"></div>
+      <input type="url" id="url" placeholder="API Link (https://...)" aria-required="true">
+      <div class="error" id="url-error"></div>
+      <input type="text" id="category" placeholder="Category" maxlength="50">
+      <input type="text" id="tags" placeholder="Tags (comma separated)" maxlength="100">
+      <textarea id="description" placeholder="Description" rows="3" aria-label="API Description" maxlength="500"></textarea>
+      <div class="char-counter" id="desc-counter">0/500</div>
+      <div class="form-row">
+        <button onclick="addOrUpdateAPI()" aria-label="Add or Update API">➕ Add / Update</button>
+        <button onclick="clearForm()" aria-label="Clear Form">🧹 Clear Form</button>
+        <button onclick="clearAll()" aria-label="Clear All APIs">🗑️ Clear All</button>
+        <button onclick="toggleTheme()" aria-label="Toggle Theme">🌗 Theme</button>
+        <button onclick="exportJSON()" aria-label="Export APIs">📤 Export</button>
+        <button onclick="document.getElementById('importFile').click()" id="importBtn" aria-label="Import APIs">📥 Import</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+        <button onclick="randomAPI()" aria-label="Random API">🎲 Random</button>
+        <button onclick="copyAllURLs()" aria-label="Copy All URLs">📋 Copy All</button>
+      </div>
+    </section>
+    <section class="search-bar" role="search">
+      <input type="text" id="search" placeholder="🔍 Search by name, category, or tag..." aria-label="Search APIs" oninput="debouncedRenderList()">
+      <button onclick="resetSearch()" aria-label="Reset Search">❌</button>
+    </section>
+    <section id="apiList" role="region" aria-live="polite"></section>
+  </main>
+  <div id="toast" role="alert" aria-live="assertive"></div>
+  <footer role="contentinfo">© 2025 - Made by YANZZ | Last Updated: <span id="last-updated">August 3, 2025</span></footer>
+  <script>
+    const $ = id => document.getElementById(id);
+    let editIndex = -1, isLoading = false;
+
+    const showToast = (msg, isError = false) => {
+      const toast = $("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      toast.style.background = isError ? "rgba(255, 0, 0, 0.8)" : "rgba(0, 0, 0, 0.8)";
+      setTimeout(() => toast.classList.remove("show"), 3000);
+      toast.focus();
+    };
+
+    const sanitizeInput = input => {
+      const div = document.createElement("div");
+      div.textContent = input;
+      return div.innerHTML.replace(/[<>&"]/g, m => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" })[m]);
+    };
+
+    const isValidUrl = url => /^https?:\/\/[^\s/$.?#].[^\s]*$/.test(url);
+
+    const saveData = data => localStorage.setItem("apis", JSON.stringify(data));
+    const loadData = () => JSON.parse(localStorage.getItem("apis") || "[]");
+
+    const getInput = () => ({
+      name: sanitizeInput($("name").value.trim()),
+      url: sanitizeInput($("url").value.trim()),
+      category: sanitizeInput($("category").value.trim()) || "Uncategorized",
+      tags: $("tags").value.trim().toLowerCase().split(",").map(t => sanitizeInput(t.trim())).filter(t => t),
+      description: sanitizeInput($("description").value.trim()),
+      time: new Date().toLocaleString(),
+      pinned: false
+    });
+
+    const validateForm = () => {
+      const input = getInput();
+      const nameError = $("name-error"), urlError = $("url-error");
+      let isValid = true;
+      nameError.textContent = urlError.textContent = "";
+      if (!input.name) {
+        nameError.textContent = "API Name is required";
+        isValid = false;
+      }
+      if (!input.url) {
+        urlError.textContent = "API URL is required";
+        isValid = false;
+      } else if (!isValidUrl(input.url)) {
+        urlError.textContent = "Invalid URL (must start with http:// or https://)";
+        isValid = false;
+      }
+      return isValid;
+    };
+
+    const addOrUpdateAPI = () => {
+      if (!validateForm()) return;
+      const input = getInput();
+      const apis = loadData();
+      if (editIndex >= 0) {
+        input.pinned = apis[editIndex].pinned;
+        apis[editIndex] = input;
+        editIndex = -1;
+        showToast("✏️ API Updated");
+      } else {
+        if (apis.some(a => a.name === input.name && a.url === input.url)) {
+          $("name-error").textContent = "Duplicate API Name or URL";
+          return;
+        }
+        apis.push(input);
+        showToast("➕ API Added");
+      }
+      saveData(apis);
+      renderList();
+      clearForm();
+    };
+
+    const clearForm = () => {
+      $("name").value = $("url").value = $("category").value = $("tags").value = $("description").value = "";
+      $("name-error").textContent = $("url-error").textContent = "";
+      $("desc-counter").textContent = "0/500";
+      editIndex = -1;
+      $("name").focus();
+    };
+
+    const toggleTheme = () => {
+      document.body.classList.toggle("light");
+      const isLight = document.body.classList.contains("light");
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+      showToast(isLight ? "🌗 Light Mode" : "🌚 Dark Mode");
+    };
+
+    const exportJSON = () => {
+      const data = localStorage.getItem("apis") || "[]";
+      const blob = new Blob([data], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `apis_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      showToast("📤 Exported");
+    };
+
+    const importJSON = async e => {
+      if (isLoading) return;
+      isLoading = true;
+      const btn = $("importBtn");
+      btn.classList.add("loading");
+      const file = e.target.files[0];
+      if (!file) {
+        isLoading = false;
+        btn.classList.remove("loading");
+        return;
+      }
+      try {
+        const text = await file.text();
+        const arr = JSON.parse(text);
+        if (!Array.isArray(arr)) throw new Error("Invalid JSON");
+        saveData(arr);
+        renderList();
+        showToast("📥 Imported Successfully");
+      } catch {
+        showToast("⚠️ Invalid JSON file", true);
+      } finally {
+        isLoading = false;
+        btn.classList.remove("loading");
+        $("importFile").value = "";
+      }
+    };
+
+    const randomAPI = () => {
+      const apis = loadData();
+      if (!apis.length) return showToast("❗ No APIs available", true);
+      const r = apis[Math.floor(Math.random() * apis.length)];
+      showToast(`🎲 ${r.name}\n${r.url}`);
+    };
+
+    const clearAll = () => {
+      if (!confirm("Delete all APIs? This cannot be undone.")) return;
+      localStorage.removeItem("apis");
+      renderList();
+      showToast("🗑️ Cleared All");
+    };
+
+    const copyAllURLs = () => {
+      const apis = loadData();
+      if (!apis.length) return showToast("❗ No APIs to copy", true);
+      const urls = apis.map(api => api.url).join("\n");
+      navigator.clipboard.writeText(urls);
+      showToast("📋 All URLs Copied");
+    };
+
+    const copyLink = url => {
+      navigator.clipboard.writeText(url);
+      showToast("📋 Link Copied");
+    };
+
+    const deleteAPI = idx => {
+      if (!confirm("Delete this API?")) return;
+      const apis = loadData();
+      apis.splice(idx, 1);
+      saveData(apis);
+      renderList();
+      showToast("❌ Deleted");
+    };
+
+    const togglePin = idx => {
+      const apis = loadData();
+      apis[idx].pinned = !apis[idx].pinned;
+      saveData(apis);
+      renderList();
+      showToast(apis[idx].pinned ? "📌 Pinned" : "📍 Unpinned");
+    };
+
+    const editAPI = idx => {
+      const apis = loadData();
+      const api = apis[idx];
+      $("name").value = api.name;
+      $("url").value = api.url;
+      $("category").value = api.category;
+      $("tags").value = api.tags.join(", ");
+      $("description").value = api.description;
+      $("desc-counter").textContent = `${api.description.length}/500`;
+      editIndex = idx;
+      showToast("✏️ Edit Mode");
+      $("name").focus();
+    };
+
+    const resetSearch = () => {
+      $("search").value = "";
+      renderList();
+      $("search").focus();
+    };
+
+    const debounce = (func, delay) => {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+      };
+    };
+
+    const renderList = () => {
+      const all = loadData();
+      const q = $("search").value.trim().toLowerCase();
+      const listEl = $("apiList");
+      listEl.innerHTML = "";
+      all.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+      const filtered = all.filter(api =>
+        api.name.toLowerCase().includes(q) ||
+        api.category.toLowerCase().includes(q) ||
+        api.tags.some(tag => tag.toLowerCase().includes(q))
+      );
+      const grouped = {};
+      filtered.forEach(api => {
+        grouped[api.category] = grouped[api.category] || [];
+        grouped[api.category].push(api);
+      });
+      Object.entries(grouped).forEach(([cat, items]) => {
+        const section = document.createElement("div");
+        section.className = "category-group";
+        const header = document.createElement("div");
+        header.className = "category-header";
+        header.textContent = `📂 ${cat} (${items.length})`;
+        header.setAttribute("role", "button");
+        header.setAttribute("aria-expanded", "true");
+        header.onclick = () => {
+          const grid = section.querySelector(".card-grid");
+          const isExpanded = grid.style.display !== "none";
+          grid.style.display = isExpanded ? "none" : "grid";
+          header.textContent = `${isExpanded ? "📁" : "📂"} ${cat} (${items.length})`;
+          header.setAttribute("aria-expanded", !isExpanded);
+        };
+        const grid = document.createElement("div");
+        grid.className = "card-grid";
+        items.forEach(api => {
+          const actualIdx = loadData().findIndex(a => a.name === api.name && a.url === api.url && a.time === api.time);
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            ${api.pinned ? '<button class="pin-btn" aria-label="Pinned">📌</button>' : ''}
+            <h3>${api.name}</h3>
+            <p><strong>URL:</strong> <a href="${api.url}" target="_blank" rel="noopener">${api.url}</a></p>
+            <p><strong>Category:</strong> ${api.category}</p>
+            <p>${api.description || "No description"}</p>
+            <p><small>${api.time}</small></p>
+            <p><strong>Tags:</strong> ${api.tags.map(t => `<span class="tag">${t}</span>`).join(" ")}</p>
+            <button class="copy-btn" onclick="copyLink('${api.url}')" aria-label="Copy URL">📋 Copy</button>
+            <button class="delete-btn" onclick="deleteAPI(${actualIdx})" aria-label="Delete API">❌ Delete</button>
+            <div class="card-actions">
+              <button onclick="togglePin(${actualIdx})" aria-label="${api.pinned ? "Unpin" : "Pin"} API">${api.pinned ? "📍 Unpin" : "📌 Pin"}</button>
+              <button onclick="editAPI(${actualIdx})" aria-label="Edit API">✏️ Edit</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+        section.appendChild(header);
+        section.appendChild(grid);
+        listEl.appendChild(section);
+      });
+      if (!filtered.length) {
+        listEl.innerHTML = '<p style="text-align: center; color: var(--highlight);">No APIs found</p>';
+      }
+    };
+
+    const debouncedRenderList = debounce(renderList, 300);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("theme") === "light") document.body.classList.add("light");
+      $("description").addEventListener("input", () => {
+        $("desc-counter").textContent = `${$("description").value.length}/500`;
+      });
+      $("last-updated").textContent = new Date().toLocaleDateString();
+      renderList();
+    });
+  </script>
+</body>
+</html>
