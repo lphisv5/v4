@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+  <link
+    rel="icon"
+    href="https://i.postimg.cc/DZM4y0kR/file-00000000c93461f7be1f93c2cbc209b3.png"
+    type="image/png"
+    alt="YANZ favicon"
+  />
+  <meta name="author" content="YANZ" />
+  <title>YANZ - The main website that collects other websites</title>
+  <meta
+    name="description"
+    content="YANZ is the ultimate gateway by YANZ - combining every essential tool, script, and powerful system in one ultra-fast, ultra-sleek platform. Built different."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://yanz-website.github.io/main/" />
+  <meta property="og:title" content="YANZ - The main website that collects other websites" />
+  <meta
+    property="og:description"
+    content="YANZ is the ultimate gateway by YANZ - combining every essential tool, script, and powerful system in one ultra-fast, ultra-sleek platform. Built different."
+  />
+  <meta
+    property="og:image"
+    content="https://i.postimg.cc/sX6LyKPL/2f1137d1404ae863705f3d90517ce045.gif"
+    alt="YANZ preview image"
+  />
+  <link
+    rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap"
+    as="style"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="preload"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    as="style"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="preload"
+    href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+    as="script"
+  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32"><circle cx="16" cy="16" r="8" fill="white" stroke="cyan" stroke-width="2"/></svg>') 16 16, auto;
+      touch-action: manipulation;
+    }
+    body {
+      font-family: 'Kanit', sans-serif;
+      color: #fff;
+      background: #0f172a;
+      overflow-y: auto;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      --x: 0;
+      --y: 0;
+      --xp: 0;
+      --yp: 0;
+      --hue: calc(0 + (var(--xp) * 500));
+      --bg: hsl(0 0% 10%);
+      --glow: radial-gradient(
+        50% 50% at center,
+        hsl(var(--hue) 80% 85%),
+        hsl(var(--hue) 80% 70%),
+        transparent
+      )
+        calc((var(--x) * 1px) - (100px * 0.5))
+        calc((var(--y) * 1px) - (100px * 0.5)) / 100px 100px no-repeat fixed;
+      background: var(--bg);
+      background-image: var(--glow);
+      transition: background 0.2s ease;
+    }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    #loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loader .loader {
+      --path: white;
+      --dot: #f40af0;
+      --duration: 3s;
+      width: 44px;
+      height: 44px;
+      position: relative;
+      display: inline-block;
+      margin: 0 16px;
+    }
+    #loader .loader:before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      position: absolute;
+      display: block;
+      background: var(--dot);
+      top: 37px;
+      left: 19px;
+      transform: translate(-18px, -18px);
+      animation: dotRect var(--duration) cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
+    }
+    #loader .loader svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    #loader .loader svg rect,
+    #loader .loader svg polygon,
+    #loader .loader svg circle {
+      fill: none;
+      stroke: var(--path);
+      stroke-width: 10px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    #loader .loader svg polygon {
+      stroke-dasharray: 145 76 145 76;
+      stroke-dashoffset: 0;
+      animation: pathTriangle var(--duration) cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
+    }
+    #loader .loader svg rect {
+      stroke-dasharray: 192 64 192 64;
+      stroke-dashoffset: 0;
+      animation: pathRect var(--duration) cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
+    }
+    #loader .loader svg circle {
+      stroke-dasharray: 150 50 150 50;
+      stroke-dashoffset: 75;
+      animation: pathCircle var(--duration) cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
+    }
+    #loader .loader.triangle {
+      width: 48px;
+    }
+    #loader .loader.triangle:before {
+      left: 21px;
+      transform: translate(-10px, -18px);
+      animation: dotTriangle var(--duration) cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
+    }
+
+    @keyframes pathTriangle {
+      33% { stroke-dashoffset: 74; }
+      66% { stroke-dashoffset: 147; }
+      100% { stroke-dashoffset: 221; }
+    }
+    @keyframes dotTriangle {
+      33% { transform: translate(0, 0); }
+      66% { transform: translate(10px, -18px); }
+      100% { transform: translate(-10px, -18px); }
+    }
+    @keyframes pathRect {
+      25% { stroke-dashoffset: 64; }
+      50% { stroke-dashoffset: 128; }
+      75% { stroke-dashoffset: 192; }
+      100% { stroke-dashoffset: 256; }
+    }
+    @keyframes dotRect {
+      25% { transform: translate(0, 0); }
+      50% { transform: translate(18px, -18px); }
+      75% { transform: translate(0, -36px); }
+      100% { transform: translate(-18px, -18px); }
+    }
+    @keyframes pathCircle {
+      25% { stroke-dashoffset: 125; }
+      50% { stroke-dashoffset: 175; }
+      75% { stroke-dashoffset: 225; }
+      100% { stroke-dashoffset: 275; }
+    }
+
+    canvas#bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: #0f172a;
+      display: block;
+    }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+      margin: 5vh auto;
+      padding: 0 1rem;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .link-item {
+      position: relative;
+      padding: clamp(0.75rem, 2vw, 1.25rem);
+      font-family: 'Kanit', sans-serif;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #e0f7ff;
+      background: linear-gradient(135deg, #1e3a8a, #4c1d95);
+      border: 2px solid transparent;
+      border-radius: 1.2rem;
+      box-shadow:
+        0 0 12px rgba(0, 170, 255, 0.5),
+        0 0 20px rgba(147, 51, 234, 0.3);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      animation: glowPulse 2.5s ease-in-out infinite;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideIn 0.6s ease-out forwards;
+      text-decoration: none;
+      width: 100%;
+      box-sizing: border-box;
+      touch-action: manipulation;
+    }
+
+    .link-item:hover {
+      transform: translateY(-8px) scale(1.06);
+      background: linear-gradient(135deg, #00b4d8, #7209b7);
+      box-shadow:
+        0 0 25px rgba(0, 180, 216, 0.8),
+        0 0 35px rgba(114, 9, 183, 0.6);
+      border-color: #00d0ff;
+      animation: none;
+    }
+
+    .link-item::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(0, 208, 255, 0.4);
+      border-radius: 50%;
+      transform: translate(-50\%, -50\%);
+      transition: width 0.5s ease, height 0.5s ease;
+      z-index: -1;
+    }
+
+    .link-item:hover::before {
+      width: 350px;
+      height: 350px;
+    }
+
+    .link-item:active::before {
+      width: 450px;
+      height: 450px;
+      background: rgba(114, 9, 183, 0.5);
+      transition: none;
+    }
+
+    .link-item::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 20px;
+      height: 200%;
+      background: linear-gradient(
+        to right,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+      );
+      transform: rotate(45deg);
+      animation: shine 4s infinite;
+      z-index: 2;
+    }
+
+    .link-item:focus {
+      outline: none;
+      box-shadow:
+        0 0 25px rgba(0, 180, 216, 0.8),
+        0 0 0 3px #00d0ff;
+    }
+
+    .link-text {
+      display: flex;
+      align-items: center gap: 0.6em;
+      width: 100%;
+      position: relative;
+      z-index: 3;
+    }
+    .link-text i {
+      font-size: clamp(1.2em, 2vw, 1.4em);
+      color: #00d0ff;
+      transition: color 0.3s ease;
+      flex-shrink: 0;
+    }
+    .link-item:hover .link-text i {
+      color: #f0c6ff;
+    }
+
+    .click-count {
+      margin-top: 0.6rem;
+      font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+      color: #a0d9ffcc;
+      font-weight: 500;
+      user-select: none;
+      position: relative;
+      z-index: 3;
+    }
+
+    .description {
+      font-size: clamp(0.7rem, 1.6vw, 0.8rem);
+      color: #a0d9ffcc;
+      margin-top: 0.4rem;
+      font-weight: 400;
+      position: relative;
+      z-index: 3;
+      transition: color 0.3s ease;
+      text-align: left;
+      width: 100%;
+    }
+    .link-item:hover .description {
+      color: #f0c6ff;
+    }
+
+    .status-green,
+    .status-red {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      font-size: clamp(0.65rem, 1.5vw, 0.7rem);
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 12px;
+      user-select: none;
+      pointer-events: none;
+      box-shadow: 0 0 8px;
+      z-index: 10;
+      white-space: nowrap;
+    }
+    .status-green {
+      background-color: #2ecc71;
+      color: white;
+      box-shadow: 0 0 8px #2ecc71cc;
+    }
+    .status-red {
+      background-color: #d32f2f;
+      color: white;
+      box-shadow: 0 0 8px #d32f2fcc;
+    }
+
+    footer {
+      text-align: center;
+      margin: 0 0 1.5rem;
+      font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+      color: #88cfffcc;
+      user-select: none;
+      position: relative;
+      padding: 0 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .link-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        padding: 0 0.5rem;
+      }
+      .link-item {
+        padding: clamp(0.5rem, 1.5vw, 0.75rem);
+        font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+      }
+      .link-text i {
+        font-size: clamp(1.1em, 1.8vw, 1.2em);
+      }
+      .description {
+        font-size: clamp(0.6rem, 1.4vw, 0.7rem);
+        margin-top: 0.3rem;
+      }
+      .status-green, .status-red {
+        font-size: clamp(0.6rem, 1.3vw, 0.65rem);
+        padding: 3px 6px;
+      }
+    }
+
+    @media (min-width: 600px) and (max-width: 900px) {
+      .link-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.25rem;
+        padding: 0 1rem;
+      }
+      .link-item {
+        padding: clamp(0.75rem, 1.8vw, 1rem);
+        font-size: clamp(0.9rem, 1.9vw, 1rem);
+      }
+      .link-text i {
+        font-size: clamp(1.2em, 1.9vw, 1.3em);
+      }
+    }
+
+    @media (min-width: 900px) {
+      .link-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+      .link-item {
+        padding: clamp(1rem, 2vw, 1.25rem);
+        font-size: clamp(1rem, 2vw, 1.1rem);
+      }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 12px rgba(0, 170, 255, 0.5),
+          0 0 20px rgba(147, 51, 234, 0.3);
+        border-color: transparent;
+      }
+      50% {
+        box-shadow:
+          0 0 18px rgba(0, 170, 255, 0.7),
+          0 0 30px rgba(147, 51, 234, 0.5);
+        border-color: rgba(0, 208, 255, 0.5);
+      }
+    }
+
+    @keyframes slideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shine {
+      0% {
+        left: -50%;
+      }
+      50% {
+        left: 150%;
+      }
+      100% {
+        left: 150%;
+      }
+    }
+    .link-grid .link-item:nth-child(1) { animation-delay: 0.1s; }
+    .link-grid .link-item:nth-child(2) { animation-delay: 0.2s; }
+    .link-grid .link-item:nth-child(3) { animation-delay: 0.3s; }
+    .link-grid .link-item:nth-child(4) { animation-delay: 0.4s; }
+    .link-grid .link-item:nth-child(5) { animation-delay: 0.5s; }
+    .link-grid .link-item:nth-child(6) { animation-delay: 0.6s; }
+    .link-grid .link-item:nth-child(7) { animation-delay: 0.7s; }
+    .link-grid .link-item:nth-child(8) { animation-delay: 0.8s; }
+    .link-grid .link-item:nth-child(9) { animation-delay: 0.9s; }
+    .link-grid .link-item:nth-child(10) { animation-delay: 1.0s; }
+    .link-grid .link-item:nth-child(11) { animation-delay: 1.1s; }
+    .link-grid .link-item:nth-child(12) { animation-delay: 1.2s; }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <div class="loader">
+      <svg viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32"></circle>
+      </svg>
+    </div>
+    <div class="loader triangle">
+      <svg viewBox="0 0 86 80">
+        <polygon points="43 8 79 72 7 72"></polygon>
+      </svg>
+    </div>
+    <div class="loader">
+      <svg viewBox="0 0 80 80">
+        <rect x="8" y="8" width="64" height="64"></rect>
+      </svg>
+    </div>
+  </div>
+
+  <canvas id="bg"></canvas>
+
+  <div class="link-grid">
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/genkey"
+      target="_blank"
+      data-id="genkey"
+      aria-label="Generate Key"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-key" aria-hidden="true"></i>
+        <span>GEN KEY</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="genkey">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/update"
+      target="_blank"
+      data-id="update"
+      aria-label="Check Updates"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+        <span>CHECK UPDATES BOT</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="update">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/addapi"
+      target="_blank"
+      data-id="addapi"
+      aria-label="Add API"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+        <span>ADD API</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="addapi">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/invite"
+      target="_blank"
+      data-id="invite"
+      aria-label="Invite Bot"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-robot" aria-hidden="true"></i>
+        <span>INVITE BOT</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="invite">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/command"
+      target="_blank"
+      data-id="command"
+      aria-label="Bot Commands"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-list" aria-hidden="true"></i>
+        <span>BOT COMMANDS</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="command">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/roblox-version"
+      target="_blank"
+      data-id="robloxver"
+      aria-label="Roblox Version"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-cube" aria-hidden="true"></i>
+        <span>ROBLOX VERSION</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="robloxver">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/growagarden-pet-info"
+      target="_blank"
+      data-id="gardenpet"
+      aria-label="Grow A Garden Pet Info"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-dog" aria-hidden="true"></i>
+        <span>GROW A GARDEN PET INFO</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="gardenpet">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/growagarden-stock"
+      target="_blank"
+      data-id="gardenstock"
+      aria-label="Grow A Garden"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-seedling" aria-hidden="true"></i>
+        <span>GROW A GARDEN</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="gardenstock">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/weather"
+      target="_blank"
+      data-id="gardenweather"
+      aria-label="Grow A Garden Weather"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-cloud-sun" aria-hidden="true"></i>
+        <span>GROW A GARDEN WEATHER</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="gardenweather">0</span>
+      </div>
+    </a>
+
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/profile"
+      target="_blank"
+      data-id="profile"
+      aria-label="Profile"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-user-circle" aria-hidden="true"></i>
+        <span>PROFILE</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="profile">0</span>
+      </div>
+    </a>
+
+    <a  
+      class="link-item"  
+      href="https://yanz-website.github.io/main/executors"  
+      target="_blank"  
+      data-id="executors"  
+      aria-label="Executors"  
+      role="link"  
+      tabindex="0"  
+    >  
+    <div class="status-green">Online</div>  
+    <div class="link-text">  
+    <i class="fas fa-bolt" aria-hidden="true"></i>  
+    <span>EXECUTORS</span>  
+     </div>  
+      <div class="click-count">  
+       Clicks: <span class="count" data-id="executors">0</span>  
+     </div>  
+    </a>
+    
+    <a
+      class="link-item"
+      href="https://yanz-website.github.io/main/meme"
+      target="_blank"
+      data-id="meme"
+      aria-label="Meme"
+      role="link"
+      tabindex="0"
+    >
+      <div class="status-green">Online</div>
+      <div class="link-text">
+        <i class="fas fa-image" aria-hidden="true"></i>
+        <span>MEME</span>
+      </div>
+      <div class="click-count">
+        Clicks: <span class="count" data-id="meme">0</span>
+      </div>
+    </a>
+  </div>
+
+  <footer>© 2025 All Websites are Powered by YANZ</footer>
+
+  <script>
+    const syncPointer = ({ clientX: pointerX, clientY: pointerY }) => {
+      const x = pointerX.toFixed(2);
+      const y = pointerY.toFixed(2);
+      const xp = (pointerX / window.innerWidth).toFixed(2);
+      const yp = (pointerY / window.innerHeight).toFixed(2);
+      document.documentElement.style.setProperty('--x', x);
+      document.documentElement.style.setProperty('--xp', xp);
+      document.documentElement.style.setProperty('--y', y);
+      document.documentElement.style.setProperty('--yp', yp);
+    };
+
+    document.body.addEventListener('pointermove', syncPointer);
+    document.body.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      syncPointer({ clientX: touch.clientX, clientY: touch.clientY });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      syncPointer({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+    });
+
+    const loader = document.getElementById("loader");
+    const hideLoader = () => {
+      if (loader) {
+        loader.classList.add("hidden");
+        setTimeout(() => {
+          loader.style.display = "none";
+        }, 500);
+      }
+    };
+
+    Promise.all([
+      new Promise((resolve) => window.addEventListener('load', resolve)),
+      new Promise((resolve) => setTimeout(resolve, 3500))
+    ]).then(hideLoader);
+
+    document.querySelectorAll(".link-item").forEach((item) => {
+      const id = item.dataset.id;
+      const countEl = document.querySelector(`.count[data-id="${id}"]`);
+      if (!countEl) {
+        console.warn(`Element with selector .count[data-id="${id}"] not found`);
+        return;
+      }
+      let count = 0;
+      try {
+        count = parseInt(localStorage.getItem(`click_${id}`) || "0");
+      } catch (e) {
+        console.warn("localStorage not available:", e);
+      }
+      countEl.textContent = count;
+
+      item.addEventListener("click", () => {
+        count++;
+        try {
+          localStorage.setItem(`click_${id}`, count);
+        } catch (e) {
+          console.warn("Failed to save to localStorage:", e);
+        }
+        countEl.textContent = count;
+        const sound = new Audio('https://www.soundjay.com/buttons/button-09.mp3');
+        sound.play().catch((e) => console.warn("Failed to play sound:", e));
+      });
+    });
+
+    const scene = new THREE.Scene();
+    const textureLoader = new THREE.CubeTextureLoader();
+    textureLoader.load(
+      [
+        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_px.jpg",
+        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_nx.jpg",
+        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_py.jpg",
+        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_ny.jpg",
+        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_pz.jpg",
+        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_nz.jpg",
+      ],
+      (texture) => {
+        scene.background = texture;
+      },
+      undefined,
+      (error) => {
+        console.warn("Failed to load cube texture:", error);
+        scene.background = new THREE.Color(0x0f172a);
+      }
+    );
+
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.getElementById("bg"),
+      antialias: true,
+      powerPreference: "low-power",
+    });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    window.addEventListener("resize", () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+
+    const geom = new THREE.BufferGeometry();
+    const verts = [];
+    for (let i = 0; i < 1000; i++) {
+      verts.push((Math.random() - 0.5) * 1000);
+      verts.push((Math.random() - 0.5) * 1000);
+      verts.push((Math.random() - 0.5) * 1000);
+    }
+    geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+
+    const stars = new THREE.Points(
+      geom,
+      new THREE.PointsMaterial({ color: 0xffffff, size: 1, sizeAttenuation: true })
+    );
+    scene.add(stars);
+
+    camera.position.z = 200;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      stars.rotation.y += 0.0005;
+      stars.rotation.x += 0.0003;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
