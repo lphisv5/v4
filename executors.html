@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="Explore a collection of executors for Android, iOS, Windows, macOS, and external platforms with status, versions, and download links.">
+    <meta name="keywords" content="executors, roblox, android, ios, windows, macos, external, gaming">
+    <meta name="author" content="YANZ">
+    <title>YANZ - EXECUTORS</title>
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --dark-blue: #0b132b;
+            --neon-purple: #7c3aed;
+            --gray: #6b7280;
+            --light-gray: #d1d5db;
+            --background: #0f172a;
+            --card-bg: #1f2937;
+            --white: #f9fafb;
+            --success-green: #34d399;
+            --error-red: #f87171;
+            --discord-purple: #5865f2;
+            --shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.5);
+            --neon-shadow: 0 0 1rem var(--neon-purple);
+            --glass-bg: rgba(31, 41, 55, 0.7);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(180deg, var(--dark-blue), var(--background));
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--neon-purple));
+            padding: clamp(1.5rem, 5vw, 2.5rem);
+            text-align: center;
+            box-shadow: var(--neon-shadow);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 3rem);
+            letter-spacing: clamp(0.1rem, 0.5vw, 0.2rem);
+            text-transform: uppercase;
+            background: linear-gradient(to right, var(--white), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: fadeIn 1s ease-in-out;
+            text-shadow: 0 0 0.5rem var(--neon-purple);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(0.5rem, 2vw, 1rem);
+            margin: clamp(1rem, 3vw, 1.5rem) auto;
+            max-width: 90%;
+            padding: clamp(0.5rem, 2vw, 1rem);
+            background: var(--glass-bg);
+            backdrop-filter: blur(0.625rem);
+            border-radius: 0.75rem;
+            box-shadow: var(--neon-shadow);
+        }
+
+        .search-bar {
+            padding: clamp(0.5rem, 2vw, 0.8rem);
+            border-radius: 0.625rem;
+            border: 1px solid var(--light-gray);
+            background: var(--card-bg);
+            color: var(--white);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            width: clamp(10rem, 30vw, 15rem);
+            transition: var(--transition);
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 0.5rem var(--neon-purple);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: clamp(0.25rem, 1vw, 0.75rem);
+            padding: clamp(0.5rem, 2vw, 1rem);
+            position: sticky;
+            top: 0;
+            z-index: 9;
+        }
+
+        .tab {
+            padding: clamp(0.5rem, 2vw, 0.8rem) clamp(1rem, 4vw, 2rem);
+            cursor: pointer;
+            border-radius: 0.625rem;
+            background: var(--gray);
+            color: var(--white);
+            font-weight: 700;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            transition: var(--transition);
+            text-transform: uppercase;
+            min-width: clamp(4rem, 15vw, 6rem);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab::before {
+            content: '';
+            width: 1.5rem;
+            height: 1.5rem;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            mix-blend-mode: multiply;
+        }
+
+        .tab[data-tab="android"]::before {
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEhH8K_uZ_kcmxyNw3NsoO2Vrz_KBerO7TX7OpgDybCQ&s');
+        }
+
+        .tab[data-tab="ios"]::before {
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7gZAW87-IEweXTSICBJqdlx3-791stFVrog&s');
+        }
+
+        .tab[data-tab="windows"]::before {
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShfDsOJrEC72wWWqPkkriYd8UUg_rDS7DTAD5TXgKXpj044l12lBQhhaA&s=10');
+        }
+
+        .tab[data-tab="macos"]::before {
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-8lir9rdHoKR7X2j0yXFfrXCAyq9eOaAwQ&s');
+        }
+
+        .tab[data-tab="external"]::before {
+            background-image: url('https://static.thenounproject.com/png/5091611-200.png');
+        }
+
+        .tab:hover, .tab.active {
+            background: var(--neon-purple);
+            transform: scale(1.05);
+            box-shadow: var(--neon-shadow);
+        }
+
+        .container {
+            max-width: 90vw;
+            margin: clamp(1.5rem, 5vw, 3rem) auto;
+            padding: 0 clamp(0.5rem, 2vw, 2rem);
+        }
+
+        .executor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(15rem, 40vw, 20rem), 1fr));
+            gap: clamp(1rem, 3vw, 2.5rem);
+            padding: clamp(0.5rem, 2vw, 1rem);
+        }
+
+        .executor-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(0.5rem);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .executor-card:hover {
+            transform: translateY(-0.625rem);
+            box-shadow: var(--neon-shadow);
+        }
+
+        .executor-card img {
+            width: 100%;
+            height: clamp(10rem, 25vw, 12.5rem);
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .executor-card img.loaded {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        .executor-card-content {
+            padding: clamp(1rem, 3vw, 2rem);
+        }
+
+        .executor-card h3 {
+            margin: 0 0 clamp(0.5rem, 2vw, 1rem);
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            font-weight: 700;
+            color: var(--white);
+            text-shadow: 0 0 0.5rem var(--neon-purple);
+        }
+
+        .status {
+            font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+            margin: clamp(0.25rem, 1vw, 0.75rem) 0;
+            font-weight: 600;
+            letter-spacing: 0.03125rem;
+        }
+
+        .status.online {
+            color: var(--success-green);
+            text-shadow: 0 0 0.5rem rgba(52, 211, 153, 0.5);
+        }
+
+        .status.offline {
+            color: var(--error-red);
+            text-shadow: 0 0 0.5rem rgba(248, 113, 113, 0.5);
+        }
+
+        .type, .version, .vng-version, .last-updated {
+            font-size: clamp(0.7rem, 2vw, 1rem);
+            color: var(--light-gray);
+            margin: clamp(0.25rem, 1vw, 0.5rem) 0;
+            font-weight: 500;
+        }
+
+        .download-text {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.5rem, 2vw, 1rem);
+            margin: clamp(0.5rem, 2vw, 1rem) 0;
+            background: var(--card-bg);
+            padding: clamp(0.5rem, 2vw, 0.8rem);
+            border-radius: 0.625rem;
+            border: 1px solid var(--light-gray);
+        }
+
+        .download-text input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            font-family: 'Inter', monospace;
+            pointer-events: none;
+        }
+
+        .copy-button {
+            padding: clamp(0.4rem, 1.5vw, 0.6rem) clamp(0.8rem, 3vw, 1.2rem);
+            background: var(--neon-purple);
+            color: var(--white);
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .copy-button:hover {
+            transform: translateY(-0.1875rem);
+            box-shadow: var(--neon-shadow);
+        }
+
+        .copy-button.copied {
+            background: var(--success-green);
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: clamp(0.5rem, 2vw, 1rem);
+            margin-top: clamp(0.75rem, 2vw, 1.5rem);
+            justify-content: center;
+        }
+
+        .button {
+            padding: clamp(0.5rem, 2vw, 0.8rem) clamp(1rem, 4vw, 1.6rem);
+            text-decoration: none;
+            border-radius: 0.625rem;
+            color: var(--white);
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            font-weight: 600;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            min-width: clamp(5rem, 15vw, 6rem);
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .button:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        .button.download {
+            background: var(--primary-blue);
+        }
+
+        .button.purchase {
+            background: var(--success-green);
+        }
+
+        .button.discord {
+            background: var(--discord-purple);
+        }
+
+        .button:hover {
+            transform: translateY(-0.1875rem);
+            box-shadow: var(--neon-shadow);
+        }
+
+        .error {
+            color: var(--error-red);
+            text-align: center;
+            margin: clamp(1.5rem, 5vw, 3rem);
+            font-size: clamp(1rem, 3.5vw, 1.4rem);
+            font-weight: 600;
+            text-shadow: 0 0 0.5rem rgba(248, 113, 113, 0.5);
+        }
+
+        .loading {
+            text-align: center;
+            margin: clamp(1.5rem, 5vw, 3rem);
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            color: var(--neon-purple);
+            font-weight: 600;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: clamp(1.5rem, 5vw, 1.75rem);
+            height: clamp(1.5rem, 5vw, 1.75rem);
+            border: clamp(0.25rem, 1vw, 0.3125rem) solid var(--neon-purple);
+            border-top: clamp(0.25rem, 1vw, 0.3125rem) solid transparent;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+            margin-left: clamp(0.5rem, 2vw, 0.75rem);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 3rem;
+            height: 3rem;
+            background: var(--neon-purple);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--neon-shadow);
+            transition: var(--transition);
+            display: none;
+            transform: perspective(500px) rotateX(0deg) rotateY(0deg);
+        }
+
+        .back-to-top::before {
+            content: '↑';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateZ(20px);
+            font-size: 1.5rem;
+            color: var(--white);
+            text-shadow: 0 0 0.5rem var(--white);
+        }
+
+        .back-to-top:hover {
+            transform: perspective(500px) rotateX(10deg) rotateY(10deg) scale(1.1);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0.5rem var(--neon-purple); }
+            50% { box-shadow: 0 0 1.5rem var(--neon-purple); }
+            100% { box-shadow: 0 0 0.5rem var(--neon-purple); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-1.25rem); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .executor-grid {
+                grid-template-columns: repeat(auto-fit, minmax(clamp(14rem, 40vw, 18rem), 1fr));
+            }
+            .controls, .tabs {
+                padding: clamp(0.5rem, 2vw, 0.75rem);
+                gap: clamp(0.25rem, 1vw, 0.5rem);
+            }
+            .tab {
+                padding: clamp(0.4rem, 2vw, 0.7rem) clamp(0.8rem, 3vw, 1.5rem);
+                font-size: clamp(0.8rem, 3vw, 1rem);
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: clamp(1.8rem, 8vw, 2.2rem);
+            }
+            .tab {
+                padding: clamp(0.3rem, 2vw, 0.6rem) clamp(0.6rem, 3vw, 1.2rem);
+                font-size: clamp(0.7rem, 3vw, 0.9rem);
+            }
+            .tab::before {
+                width: 1.2rem;
+                height: 1.2rem;
+            }
+            .executor-card h3 {
+                font-size: clamp(1rem, 5vw, 1.5rem);
+            }
+            .executor-card img {
+                height: clamp(8rem, 25vw, 10rem);
+            }
+            .buttons {
+                gap: clamp(0.3rem, 1.5vw, 0.5rem);
+            }
+            .button, .copy-button {
+                padding: clamp(0.4rem, 2vw, 0.7rem) clamp(0.8rem, 3vw, 1.4rem);
+                font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+            }
+            .search-bar {
+                width: clamp(8rem, 25vw, 12rem);
+            }
+            .back-to-top {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            .back-to-top::before {
+                font-size: 1.2rem;
+            }
+            .download-text input {
+                font-size: clamp(0.6rem, 2vw, 0.8rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>YANZ Executors</h1>
+    </header>
+    <div class="controls">
+        <input type="text" class="search-bar" placeholder="Search executors..." aria-label="Search executors">
+    </div>
+    <div class="tabs">
+        <div class="tab active" data-tab="android" role="tab" aria-selected="true">Android</div>
+        <div class="tab" data-tab="ios" role="tab" aria-selected="false">iOS</div>
+        <div class="tab" data-tab="windows" role="tab" aria-selected="false">Windows</div>
+        <div class="tab" data-tab="macos" role="tab" aria-selected="false">macOS</div>
+        <div class="tab" data-tab="external" role="tab" aria-selected="false">External</div>
+    </div>
+    <div class="container">
+        <div class="executor-grid" id="executor-grid">
+            <p class="loading">Loading...</p>
+        </div>
+    </div>
+    <button class="back-to-top" aria-label="Back to top"></button>
+    <script>
+    const executorsData = {
+        "android": [
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/lugia","download_url":"https://android.spdmteam.com/","image_url":"https://files.catbox.moe/55tkbq.png","purchase":"https://spdmteam.com/api/create-checkout-session?referral=RSD","status":"Online","title":"Arceus X","type":"Paid","version":"2.683.775","vng_url":"https://vng.spdmteam.com/","last_updated":"2025-08-01"},
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/getkrnl","download_url":"https://wrdcdn.net/r/54921/1753730859603/krnl_release_2.683.775_2025.7.28_38.apk","image_url":"https://cdn.wearedevs.net/images/thumbnails/krnl.jpeg","status":"Online","title":"Krnl","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/pjz8xgb9lukcdyj/krnl_release_2.683.775_2025.7.28_38.apk/file","last_updated":"2025-08-01"},
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/codexlol","download_url":"https://www.mediafire.com/file/pw0bdp3seftd5d3/Codex+V2.683.apk/file","image_url":"https://files.catbox.moe/mmjwwd.png","status":"Online","title":"Codex","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/xmk2zq6iq9pz2bg/Codex_VNG_v2.681.apk/file","last_updated":"2025-08-01"},
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/qM3WZhQShn","download_url":"https://www.mediafire.com/file/w4f7a2ezsa0sio3/Cryptic+2.683.775+APK.apk/file","image_url":"https://getcryptic.net/assets/moonglow-HcoSKqMr.png","status":"Online","title":"Cryptic","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/vton5o28dou1wd9/Cryptic_2.681.805_VNG.apk/file","last_updated":"2025-08-01"},
+            {"VNGversion":"2.683.775","discord_url":"https://discord.gg/deltax","download_url":"https://delta.webfiles.pro/file/Delta-2.683.775-01.apk","image_url":"https://i.ibb.co/nbDv3Lx/delta.png","status":"Online","title":"Delta","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/75x4lstancampr8/DeltaVng-2.683.775-02.apk/file","last_updated":"2025-08-01"},
+            {"VNGversion":"2.683.775","discord_url":"https://discord.gg/subz","download_url":"https://webfiles.pro/file/Fluxus.apk","image_url":"https://flux.li/assets/faviconbutpng.e3767602.png","status":"Online","title":"Fluxus","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/sh0vqetz2vccqs8/Fluxus_V2.683.775-VNG.apk/file","last_updated":"2025-08-01"},
+            {"VNGversion":"2.674.786","discord_url":"https://discord.gg/VgsHH4FN5P","download_url":"https://www.mediafire.com/file/n94ukcksi5x60xw/Rift+3.1.0.apk/file","image_url":"https://files.catbox.moe/lro9zw.png","status":"Online","title":"Rift","type":"Free","version":"2.679.762","vng_url":"https://www.mediafire.com/file/vcrfkmjxj14mvjl/Rift+3.0.0+VNG.apk/file","last_updated":"2025-08-01"},
+            {"VNGversion":"2.655.1095","discord_url":"https://discord.gg/getfrost","download_url":"https://www.mediafire.com/file/mvf7nt4wjuxzpbx/Frostware-GenX+V3.5(fixed).apk/file?hash=K55p1BVkmmR0tQSPLpFrqTJb8O7LX8GpwP2iNymwbRiaAqBQtdbQvDdL22Q770ux","image_url":"https://files.catbox.moe/o5nmea.png","status":"Online","title":"Frostware","type":"Free","version":"v2.682.538","vng_url":"https://www.mediafire.com/file/2oefdp15evvka2c/Frostware+VNG+V4.2.apk/file","last_updated":"2025-08-01"},
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1753248043148/roni64.apk","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"RoniX","type":"Free","version":"2.682.538","vng_url":"https://www.mediafire.com/file/6zmd9n52vxu16tm/%25F0%259F%2587%25BB%25F0%259F%2587%25B3Ronix_682_VIETNAM%25F0%259F%25A4%258D.apk/file","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/x5AT9UMMWG","download_url":"https://evon.cc/android/dl-a/Evon.apk","image_url":"https://evon.cc/favicon.png","status":"Online","title":"Evon","type":"Free","version":"2.681.805","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/qQMs6ns5Za","download_url":"https://trigonevo.com/download?os=android&fs=mediafire","image_url":"https://files.catbox.moe/15b32y.webp","status":"Online","title":"Trigon","type":"Free","version":"2.683.775","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/DvvdeNBnZt","download_url":"https://github.com/1f0yt/community/releases/download/Vegax/Vega.X.apk","image_url":"https://vegax.gg/assets/img/V_logo_white.png","status":"Online","title":"VegaX","type":"Free","version":"2.683.775","last_updated":"2025-08-01"}
+        ],
+        "external": [
+            {"discord_url":"https://discord.gg/7GZqhErX8C","image_url":"https://files.catbox.moe/f9kg6k.png","purchase":"https://getronin.xyz","status":"Online","title":"Ronin","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/valex","download_url":"https://github.com/1Softworks/assets/raw/refs/heads/main/Valex_External.zip","image_url":"https://files.catbox.moe/o44tdw.webp","status":"Online","title":"Valex","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.com/invite/3eTeZjywuV","image_url":"https://files.catbox.moe/bxrhw5.png","purchase":"https://cultofintellect.com/dx9ware/","status":"Online","title":"DX9WARE","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/vro","image_url":"https://files.catbox.moe/tp1798.webp","purchase":"https://photonsys.sellpass.io/","status":"Online","title":"Photon","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/isabelle","image_url":"https://files.catbox.moe/q1obyx.webp","purchase":"https://ext.sellsn.io/","status":"Online","title":"Isabelle","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.com/invite/yPjkUBcWgR","image_url":"https://files.catbox.moe/gliige.png","purchase":"https://matrixhubs.shop/","status":"Online","title":"Matrix Hub","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/asmlol","image_url":"https://files.catbox.moe/w7ob4c.png","purchase":"https://bloxproducts.com/#Matcha","status":"Online","title":"Matcha","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/asmlol","image_url":"https://files.catbox.moe/rk7l3j.webp","purchase":"https://assembly.lol/","status":"Online","title":"Assembly","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"}
+        ],
+        "ios": [
+            {"discord_url":"https://discord.gg/getkrnl","download_url":"https://wrdcdn.net/r/54921/1753571817485/Krnl_release_683.ipa","image_url":"https://cdn.wearedevs.net/images/thumbnails/krnl.jpeg","status":"Online","title":"Krnl","type":"Free","version":"2.683.775","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/lugia","download_url":"https://ios.spdmteam.com","image_url":"https://files.catbox.moe/55tkbq.png","status":"Offline","title":"Arceus X","type":"Free","version":"2.668.660","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/codexlol","download_url":"https://www.mediafire.com/file/7afzer5xxo1110n/Codex_2.674.782.ipa/file","image_url":"https://files.catbox.moe/mmjwwd.png","status":"Offline","title":"Codex","type":"Free","version":"2.674.786","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/qM3WZhQShn","download_url":"https://www.mediafire.com/file/okr6d1frv52l9zo/Cryptic_2.668.658+iOS.ipa/file","image_url":"https://getcryptic.net/assets/moonglow-HcoSKqMr.png","status":"Offline","title":"Cryptic","type":"Free","version":"2.668.660","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/deltax","download_url":"https://delta.webfiles.pro/ios.html","image_url":"https://i.ibb.co/nbDv3Lx/delta.png","status":"Online","title":"Delta","type":"Free","version":"2.683.775","last_updated":"2025-08-01"}
+        ],
+        "macos": [
+            {"discord_url":"https://discord.com/invite/macsploit","image_url":"https://files.catbox.moe/ii70gl.png","purchase":"https://www.raptor.fun/","status":"Online","title":"MacSploit","type":"Paid","version":"version-4010d14c83284ae5","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/gethydrogen","download_text":"bash -c \"$(curl -fsSL https://www.hydrogen.lat/install)\"","image_url":"https://discord.do/wp-content/uploads/2023/08/Hydrogen.jpg","purchase":"https://hydrogenmacos.selly.store/","status":"Online","title":"Hydrogen","type":"Paid","version":"version-6c0b1c5cf2914623","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/ronix","download_text":"bash -c \"$(curl -fsSL https://www.ronixmac.lol/install)\"","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"Ronix","type":"Free","version":"version-774691dc93a947ef","last_updated":"2025-08-01"},
+            {"download_text":"curl -s \"https://realbunni.com/beta/install.sh\" | bash","image_url":"https://files.catbox.moe/hd9264.webp","status":"Online","title":"BUNNI.LOL","type":"Free","version":"version-774691dc93a947ef","last_updated":"2025-08-01"}
+        ],
+        "windows": [
+            {"discord_url":"https://discord.gg/fAXWJj8Bp3","image_url":"https://files.catbox.moe/7rfhji.png","purchase":"https://flyontop.mysellauth.com/","status":"Online","title":"Fly","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/9DPW2G22cF","download_url":"https://realbunni.com/beta/download","image_url":"https://files.catbox.moe/hd9264.webp","status":"Online","title":"BUNNI.lOL","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.com/invite/g8knYkUpQn","image_url":"https://framerusercontent.com/images/x9dgYhhG8T8nA56Naw3P1bMVDg.png?scale-down-to=512","purchase":"https://zenith.win/","status":"Online","title":"Zenith","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/getswiftgg","download_url":"https://getswift.vip//download","image_url":"https://files.catbox.moe/5krpqt.webp","status":"Online","title":"Swift","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/velocityide","download_url":"https://gofile.io/d/YucVBu","image_url":"https://files.catbox.moe/tj6brv.png","status":"Online","title":"Velocity","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/zSnS9kCxJX","download_url":"https://volcano.wtf/","image_url":"https://files.catbox.moe/ucf3km.png","status":"Online","title":"Volcano","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1753480423073/release%20(2).zip","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"Ronix","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/XZWTFr3cHt","download_url":"https://gofile.io/d/1mpEES","image_url":"https://files.catbox.moe/dlmfx4.webp","status":"Online","title":"Illusion","type":"Free","version":"version-225e87fdb7254f64","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/eQP6Y5pKWQ","download_url":"https://wrdcdn.net/r/58255/1752074773254/LX63AFE.zip","image_url":"https://files.catbox.moe/sljr5s.webp","status":"Online","title":"LX63","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/RUVr3Q2fSt","download_url":"https://filerift.com/file/EkpzFp_mgJ","image_url":"https://files.catbox.moe/tveaai.webp","status":"Online","title":"Nucleus","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/xeno-now","download_url":"https://www.xeno.onl/download","image_url":"https://cdn.wearedevs.net/images/thumbnails/xeno-0131252.webp","status":"Online","title":"Xeno","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.com/invite/awpgg","image_url":"https://files.catbox.moe/olkjgi.png","purchase":"https://buyawp.gg/","status":"Offline","title":"AWP.GG","type":"Paid","version":"version-78712d8739f34cb9","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/getwave","image_url":"https://files.catbox.moe/4ly86h.webp","purchase":"https://getwave.gg","status":"Online","title":"Wave","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/realzorara","download_url":"https://wrdcdn.net/r/118757/1752746590674/Drift1.1.4.zip","image_url":"https://files.catbox.moe/g8asky.webp","status":"Online","title":"Drift","type":"Free","version":"version-225e87fdb7254f64","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/valex","download_url":"https://github.com/1Softworks/assets/raw/refs/heads/main/Valex_Executor.zip","image_url":"https://files.catbox.moe/o44tdw.webp","status":"Online","title":"Valex","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.com/invite/potassium","image_url":"https://files.catbox.moe/hryiqu.jpeg","purchase":"https://potassium.pro","status":"Online","title":"Potassium","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/plutora","download_url":"https://wrdcdn.net/r/87882/1751318463316/plutora%20v2.0.1.zip","image_url":"https://files.catbox.moe/k18j6c.webp","status":"Online","title":"Plutora","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/m6zAQ3KNsP","image_url":"https://files.catbox.moe/d1usrx.jpg","purchase":"https://seliware.com/","status":"Online","title":"Seliware","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/cCm7byQCPe","download_url":"https://www.mediafire.com/file/bumjga1i1n1s9i3/Trigon_Evo_0.1.0+(2).exe/file","image_url":"https://files.catbox.moe/15b32y.webp","status":"Online","title":"Trigon","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"discord_url":"https://www.discord.gg/CPKvWTgFdV","image_url":"https://files.catbox.moe/y3rfh1.png","purchase":"https://sirhurt.net/","status":"Online","title":"SirHurt","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/wearedevs","download_url":"https://github.com/wcrddn/wcrddn.github.io/raw/refs/heads/main/0625/jjsploit_8.15.3_x64_en-US.msi","image_url":"https://cdn.wearedevs.net/images/thumbnails/jjsploit-031425.webp","status":"Online","title":"JJSploit","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
+            {"download_url":"https://getsolara.dev/download/static/files/BootstrapperNew.exe","image_url":"https://files.catbox.moe/gjzzjt.png","status":"Online","title":"Solara","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/arctic-studios-1329873465897128058","download_url":"https://www.mediafire.com/file/lbshy3ozy3z9uyn/Arctic-2.0.3C.rar/file","image_url":"https://files.catbox.moe/vc4ao7.webp","status":"Online","title":"Artic","type":"Free","version":"version-765338e04cf54fde","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/p5ehjGMJhP","download_url":"https://gofile.io/d/rwSPUW","image_url":"https://files.catbox.moe/n4wh1a.webp","status":"Offline","title":"Venux","type":"Free","last_updated":"2025-08-01"},
+            {"discord_url":"https://discord.gg/RrNWfpjtHA","download_url":"https://saturn-website-gamma.vercel.app/Bootstrapper.exe","image_url":"https://files.catbox.moe/p7l0hd.png","status":"Online","title":"Saturn X","type":"Free","version":"version-225e87fdb7254f64","last_updated":"2025-08-01"}
+        ]
+    };
+
+    const executors = Object.keys(executorsData).reduce((acc, platform) => {
+        return acc.concat(executorsData[platform].map(executor => ({
+            ...executor,
+            platform
+        })));
+    }, []);
+
+    const tabs = document.querySelectorAll(".tab");
+    const executorGrid = document.getElementById("executor-grid");
+    const searchBar = document.querySelector(".search-bar");
+    const backToTop = document.querySelector(".back-to-top");
+
+    function renderExecutors(data) {
+        executorGrid.innerHTML = "";
+        if (data.length === 0) {
+            executorGrid.innerHTML = '<p class="error">No executors found.</p>';
+            return;
+        }
+        data.forEach(executor => {
+            const escapedDownloadText = executor.download_text ? executor.download_text.replace(/"/g, '&quot;') : '';
+            const card = `
+                <div class="executor-card">
+                    <img src="${executor.image_url}" alt="${executor.title}" data-src="${executor.image_url}" onerror="this.src='https://via.placeholder.com/280x160?text=Image+Not+Found';" onload="this.classList.add('loaded')">
+                    <div class="executor-card-content">
+                        <h3>${executor.title}</h3>
+                        <p class="status ${executor.status.toLowerCase()}">Status: ${executor.status}</p>
+                        <p class="type">Type: ${executor.type || 'N/A'}</p>
+                        <p class="version">Version: ${executor.version || 'N/A'}</p>
+                        <p class="vng-version">VNG Version: ${executor.VNGversion || 'N/A'}</p>
+                        <p class="last-updated">Last Updated: ${executor.last_updated || 'N/A'}</p>
+                        ${executor.download_text ? `
+                            <div class="download-text">
+                                <input type="text" value="${escapedDownloadText}" readonly aria-label="Download command for ${executor.title}">
+                                <button class="copy-button" onclick="copyText(this, \`${escapedDownloadText}\`)">Copy</button>
+                            </div>
+                        ` : ''}
+                        <div class="buttons">
+                            ${executor.download_url ? `<a href="${executor.download_url}" class="button download" aria-label="Download ${executor.title}">Download</a>` : ''}
+                            ${executor.purchase ? `<a href="${executor.purchase}" class="button purchase" aria-label="Purchase ${executor.title}">Purchase</a>` : ''}
+                            ${executor.discord_url ? `<a href="${executor.discord_url}" class="button discord" aria-label="Join ${executor.title} Discord">Discord</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            executorGrid.innerHTML += card;
+        });
+    }
+
+    function copyText(button, text) {
+        try {
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.textContent = 'Error';
+                button.classList.add('error');
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('error');
+                }, 2000);
+            });
+        } catch (err) {
+            console.error('Clipboard API not supported or other error: ', err);
+        }
+    }
+
+    function filterExecutors() {
+        const activeTab = document.querySelector(".tab.active").dataset.tab;
+        const searchTerm = searchBar.value.toLowerCase();
+        const filtered = executors.filter(executor => 
+            executor.platform === activeTab &&
+            (executor.title.toLowerCase().includes(searchTerm) || 
+             executor.platform.toLowerCase().includes(searchTerm))
+        );
+        renderExecutors(filtered);
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            tabs.forEach(t => {
+                t.classList.remove("active");
+                t.setAttribute("aria-selected", "false");
+            });
+            tab.classList.add("active");
+            tab.setAttribute("aria-selected", "true");
+            filterExecutors();
+        });
+    });
+
+    searchBar.addEventListener("input", filterExecutors);
+
+    window.addEventListener("scroll", () => {
+        backToTop.style.display = window.scrollY > 300 ? "block" : "none";
+    });
+
+    backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const images = document.querySelectorAll("img");
+        if ("IntersectionObserver" in window) {
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src || img.src;
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            images.forEach(img => observer.observe(img));
+        }
+        filterExecutors();
+    });
+
+    window.addEventListener("error", (event) => {
+        executorGrid.innerHTML = '<p class="error">An error occurred while loading executors. Please try again later.</p>';
+    });
+</script>
+</body>
+</html>
