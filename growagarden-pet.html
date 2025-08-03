@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Grow A Garden Pet</title>
+  <style>
+    :root {
+      --primary: #2b6cb0;
+      --primary-light: #e6f0fa;
+      --primary-dark: #1a4971;
+      --bg: #f7fafc;
+      --text: #1a202c;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --hover: #edf2f7;
+      --shadow: rgba(0, 0, 0, 0.05);
+      --radius: clamp(8px, 1vw, 10px);
+      --transition: 0.3s ease;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-size-base: clamp(14px, 3.5vw, 16px);
+      --rarity-common: #a0aec0;
+      --rarity-uncommon: #68d391;
+      --rarity-rare: #63b3ed;
+      --rarity-legendary: #f6ad55;
+      --rarity-mythical: #ed64a6;
+      --rarity-divine: #9f7aea;
+      --rarity-prismatic: #f687b3;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text);
+      padding: clamp(1rem, 3vw, 1.5rem);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: var(--font-size-base);
+    }
+
+    header {
+      background: var(--primary-light);
+      padding: clamp(0.8rem, 2vw, 1rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(0.8rem, 2vw, 1rem);
+      border-bottom: 1px solid var(--border);
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    header h1 {
+      color: var(--primary-dark);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      margin: 0;
+      text-align: center;
+    }
+
+    header input,
+    header select {
+      padding: clamp(0.4rem, 1.5vw, 0.5rem);
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: clamp(280px, 80vw, 400px);
+      background: white;
+      transition: var(--transition);
+    }
+
+    header input:focus,
+    header select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(clamp(200px, 30vw, 240px), 1fr));
+      gap: clamp(0.8rem, 2vw, 1rem);
+      padding: clamp(0.8rem, 2vw, 1rem);
+      min-height: 300px;
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 10px var(--shadow);
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .card img {
+      width: 100%;
+      height: clamp(140px, 25vw, 160px);
+      object-fit: cover;
+      background: var(--primary-light);
+    }
+
+    .card .rarity {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius);
+      font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+      color: white;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: clamp(0.6rem, 1.5vw, 0.75rem);
+    }
+
+    .card-body h3 {
+      margin: 0 0 clamp(0.4rem, 1vw, 0.5rem);
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--text);
+    }
+
+    .card-body p {
+      margin: clamp(0.2rem, 0.5vw, 0.25rem) 0;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      color: var(--muted);
+    }
+
+    #modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: grid;
+      place-items: center;
+      z-index: 9999;
+      transition: opacity 0.25s ease;
+    }
+
+    #modal.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius);
+      padding: clamp(1rem, 2vw, 1.5rem);
+      max-width: clamp(320px, 90vw, 400px);
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      text-align: center;
+      box-shadow: 0 4px 12px var(--shadow);
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    #modalClose {
+      position: absolute;
+      top: clamp(0.4rem, 1vw, 0.5rem);
+      right: clamp(0.4rem, 1vw, 0.5rem);
+      cursor: pointer;
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      background: transparent;
+      border: none;
+      color: var(--text);
+      transition: var(--transition);
+    }
+
+    #modalClose:hover {
+      color: var(--primary);
+    }
+
+    #modalIcon {
+      width: 100%;
+      max-width: clamp(120px, 30vw, 160px);
+      height: auto;
+      border-radius: var(--radius);
+      margin-bottom: clamp(0.8rem, 2vw, 1rem);
+    }
+
+    .modal-content h2 {
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      color: var(--primary-dark);
+      margin: clamp(0.4rem, 1vw, 0.5rem) 0;
+    }
+
+    .modal-detail p {
+      margin: clamp(0.4rem, 1vw, 0.5rem) 0;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      color: var(--muted);
+    }
+
+    .modal-detail strong {
+      color: var(--text);
+    }
+
+    #loading {
+      text-align: center;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--text);
+      padding: clamp(1.5rem, 3vw, 2rem) 0;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    #error {
+      text-align: center;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: #e53e3e;
+      padding: clamp(0.8rem, 2vw, 1rem) 0;
+      font-weight: 600;
+    }
+
+    #pagination {
+      display: flex;
+      justify-content: center;
+      gap: clamp(0.4rem, 1vw, 0.5rem);
+      padding: clamp(0.8rem, 2vw, 1rem);
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      padding: clamp(0.4rem, 1.5vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
+      border: none;
+      background: var(--primary);
+      color: white;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      transition: var(--transition);
+    }
+
+    .page-btn:disabled {
+      background: var(--muted);
+      cursor: not-allowed;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+    }
+
+    /* Rarity Colors */
+    .rarity-common { background: var(--rarity-common); }
+    .rarity-uncommon { background: var(--rarity-uncommon); }
+    .rarity-rare { background: var(--rarity-rare); }
+    .rarity-legendary { background: var(--rarity-legendary); }
+    .rarity-mythical { background: var(--rarity-mythical); }
+    .rarity-divine { background: var(--rarity-divine); }
+    .rarity-prismatic { background: var(--rarity-prismatic); }
+
+    /* High DPI adjustments */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      :root {
+        --font-size-base: clamp(15px, 3.5vw, 17px);
+        --radius: clamp(9px, 1vw, 11px);
+      }
+      .card img {
+        height: clamp(150px, 25vw, 170px);
+      }
+      #modalIcon {
+        max-width: clamp(130px, 30vw, 170px);
+      }
+    }
+
+    /* Responsive for smaller screens */
+    @media (max-width: 600px) {
+      body { padding: clamp(0.8rem, 2vw, 1rem); }
+      header { padding: clamp(0.6rem, 1.5vw, 0.8rem); }
+      header h1 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); }
+      header input, header select { font-size: clamp(0.8rem, 2vw, 0.9rem); }
+      #grid { grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 45vw, 200px), 1fr)); }
+      .card img { height: clamp(120px, 30vw, 140px); }
+      .card-body h3 { font-size: clamp(0.9rem, 2vw, 1rem); }
+      .card-body p { font-size: clamp(0.7rem, 1.8vw, 0.8rem); }
+      .modal-content { padding: clamp(0.8rem, 2vw, 1rem); max-width: clamp(280px, 95vw, 360px); }
+      #modalIcon { max-width: clamp(100px, 35vw, 140px); }
+      .page-btn { font-size: clamp(0.8rem, 2vw, 0.9rem); }
+    }
+
+    /* Ultra-small screens */
+    @media (max-width: 400px) {
+      #grid { grid-template-columns: 1fr; }
+      .card img { height: clamp(100px, 35vw, 120px); }
+      .modal-content { max-width: 90vw; }
+    }
+
+    /* Ultra-wide or large screens */
+    @media (min-width: 1200px) {
+      header input, header select { max-width: clamp(360px, 40vw, 450px); }
+      #grid { grid-template-columns: repeat(auto-fill, minmax(clamp(220px, 25vw, 260px), 1fr)); }
+      .card img { height: clamp(160px, 20vw, 180px); }
+      .card-body h3 { font-size: clamp(1.1rem, 2vw, 1.3rem); }
+      .modal-content { max-width: clamp(360px, 35vw, 450px); }
+      #modalIcon { max-width: clamp(140px, 25vw, 180px); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Grow A Garden Pet</h1>
+    <input type="search" id="search" placeholder="Search by name or rarity…" />
+    <select id="filterRarity">
+      <option value="">All Rarity</option>
+      <option value="Common">Common</option>
+      <option value="Uncommon">Uncommon</option>
+      <option value="Rare">Rare</option>
+      <option value="Legendary">Legendary</option>
+      <option value="Mythical">Mythical</option>
+      <option value="Divine">Divine</option>
+      <option value="Prismatic">Prismatic</option>
+    </select>
+  </header>
+
+  <main id="grid"></main>
+  <div id="loading" class="hidden">Loading...</div>
+  <div id="error" class="hidden"></div>
+  <div id="pagination"></div>
+
+  <div id="modal" class="hidden" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <div class="modal-content">
+      <button id="modalClose" aria-label="Close modal">&times;</button>
+      <img id="modalIcon" src="" alt="" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2216%22>🐾</text></svg>';this.onerror=null;" />
+      <h2 id="modalName"></h2>
+      <div class="modal-detail">
+        <p><strong>Rarity:</strong> <span id="modalRarity"></span></p>
+        <p><strong>Price:</strong> <span id="modalPrice"></span> <span id="modalCurrency"></span></p>
+        <p><strong>Description:</strong> <span id="modalDesc"></span></p>
+        <p><strong>Type:</strong> <span id="modalType"></span></p>
+        <p><strong>Last Seen:</strong> <span id="modalLastSeen"></span></p>
+        <p><strong>Duration:</strong> <span id="modalDuration"></span></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://api.joshlei.com/v2/growagarden/info?type=pet';
+    const JSTUDIO_KEY = 'js_bfbf185548d8ea2b648c6d971833bbecdcc70a896575b193444af969ecfbaf69';
+    const ITEMS_PER_PAGE = 12;
+
+    const grid = document.getElementById('grid');
+    const searchInput = document.getElementById('search');
+    const filterRarity = document.getElementById('filterRarity');
+    const modal = document.getElementById('modal');
+    const modalClose = document.getElementById('modalClose');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalName = document.getElementById('modalName');
+    const modalRarity = document.getElementById('modalRarity');
+    const modalPrice = document.getElementById('modalPrice');
+    const modalCurrency = document.getElementById('modalCurrency');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalType = document.getElementById('modalType');
+    const modalLastSeen = document.getElementById('modalLastSeen');
+    const modalDuration = document.getElementById('modalDuration');
+
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const paginationEl = document.getElementById('pagination');
+
+    let animals = [];
+    let filteredAnimals = [];
+    let currentPage = 1;
+
+    function formatUnixTimestamp(ts) {
+      if (!ts || ts === "0") return "N/A";
+      const d = new Date(Number(ts) * 1000);
+      return d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+    }
+
+    function formatPrice(price, currency) {
+      price = Number(price);
+      if (isNaN(price)) return "N/A";
+      if (currency === "Chi") return price.toLocaleString();
+      return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    }
+
+    function getRarityClass(rarity) {
+      return `rarity-${rarity.toLowerCase().replace(' ', '-')}`;
+    }
+
+    function showLoading(show) {
+      loadingEl.classList.toggle('hidden', !show);
+    }
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.toggle('hidden', !msg);
+    }
+
+    function debounce(func, delay = 300) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+      };
+    }
+
+    async function fetchAnimals() {
+      showLoading(true);
+      showError('');
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'JStudio-key': JSTUDIO_KEY }
+        });
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        animals = await res.json();
+        applyFilters();
+      } catch (e) {
+        showError(`Failed to load data: ${e.message}`);
+        grid.innerHTML = '';
+        paginationEl.innerHTML = '';
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function applyFilters() {
+      const q = searchInput.value.trim().toLowerCase();
+      const rarityFilter = filterRarity.value;
+      filteredAnimals = animals.filter(a => {
+        const matchesText = a.display_name.toLowerCase().includes(q) || a.rarity.toLowerCase().includes(q);
+        const matchesRarity = rarityFilter === '' || a.rarity === rarityFilter;
+        return matchesText && matchesRarity;
+      });
+      currentPage = 1;
+      renderPage();
+      renderPagination();
+    }
+
+    function renderPage() {
+      grid.innerHTML = '';
+      if (filteredAnimals.length === 0) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">No animals found.</p>';
+        return;
+      }
+      const start = (currentPage - 1) * ITEMS_PER_PAGE;
+      const end = start + ITEMS_PER_PAGE;
+      const pageItems = filteredAnimals.slice(start, end);
+
+      for (const animal of pageItems) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${animal.icon}" alt="${animal.display_name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2216%22>🐾</text></svg>';this.onerror=null;">
+          <div class="rarity ${getRarityClass(animal.rarity)}">${animal.rarity}</div>
+          <div class="card-body">
+            <h3>${animal.display_name}</h3>
+            <p><strong>Rarity:</strong> ${animal.rarity}</p>
+            <p><strong>Price:</strong> ${formatPrice(animal.price, animal.currency)} ${animal.currency}</p>
+          </div>`;
+        card.onclick = () => openModal(animal);
+        grid.appendChild(card);
+      }
+    }
+
+    function renderPagination() {
+      paginationEl.innerHTML = '';
+      const totalPages = Math.ceil(filteredAnimals.length / ITEMS_PER_PAGE);
+      if (totalPages <= 1) return;
+
+      const createBtn = (text, disabled, onClick) => {
+        const btn = document.createElement('button');
+        btn.textContent = text;
+        btn.className = 'page-btn';
+        btn.disabled = disabled;
+        btn.onclick = onClick;
+        return btn;
+      };
+
+      paginationEl.appendChild(createBtn('Prev', currentPage === 1, () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage();
+          renderPagination();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }));
+
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, startPage + 4);
+      if (endPage - startPage < 4) {
+        startPage = Math.max(1, endPage - 4);
+      }
+      for (let i = startPage; i <= endPage; i++) {
+        const btn = createBtn(i, i === currentPage, () => {
+          currentPage = i;
+          renderPage();
+          renderPagination();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        paginationEl.appendChild(btn);
+      }
+
+      paginationEl.appendChild(createBtn('Next', currentPage === totalPages, () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderPage();
+          renderPagination();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }));
+    }
+
+    function openModal(a) {
+      modalIcon.src = a.icon;
+      modalIcon.alt = a.display_name;
+      modalName.textContent = a.display_name;
+      modalRarity.textContent = a.rarity;
+      modalPrice.textContent = formatPrice(a.price, a.currency);
+      modalCurrency.textContent = a.currency;
+      modalDesc.textContent = a.description || 'No description available';
+      modalType.textContent = a.type || 'N/A';
+      modalLastSeen.textContent = formatUnixTimestamp(a.last_seen);
+      modalDuration.textContent = a.duration === "0" ? "N/A" : a.duration + " seconds";
+      modal.classList.remove('hidden');
+      modal.focus();
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      modalIcon.src = '';
+      modalIcon.alt = '';
+      modalName.textContent = '';
+      modalRarity.textContent = '';
+      modalPrice.textContent = '';
+      modalCurrency.textContent = '';
+      modalDesc.textContent = '';
+      modalType.textContent = '';
+      modalLastSeen.textContent = '';
+      modalDuration.textContent = '';
+    }
+
+    modalClose.onclick = closeModal;
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeModal();
+    });
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    const debouncedFilter = debounce(applyFilters, 300);
+    searchInput.addEventListener('input', debouncedFilter);
+    filterRarity.addEventListener('change', applyFilters);
+
+    fetchAnimals();
+  </script>
+</body>
+</html>
