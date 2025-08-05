@@ -130,27 +130,32 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            mix-blend-mode: multiply;
+            background-color: transparent;
+            mix-blend-mode: normal;
+        }
+
+        .tab[data-tab="all"]::before {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/5110/5110770.png');
         }
 
         .tab[data-tab="android"]::before {
-            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEhH8K_uZ_kcmxyNw3NsoO2Vrz_KBerO7TX7OpgDybCQ&s');
+            background-image: url('https://cdn-icons-png.flaticon.com/512/226/226770.png');
         }
 
         .tab[data-tab="ios"]::before {
-            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7gZAW87-IEweXTSICBJqdlx3-791stFVrog&s');
+            background-image: url('https://cdn-icons-png.flaticon.com/512/731/731985.png');
         }
 
         .tab[data-tab="windows"]::before {
-            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShfDsOJrEC72wWWqPkkriYd8UUg_rDS7DTAD5TXgKXpj044l12lBQhhaA&s=10');
+            background-image: url('https://cdn-icons-png.flaticon.com/512/2504/2504927.png');
         }
 
         .tab[data-tab="macos"]::before {
-            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh-8lir9rdHoKR7X2j0yXFfrXCAyq9eOaAwQ&s');
+            background-image: url('https://cdn-icons-png.flaticon.com/512/15399/15399022.png');
         }
 
         .tab[data-tab="external"]::before {
-            background-image: url('https://static.thenounproject.com/png/5091611-200.png');
+            background-image: url('https://cdn-icons-png.flaticon.com/512/7268/7268615.png');
         }
 
         .tab:hover, .tab.active {
@@ -276,6 +281,10 @@
 
         .copy-button.copied {
             background: var(--success-green);
+        }
+
+        .copy-button.error {
+            background: var(--error-red);
         }
 
         .buttons {
@@ -474,7 +483,8 @@
         <input type="text" class="search-bar" placeholder="Search executors..." aria-label="Search executors">
     </div>
     <div class="tabs">
-        <div class="tab active" data-tab="android" role="tab" aria-selected="true">Android</div>
+        <div class="tab active" data-tab="all" role="tab" aria-selected="true">All</div>
+        <div class="tab" data-tab="android" role="tab" aria-selected="false">Android</div>
         <div class="tab" data-tab="ios" role="tab" aria-selected="false">iOS</div>
         <div class="tab" data-tab="windows" role="tab" aria-selected="false">Windows</div>
         <div class="tab" data-tab="macos" role="tab" aria-selected="false">macOS</div>
@@ -489,68 +499,70 @@
     <script>
     const executorsData = {
         "android": [
-            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/lugia","download_url":"https://android.spdmteam.com/","image_url":"https://files.catbox.moe/55tkbq.png","purchase":"https://spdmteam.com/api/create-checkout-session?referral=RSD","status":"Online","title":"Arceus X","type":"Paid","version":"2.684.668","vng_url":"https://vng.spdmteam.com/","last_updated":"2025-08-05"},
-            {"VNGversion":"2.683.775","discord_url":"https://discord.gg/getkrnl","download_url":"https://www.mediafire.com/file/oi5hol9h01mwaio/Krnl_Executor_V2.684_Up.apk/file","image_url":"https://cdn.wearedevs.net/images/thumbnails/krnl.jpeg","status":"Online","title":"Krnl","type":"Free","version":"2.684.668","vng_url":"https://www.mediafire.com/file/d4eajcevdsm6hy1/krnl_vng_release_2.683.775_2025.8.1_16.apk/file","last_updated":"2025-08-05"},
-            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/codexlol","download_url":"https://www.mediafire.com/file/pw0bdp3seftd5d3/Codex+V2.683.apk/file","image_url":"https://files.catbox.moe/mmjwwd.png","status":"Online","title":"Codex","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/xmk2zq6iq9pz2bg/Codex_VNG_v2.681.apk/file","last_updated":"2025-08-01"},
-            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/qM3WZhQShn","download_url":"https://www.mediafire.com/file/w4f7a2ezsa0sio3/Cryptic+2.683.775+APK.apk/file","image_url":"https://getcryptic.net/assets/moonglow-HcoSKqMr.png","status":"Online","title":"Cryptic","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/vton5o28dou1wd9/Cryptic_2.681.805_VNG.apk/file","last_updated":"2025-08-01"},
-            {"VNGversion":"2.684.688","discord_url":"https://discord.gg/deltax","download_url":"https://www.mediafire.com/file/v3pfwf6dcj9a7dd/Delta-2.684.688.apk/file","image_url":"https://i.ibb.co/nbDv3Lx/delta.png","status":"Online","title":"Delta","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/v3pfwf6dcj9a7dd/Delta-2.684.688.apk/file","last_updated":"2025-08-04"},
-            {"VNGversion":"2.683.775","discord_url":"https://discord.gg/subz","download_url":"https://webfiles.pro/file/Fluxus.apk","image_url":"https://flux.li/assets/faviconbutpng.e3767602.png","status":"Online","title":"Fluxus","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/sh0vqetz2vccqs8/Fluxus_V2.683.775-VNG.apk/file","last_updated":"2025-08-04"},
-            {"VNGversion":"2.674.786","discord_url":"https://discord.gg/VgsHH4FN5P","download_url":"https://www.mediafire.com/file/n94ukcksi5x60xw/Rift+3.1.0.apk/file","image_url":"https://files.catbox.moe/lro9zw.png","status":"Online","title":"Rift","type":"Free","version":"2.679.762","vng_url":"https://www.mediafire.com/file/vcrfkmjxj14mvjl/Rift+3.0.0+VNG.apk/file","last_updated":"2025-08-01"},
-            {"VNGversion":"2.655.1095","discord_url":"https://discord.gg/getfrost","download_url":"https://www.mediafire.com/file/67m83qe9qodjilz/Frostware+Gen-X+V3.6.apk/file","image_url":"https://files.catbox.moe/o5nmea.png","status":"Online","title":"Frostware","type":"Free","version":"2.684.668","vng_url":"https://www.mediafire.com/file/2oefdp15evvka2c/Frostware+VNG+V4.2.apk/file","last_updated":"2025-08-05"},
-            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1754357527605/Ronix_684_(arm64).apk","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"RoniX","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/6zmd9n52vxu16tm/%25F0%259F%2587%25BB%25F0%259F%2587%25B3Ronix_682_VIETNAM%25F0%259F%25A4%258D.apk/file","last_updated":"2025-08-05"},
-            {"discord_url":"https://discord.gg/x5AT9UMMWG","download_url":"https://evon.cc/android/dl-a/Evon.apk","image_url":"https://evon.cc/favicon.png","status":"Online","title":"Evon","type":"Free","version":"2.684.688","last_updated":"2025-08-05"},
-            {"discord_url":"https://discord.gg/qQMs6ns5Za","download_url":"https://trigonevo.com/download?os=android&fs=mediafire","image_url":"https://files.catbox.moe/15b32y.webp","status":"Online","title":"Trigon","type":"Free","version":"2.683.775","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/DvvdeNBnZt","download_url":"https://github.com/1f0yt/community/releases/download/Vegax/Vega.X.apk","image_url":"https://vegax.gg/assets/img/V_logo_white.png","status":"Online","title":"VegaX","type":"Free","version":"2.683.775","last_updated":"2025-08-01"}
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/lugia","download_url":"https://android.spdmteam.com/","image_url":"https://files.catbox.moe/55tkbq.png","purchase":"https://spdmteam.com/api/create-checkout-session?referral=RSD","status":"Online","title":"Arceus X","type":"Paid","version":"2.684.688","vng_url":"https://vng.spdmteam.com/"},
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/getkrnl","download_url":"https://krnl.webfiles.pro/file/krnl_release_2.684.688_2025.8.5_40.apk","image_url":"https://cdn.wearedevs.net/images/thumbnails/krnl.jpeg","status":"Online","title":"Krnl","type":"Free","version":"2.684.668","vng_url":"https://www.mediafire.com/file/d4eajcevdsm6hy1/krnl_vng_release_2.683.775_2025.8.1_16.apk/file"},
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/codexlol","download_url":"https://www.mediafire.com/file/ytyjk543b2ng8zs/Codex+v2.684.apk/file","image_url":"https://files.catbox.moe/mmjwwd.png","status":"Online","title":"Codex","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/xmk2zq6iq9pz2bg/Codex_VNG_v2.681.apk/file"},
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/qM3WZhQShn","download_url":"https://www.mediafire.com/file/zner16yvxfcq19c/Cryptic_2.683.775_APK.apk/file","image_url":"https://getcryptic.net/assets/moonglow-HcoSKqMr.png","status":"Online","title":"Cryptic","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/vton5o28dou1wd9/Cryptic_2.681.805_VNG.apk/file"},
+            {"VNGversion":"2.683.775","discord_url":"https://discord.gg/deltax","download_url":"https://delta.webfiles.pro/file/Delta-2.684.688-01.apk","image_url":"https://i.ibb.co/nbDv3Lx/delta.png","status":"Online","title":"Delta","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/bmen5xb21jk65po/Delta-2.683.775_fix.apk/file"},
+            {"VNGversion":"2.683.775","discord_url":"https://discord.gg/subz","download_url":"https://webfiles.pro/file/Fluxus.apk","image_url":"https://flux.li/assets/faviconbutpng.e3767602.png","status":"Online","title":"Fluxus","type":"Free","version":"2.683.775","vng_url":"https://www.mediafire.com/file/j9z97z4vk7v6fcc/FluxusV2.683.775-02_Vng.apk/file"},
+            {"VNGversion":"2.674.786","discord_url":"https://discord.gg/VgsHH4FN5P","download_url":"https://www.mediafire.com/file/n94ukcksi5x60xw/Rift+3.1.0.apk/file","image_url":"https://files.catbox.moe/lro9zw.png","status":"Online","title":"Rift","type":"Free","version":"2.679.762","vng_url":"https://www.mediafire.com/file/vcrfkmjxj14mvjl/Rift+3.0.0+VNG.apk/file"},
+            {"VNGversion":"2.655.1095","discord_url":"https://discord.gg/getfrost","download_url":"https://www.mediafire.com/file/67m83qe9qodjilz/Frostware+Gen-X+V3.6.apk/file?hash=1LBMIEu3ts7boLlh50dRxAt6hKngJTAuRMBRYeJNMtY7Rf9WDaFf7q0AConIc4D3","image_url":"https://files.catbox.moe/o5nmea.png","status":"Online","title":"Frostware","type":"Free","version":"v2.684.688","vng_url":"https://www.mediafire.com/file/2oefdp15evvka2c/Frostware+VNG+V4.2.apk/file"},
+            {"VNGversion":"2.681.805","discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1754357527605/Ronix_684_(arm64).apk","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"RoniX","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/6zmd9n52vxu16tm/%25F0%259F%2587%25BB%25F0%259F%2587%25B3Ronix_682_VIETNAM%25F0%259F%25A4%258D.apk/file"},
+            {"discord_url":"https://discord.gg/x5AT9UMMWG","download_url":"https://evon.cc/android/dl-a/Evon.apk","image_url":"https://evon.cc/favicon.png","status":"Online","title":"Evon","type":"Free","version":"2.684.688"},
+            {"discord_url":"https://discord.gg/qQMs6ns5Za","download_url":"https://trigonevo.com/download?os=android&fs=mediafire","image_url":"https://files.catbox.moe/15b32y.webp","status":"Online","title":"Trigon","type":"Free","version":"2.683.775"},
+            {"discord_url":"https://discord.gg/DvvdeNBnZt","download_url":"https://cdn.discordapp.com/attachments/1191528978167640125/1402142072491741184/Vega_X.apk?ex=6892d610&is=68918490&hm=cd3d220e8cd8f8c34960bfb86c7b12f56c013200751cd9fa0a600c6b7ebac4d4&","image_url":"https://vegax.gg/assets/img/V_logo_white.png","status":"Online","title":"VegaX","type":"Free","version":"2.684.688"}
         ],
         "external": [
-            {"discord_url":"https://discord.gg/7GZqhErX8C","image_url":"https://files.catbox.moe/f9kg6k.png","purchase":"https://getronin.xyz","status":"Online","title":"Ronin","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/valex","download_url":"https://github.com/1Softworks/assets/raw/refs/heads/main/Valex_External.zip","image_url":"https://files.catbox.moe/o44tdw.webp","status":"Online","title":"Valex","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.com/invite/3eTeZjywuV","image_url":"https://files.catbox.moe/bxrhw5.png","purchase":"https://cultofintellect.com/dx9ware/","status":"Online","title":"DX9WARE","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/vro","image_url":"https://files.catbox.moe/tp1798.webp","purchase":"https://photonsys.sellpass.io/","status":"Online","title":"Photon","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/isabelle","image_url":"https://files.catbox.moe/q1obyx.webp","purchase":"https://ext.sellsn.io/","status":"Online","title":"Isabelle","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.com/invite/yPjkUBcWgR","image_url":"https://files.catbox.moe/gliige.png","purchase":"https://matrixhubs.shop/","status":"Online","title":"Matrix Hub","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/asmlol","image_url":"https://files.catbox.moe/w7ob4c.png","purchase":"https://bloxproducts.com/#Matcha","status":"Online","title":"Matcha","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/asmlol","image_url":"https://files.catbox.moe/rk7l3j.webp","purchase":"https://assembly.lol/","status":"Online","title":"Assembly","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"}
+            {"discord_url":"https://discord.gg/7GZqhErX8C","image_url":"https://files.catbox.moe/f9kg6k.png","purchase":"https://getronin.xyz","status":"Online","title":"Ronin","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/valex","download_url":"https://github.com/1Softworks/assets/raw/refs/heads/main/Valex_External.zip","image_url":"https://files.catbox.moe/o44tdw.webp","status":"Online","title":"Valex","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.com/invite/3eTeZjywuV","image_url":"https://files.catbox.moe/bxrhw5.png","purchase":"https://cultofintellect.com/dx9ware/","status":"Online","title":"DX9WARE","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/vro","image_url":"https://files.catbox.moe/tp1798.webp","purchase":"https://photonsys.sellpass.io/","status":"Online","title":"Photon","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/isabelle","image_url":"https://files.catbox.moe/q1obyx.webp","purchase":"https://ext.sellsn.io/","status":"Online","title":"Isabelle","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.com/invite/yPjkUBcWgR","image_url":"https://files.catbox.moe/gliige.png","purchase":"https://matrixhubs.shop/","status":"Online","title":"Matrix Hub","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/asmlol","image_url":"https://files.catbox.moe/w7ob4c.png","purchase":"https://bloxproducts.com/#Matcha","status":"Online","title":"Matcha","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/asmlol","image_url":"https://files.catbox.moe/rk7l3j.webp","purchase":"https://assembly.lol/","status":"Online","title":"Assembly","type":"Paid","version":"version-b8550645b8834e8a"}
         ],
         "ios": [
-            {"discord_url":"https://discord.gg/getkrnl","download_url":"https://wrdcdn.net/r/54921/1753571817485/Krnl_release_683.ipa","image_url":"https://cdn.wearedevs.net/images/thumbnails/krnl.jpeg","status":"Online","title":"Krnl","type":"Free","version":"2.683.775","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/lugia","download_url":"https://ios.spdmteam.com","image_url":"https://files.catbox.moe/55tkbq.png","status":"Offline","title":"Arceus X","type":"Free","version":"2.668.660","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/codexlol","download_url":"https://www.mediafire.com/file/7afzer5xxo1110n/Codex_2.674.782.ipa/file","image_url":"https://files.catbox.moe/mmjwwd.png","status":"Offline","title":"Codex","type":"Free","version":"2.674.786","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/qM3WZhQShn","download_url":"https://www.mediafire.com/file/okr6d1frv52l9zo/Cryptic_2.668.658+iOS.ipa/file","image_url":"https://getcryptic.net/assets/moonglow-HcoSKqMr.png","status":"Offline","title":"Cryptic","type":"Free","version":"2.668.660","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/deltax","download_url":"https://delta.webfiles.pro/ios.html","image_url":"https://i.ibb.co/nbDv3Lx/delta.png","status":"Online","title":"Delta","type":"Free","version":"2.683.775","last_updated":"2025-08-01"}
+            {"discord_url":"https://discord.gg/getkrnl","download_url":"https://wrdcdn.net/r/54921/1753571817485/Krnl_release_683.ipa","image_url":"https://cdn.wearedevs.net/images/thumbnails/krnl.jpeg","status":"Online","title":"Krnl","type":"Free","version":"2.683.775"},
+            {"discord_url":"https://discord.gg/lugia","download_url":"https://ios.spdmteam.com","image_url":"https://files.catbox.moe/55tkbq.png","status":"Offline","title":"Arceus X","type":"Free","version":"2.668.660"},
+            {"discord_url":"https://discord.gg/codexlol","download_url":"https://www.mediafire.com/file/7afzer5xxo1110n/Codex_2.674.782.ipa/file","image_url":"https://files.catbox.moe/mmjwwd.png","status":"Offline","title":"Codex","type":"Free","version":"2.674.786"},
+            {"discord_url":"https://discord.gg/qM3WZhQShn","download_url":"https://www.mediafire.com/file/okr6d1frv52l9zo/Cryptic_2.668.658+iOS.ipa/file","image_url":"https://getcryptic.net/assets/moonglow-HcoSKqMr.png","status":"Offline","title":"Cryptic","type":"Free","version":"2.668.660"},
+            {"discord_url":"https://discord.gg/deltax","download_url":"https://delta.webfiles.pro/ios.html","image_url":"https://i.ibb.co/nbDv3Lx/delta.png","status":"Online","title":"Delta","type":"Free","version":"2.683.775"}
         ],
         "macos": [
-            {"discord_url":"https://discord.com/invite/macsploit","image_url":"https://files.catbox.moe/ii70gl.png","purchase":"https://www.raptor.fun/","status":"Online","title":"MacSploit","type":"Paid","version":"version-4010d14c83284ae5","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/gethydrogen","download_text":"bash -c \"$(curl -fsSL https://www.hydrogen.lat/install)\"","image_url":"https://discord.do/wp-content/uploads/2023/08/Hydrogen.jpg","purchase":"https://hydrogenmacos.selly.store/","status":"Online","title":"Hydrogen","type":"Paid","version":"version-6c0b1c5cf2914623","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/ronix","download_text":"bash -c \"$(curl -fsSL https://www.ronixmac.lol/install)\"","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"Ronix","type":"Free","version":"version-774691dc93a947ef","last_updated":"2025-08-01"},
-            {"download_text":"curl -s \"https://realbunni.com/beta/install.sh\" | bash","image_url":"https://files.catbox.moe/hd9264.webp","status":"Online","title":"BUNNI.LOL","type":"Free","version":"version-774691dc93a947ef","last_updated":"2025-08-01"}
+            {"discord_url":"https://discord.com/invite/macsploit","image_url":"https://files.catbox.moe/ii70gl.png","purchase":"https://www.raptor.fun/","status":"Online","title":"MacSploit","type":"Paid","version":"version-6c0b1c5cf2914623"},
+            {"discord_url":"https://discord.gg/gethydrogen","download_text":"bash -c \"$(curl -fsSL https://www.hydrogen.lat/install)\"","image_url":"https://discord.do/wp-content/uploads/2023/08/Hydrogen.jpg","purchase":"https://hydrogenmacos.selly.store/","status":"Online","title":"Hydrogen","type":"Paid","version":"version-6c0b1c5cf2914623"},
+            {"discord_url":"https://discord.gg/ronix","download_text":"bash -c \"$(curl -fsSL https://www.ronixmac.lol/install)\"","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"Ronix","type":"Free","version":"version-774691dc93a947ef"},
+            {"download_text":"curl -s \"https://realbunni.com/beta/install.sh\" | bash","image_url":"https://files.catbox.moe/hd9264.webp","status":"Offline","title":"BUNNI.LOL","type":"Free","version":"version-774691dc93a947ef"}
         ],
         "windows": [
-            {"discord_url":"https://discord.gg/fAXWJj8Bp3","image_url":"https://files.catbox.moe/7rfhji.png","purchase":"https://flyontop.mysellauth.com/","status":"Online","title":"Fly","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/9DPW2G22cF","download_url":"https://realbunni.com/beta/download","image_url":"https://files.catbox.moe/hd9264.webp","status":"Online","title":"BUNNI.lOL","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.com/invite/g8knYkUpQn","image_url":"https://framerusercontent.com/images/x9dgYhhG8T8nA56Naw3P1bMVDg.png?scale-down-to=512","purchase":"https://zenith.win/","status":"Online","title":"Zenith","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/getswiftgg","download_url":"https://getswift.vip//download","image_url":"https://files.catbox.moe/5krpqt.webp","status":"Online","title":"Swift","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/velocityide","download_url":"https://gofile.io/d/YucVBu","image_url":"https://files.catbox.moe/tj6brv.png","status":"Online","title":"Velocity","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/zSnS9kCxJX","download_url":"https://volcano.wtf/","image_url":"https://files.catbox.moe/ucf3km.png","status":"Online","title":"Volcano","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1753480423073/release%20(2).zip","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"Ronix","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/XZWTFr3cHt","download_url":"https://gofile.io/d/1mpEES","image_url":"https://files.catbox.moe/dlmfx4.webp","status":"Online","title":"Illusion","type":"Free","version":"version-225e87fdb7254f64","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/eQP6Y5pKWQ","download_url":"https://wrdcdn.net/r/58255/1754201684021/LX63V3.zip","image_url":"https://files.catbox.moe/sljr5s.webp","status":"Online","title":"LX63","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-04"},
-            {"discord_url":"https://discord.gg/RUVr3Q2fSt","download_url":"https://filerift.com/file/EkpzFp_mgJ","image_url":"https://files.catbox.moe/tveaai.webp","status":"Online","title":"Nucleus","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/xeno-now","download_url":"https://www.xeno.onl/download","image_url":"https://cdn.wearedevs.net/images/thumbnails/xeno-0131252.webp","status":"Online","title":"Xeno","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.com/invite/awpgg","image_url":"https://files.catbox.moe/olkjgi.png","purchase":"https://buyawp.gg/","status":"Offline","title":"AWP.GG","type":"Paid","version":"version-78712d8739f34cb9","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/getwave","image_url":"https://files.catbox.moe/4ly86h.webp","purchase":"https://getwave.gg","status":"Online","title":"Wave","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/realzorara","download_url":"https://wrdcdn.net/r/118757/1752746590674/Drift1.1.4.zip","image_url":"https://files.catbox.moe/g8asky.webp","status":"Online","title":"Drift","type":"Free","version":"version-225e87fdb7254f64","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/valex","download_url":"https://github.com/1Softworks/assets/raw/refs/heads/main/Valex_Executor.zip","image_url":"https://files.catbox.moe/o44tdw.webp","status":"Online","title":"Valex","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.com/invite/potassium","image_url":"https://files.catbox.moe/hryiqu.jpeg","purchase":"https://potassium.pro","status":"Online","title":"Potassium","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/plutora","download_url":"https://wrdcdn.net/r/87882/1751318463316/plutora%20v2.0.1.zip","image_url":"https://files.catbox.moe/k18j6c.webp","status":"Online","title":"Plutora","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/m6zAQ3KNsP","image_url":"https://files.catbox.moe/d1usrx.jpg","purchase":"https://seliware.com/","status":"Online","title":"Seliware","type":"Paid","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/cCm7byQCPe","download_url":"https://www.mediafire.com/file/bumjga1i1n1s9i3/Trigon_Evo_0.1.0+(2).exe/file","image_url":"https://files.catbox.moe/15b32y.webp","status":"Online","title":"Trigon","type":"Free","version":"version-2a06298afe3947ab","last_updated":"2025-08-01"},
-            {"discord_url":"https://www.discord.gg/CPKvWTgFdV","image_url":"https://files.catbox.moe/y3rfh1.png","purchase":"https://sirhurt.net/","status":"Online","title":"SirHurt","type":"Paid","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/wearedevs","download_url":"https://github.com/wcrddn/wcrddn.github.io/raw/refs/heads/main/0706/jjsploit_8.15.5_x64_en-US.msi","image_url":"https://cdn.wearedevs.net/images/thumbnails/jjsploit-031425.webp","status":"Online","title":"JJSploit","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-04"},
-            {"download_url":"https://getsolara.dev/download/static/files/BootstrapperNew.exe","image_url":"https://files.catbox.moe/gjzzjt.png","status":"Online","title":"Solara","type":"Free","version":"version-b8550645b8834e8a","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/arctic-studios-1329873465897128058","download_url":"https://www.mediafire.com/file/lbshy3ozy3z9uyn/Arctic-2.0.3C.rar/file","image_url":"https://files.catbox.moe/vc4ao7.webp","status":"Online","title":"Artic","type":"Free","version":"version-765338e04cf54fde","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/p5ehjGMJhP","download_url":"https://gofile.io/d/rwSPUW","image_url":"https://files.catbox.moe/n4wh1a.webp","status":"Offline","title":"Venux","type":"Free","last_updated":"2025-08-01"},
-            {"discord_url":"https://discord.gg/RrNWfpjtHA","download_url":"https://saturn-website-gamma.vercel.app/Bootstrapper.exe","image_url":"https://files.catbox.moe/p7l0hd.png","status":"Online","title":"Saturn X","type":"Free","version":"version-225e87fdb7254f64","last_updated":"2025-08-01"}
+            {"discord_url":"https://discord.gg/fAXWJj8Bp3","image_url":"https://files.catbox.moe/7rfhji.png","purchase":"https://discord.gg/fAXWJj8Bp3","status":"Online","title":"Fly","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/9DPW2G22cF","download_url":"https://cdn.discordapp.com/attachments/1347245161327100036/1401721017172365352/latestinstaller.zip?ex=68914ded&is=688ffc6d&hm=323083dcf985538b76fca08a1a139e94c5326de33e3b27315b43fa49e646d7a9&","image_url":"https://files.catbox.moe/hd9264.webp","status":"Online","title":"BUNNI.lOL","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.com/invite/g8knYkUpQn","image_url":"https://framerusercontent.com/images/x9dgYhhG8T8nA56Naw3P1bMVDg.png?scale-down-to=512","purchase":"https://zenith.win/","status":"Online","title":"Zenith","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/getswiftgg","download_url":"https://getswift.vip//download","image_url":"https://files.catbox.moe/5krpqt.webp","status":"Online","title":"Swift","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/velocityide","download_url":"https://gofile.io/d/YucVBu","image_url":"https://files.catbox.moe/tj6brv.png","status":"Online","title":"Velocity","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/zSnS9kCxJX","download_url":"https://volcano.wtf/","image_url":"https://files.catbox.moe/ucf3km.png","status":"Offline","title":"Volcano","type":"Free","version":"version-2a06298afe3947ab"},
+            {"discord_url":"https://discord.gg/FKVAyr5wze","download_url":"https://bappalot.online/","image_url":"https://cdn.discordapp.com/attachments/1402137641050181752/1402247482456408114/image.png?ex=6893383c&is=6891e6bc&hm=ec75bb0baa7cf97137c3ad78aea0b4d90f35c5ec7a66d32f4e4a30c8ef20dc9b&","status":"Online","title":"Bappalot","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/WMsYZgmCYA","download_url":"https://useworld.xyz/","image_url":"https://cdn.discordapp.com/attachments/1399454111027564574/1402246403371307158/world.png?ex=6893373b&is=6891e5bb&hm=cd3fbf078eba8023252f04e75a2958cc17f184093708ebfdb9e983ce44736a50&","status":"Online","title":"WORLD","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1753994040590/release%20(3).zip","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"Ronix","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/XZWTFr3cHt","download_url":"https://gofile.io/d/1mpEES","image_url":"https://files.catbox.moe/dlmfx4.webp","status":"Offline","title":"Illusion","type":"Free","version":"version-225e87fdb7254f64"},
+            {"discord_url":"https://discord.gg/eQP6Y5pKWQ","download_url":"https://wrdcdn.net/r/58255/1754201684021/LX63V3.zip","image_url":"https://files.catbox.moe/sljr5s.webp","status":"Online","title":"LX63","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/RUVr3Q2fSt","download_url":"https://filerift.com/file/EkpzFp_mgJ","image_url":"https://files.catbox.moe/tveaai.webp","status":"Offline","title":"Nucleus","type":"Free","version":"version-2a06298afe3947ab"},
+            {"discord_url":"https://discord.gg/xeno-now","download_url":"https://www.xeno.onl/download","image_url":"https://cdn.wearedevs.net/images/thumbnails/xeno-0131252.webp","status":"Offline","title":"Xeno","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.com/invite/awpgg","image_url":"https://files.catbox.moe/olkjgi.png","purchase":"https://buyawp.gg/","status":"Offline","title":"AWP.GG","type":"Paid","version":"version-78712d8739f34cb9"},
+            {"discord_url":"https://discord.gg/getwave","image_url":"https://files.catbox.moe/4ly86h.webp","purchase":"https://getwave.gg","status":"Online","title":"Wave","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/realzorara","download_url":"https://wrdcdn.net/r/118757/1753982881904/Drift1.1.5.zip","image_url":"https://files.catbox.moe/g8asky.webp","status":"Online","title":"Drift","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/valex","download_url":"https://github.com/1Softworks/assets/raw/refs/heads/main/Valex_Executor.zip","image_url":"https://files.catbox.moe/o44tdw.webp","status":"Online","title":"Valex","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.com/invite/potassium","image_url":"https://files.catbox.moe/hryiqu.jpeg","purchase":"https://potassium.pro","status":"Online","title":"Potassium","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/plutora","download_url":"https://wrdcdn.net/r/87882/1751318463316/plutora%20v2.0.1.zip","image_url":"https://files.catbox.moe/k18j6c.webp","status":"Online","title":"Pluto","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/m6zAQ3KNsP","image_url":"https://files.catbox.moe/d1usrx.jpg","purchase":"https://seliware.com/","status":"Online","title":"Seliware","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/cCm7byQCPe","download_url":"https://www.mediafire.com/file/bumjga1i1n1s9i3/Trigon_Evo_0.1.0+(2).exe/file","image_url":"https://files.catbox.moe/15b32y.webp","status":"Online","title":"Trigon","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://www.discord.gg/CPKvWTgFdV","image_url":"https://files.catbox.moe/y3rfh1.png","purchase":"https://sirhurt.net/","status":"Online","title":"SirHurt","type":"Paid","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/wearedevs","download_url":"https://github.com/wcrddn/wcrddn.github.io/raw/refs/heads/main/0706/jjsploit_8.15.5_x64_en-US.msi","image_url":"https://cdn.wearedevs.net/images/thumbnails/jjsploit-031425.webp","status":"Online","title":"JJSploit","type":"Free","version":"version-b8550645b8834e8a"},
+            {"download_url":"https://getsolara.dev/download/static/files/BootstrapperNew.exe","image_url":"https://files.catbox.moe/gjzzjt.png","status":"Online","title":"Solara","type":"Free","version":"version-b8550645b8834e8a"},
+            {"discord_url":"https://discord.gg/arctic-studios-1329873465897128058","download_url":"https://www.mediafire.com/file/lbshy3ozy3z9uyn/Arctic-2.0.3C.rar/file","image_url":"https://files.catbox.moe/vc4ao7.webp","status":"Offline","title":"Artic","type":"Free","version":"version-765338e04cf54fde"},
+            {"discord_url":"https://discord.gg/p5ehjGMJhP","download_url":"https://gofile.io/d/rwSPUW","image_url":"https://files.catbox.moe/n4wh1a.webp","status":"Offline","title":"Venux","type":"Free"},
+            {"discord_url":"https://discord.gg/RrNWfpjtHA","download_url":"https://saturn-website-gamma.vercel.app/Bootstrapper.exe","image_url":"https://files.catbox.moe/p7l0hd.png","status":"Offline","title":"Saturn X","type":"Free","version":"version-2a06298afe3947ab"}
         ]
     };
 
@@ -582,7 +594,7 @@
                         <p class="status ${executor.status.toLowerCase()}">Status: ${executor.status}</p>
                         <p class="type">Type: ${executor.type || 'N/A'}</p>
                         <p class="version">Version: ${executor.version || 'N/A'}</p>
-                        <p class="vng-version">VNG Version: ${executor.VNGversion || 'N/A'}</p>
+                        ${executor.VNGversion ? `<p class="vng-version">VNG Version: ${executor.VNGversion}</p>` : ''}
                         <p class="last-updated">Last Updated: ${executor.last_updated || 'N/A'}</p>
                         ${executor.download_text ? `
                             <div class="download-text">
@@ -622,6 +634,12 @@
             });
         } catch (err) {
             console.error('Clipboard API not supported or other error: ', err);
+            button.textContent = 'Error';
+            button.classList.add('error');
+            setTimeout(() => {
+                button.textContent = 'Copy';
+                button.classList.remove('error');
+            }, 2000);
         }
     }
 
@@ -629,7 +647,7 @@
         const activeTab = document.querySelector(".tab.active").dataset.tab;
         const searchTerm = searchBar.value.toLowerCase();
         const filtered = executors.filter(executor => 
-            executor.platform === activeTab &&
+            (activeTab === 'all' || executor.platform === activeTab) &&
             (executor.title.toLowerCase().includes(searchTerm) || 
              executor.platform.toLowerCase().includes(searchTerm))
         );
@@ -678,6 +696,6 @@
     window.addEventListener("error", (event) => {
         executorGrid.innerHTML = '<p class="error">An error occurred while loading executors. Please try again later.</p>';
     });
-</script>
+    </script>
 </body>
 </html>
