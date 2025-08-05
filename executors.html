@@ -177,6 +177,19 @@
             padding: clamp(0.5rem, 2vw, 1rem);
         }
 
+        .platform-section {
+            margin-bottom: clamp(1.5rem, 3vw, 2rem);
+        }
+
+        .platform-title {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            font-weight: 700;
+            color: var(--neon-purple);
+            margin-bottom: clamp(1rem, 2vw, 1.5rem);
+            text-transform: uppercase;
+            text-shadow: 0 0 0.5rem var(--neon-purple);
+        }
+
         .executor-card {
             background: var(--glass-bg);
             backdrop-filter: blur(0.5rem);
@@ -234,7 +247,7 @@
             text-shadow: 0 0 0.5rem rgba(248, 113, 113, 0.5);
         }
 
-        .type, .version, .vng-version, .last-updated {
+        .type, .version, .vng-version {
             font-size: clamp(0.7rem, 2vw, 1rem);
             color: var(--light-gray);
             margin: clamp(0.25rem, 1vw, 0.5rem) 0;
@@ -584,34 +597,84 @@
             executorGrid.innerHTML = '<p class="error">No executors found.</p>';
             return;
         }
-        data.forEach(executor => {
-            const escapedDownloadText = executor.download_text ? executor.download_text.replace(/"/g, '&quot;') : '';
-            const card = `
-                <div class="executor-card">
-                    <img src="${executor.image_url}" alt="${executor.title}" data-src="${executor.image_url}" onerror="this.src='https://via.placeholder.com/280x160?text=Image+Not+Found';" onload="this.classList.add('loaded')">
-                    <div class="executor-card-content">
-                        <h3>${executor.title}</h3>
-                        <p class="status ${executor.status.toLowerCase()}">Status: ${executor.status}</p>
-                        <p class="type">Type: ${executor.type || 'N/A'}</p>
-                        <p class="version">Version: ${executor.version || 'N/A'}</p>
-                        ${executor.VNGversion ? `<p class="vng-version">VNG Version: ${executor.VNGversion}</p>` : ''}
-                        <p class="last-updated">Last Updated: ${executor.last_updated || 'N/A'}</p>
-                        ${executor.download_text ? `
-                            <div class="download-text">
-                                <input type="text" value="${escapedDownloadText}" readonly aria-label="Download command for ${executor.title}">
-                                <button class="copy-button" onclick="copyText(this, \`${escapedDownloadText}\`)">Copy</button>
-                            </div>
-                        ` : ''}
-                        <div class="buttons">
-                            ${executor.download_url ? `<a href="${executor.download_url}" class="button download" aria-label="Download ${executor.title}">Download</a>` : ''}
-                            ${executor.purchase ? `<a href="${executor.purchase}" class="button purchase" aria-label="Purchase ${executor.title}">Purchase</a>` : ''}
-                            ${executor.discord_url ? `<a href="${executor.discord_url}" class="button discord" aria-label="Join ${executor.title} Discord">Discord</a>` : ''}
+
+        const activeTab = document.querySelector(".tab.active").dataset.tab;
+        if (activeTab === "all") {
+            // Group by platform for 'All' tab
+            const groupedExecutors = data.reduce((acc, executor) => {
+                if (!acc[executor.platform]) {
+                    acc[executor.platform] = [];
+                }
+                acc[executor.platform].push(executor);
+                return acc;
+            }, {});
+
+            Object.keys(groupedExecutors).forEach(platform => {
+                const platformSection = `
+                    <div class="platform-section">
+                        <h2 class="platform-title">${platform.charAt(0).toUpperCase() + platform.slice(1)}</h2>
+                        <div class="executor-grid">
+                            ${groupedExecutors[platform].map(executor => {
+                                const escapedDownloadText = executor.download_text ? executor.download_text.replace(/"/g, '&quot;') : '';
+                                return `
+                                    <div class="executor-card">
+                                        <img src="${executor.image_url}" alt="${executor.title}" data-src="${executor.image_url}" onerror="this.src='https://via.placeholder.com/280x160?text=Image+Not+Found';" onload="this.classList.add('loaded')">
+                                        <div class="executor-card-content">
+                                            <h3>${executor.title}</h3>
+                                            <p class="status ${executor.status.toLowerCase()}">Status: ${executor.status}</p>
+                                            <p class="type">Type: ${executor.type || 'N/A'}</p>
+                                            <p class="version">Version: ${executor.version || 'N/A'}</p>
+                                            ${executor.VNGversion ? `<p class="vng-version">VNG Version: ${executor.VNGversion}</p>` : ''}
+                                            ${executor.download_text ? `
+                                                <div class="download-text">
+                                                    <input type="text" value="${escapedDownloadText}" readonly aria-label="Download command for ${executor.title}">
+                                                    <button class="copy-button" onclick="copyText(this, \`${escapedDownloadText}\`)">Copy</button>
+                                                </div>
+                                            ` : ''}
+                                            <div class="buttons">
+                                                ${executor.download_url ? `<a href="${executor.download_url}" class="button download" aria-label="Download ${executor.title}">Download</a>` : ''}
+                                                ${executor.purchase ? `<a href="${executor.purchase}" class="button purchase" aria-label="Purchase ${executor.title}">Purchase</a>` : ''}
+                                                ${executor.discord_url ? `<a href="${executor.discord_url}" class="button discord" aria-label="Join ${executor.title} Discord">Discord</a>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
-                </div>
-            `;
-            executorGrid.innerHTML += card;
-        });
+                `;
+                executorGrid.innerHTML += platformSection;
+            });
+        } else {
+            // Render normally for specific platform tabs
+            data.forEach(executor => {
+                const escapedDownloadText = executor.download_text ? executor.download_text.replace(/"/g, '&quot;') : '';
+                const card = `
+                    <div class="executor-card">
+                        <img src="${executor.image_url}" alt="${executor.title}" data-src="${executor.image_url}" onerror="this.src='https://via.placeholder.com/280x160?text=Image+Not+Found';" onload="this.classList.add('loaded')">
+                        <div class="executor-card-content">
+                            <h3>${executor.title}</h3>
+                            <p class="status ${executor.status.toLowerCase()}">Status: ${executor.status}</p>
+                            <p class="type">Type: ${executor.type || 'N/A'}</p>
+                            <p class="version">Version: ${executor.version || 'N/A'}</p>
+                            ${executor.VNGversion ? `<p class="vng-version">VNG Version: ${executor.VNGversion}</p>` : ''}
+                            ${executor.download_text ? `
+                                <div class="download-text">
+                                    <input type="text" value="${escapedDownloadText}" readonly aria-label="Download command for ${executor.title}">
+                                    <button class="copy-button" onclick="copyText(this, \`${escapedDownloadText}\`)">Copy</button>
+                                </div>
+                            ` : ''}
+                            <div class="buttons">
+                                ${executor.download_url ? `<a href="${executor.download_url}" class="button download" aria-label="Download ${executor.title}">Download</a>` : ''}
+                                ${executor.purchase ? `<a href="${executor.purchase}" class="button purchase" aria-label="Purchase ${executor.title}">Purchase</a>` : ''}
+                                ${executor.discord_url ? `<a href="${executor.discord_url}" class="button discord" aria-label="Join ${executor.title} Discord">Discord</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                executorGrid.innerHTML += card;
+            });
+        }
     }
 
     function copyText(button, text) {
