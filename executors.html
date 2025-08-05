@@ -445,6 +445,27 @@
                 padding: clamp(0.4rem, 2vw, 0.7rem) clamp(0.8rem, 3vw, 1.5rem);
                 font-size: clamp(0.8rem, 3vw, 1rem);
             }
+            .tab[data-tab="all"].active ~ .container .platform-section .executor-grid {
+                grid-template-columns: 1fr; /* Single column for portrait */
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .tab[data-tab="all"].active ~ .container .platform-section .executor-card {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 768px) and (orientation: landscape) {
+            .tab[data-tab="all"].active ~ .container .platform-section .executor-grid {
+                grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); /* Flexible columns for landscape */
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .tab[data-tab="all"].active ~ .container .platform-section .executor-card {
+                flex: 1;
+                min-width: 0;
+            }
         }
 
         @media (max-width: 480px) {
@@ -484,6 +505,18 @@
             }
             .download-text input {
                 font-size: clamp(0.6rem, 2vw, 0.8rem);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .tab[data-tab="all"].active ~ .container .platform-section .executor-grid {
+                grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .tab[data-tab="all"].active ~ .container .platform-section .executor-card {
+                flex: 1;
+                min-width: 0;
             }
         }
     </style>
@@ -571,7 +604,6 @@
             {"discord_url":"https://discord.gg/m6zAQ3KNsP","image_url":"https://files.catbox.moe/d1usrx.jpg","purchase":"https://seliware.com/","status":"Online","title":"Seliware","type":"Paid","version":"version-b8550645b8834e8a"},
             {"discord_url":"https://discord.gg/cCm7byQCPe","download_url":"https://www.mediafire.com/file/bumjga1i1n1s9i3/Trigon_Evo_0.1.0+(2).exe/file","image_url":"https://files.catbox.moe/15b32y.webp","status":"Online","title":"Trigon","type":"Free","version":"version-b8550645b8834e8a"},
             {"discord_url":"https://www.discord.gg/CPKvWTgFdV","image_url":"https://files.catbox.moe/y3rfh1.png","purchase":"https://sirhurt.net/","status":"Online","title":"SirHurt","type":"Paid","version":"version-b8550645b8834e8a"},
-            {"discord_url":"https://discord.gg/wearedevs","download_url":"https://github.com/wcrddn/wcrddn.github.io/raw/refs/heads/main/0706/jjsploit_8.15.5_x64_en-US.msi","image_url":"https://cdn.wearedevs.net/images/thumbnails/jjsploit-031425.webp","status":"Online","title":"JJSploit","type":"Free","version":"version-b8550645b8834e8a"},
             {"download_url":"https://getsolara.dev/download/static/files/BootstrapperNew.exe","image_url":"https://files.catbox.moe/gjzzjt.png","status":"Online","title":"Solara","type":"Free","version":"version-b8550645b8834e8a"},
             {"discord_url":"https://discord.gg/arctic-studios-1329873465897128058","download_url":"https://www.mediafire.com/file/lbshy3ozy3z9uyn/Arctic-2.0.3C.rar/file","image_url":"https://files.catbox.moe/vc4ao7.webp","status":"Offline","title":"Artic","type":"Free","version":"version-765338e04cf54fde"},
             {"discord_url":"https://discord.gg/p5ehjGMJhP","download_url":"https://gofile.io/d/rwSPUW","image_url":"https://files.catbox.moe/n4wh1a.webp","status":"Offline","title":"Venux","type":"Free"},
