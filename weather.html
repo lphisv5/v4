@@ -52,6 +52,22 @@
       box-shadow: var(--shadow);
       text-align: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    .card.active {
+      animation: rainbow-border 3s linear infinite;
+    }
+
+    @keyframes rainbow-border {
+      0% { box-shadow: 0 0 8px 2px red; }
+      14% { box-shadow: 0 0 8px 2px orange; }
+      28% { box-shadow: 0 0 8px 2px yellow; }
+      42% { box-shadow: 0 0 8px 2px green; }
+      57% { box-shadow: 0 0 8px 2px blue; }
+      71% { box-shadow: 0 0 8px 2px indigo; }
+      85% { box-shadow: 0 0 8px 2px violet; }
+      100% { box-shadow: 0 0 8px 2px red; }
     }
 
     .card:hover {
@@ -87,23 +103,6 @@
     .card .duration {
       font-size: 0.75rem;
       color: var(--muted);
-    }
-
-    #discord-link {
-      text-align: center;
-      margin: 1.5rem 0;
-    }
-
-    #discord-link a {
-      color: #4c51bf;
-      font-weight: 500;
-      text-decoration: none;
-      font-size: 1rem;
-      transition: color 0.2s ease;
-    }
-
-    #discord-link a:hover {
-      color: #5a67d8;
     }
 
     #next-page-container {
@@ -146,15 +145,15 @@
 <body>
   <h1>Grow A Garden</h1>
   <div id="weather-container"></div>
-  <div id="discord-link"></div>
   <div id="next-page-container">
-    <a href="https://yanzz-ios.github.io/main/growagarden-stock" class="next-button">STOCK</a>
+    <a href="https://lphisv5.github.io/webv4/growagarden-stock" class="next-button">STOCK</a>
   </div>
 
   <script>
     const JSTUDIO_KEY = 'js_bfbf185548d8ea2b648c6d971833bbecdcc70a896575b193444af969ecfbaf69';
     let lastWeatherIds = new Set();
     let lastHasActive = false;
+    let timers = {};
 
     async function loadWeather(firstUpdate = false) {
       try {
@@ -188,9 +187,12 @@
       const container = document.getElementById('weather-container');
       container.innerHTML = '';
 
+      Object.values(timers).forEach(clearInterval);
+      timers = {};
+
       data.weather.forEach(w => {
         const card = document.createElement('div');
-        card.className = 'card';
+        card.className = `card ${w.active ? 'active' : ''}`;
 
         const img = document.createElement('img');
         img.src = w.icon;
@@ -210,14 +212,26 @@
 
         const dur = document.createElement('div');
         dur.className = 'duration';
-        dur.textContent = `Duration: ${w.duration} sec`;
+        if (w.active && w.end_duration_unix > 0) {
+          const updateTimer = () => {
+            const now = Math.floor(Date.now() / 1000);
+            const remaining = w.end_duration_unix - now;
+            if (remaining <= 0) {
+              clearInterval(timers[w.weather_id]);
+              dur.textContent = 'Expired';
+            } else {
+              dur.textContent = `Time left: ${remaining} sec`;
+            }
+          };
+          updateTimer();
+          timers[w.weather_id] = setInterval(updateTimer, 1000);
+        } else {
+          dur.textContent = `Duration: ${w.duration} sec`;
+        }
         card.appendChild(dur);
 
         container.appendChild(card);
       });
-
-      const discordDiv = document.getElementById('discord-link');
-      discordDiv.innerHTML = `<a href="https://discord.gg/kCryJ8zPwy" target="_blank" rel="noopener noreferrer">Join Our Discord Community</a>`;
     }
 
     window.addEventListener('load', () => {
