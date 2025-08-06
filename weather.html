@@ -151,11 +151,22 @@
 
   <script>
     const JSTUDIO_KEY = 'js_bfbf185548d8ea2b648c6d971833bbecdcc70a896575b193444af969ecfbaf69';
-    let lastWeatherIds = new Set();
-    let lastHasActive = false;
+    let lastDataHash = '';
     let timers = {};
 
-    async function loadWeather(firstUpdate = false) {
+    // Function to generate a hash from data for comparison
+    function generateHash(data) {
+      return JSON.stringify(data.weather.map(w => ({
+        id: w.weather_id,
+        active: w.active,
+        icon: w.icon,
+        name: w.weather_name,
+        duration: w.duration,
+        end_duration_unix: w.end_duration_unix
+      }))).split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
+    }
+
+    async function fetchWeather() {
       try {
         const res = await fetch('https://api.joshlei.com/v2/growagarden/weather', {
           headers: {
@@ -164,22 +175,10 @@
         });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
-
-        const hasActive = data.weather.some(w => w.active === true);
-        const currentWeatherIds = new Set(data.weather.map(w => w.weather_id));
-        const hasNewIcon = [...currentWeatherIds].some(id => !lastWeatherIds.has(id));
-
-        if (firstUpdate || hasActive || hasNewIcon || lastHasActive !== hasActive) {
-          lastWeatherIds = currentWeatherIds;
-          lastHasActive = hasActive;
-          updateUI(data);
-        } else {
-          console.log('No update needed');
-        }
+        return data;
       } catch (err) {
         console.error('Error fetching weather:', err);
-        const container = document.getElementById('weather-container');
-        container.innerHTML = '<p style="text-align: center; color: #e53e3e;">ไม่สามารถโหลดข้อมูลได้</p>';
+        throw err;
       }
     }
 
@@ -232,11 +231,71 @@
 
         container.appendChild(card);
       });
+
+      const activeCard = container.querySelector('.card.active');
+      if (activeCard) {
+        activeCard.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
+    }
+
+    async function checkForUpdates(firstUpdate = false) {
+      try {
+        const data = await fetchWeather();
+        const newHash = generateHash(data);
+
+        if (firstUpdate || newHash !== lastDataHash) {
+          lastDataHash = newHash;
+          updateUI(data);
+          console.log('UI updated due to data change');
+        } else {
+          console.log('No update needed');
+        }
+      } catch (err) {
+        const container = document.getElementById('weather-container');
+        container.innerHTML = '<p style="text-align: center; color: #e53e3e;">ไม่สามารถโหลดข้อมูลได้</p>';
+      }
+    }
+
+    function setupWebSocket() {
+      const ws = new WebSocket('wss://api.joshlei.com/v2/growagarden/weather/ws');
+      ws.onopen = () => {
+        console.log('WebSocket connected');
+        ws.send(JSON.stringify({ key: JSTUDIO_KEY }));
+      };
+      ws.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+        const newHash = generateHash(data);
+        if (newHash !== lastDataHash) {
+          lastDataHash = newHash;
+          updateUI(data);
+          console.log('UI updated via WebSocket');
+        }
+      };
+      ws.onerror = (err) => {
+        console.error('WebSocket error:', err);
+        startPolling();
+      };
+      ws.onclose = () => {
+        console.log('WebSocket closed, switching to polling');
+        startPolling();
+      };
+    }
+
+    function startPolling() {
+      checkForUpdates(true);
+      setInterval(() => checkForUpdates(false), 30000);
     }
 
     window.addEventListener('load', () => {
-      loadWeather(true);
-      setInterval(() => loadWeather(false), 30000);
+      if ('WebSocket' in window) {
+        setupWebSocket();
+      } else {
+        startPolling();
+      }
     });
   </script>
 </body>
