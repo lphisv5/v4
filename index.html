@@ -308,7 +308,6 @@
       font-size: 0.9rem;
     }
 
-    /* Original Styles */
     #loader {
       position: fixed;
       inset: 0;
@@ -728,7 +727,6 @@
     </div>
   </div>
 
-  <!-- Login Overlay -->
   <div id="auth-overlay">
     <div class="auth-container">
       <div class="auth-header">
@@ -760,7 +758,6 @@
     </div>
   </div>
 
-  <!-- Register Overlay -->
   <div id="auth-overlay-register" class="hidden">
     <div class="auth-container">
       <div class="auth-header">
@@ -797,7 +794,6 @@
     </div>
   </div>
 
-  <!-- Lock Screen -->
   <div id="lock-screen">
     <div class="lock-avatar">
       <i class="fas fa-user"></i>
@@ -818,7 +814,6 @@
     </form>
   </div>
 
-  <!-- Main Content -->
   <canvas id="bg"></canvas>
 
   <div class="link-grid">
@@ -997,20 +992,16 @@
   <footer>© 2025 All Websites are Powered by YANZ</footer>
 
   <script>
-    // Wait for DOM to be fully loaded
     document.addEventListener('DOMContentLoaded', function() {
-      // Auth System Variables
       let currentUser = null;
       let sessionTimeout = null;
-      const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
 
-      // Demo credentials (in a real app, these would be server-side)
       const demoUsers = [
         { username: "admin", password: "YANZ2025" },
         { username: "user", password: "Welcome123" }
       ];
 
-      // Initialize Three.js scene
       const scene = new THREE.Scene();
       const textureLoader = new THREE.CubeTextureLoader();
       textureLoader.load(
@@ -1080,7 +1071,6 @@
 
       animate();
 
-      // Auth System Functions
       function showError(elementId, message) {
         const errorElement = document.getElementById(elementId);
         if (errorElement) {
@@ -1108,7 +1098,6 @@
       }
 
       function loginUser(username, password) {
-        // In a real app, this would be a server-side check
         const user = demoUsers.find(u => u.username === username && u.password === password);
         
         if (user) {
@@ -1123,7 +1112,6 @@
       }
 
       function registerUser(username, password) {
-        // In a real app, this would be a server-side operation
         if (demoUsers.some(u => u.username === username)) {
           return { success: false, message: 'Username already exists' };
         }
@@ -1153,7 +1141,6 @@
       }
 
       function unlockSession(password) {
-        // In a real app, this would verify with the server
         const user = demoUsers.find(u => u.username === currentUser?.username && u.password === password);
         
         if (user) {
@@ -1176,7 +1163,6 @@
         }
       }
 
-      // Event Listeners
       const togglePassword = document.getElementById('toggle-password');
       if (togglePassword) {
         togglePassword.addEventListener('click', () => {
@@ -1199,7 +1185,6 @@
           const password = document.getElementById('password')?.value;
           
           if (username && password && loginUser(username, password)) {
-            // Login success - handled in loginUser function
           } else {
             showError('login-error', 'Invalid username or password');
           }
@@ -1223,7 +1208,6 @@
           
           const result = registerUser(username, password);
           if (result.success) {
-            // Auto-login after registration
             if (loginUser(username, password)) {
               registerForm.reset();
             }
@@ -1269,12 +1253,10 @@
         });
       }
 
-      // Track user activity to reset session timeout
       document.addEventListener('mousemove', resetSessionTimeout);
       document.addEventListener('keydown', resetSessionTimeout);
       document.addEventListener('click', resetSessionTimeout);
 
-      // Check for existing session on load
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
         currentUser = JSON.parse(storedUser);
@@ -1283,7 +1265,6 @@
         resetSessionTimeout();
       }
 
-      // Original functionality
       const syncPointer = ({ clientX: pointerX, clientY: pointerY }) => {
         const x = pointerX.toFixed(2);
         const y = pointerY.toFixed(2);
