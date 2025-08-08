@@ -741,12 +741,22 @@ function copyText(button, text) {
 
 function filterExecutors() {
     const activeTab = document.querySelector(".tab.active").dataset.tab;
-    const searchTerm = searchBar.value.toLowerCase();
-    const filtered = executors.filter(executor => 
-        (activeTab === 'all' || executor.platform === activeTab) &&
-        (executor.title.toLowerCase().includes(searchTerm) || 
-         executor.platform.toLowerCase().includes(searchTerm))
-    );
+    const searchTerm = searchBar.value.toLowerCase().trim();
+    const filtered = executors.filter(executor => {
+        // Filter by platform if not 'all'
+        if (activeTab !== 'all' && executor.platform !== activeTab) {
+            return false;
+        }
+        // Search across multiple fields
+        return (
+            (executor.title && executor.title.toLowerCase().includes(searchTerm)) ||
+            (executor.platform && executor.platform.toLowerCase().includes(searchTerm)) ||
+            (executor.type && executor.type.toLowerCase().includes(searchTerm)) ||
+            (executor.version && executor.version.toLowerCase().includes(searchTerm)) ||
+            (executor.VNGversion && executor.VNGversion.toLowerCase().includes(searchTerm)) ||
+            (executor.status && executor.status.toLowerCase().includes(searchTerm))
+        );
+    });
     renderExecutors(filtered);
 }
 
