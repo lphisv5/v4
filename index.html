@@ -91,6 +91,224 @@
       transition: background 0.2s ease;
     }
 
+    /* Auth System Styles */
+    #auth-overlay, #auth-overlay-register {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+      transition: opacity 0.5s ease;
+    }
+
+    #auth-overlay.hidden, #auth-overlay-register.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .auth-container {
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: scale(0.95);
+      opacity: 0;
+      animation: authFadeIn 0.4s ease-out forwards;
+      margin: 1rem;
+    }
+
+    @keyframes authFadeIn {
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #00d0ff, #f0c6ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .auth-header p {
+      color: #88cfffcc;
+      font-size: 0.9rem;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #a0d9ffcc;
+      font-size: 0.9rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.8rem;
+      color: white;
+      font-family: 'Kanit', sans-serif;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #00d0ff;
+      box-shadow: 0 0 0 3px rgba(0, 208, 255, 0.3);
+    }
+
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 0.8rem;
+      border: none;
+      font-family: 'Kanit', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00b4d8, #7209b7);
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #00d0ff, #9d4edd);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 180, 216, 0.6);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #a0d9ffcc;
+      border: 1px solid rgba(160, 217, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(160, 217, 255, 0.1);
+      color: white;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #88cfffcc;
+    }
+
+    .auth-footer a {
+      color: #00d0ff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .auth-footer a:hover {
+      color: #f0c6ff;
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .lock-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+    }
+
+    .lock-icon:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    #lock-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9997;
+    }
+
+    #lock-screen.active {
+      display: flex;
+    }
+
+    .lock-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00b4d8, #7209b7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      color: white;
+    }
+
+    .lock-info {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .lock-info h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .lock-info p {
+      color: #88cfffcc;
+      font-size: 0.9rem;
+    }
+
+    /* Original Styles */
     #loader {
       position: fixed;
       inset: 0;
@@ -267,7 +485,7 @@
       height: 0;
       background: rgba(0, 208, 255, 0.4);
       border-radius: 50%;
-      transform: translate(-50\%, -50\%);
+      transform: translate(-50%, -50%);
       transition: width 0.5s ease, height 0.5s ease;
       z-index: -1;
     }
@@ -311,7 +529,8 @@
 
     .link-text {
       display: flex;
-      align-items: center gap: 0.6em;
+      align-items: center;
+      gap: 0.6em;
       width: 100%;
       position: relative;
       z-index: 3;
@@ -407,6 +626,9 @@
       .status-green, .status-red {
         font-size: clamp(0.6rem, 1.3vw, 0.65rem);
         padding: 3px 6px;
+      }
+      .auth-container {
+        padding: 1.5rem;
       }
     }
 
@@ -506,6 +728,97 @@
     </div>
   </div>
 
+  <!-- Login Overlay -->
+  <div id="auth-overlay">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h2>Welcome to YANZ</h2>
+        <p>Please sign in to access the dashboard</p>
+      </div>
+      
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" class="form-control" placeholder="Enter your username" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div style="position: relative;">
+            <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+            <i class="fas fa-eye-slash lock-icon" id="toggle-password"></i>
+          </div>
+          <div class="error-message" id="login-error"></div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Sign In</button>
+      </form>
+      
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Overlay -->
+  <div id="auth-overlay-register" class="hidden">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h2>Create Account</h2>
+        <p>Join the YANZ platform</p>
+      </div>
+      
+      <form id="register-form" class="auth-form">
+        <div class="form-group">
+          <label for="reg-username">Username</label>
+          <input type="text" id="reg-username" class="form-control" placeholder="Choose a username" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <div style="position: relative;">
+            <input type="password" id="reg-password" class="form-control" placeholder="Create a password" required>
+            <i class="fas fa-eye-slash lock-icon" id="toggle-reg-password"></i>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <input type="password" id="confirm-password" class="form-control" placeholder="Confirm your password" required>
+          <div class="error-message" id="register-error"></div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+      
+      <div class="auth-footer">
+        <p>Already have an account? <a href="#" id="show-login">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lock Screen -->
+  <div id="lock-screen">
+    <div class="lock-avatar">
+      <i class="fas fa-user"></i>
+    </div>
+    <div class="lock-info">
+      <h3 id="locked-username">User</h3>
+      <p>Session locked</p>
+    </div>
+    
+    <form id="unlock-form" class="auth-form" style="width: 100%; max-width: 300px;">
+      <div class="form-group">
+        <label for="unlock-password">Password</label>
+        <input type="password" id="unlock-password" class="form-control" placeholder="Enter your password" required>
+        <div class="error-message" id="unlock-error"></div>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Unlock</button>
+    </form>
+  </div>
+
+  <!-- Main Content -->
   <canvas id="bg"></canvas>
 
   <div class="link-grid">
@@ -684,138 +997,357 @@
   <footer>© 2025 All Websites are Powered by YANZ</footer>
 
   <script>
-    const syncPointer = ({ clientX: pointerX, clientY: pointerY }) => {
-      const x = pointerX.toFixed(2);
-      const y = pointerY.toFixed(2);
-      const xp = (pointerX / window.innerWidth).toFixed(2);
-      const yp = (pointerY / window.innerHeight).toFixed(2);
-      document.documentElement.style.setProperty('--x', x);
-      document.documentElement.style.setProperty('--xp', xp);
-      document.documentElement.style.setProperty('--y', y);
-      document.documentElement.style.setProperty('--yp', yp);
-    };
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Auth System Variables
+      let currentUser = null;
+      let sessionTimeout = null;
+      const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-    document.body.addEventListener('pointermove', syncPointer);
-    document.body.addEventListener('touchmove', (e) => {
-      const touch = e.touches[0];
-      syncPointer({ clientX: touch.clientX, clientY: touch.clientY });
-    });
+      // Demo credentials (in a real app, these would be server-side)
+      const demoUsers = [
+        { username: "admin", password: "YANZ2025" },
+        { username: "user", password: "Welcome123" }
+      ];
 
-    window.addEventListener('DOMContentLoaded', () => {
-      syncPointer({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
-    });
+      // Initialize Three.js scene
+      const scene = new THREE.Scene();
+      const textureLoader = new THREE.CubeTextureLoader();
+      textureLoader.load(
+        [
+          "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_px.jpg",
+          "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_nx.jpg",
+          "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_py.jpg",
+          "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_ny.jpg",
+          "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_pz.jpg",
+          "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_nz.jpg",
+        ],
+        (texture) => {
+          scene.background = texture;
+        },
+        undefined,
+        (error) => {
+          console.warn("Failed to load cube texture:", error);
+          scene.background = new THREE.Color(0x0f172a);
+        }
+      );
 
-    const loader = document.getElementById("loader");
-    const hideLoader = () => {
-      if (loader) {
-        loader.classList.add("hidden");
-        setTimeout(() => {
-          loader.style.display = "none";
-        }, 500);
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById("bg"),
+        antialias: true,
+        powerPreference: "low-power",
+      });
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      window.addEventListener("resize", () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      });
+
+      const geom = new THREE.BufferGeometry();
+      const verts = [];
+      for (let i = 0; i < 1000; i++) {
+        verts.push((Math.random() - 0.5) * 1000);
+        verts.push((Math.random() - 0.5) * 1000);
+        verts.push((Math.random() - 0.5) * 1000);
       }
-    };
+      geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
 
-    Promise.all([
-      new Promise((resolve) => window.addEventListener('load', resolve)),
-      new Promise((resolve) => setTimeout(resolve, 3500))
-    ]).then(hideLoader);
+      const stars = new THREE.Points(
+        geom,
+        new THREE.PointsMaterial({ color: 0xffffff, size: 1, sizeAttenuation: true })
+      );
+      scene.add(stars);
 
-    document.querySelectorAll(".link-item").forEach((item) => {
-      const id = item.dataset.id;
-      const countEl = document.querySelector(`.count[data-id="${id}"]`);
-      if (!countEl) {
-        console.warn(`Element with selector .count[data-id="${id}"] not found`);
-        return;
+      camera.position.z = 200;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        stars.rotation.y += 0.0005;
+        stars.rotation.x += 0.0003;
+        renderer.render(scene, camera);
       }
-      let count = 0;
-      try {
-        count = parseInt(localStorage.getItem(`click_${id}`) || "0");
-      } catch (e) {
-        console.warn("localStorage not available:", e);
-      }
-      countEl.textContent = count;
 
-      item.addEventListener("click", () => {
-        count++;
+      animate();
+
+      // Auth System Functions
+      function showError(elementId, message) {
+        const errorElement = document.getElementById(elementId);
+        if (errorElement) {
+          errorElement.textContent = message;
+          errorElement.style.display = 'block';
+          setTimeout(() => {
+            errorElement.style.display = 'none';
+          }, 3000);
+        }
+      }
+
+      function togglePasswordVisibility(inputId, toggleId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleIcon = document.getElementById(toggleId);
+        
+        if (passwordInput && toggleIcon) {
+          if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+          } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+          }
+        }
+      }
+
+      function loginUser(username, password) {
+        // In a real app, this would be a server-side check
+        const user = demoUsers.find(u => u.username === username && u.password === password);
+        
+        if (user) {
+          currentUser = { username: user.username };
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          const authOverlay = document.getElementById('auth-overlay');
+          if (authOverlay) authOverlay.classList.add('hidden');
+          resetSessionTimeout();
+          return true;
+        }
+        return false;
+      }
+
+      function registerUser(username, password) {
+        // In a real app, this would be a server-side operation
+        if (demoUsers.some(u => u.username === username)) {
+          return { success: false, message: 'Username already exists' };
+        }
+        
+        demoUsers.push({ username, password });
+        return { success: true };
+      }
+
+      function resetSessionTimeout() {
+        if (sessionTimeout) {
+          clearTimeout(sessionTimeout);
+        }
+        
+        sessionTimeout = setTimeout(lockSession, INACTIVITY_TIMEOUT);
+      }
+
+      function lockSession() {
+        const lockScreen = document.getElementById('lock-screen');
+        if (lockScreen) {
+          lockScreen.classList.add('active');
+          const usernameDisplay = document.getElementById('locked-username');
+          if (usernameDisplay) {
+            usernameDisplay.textContent = currentUser?.username || 'User';
+          }
+        }
+        resetSessionTimeout();
+      }
+
+      function unlockSession(password) {
+        // In a real app, this would verify with the server
+        const user = demoUsers.find(u => u.username === currentUser?.username && u.password === password);
+        
+        if (user) {
+          const lockScreen = document.getElementById('lock-screen');
+          if (lockScreen) lockScreen.classList.remove('active');
+          resetSessionTimeout();
+          return true;
+        }
+        return false;
+      }
+
+      function logout() {
+        currentUser = null;
+        localStorage.removeItem('currentUser');
+        const authOverlay = document.getElementById('auth-overlay');
+        if (authOverlay) authOverlay.classList.remove('hidden');
+        if (sessionTimeout) {
+          clearTimeout(sessionTimeout);
+          sessionTimeout = null;
+        }
+      }
+
+      // Event Listeners
+      const togglePassword = document.getElementById('toggle-password');
+      if (togglePassword) {
+        togglePassword.addEventListener('click', () => {
+          togglePasswordVisibility('password', 'toggle-password');
+        });
+      }
+
+      const toggleRegPassword = document.getElementById('toggle-reg-password');
+      if (toggleRegPassword) {
+        toggleRegPassword.addEventListener('click', () => {
+          togglePasswordVisibility('reg-password', 'toggle-reg-password');
+        });
+      }
+
+      const loginForm = document.getElementById('login-form');
+      if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const username = document.getElementById('username')?.value.trim();
+          const password = document.getElementById('password')?.value;
+          
+          if (username && password && loginUser(username, password)) {
+            // Login success - handled in loginUser function
+          } else {
+            showError('login-error', 'Invalid username or password');
+          }
+        });
+      }
+
+      const registerForm = document.getElementById('register-form');
+      if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const username = document.getElementById('reg-username')?.value.trim();
+          const password = document.getElementById('reg-password')?.value;
+          const confirmPassword = document.getElementById('confirm-password')?.value;
+          
+          if (!username || !password || !confirmPassword) return;
+          
+          if (password !== confirmPassword) {
+            showError('register-error', 'Passwords do not match');
+            return;
+          }
+          
+          const result = registerUser(username, password);
+          if (result.success) {
+            // Auto-login after registration
+            if (loginUser(username, password)) {
+              registerForm.reset();
+            }
+          } else {
+            showError('register-error', result.message);
+          }
+        });
+      }
+
+      const unlockForm = document.getElementById('unlock-form');
+      if (unlockForm) {
+        unlockForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const password = document.getElementById('unlock-password')?.value;
+          
+          if (password && unlockSession(password)) {
+            unlockForm.reset();
+          } else {
+            showError('unlock-error', 'Incorrect password');
+          }
+        });
+      }
+
+      const showRegister = document.getElementById('show-register');
+      if (showRegister) {
+        showRegister.addEventListener('click', (e) => {
+          e.preventDefault();
+          const authOverlay = document.getElementById('auth-overlay');
+          const authOverlayRegister = document.getElementById('auth-overlay-register');
+          if (authOverlay) authOverlay.classList.add('hidden');
+          if (authOverlayRegister) authOverlayRegister.classList.remove('hidden');
+        });
+      }
+
+      const showLogin = document.getElementById('show-login');
+      if (showLogin) {
+        showLogin.addEventListener('click', (e) => {
+          e.preventDefault();
+          const authOverlay = document.getElementById('auth-overlay');
+          const authOverlayRegister = document.getElementById('auth-overlay-register');
+          if (authOverlayRegister) authOverlayRegister.classList.add('hidden');
+          if (authOverlay) authOverlay.classList.remove('hidden');
+        });
+      }
+
+      // Track user activity to reset session timeout
+      document.addEventListener('mousemove', resetSessionTimeout);
+      document.addEventListener('keydown', resetSessionTimeout);
+      document.addEventListener('click', resetSessionTimeout);
+
+      // Check for existing session on load
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        currentUser = JSON.parse(storedUser);
+        const authOverlay = document.getElementById('auth-overlay');
+        if (authOverlay) authOverlay.classList.add('hidden');
+        resetSessionTimeout();
+      }
+
+      // Original functionality
+      const syncPointer = ({ clientX: pointerX, clientY: pointerY }) => {
+        const x = pointerX.toFixed(2);
+        const y = pointerY.toFixed(2);
+        const xp = (pointerX / window.innerWidth).toFixed(2);
+        const yp = (pointerY / window.innerHeight).toFixed(2);
+        document.documentElement.style.setProperty('--x', x);
+        document.documentElement.style.setProperty('--xp', xp);
+        document.documentElement.style.setProperty('--y', y);
+        document.documentElement.style.setProperty('--yp', yp);
+      };
+
+      document.body.addEventListener('pointermove', syncPointer);
+      document.body.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        syncPointer({ clientX: touch.clientX, clientY: touch.clientY });
+      });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        syncPointer({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+      });
+
+      const loader = document.getElementById("loader");
+      const hideLoader = () => {
+        if (loader) {
+          loader.classList.add("hidden");
+          setTimeout(() => {
+            loader.style.display = "none";
+          }, 500);
+        }
+      };
+
+      Promise.all([
+        new Promise((resolve) => window.addEventListener('load', resolve)),
+        new Promise((resolve) => setTimeout(resolve, 3500))
+      ]).then(hideLoader);
+
+      document.querySelectorAll(".link-item").forEach((item) => {
+        const id = item.dataset.id;
+        const countEl = document.querySelector(`.count[data-id="${id}"]`);
+        if (!countEl) {
+          console.warn(`Element with selector .count[data-id="${id}"] not found`);
+          return;
+        }
+        let count = 0;
         try {
-          localStorage.setItem(`click_${id}`, count);
+          count = parseInt(localStorage.getItem(`click_${id}`) || "0");
         } catch (e) {
-          console.warn("Failed to save to localStorage:", e);
+          console.warn("localStorage not available:", e);
         }
         countEl.textContent = count;
-        const sound = new Audio('https://www.soundjay.com/buttons/button-09.mp3');
-        sound.play().catch((e) => console.warn("Failed to play sound:", e));
+
+        item.addEventListener("click", () => {
+          count++;
+          try {
+            localStorage.setItem(`click_${id}`, count);
+          } catch (e) {
+            console.warn("Failed to save to localStorage:", e);
+          }
+          countEl.textContent = count;
+          const sound = new Audio('https://www.soundjay.com/buttons/button-09.mp3');
+          sound.play().catch((e) => console.warn("Failed to play sound:", e));
+        });
       });
     });
-
-    const scene = new THREE.Scene();
-    const textureLoader = new THREE.CubeTextureLoader();
-    textureLoader.load(
-      [
-        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_px.jpg",
-        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_nx.jpg",
-        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_py.jpg",
-        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_ny.jpg",
-        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_pz.jpg",
-        "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_nz.jpg",
-      ],
-      (texture) => {
-        scene.background = texture;
-      },
-      undefined,
-      (error) => {
-        console.warn("Failed to load cube texture:", error);
-        scene.background = new THREE.Color(0x0f172a);
-      }
-    );
-
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas: document.getElementById("bg"),
-      antialias: true,
-      powerPreference: "low-power",
-    });
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    window.addEventListener("resize", () => {
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-    });
-
-    const geom = new THREE.BufferGeometry();
-    const verts = [];
-    for (let i = 0; i < 1000; i++) {
-      verts.push((Math.random() - 0.5) * 1000);
-      verts.push((Math.random() - 0.5) * 1000);
-      verts.push((Math.random() - 0.5) * 1000);
-    }
-    geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-
-    const stars = new THREE.Points(
-      geom,
-      new THREE.PointsMaterial({ color: 0xffffff, size: 1, sizeAttenuation: true })
-    );
-    scene.add(stars);
-
-    camera.position.z = 200;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      stars.rotation.y += 0.0005;
-      stars.rotation.x += 0.0003;
-      renderer.render(scene, camera);
-    }
-
-    animate();
   </script>
 </body>
 </html>
