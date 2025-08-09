@@ -48,6 +48,21 @@
         </div>
         <div class="hidden text-red-600 text-center mt-4" id="errorMessage" role="alert"></div>
         <div class="text-center text-gray-500 text-sm mt-4" id="lastUUID" aria-live="polite"></div>
+        <a 
+            href="https://discord.com/invite/mNGeUVcjKB" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex items-center justify-center mt-6 bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition-colors"
+            aria-label="Join our Discord community"
+        >
+            <img 
+                src="https://cdn-icons-png.flaticon.com/512/2626/2626288.png" 
+                alt="Discord logo"
+                class="w-6 h-6 mr-2"
+                loading="lazy"
+            >
+            Join Discord
+        </a>
     </div>
 
     <script>
@@ -76,7 +91,6 @@
             if (!data.success || !data.uuid || typeof data.uuid !== 'string') {
                 throw new Error('Invalid UUID data');
             }
-            // Basic UUID format validation
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             if (!uuidRegex.test(data.uuid)) {
                 throw new Error('Invalid UUID format');
@@ -115,7 +129,7 @@
                         'Authorization': `Bearer ${API_KEY}`,
                         'Accept': 'application/json'
                     },
-                    signal: AbortSignal.timeout(10000) // 10s timeout
+                    signal: AbortSignal.timeout(10000)
                 });
 
                 if (!response.ok) {
