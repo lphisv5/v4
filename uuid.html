@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Generate unique UUIDs with our fast and reliable UUID Generator tool">
+    <meta name="keywords" content="UUID, UUID Generator, Unique Identifier">
+    <meta name="author" content="xAI">
+    <title>UUID Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .uuid-text {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .animate-pulse {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 p-4">
+    <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full" role="main">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">UUID Generator</h1>
+        <button 
+            class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50" 
+            onclick="generateUUID()"
+            id="generateBtn"
+            aria-label="Generate a new UUID"
+        >
+            Generate UUID
+        </button>
+        <div class="hidden text-center text-gray-600 mt-4 animate-pulse" id="loading" role="status">
+            Generating...
+        </div>
+        <div class="hidden bg-gray-100 p-4 rounded-lg mt-4 flex items-center justify-between" id="uuidContainer">
+            <span class="uuid-text text-gray-800 text-sm" id="uuidText" aria-live="polite"></span>
+            <button 
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors" 
+                onclick="copyUUID()"
+                aria-label="Copy UUID to clipboard"
+            >
+                Copy
+            </button>
+        </div>
+        <div class="hidden text-red-600 text-center mt-4" id="errorMessage" role="alert"></div>
+        <div class="text-center text-gray-500 text-sm mt-4" id="lastUUID" aria-live="polite"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://api.loopy5418.dev/uuid-generator';
+        const API_KEY = '1b692718-1beb-4673-9965-7b6164df5fe9';
+        let isGenerating = false;
+
+        // Debounce function to prevent multiple clicks
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Sanitize API response
+        function sanitizeResponse(data) {
+            if (!data || typeof data !== 'object') {
+                throw new Error('Invalid response format');
+            }
+            if (!data.success || !data.uuid || typeof data.uuid !== 'string') {
+                throw new Error('Invalid UUID data');
+            }
+            // Basic UUID format validation
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            if (!uuidRegex.test(data.uuid)) {
+                throw new Error('Invalid UUID format');
+            }
+            return data.uuid;
+        }
+
+        // Load last UUID from localStorage
+        function loadLastUUID() {
+            const lastUUID = localStorage.getItem('lastUUID');
+            if (lastUUID) {
+                document.getElementById('lastUUID').textContent = `Last UUID: ${lastUUID}`;
+            }
+        }
+
+        async function generateUUID() {
+            if (isGenerating) return;
+            isGenerating = true;
+
+            const generateBtn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
+            const uuidContainer = document.getElementById('uuidContainer');
+            const uuidText = document.getElementById('uuidText');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Reset states
+            generateBtn.disabled = true;
+            loading.classList.remove('hidden');
+            uuidContainer.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            errorMessage.textContent = '';
+
+            try {
+                const response = await fetch(API_URL, {
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Accept': 'application/json'
+                    },
+                    signal: AbortSignal.timeout(10000) // 10s timeout
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const uuid = sanitizeResponse(data);
+
+                uuidText.textContent = uuid;
+                uuidContainer.classList.remove('hidden');
+                localStorage.setItem('lastUUID', uuid);
+                loadLastUUID();
+            } catch (error) {
+                errorMessage.textContent = `Error: ${error.message || 'Could not generate UUID. Please try again.'}`;
+                errorMessage.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+                generateBtn.disabled = false;
+                isGenerating = false;
+            }
+        }
+
+        function copyUUID() {
+            const uuidText = document.getElementById('uuidText').textContent;
+            navigator.clipboard.writeText(uuidText).then(() => {
+                const copyBtn = document.querySelector('.bg-green-600');
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                document.getElementById('errorMessage').textContent = 'Error: Failed to copy UUID';
+                document.getElementById('errorMessage').classList.remove('hidden');
+            });
+        }
+
+        // Debounced generateUUID
+        const debouncedGenerateUUID = debounce(generateUUID, 300);
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLastUUID();
+            document.getElementById('generateBtn').addEventListener('click', debouncedGenerateUUID);
+        });
+    </script>
+</body>
+</html>
