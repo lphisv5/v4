@@ -556,7 +556,7 @@ const executorsData = {
         {"VNGversion":"2.681.805","discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1754357527605/Ronix_684_(arm64).apk","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"RoniX","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/6zmd9n52vxu16tm/%25F0%259F%2587%25BB%25F0%259F%2587%25B3Ronix_682_VIETNAM%25F0%259F%25A4%258D.apk/file"},
         {"discord_url":"https://discord.gg/x5AT9UMMWG","download_url":"https://evon.cc/android/dl-a/Evon.apk","image_url":"https://evon.cc/favicon.png","status":"Online","title":"Evon","type":"Free","version":"2.684.688"},
         {"discord_url":"https://discord.gg/qQMs6ns5Za","download_url":"https://trigonevo.com/download?os=android&fs=mediafire","image_url":"https://files.catbox.moe/15b32y.webp","status":"Online","title":"Trigon","type":"Free","version":"2.684.688"},
-        {"discord_url":"https://discord.gg/DvvdeNBnZt","download_url":"https://cdn.discordapp.com/attachments/1191528978167640125/1402142072491741184/Vega_X.apk?ex=6892d610&is=68918490&hm=cd3d220e8cd8f8c34960bfb86c7b12f56c013200751cd9fa0a600c6b7ebac4d4&","image_url":"https://vegax.gg/assets/img/V_logo_white.png","status":"Online","title":"VegaX","type":"Free","version":"2.684.688"}
+        {"discord_url":"https://discord.gg/DvvdeNBnZt","download_url":"https://github.com/1f0yt/community/releases/download/Vegax/Vega.X.apk","image_url":"https://vegax.gg/assets/img/V_logo_white.png","status":"Online","title":"VegaX","type":"Free","version":"2.684.688"}
     ],
     "external": [
         {"discord_url":"https://discord.gg/7GZqhErX8C","image_url":"https://files.catbox.moe/f9kg6k.png","purchase":"https://getronin.xyz","status":"Online","title":"Ronin","type":"Paid","version":"version-3f74e22590714de4"},
@@ -597,7 +597,7 @@ const executorsData = {
         {"discord_url":"https://discord.gg/xeno-now","download_url":"https://www.xeno.onl/download","image_url":"https://cdn.wearedevs.net/images/thumbnails/xeno-0131252.webp","status":"Offline","title":"Xeno","type":"Free","version":"version-b8550645b8834e8a"},
         {"discord_url":"https://discord.com/invite/awpgg","image_url":"https://files.catbox.moe/olkjgi.png","purchase":"https://buyawp.gg/","status":"Offline","title":"AWP.GG","type":"Paid","version":"version-78712d8739f34cb9"},
         {"discord_url":"https://discord.gg/getwave","image_url":"https://files.catbox.moe/4ly86h.webp","purchase":"https://getwave.gg","status":"Offline","title":"Wave","type":"Paid","version":"version-b8550645b8834e8a"},
-        {"discord_url":"https://discord.gg/realzorara","download_url":"https://wrdcdn.net/r/118757/1753982881904/Drift1.1.5.zip","image_url":"https://files.catbox.moe/g8asky.webp","status":"Offline","title":"Drift","type":"Free","version":"version-b8550645b8834e8a"},
+        {"discord_url":"https://discord.gg/realzorara","download_url":"https://wrdcdn.net/r/118757/1754713201063/Drift1.1.7.zip","image_url":"https://files.catbox.moe/g8asky.webp","status":"Online","title":"Drift","type":"Free","version":"version-3f74e22590714de4"},
         {"discord_url":"https://discord.gg/valex","download_url":"https://github.com/1Softworks/assets/raw/refs/heads/main/Valex_Executor.zip","image_url":"https://files.catbox.moe/o44tdw.webp","status":"Online","title":"Valex","type":"Free","version":"version-3f74e22590714de4"},
         {"discord_url":"https://discord.com/invite/potassium","image_url":"https://files.catbox.moe/hryiqu.jpeg","purchase":"https://potassium.pro","status":"Online","title":"Potassium","type":"Paid","version":"version-3f74e22590714de4"},
         {"discord_url":"https://discord.gg/plutora","download_url":"https://wrdcdn.net/r/87882/1754586995788/pluto.exe","image_url":"https://files.catbox.moe/k18j6c.webp","status":"Online","title":"Pluto","type":"Free","version":"version-3f74e22590714de4"},
@@ -743,18 +743,19 @@ function filterExecutors() {
     const activeTab = document.querySelector(".tab.active").dataset.tab;
     const searchTerm = searchBar.value.toLowerCase().trim();
     const filtered = executors.filter(executor => {
-        // Filter by platform if not 'all'
         if (activeTab !== 'all' && executor.platform !== activeTab) {
             return false;
         }
-        // Search across multiple fields
-        return (
-            (executor.title && executor.title.toLowerCase().includes(searchTerm)) ||
-            (executor.platform && executor.platform.toLowerCase().includes(searchTerm)) ||
-            (executor.type && executor.type.toLowerCase().includes(searchTerm)) ||
-            (executor.version && executor.version.toLowerCase().includes(searchTerm)) ||
-            (executor.VNGversion && executor.VNGversion.toLowerCase().includes(searchTerm)) ||
-            (executor.status && executor.status.toLowerCase().includes(searchTerm))
+        const fields = [
+            executor.title,
+            executor.platform,
+            executor.type,
+            executor.version,
+            executor.VNGversion,
+            executor.status
+        ];
+        return fields.some(field => 
+            field && typeof field === 'string' && field.toLowerCase().includes(searchTerm)
         );
     });
     renderExecutors(filtered);
