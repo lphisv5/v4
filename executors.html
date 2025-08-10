@@ -20,6 +20,7 @@
             --success-green: #34d399;
             --error-red: #f87171;
             --discord-purple: #5865f2;
+            --vng-orange: #f97316; /* New color for VNG download button */
             --shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.5);
             --neon-shadow: 0 0 1rem var(--neon-purple);
             --glass-bg: rgba(31, 41, 55, 0.7);
@@ -352,6 +353,10 @@
             background: var(--discord-purple);
         }
 
+        .button.vng-download {
+            background: var(--vng-orange);
+        }
+
         .button:hover {
             transform: translateY(-0.1875rem);
             box-shadow: var(--neon-shadow);
@@ -550,8 +555,8 @@ const executorsData = {
         {"VNGversion":"2.681.805","discord_url":"https://discord.gg/codexlol","download_url":"https://www.mediafire.com/file/ytyjk543b2ng8zs/Codex+v2.684.apk/file","image_url":"https://files.catbox.moe/mmjwwd.png","status":"Online","title":"Codex","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/xmk2zq6iq9pz2bg/Codex_VNG_v2.681.apk/file"},
         {"VNGversion":"2.681.805","discord_url":"https://discord.gg/qM3WZhQShn","download_url":"https://www.mediafire.com/file/7rn43l963klk9mj/Cryptic+2.684.688+APK.apk/file?dkey=q3fsaow2fpc&r=1234","image_url":"https://getcryptic.net/assets/moonglow-HcoSKqMr.png","status":"Online","title":"Cryptic","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/vton5o28dou1wd9/Cryptic_2.681.805_VNG.apk/file"},
         {"VNGversion":"2.684.688","discord_url":"https://discord.gg/deltax","download_url":"https://delta.webfiles.pro/file/Delta-2.684.688-01.apk","image_url":"https://i.ibb.co/nbDv3Lx/delta.png","status":"Online","title":"Delta","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/2yprlhq5b7ypv10/Delta_Vng-2.684.688_Up2.apk/file"},
-        {"VNGversion":"2.684.688","discord_url":"https://discord.gg/subz","download_url":"https://webfiles.pro/file/Fluxus.apk","image_url":"https://flux.li/assets/faviconbutpng.e3767602.png","status":"Online","title":"Fluxus","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/vvdsivlxa4npn9b/Fluxus_Vng-2.684.688_Up.apk/file"},
-        {"VNGversion":"2.674.786","discord_url":"https://discord.gg/VgsHH4FN5P","download_url":"https://www.mediafire.com/file/n94ukcksi5x60xw/Rift+3.1.0.apk/file","image_url":"https://files.catbox.moe/lro9zw.png","status":"Online","title":"Rift","type":"Free","version":"2.679.762","vng_url":"https://www.mediafire.com/file/vcrfkmjxj14mvjl/Rift+3.0.0+VNG.apk/file"},
+        {"VNGversion":"2.684.688","discord_url":"discord.gg/V7axDCK3q8","download_url":"https://webfiles.pro/file/Fluxus.apk","image_url":"https://flux.li/assets/faviconbutpng.e3767602.png","status":"Offline","title":"Fluxus","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/vvdsivlxa4npn9b/Fluxus_Vng-2.684.688_Up.apk/file"},
+        {"VNGversion":"2.674.786","discord_url":"https://discord.gg/VgsHH4FN5P","download_url":"https://www.mediafire.com/file/n94ukcksi5x60xw/Rift+3.1.0.apk/file","image_url":"https://files.catbox.moe/lro9zw.png","status":"Offline","title":"Rift","type":"Free","version":"2.679.762","vng_url":"https://www.mediafire.com/file/vcrfkmjxj14mvjl/Rift+3.0.0+VNG.apk/file"},
         {"VNGversion":"2.655.1095","discord_url":"https://discord.gg/getfrost","download_url":"https://www.mediafire.com/file/67m83qe9qodjilz/Frostware+Gen-X+V3.6.apk/file?hash=1LBMIEu3ts7boLlh50dRxAt6hKngJTAuRMBRYeJNMtY7Rf9WDaFf7q0AConIc4D3","image_url":"https://files.catbox.moe/o5nmea.png","status":"Online","title":"Frostware","type":"Free","version":"v2.684.688","vng_url":"https://www.mediafire.com/file/2oefdp15evvka2c/Frostware+VNG+V4.2.apk/file"},
         {"VNGversion":"2.681.805","discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1754357527605/Ronix_684_(arm64).apk","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"RoniX","type":"Free","version":"2.684.688","vng_url":"https://www.mediafire.com/file/6zmd9n52vxu16tm/%25F0%259F%2587%25BB%25F0%259F%2587%25B3Ronix_682_VIETNAM%25F0%259F%25A4%258D.apk/file"},
         {"discord_url":"https://discord.gg/x5AT9UMMWG","download_url":"https://evon.cc/android/dl-a/Evon.apk","image_url":"https://evon.cc/favicon.png","status":"Online","title":"Evon","type":"Free","version":"2.684.688"},
@@ -590,7 +595,7 @@ const executorsData = {
         {"discord_url":"https://discord.gg/zSnS9kCxJX","download_url":"https://volcano.wtf/","image_url":"https://files.catbox.moe/ucf3km.png","status":"Online","title":"Volcano","type":"Free","version":"version-3f74e22590714de4"},
         {"discord_url":"https://discord.gg/FKVAyr5wze","download_url":"https://bappalot.online/","image_url":"https://cdn.discordapp.com/attachments/1402137641050181752/1402247482456408114/image.png?ex=6893383c&is=6891e6bc&hm=ec75bb0baa7cf97137c3ad78aea0b4d90f35c5ec7a66d32f4e4a30c8ef20dc9b&","status":"Online","title":"Bappalot","type":"Free","version":"version-3f74e22590714de4"},
         {"discord_url":"https://discord.gg/WMsYZgmCYA","download_url":"https://useworld.xyz/","image_url":"https://cdn.discordapp.com/attachments/1399454111027564574/1402246403371307158/world.png?ex=6893373b&is=6891e5bb&hm=cd3fbf078eba8023252f04e75a2958cc17f184093708ebfdb9e983ce44736a50&","status":"Offline","title":"World Client","type":"Free","version":"version-b8550645b8834e8a"},
-        {"discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1753994040590/release%20(3).zip","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Offline","title":"Ronix","type":"Free","version":"version-b8550645b8834e8a"},
+        {"discord_url":"https://discord.gg/ronix","download_url":"https://wrdcdn.net/r/154522/1754777066094/release%20(4).zip","image_url":"https://files.catbox.moe/w9zkoh.png","status":"Online","title":"Ronix","type":"Free","version":"version-3f74e22590714de4"},
         {"discord_url":"https://discord.gg/XZWTFr3cHt","download_url":"https://gofile.io/d/1mpEES","image_url":"https://files.catbox.moe/dlmfx4.webp","status":"Offline","title":"Illusion","type":"Free","version":"version-225e87fdb7254f64"},
         {"discord_url":"https://discord.gg/eQP6Y5pKWQ","download_url":"https://wrdcdn.net/r/58255/1754607240617/LX63Updated%20(1).zip","image_url":"https://files.catbox.moe/sljr5s.webp","status":"Online","title":"LX63","type":"Free","version":"version-3f74e22590714de4"},
         {"discord_url":"https://discord.gg/RUVr3Q2fSt","download_url":"https://filerift.com/file/Pui5CqlhK_","image_url":"https://files.catbox.moe/tveaai.webp","status":"Online","title":"Nucleus","type":"Free","version":"version-3f74e22590714de4"},
@@ -666,6 +671,7 @@ function renderExecutors(data) {
                                         ` : ''}
                                         <div class="buttons">
                                             ${executor.download_url ? `<a href="${executor.download_url}" class="button download" aria-label="Download ${executor.title}">Download</a>` : ''}
+                                            ${executor.vng_url ? `<a href="${executor.vng_url}" class="button vng-download" aria-label="Download VNG for ${executor.title}">VNG Download</a>` : ''}
                                             ${executor.purchase ? `<a href="${executor.purchase}" class="button purchase" aria-label="Purchase ${executor.title}">Purchase</a>` : ''}
                                             ${executor.discord_url ? `<a href="${executor.discord_url}" class="button discord" aria-label="Join ${executor.title} Discord">Discord</a>` : ''}
                                         </div>
@@ -699,6 +705,7 @@ function renderExecutors(data) {
                         ` : ''}
                         <div class="buttons">
                             ${executor.download_url ? `<a href="${executor.download_url}" class="button download" aria-label="Download ${executor.title}">Download</a>` : ''}
+                            ${executor.vng_url ? `<a href="${executor.vng_url}" class="button vng-download" aria-label="Download VNG for ${executor.title}">VNG Download</a>` : ''}
                             ${executor.purchase ? `<a href="${executor.purchase}" class="button purchase" aria-label="Purchase ${executor.title}">Purchase</a>` : ''}
                             ${executor.discord_url ? `<a href="${executor.discord_url}" class="button discord" aria-label="Join ${executor.title} Discord">Discord</a>` : ''}
                         </div>
