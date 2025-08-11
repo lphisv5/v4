@@ -9,8 +9,8 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     env:
-      API_KEY: ${{ secrets.API_KEY }}  # ดึง API_KEY จาก Secrets มาเป็น Environment Variable
-      API_URL: ${{ secrets.API_URL }}  # สมมติมี API_URL ด้วย
+      API_KEY: ${{ secrets.API_KEY }}
+      API_URL: ${{ secrets.API_URL }}
 
     steps:
       - name: Checkout repository
@@ -19,17 +19,17 @@ jobs:
       - name: Fetch API data and generate static HTML
         run: |
           echo "Fetching data from API with key $API_KEY"
-          
-          # ดึงข้อมูลจาก API (ตัวอย่าง curl)
-          curl -s "${API_URL}?key=${API_KEY}&q=example" > data.json
+          DATA=$(curl -s "${API_URL}?key=${API_KEY}&q=example")
 
-          # สร้างโฟลเดอร์สำหรับ deploy
           mkdir -p public
-
-          # แปลงข้อมูลเป็น HTML แบบง่ายๆ
           echo "<!DOCTYPE html><html><head><title>API Data</title></head><body><pre>" > public/index.html
-          cat data.json >> public/index.html
+          echo "$DATA" >> public/index.html
           echo "</pre></body></html>" >> public/index.html
+
+      - name: Setup Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
