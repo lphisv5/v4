@@ -21,9 +21,8 @@ jobs:
 
       - name: Fetch API data and generate static HTML
         run: |
-          echo "Fetching data from API with key $API_KEY"
-          # สมมติ API URL ตายตัว
-          DATA=$(curl -s "https://api.example.com/data?key=${API_KEY}&q=example")
+          echo "Fetching data from API with key ***"
+          DATA=$(curl -s "https://api.loopy5418.dev/yt-search?key=${API_KEY}&q=example")
 
           mkdir -p public
           echo "<!DOCTYPE html><html><head><title>API Data</title></head><body><pre>" > public/index.html
