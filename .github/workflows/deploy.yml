@@ -13,10 +13,23 @@ permissions:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Test API connectivity
+        run: |
+          echo "Testing API connectivity..."
+          response=$(curl -s -w "%{http_code}" -H "API-KEY: $API_KEY" "https://api.loopy5418.dev/yt-search?q=example")
+          status=${response: -3}
+          echo "API response status: $status"
+          if [ "$status" -ne 200 ]; then
+            echo "API request failed with status $status"
+            exit 1
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
