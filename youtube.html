@@ -15,8 +15,8 @@
       --danger: #ff3333;
       --success: #00c853;
       --warning: #ffab00;
-      --discord: #5865F2; /* Discord Brand Color */
-      --discord-dark: #4752C4; /* Discord Hover Color */
+      --discord: #5865F2;
+      --discord-dark: #4752C4;
       
       /* Background Colors */
       --bg-1: #0f0f0f;
@@ -61,7 +61,6 @@
       --player-height: 360px;
     }
 
-    /* Reset and Base Styles */
     * {
       margin: 0;
       padding: 0;
@@ -86,7 +85,6 @@
       overflow-x: hidden;
     }
 
-    /* Typography */
     h1, h2, h3, h4, h5, h6 {
       font-weight: 500;
       line-height: 1.3;
@@ -120,7 +118,6 @@
       color: var(--primary);
     }
 
-    /* Layout */
     .container {
       width: 100%;
       max-width: var(--max-width);
@@ -128,7 +125,6 @@
       padding: 0 var(--space-md);
     }
 
-    /* Header */
     header {
       position: sticky;
       top: 0;
@@ -163,14 +159,12 @@
       font-size: 1.5rem;
     }
 
-    /* Main App Layout */
     .app {
       display: grid;
       grid-template-columns: 1fr;
       min-height: calc(100vh - var(--header-height));
     }
 
-    /* Player Section */
     .player-section {
       background: var(--bg-2);
       padding: var(--space-md) 0;
@@ -227,7 +221,6 @@
       font-size: 0.9rem;
     }
 
-    /* Search Section */
     .search-section {
       padding: var(--space-xl) 0;
     }
@@ -252,7 +245,6 @@
       font-size: 0.95rem;
     }
 
-    /* Search Form */
     .search-form {
       display: flex;
       gap: var(--space-md);
@@ -311,7 +303,6 @@
       transform: translateY(0);
     }
 
-    /* Results Section */
     .results-section {
       padding-bottom: var(--space-xl);
     }
@@ -334,14 +325,12 @@
       font-size: 0.9rem;
     }
 
-    /* Results Grid */
     .results-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: var(--space-lg);
     }
 
-    /* Video Card */
     .video-card {
       background: var(--bg-2);
       border-radius: var(--radius-md);
@@ -422,7 +411,6 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
-    /* Loading State */
     .loading-state {
       display: flex;
       flex-direction: column;
@@ -449,7 +437,6 @@
       color: var(--text-muted);
     }
 
-    /* Empty State */
     .empty-state {
       display: flex;
       flex-direction: column;
@@ -470,7 +457,6 @@
       max-width: 500px;
     }
 
-    /* Error State */
     .error-state {
       display: flex;
       flex-direction: column;
@@ -509,7 +495,6 @@
       opacity: 0.9;
     }
 
-    /* Footer */
     footer {
       background: var(--bg-2);
       padding: var(--space-xl) 0;
@@ -542,7 +527,6 @@
       color: var(--primary);
     }
 
-    /* Discord Button */
     .discord-button {
       display: flex;
       align-items: center;
@@ -575,7 +559,6 @@
       font-size: 0.85rem;
     }
 
-    /* Utility Classes */
     .hidden {
       display: none !important;
     }
@@ -598,7 +581,22 @@
     .mb-lg { margin-bottom: var(--space-lg); }
     .mb-xl { margin-bottom: var(--space-xl); }
 
-    /* Responsive Styles */
+    .load-more-button {
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-md);
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      margin: var(--space-lg) auto;
+      display: block;
+    }
+
+    .load-more-button:hover {
+      background: var(--primary-dark);
+    }
+
     @media (max-width: 1200px) {
       :root {
         --player-height: 320px;
@@ -655,7 +653,6 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="container">
       <div class="header-container">
@@ -667,9 +664,7 @@
     </div>
   </header>
 
-  <!-- Main App -->
   <main class="app">
-    <!-- Player Section -->
     <section class="player-section">
       <div class="container">
         <div class="player-container" id="playerContainer">
@@ -696,7 +691,6 @@
       </div>
     </section>
     
-    <!-- Search Section -->
     <section class="search-section">
       <div class="container">
         <div class="search-container">
@@ -729,7 +723,6 @@
       </div>
     </section>
     
-    <!-- Results Section -->
     <section class="results-section">
       <div class="container">
         <div class="results-header">
@@ -739,9 +732,7 @@
           </div>
         </div>
         
-        <!-- Results Container -->
-        <div id="resultsContainer">
-          <!-- Initial State -->
+        <div id="resultsContainer" aria-live="polite">
           <div class="empty-state">
             <div class="empty-icon">
               <i class="fas fa-search"></i>
@@ -752,13 +743,11 @@
             </p>
           </div>
           
-          <!-- Loading State (Hidden by Default) -->
           <div class="loading-state hidden" id="loadingState">
             <div class="spinner"></div>
             <p class="loading-text">Searching for videos...</p>
           </div>
           
-          <!-- Error State (Hidden by Default) -->
           <div class="error-state hidden" id="errorState">
             <div class="error-icon">
               <i class="fas fa-exclamation-triangle"></i>
@@ -771,14 +760,13 @@
             </button>
           </div>
           
-          <!-- Results Grid (Hidden by Default) -->
           <div class="results-grid hidden" id="resultsGrid"></div>
+          <button class="load-more-button hidden" id="loadMoreButton">Load More</button>
         </div>
       </div>
     </section>
   </main>
   
-  <!-- Footer -->
   <footer>
     <div class="container">
       <div class="footer-container">
@@ -793,242 +781,290 @@
           </a>
         </div>
         <p class="footer-copyright">
-          &copy; 2023 YouTube Player. All rights reserved.
+          &copy; 2025 YouTube Player. All rights reserved.
         </p>
       </div>
     </div>
   </footer>
 
   <script>
-  const API_ENDPOINT = 'https://api.loopy5418.dev/yt-search';
-  const DEFAULT_THUMBNAIL = 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg';
+    const API_ENDPOINT = 'https://api.loopy5418.dev/yt-search';
+    const DEFAULT_THUMBNAIL = 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg';
+    const API_KEY = '1b692718-1beb-4673-9965-7b6164df5fe9';
 
-  // DOM Elements
-  const searchForm = document.getElementById('searchForm');
-  const searchInput = document.getElementById('searchInput');
-  const playerContainer = document.getElementById('playerContainer');
-  const playerPlaceholder = document.getElementById('playerPlaceholder');
-  const playerIframe = document.getElementById('playerIframe');
-  const playerInfo = document.getElementById('playerInfo');
-  const playerTitle = document.getElementById('playerTitle');
-  const playerChannel = document.getElementById('playerChannel');
-  const playerViews = document.getElementById('playerViews');
-  const resultsContainer = document.getElementById('resultsContainer');
-  const resultsGrid = document.getElementById('resultsGrid');
-  const resultsTitle = document.getElementById('resultsTitle');
-  const resultsCount = document.getElementById('resultsCount');
-  const loadingState = document.getElementById('loadingState');
-  const errorState = document.getElementById('errorState');
-  const errorText = document.getElementById('errorText');
-  const retryButton = document.getElementById('retryButton');
+    // DOM Elements
+    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    const playerContainer = document.getElementById('playerContainer');
+    const playerPlaceholder = document.getElementById('playerPlaceholder');
+    const playerIframe = document.getElementById('playerIframe');
+    const playerInfo = document.getElementById('playerInfo');
+    const playerTitle = document.getElementById('playerTitle');
+    const playerChannel = document.getElementById('playerChannel');
+    const playerViews = document.getElementById('playerViews');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultsGrid = document.getElementById('resultsGrid');
+    const resultsTitle = document.getElementById('resultsTitle');
+    const resultsCount = document.getElementById('resultsCount');
+    const loadingState = document.getElementById('loadingState');
+    const errorState = document.getElementById('errorState');
+    const errorText = document.getElementById('errorText');
+    const retryButton = document.getElementById('retryButton');
+    const loadMoreButton = document.getElementById('loadMoreButton');
 
-  // App State
-  let currentQuery = '';
-  let currentVideo = null;
-  let searchResults = [];
+    // App State
+    let currentQuery = '';
+    let currentVideo = null;
+    let searchResults = [];
+    let nextPageToken = '';
+    const cache = new Map();
 
-  // Initialize the app
-  function init() {
-    setupEventListeners();
-    // Load initial results (optional)
-    performSearch('example');
-  }
+    // Initialize the app
+    function init() {
+      console.log('Initializing app...');
+      setupEventListeners();
+      performSearch('example'); // โหลดผลการค้นหาเริ่มต้น
+    }
 
-  // Set up event listeners
-  function setupEventListeners() {
-    searchForm.addEventListener('submit', handleSearch);
-    retryButton.addEventListener('click', retrySearch);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '/' && document.activeElement !== searchInput) {
-        e.preventDefault();
-        searchInput.focus();
-      }
-    });
-  }
-
-  // Handle search form submission
-  async function handleSearch(e) {
-    e.preventDefault();
-    const query = searchInput.value.trim();
-    if (!query) return;
-    currentQuery = query;
-    performSearch(query);
-  }
-
-  // Perform the actual search
-  async function performSearch(query) {
-    try {
-      showLoading();
-      const url = new URL(API_ENDPOINT);
-      url.searchParams.set('query', query);
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
+    // Set up event listeners
+    function setupEventListeners() {
+      searchForm.addEventListener('submit', handleSearch);
+      retryButton.addEventListener('click', retrySearch);
+      loadMoreButton.addEventListener('click', () => performSearch(currentQuery, nextPageToken));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput.focus();
         }
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      processResults(data);
-    } catch (error) {
-      console.error('Search error:', error);
-      showError(error.message || 'An error occurred during the search');
+      // Debounce search input
+      searchInput.addEventListener('input', debounce((e) => {
+        const query = e.target.value.trim();
+        if (query) {
+          currentQuery = query;
+          performSearch(query);
+        }
+      }, 500));
     }
-  }
 
-  // Process API results
-  function processResults(data) {
-    searchResults = [];
-    if (!data || Object.keys(data).length === 0 || (data.success === false)) {
-      showEmptyResults();
-      return;
+    // Debounce function
+    function debounce(func, wait) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
     }
-    for (const key in data) {
-      if (key === 'success') continue;
-      const item = data[key];
-      if (item && item.title) {
-        searchResults.push({
-          id: item.videoId || key,
-          title: item.title || 'No video title',
-          channel: item.channel || 'Unknown channel',
-          thumbnail: item.thumbnail || DEFAULT_THUMBNAIL,
-          link: item.link || `https://www.youtube.com/watch?v=${item.videoId || key}`,
-          views: item.views || 'Unknown views',
-          duration: item.duration || '--:--'
+
+    // Handle search form submission
+    async function handleSearch(e) {
+      e.preventDefault();
+      const query = searchInput.value.trim();
+      if (!query) return;
+      currentQuery = query;
+      console.log('Searching for:', query);
+      nextPageToken = ''; // Reset pagination
+      performSearch(query);
+    }
+
+    // Perform the actual search
+    async function performSearch(query, pageToken = '') {
+      const cacheKey = `${query}:${pageToken}`;
+      if (cache.has(cacheKey)) {
+        console.log('Using cached results for:', cacheKey);
+        processResults(cache.get(cacheKey));
+        return;
+      }
+      try {
+        showLoading();
+        const url = new URL(API_ENDPOINT);
+        url.searchParams.set('query', query);
+        if (pageToken) url.searchParams.set('pageToken', pageToken);
+        console.log('Fetching from:', url.toString());
+        const response = await fetch(url.toString(), {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'API-KEY': API_KEY // ลบ header นี้เมื่อใช้ backend proxy ใน production
+          }
         });
+        if (!response.ok) {
+          if (response.status === 429) {
+            throw new Error('Rate limit exceeded. Please try again later.');
+          }
+          if (response.status === 401) {
+            throw new Error('Invalid API key. Please check your API key.');
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('API response:', data);
+        cache.set(cacheKey, data);
+        processResults(data);
+      } catch (error) {
+        console.error('Search error:', error);
+        showError(error.message || 'An error occurred during the search');
       }
     }
-    displayResults();
-  }
 
-  // Display search results
-  function displayResults() {
-    resultsTitle.textContent = `Results for "${currentQuery}"`;
-    resultsCount.textContent = `${searchResults.length} videos`;
-    resultsGrid.innerHTML = '';
-    searchResults.forEach(video => {
-      const videoCard = createVideoCard(video);
-      resultsGrid.appendChild(videoCard);
-    });
-    showResults();
-    if (!currentVideo && searchResults.length > 0) {
-      playVideo(searchResults[0]);
+    // Process API results
+    function processResults(data) {
+      if (!pageToken) searchResults = []; // Clear results for new search
+      nextPageToken = data.nextPageToken || '';
+      if (!data || Object.keys(data).length === 0 || (data.success === false)) {
+        console.log('No results or invalid response:', data);
+        showEmptyResults();
+        return;
+      }
+      for (const key in data) {
+        if (key === 'success' || key === 'nextPageToken') continue;
+        const item = data[key];
+        if (item && item.title) {
+          searchResults.push({
+            id: item.videoId || key,
+            title: item.title || 'No video title',
+            channel: item.channel || 'Unknown channel',
+            thumbnail: item.thumbnail || DEFAULT_THUMBNAIL,
+            link: item.link || `https://www.youtube.com/watch?v=${item.videoId || key}`,
+            views: item.views || 'Unknown views',
+            duration: item.duration || '--:--'
+          });
+        }
+      }
+      console.log('Processed results:', searchResults);
+      displayResults();
+      loadMoreButton.classList.toggle('hidden', !nextPageToken);
     }
-  }
 
-  // Create a video card element
-  function createVideoCard(video) {
-    const card = document.createElement('div');
-    card.className = 'video-card';
-    card.dataset.videoId = video.id;
-    card.innerHTML = `
-      <div class="video-thumbnail">
-        <img src="${escapeHtml(video.thumbnail)}" alt="${escapeHtml(video.title)}" loading="lazy">
-        <span class="video-duration">${escapeHtml(video.duration)}</span>
-      </div>
-      <div class="video-content">
-        <h3 class="video-title">${escapeHtml(video.title)}</h3>
-        <div class="video-meta">
-          <div class="video-channel">
-            <div class="channel-avatar"></div>
-            <span>${escapeHtml(video.channel)}</span>
-          </div>
-          <span>${escapeHtml(video.views)}</span>
+    // Display search results
+    function displayResults() {
+      resultsTitle.textContent = `Results for "${currentQuery}"`;
+      resultsCount.textContent = `${searchResults.length} videos`;
+      resultsGrid.innerHTML = '';
+      searchResults.forEach(video => {
+        const videoCard = createVideoCard(video);
+        resultsGrid.appendChild(videoCard);
+      });
+      showResults();
+      if (!currentVideo && searchResults.length > 0) {
+        playVideo(searchResults[0]);
+      }
+    }
+
+    // Create a video card element
+    function createVideoCard(video) {
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.dataset.videoId = video.id;
+      card.innerHTML = `
+        <div class="video-thumbnail">
+          <img src="${escapeHtml(video.thumbnail)}" alt="${escapeHtml(video.title)}" loading="lazy">
+          <span class="video-duration">${escapeHtml(video.duration)}</span>
         </div>
-      </div>
-    `;
-    card.addEventListener('click', () => playVideo(video));
-    return card;
-  }
-
-  // Play a video in the player
-  function playVideo(video) {
-    currentVideo = video;
-    const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`;
-    playerIframe.src = embedUrl;
-    playerIframe.classList.remove('hidden');
-    playerPlaceholder.classList.add('hidden');
-    playerTitle.textContent = video.title;
-    playerChannel.textContent = video.channel;
-    playerViews.textContent = video.views;
-    playerInfo.classList.remove('hidden');
-    if (window.innerWidth < 768) {
-      playerContainer.scrollIntoView({ behavior: 'smooth' });
+        <div class="video-content">
+          <h3 class="video-title">${escapeHtml(video.title)}</h3>
+          <div class="video-meta">
+            <div class="video-channel">
+              <div class="channel-avatar"></div>
+              <span>${escapeHtml(video.channel)}</span>
+            </div>
+            <span>${escapeHtml(video.views)}</span>
+          </div>
+        </div>
+      `;
+      card.addEventListener('click', () => playVideo(video));
+      return card;
     }
-    highlightSelectedVideo(video.id);
-  }
 
-  // Highlight the selected video card
-  function highlightSelectedVideo(videoId) {
-    const allCards = document.querySelectorAll('.video-card');
-    allCards.forEach(card => {
-      if (card.dataset.videoId === videoId) {
-        card.style.borderColor = 'var(--primary)';
-        card.style.boxShadow = 'var(--shadow-primary)';
-      } else {
-        card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-        card.style.boxShadow = 'none';
+    // Play a video in the player
+    function playVideo(video) {
+      currentVideo = video;
+      const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`;
+      playerIframe.src = embedUrl;
+      playerIframe.classList.remove('hidden');
+      playerPlaceholder.classList.add('hidden');
+      playerTitle.textContent = video.title;
+      playerChannel.textContent = video.channel;
+      playerViews.textContent = video.views;
+      playerInfo.classList.remove('hidden');
+      if (window.innerWidth < 768) {
+        playerContainer.scrollIntoView({ behavior: 'smooth' });
       }
-    });
-  }
-
-  // Retry the last search
-  function retrySearch() {
-    if (currentQuery) {
-      performSearch(currentQuery);
+      highlightSelectedVideo(video.id);
     }
-  }
 
-  // Show loading state
-  function showLoading() {
-    loadingState.classList.remove('hidden');
-    errorState.classList.add('hidden');
-    resultsGrid.classList.add('hidden');
-  }
-
-  // Show results
-  function showResults() {
-    loadingState.classList.add('hidden');
-    errorState.classList.add('hidden');
-    resultsGrid.classList.remove('hidden');
-  }
-
-  // Show error state
-  function showError(message) {
-    errorText.textContent = message;
-    loadingState.classList.add('hidden');
-    errorState.classList.remove('hidden');
-    resultsGrid.classList.add('hidden');
-  }
-
-  // Show empty results state
-  function showEmptyResults() {
-    loadingState.classList.add('hidden');
-    errorState.classList.add('hidden');
-    resultsGrid.classList.add('hidden');
-    const emptyState = document.querySelector('.empty-state');
-    if (emptyState) {
-      emptyState.querySelector('h3').textContent = 'No Results Found';
-      emptyState.querySelector('.empty-text').textContent = 
-        'No videos match your search. Try a different query.';
+    // Highlight the selected video card
+    function highlightSelectedVideo(videoId) {
+      const allCards = document.querySelectorAll('.video-card');
+      allCards.forEach(card => {
+        if (card.dataset.videoId === videoId) {
+          card.style.borderColor = 'var(--primary)';
+          card.style.boxShadow = 'var(--shadow-primary)';
+        } else {
+          card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+          card.style.boxShadow = 'none';
+        }
+      });
     }
-  }
 
-  // Helper function to escape HTML
-  function escapeHtml(unsafe) {
-    if (!unsafe) return '';
-    return unsafe
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
+    // Retry the last search
+    function retrySearch() {
+      if (currentQuery) {
+        performSearch(currentQuery, nextPageToken);
+      }
+    }
 
-  // Initialize the app when DOM is loaded
-  document.addEventListener('DOMContentLoaded', init);
-</script>
+    // Show loading state
+    function showLoading() {
+      loadingState.classList.remove('hidden');
+      errorState.classList.add('hidden');
+      resultsGrid.classList.add('hidden');
+      loadMoreButton.classList.add('hidden');
+    }
+
+    // Show results
+    function showResults() {
+      loadingState.classList.add('hidden');
+      errorState.classList.add('hidden');
+      resultsGrid.classList.remove('hidden');
+    }
+
+    // Show error state
+    function showError(message) {
+      errorText.textContent = message;
+      loadingState.classList.add('hidden');
+      errorState.classList.remove('hidden');
+      resultsGrid.classList.add('hidden');
+      loadMoreButton.classList.add('hidden');
+    }
+
+    // Show empty results state
+    function showEmptyResults() {
+      loadingState.classList.add('hidden');
+      errorState.classList.add('hidden');
+      resultsGrid.classList.add('hidden');
+      loadMoreButton.classList.add('hidden');
+      const emptyState = document.querySelector('.empty-state');
+      if (emptyState) {
+        emptyState.querySelector('h3').textContent = 'No Results Found';
+        emptyState.querySelector('.empty-text').textContent = 
+          'No videos match your search. Try a different query.';
+      }
+    }
+
+    // Helper function to escape HTML
+    function escapeHtml(unsafe) {
+      if (!unsafe) return '';
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Initialize the app when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
