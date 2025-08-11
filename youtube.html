@@ -7,654 +7,154 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      /* Primary Colors */
-      --primary: #ff0000; /* YouTube Red */
+      --primary: #ff0000;
       --primary-dark: #cc0000;
       --secondary: #282828;
       --accent: #606060;
       --danger: #ff3333;
       --success: #00c853;
       --warning: #ffab00;
-      --discord: #5865F2; /* Discord Brand Color */
-      --discord-dark: #4752C4; /* Discord Hover Color */
-      
-      /* Background Colors */
+      --discord: #5865F2;
+      --discord-dark: #4752C4;
       --bg-1: #0f0f0f;
       --bg-2: #181818;
       --bg-3: #212121;
       --bg-card: rgba(33, 33, 33, 0.9);
       --bg-glass: rgba(255, 255, 255, 0.08);
-      
-      /* Text Colors */
       --text: #ffffff;
       --text-muted: #aaaaaa;
       --text-light: #f1f1f1;
-      
-      /* Border Radius */
       --radius-sm: 4px;
       --radius-md: 8px;
       --radius-lg: 12px;
       --radius-xl: 16px;
       --radius-full: 9999px;
-      
-      /* Shadows */
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
       --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
       --shadow-primary: 0 0 12px rgba(255, 0, 0, 0.3);
-      
-      /* Spacing */
       --space-xs: 4px;
       --space-sm: 8px;
       --space-md: 16px;
       --space-lg: 24px;
       --space-xl: 32px;
       --space-xxl: 48px;
-      
-      /* Fonts */
       --font-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
       --font-mono: 'Roboto Mono', monospace;
-      
-      /* Sizes */
       --max-width: 1400px;
       --header-height: 56px;
       --player-height: 360px;
     }
 
-    /* Reset and Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      background: var(--bg-1);
-      color: var(--text);
-      font-family: var(--font-sans);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      padding: 0;
-      margin: 0;
-      overflow-x: hidden;
-    }
-
-    /* Typography */
-    h1, h2, h3, h4, h5, h6 {
-      font-weight: 500;
-      line-height: 1.3;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; }
+    body { min-height: 100vh; background: var(--bg-1); color: var(--text); font-family: var(--font-sans); line-height: 1.5; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    h1, h2, h3, h4, h5, h6 { font-weight: 500; line-height: 1.3; }
     h1 { font-size: 1.8rem; }
     h2 { font-size: 1.5rem; }
     h3 { font-size: 1.3rem; }
     h4 { font-size: 1.1rem; }
     h5 { font-size: 1rem; }
     h6 { font-size: 0.9rem; }
-
-    @media (max-width: 768px) {
-      h1 { font-size: 1.5rem; }
-      h2 { font-size: 1.3rem; }
-      h3 { font-size: 1.1rem; }
-    }
-
-    p {
-      margin-bottom: var(--space-md);
-      font-size: 0.95rem;
-    }
-
-    a {
-      color: var(--text-light);
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    a:hover {
-      color: var(--primary);
-    }
-
-    /* Layout */
-    .container {
-      width: 100%;
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 0 var(--space-md);
-    }
-
-    /* Header */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--bg-2);
-      height: var(--header-height);
-      display: flex;
-      align-items: center;
-      padding: 0 var(--space-md);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .header-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      max-width: var(--max-width);
-      margin: 0 auto;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-      font-weight: 500;
-      font-size: 1.2rem;
-    }
-
-    .logo-icon {
-      color: var(--primary);
-      font-size: 1.5rem;
-    }
-
-    /* Main App Layout */
-    .app {
-      display: grid;
-      grid-template-columns: 1fr;
-      min-height: calc(100vh - var(--header-height));
-    }
-
-    /* Player Section */
-    .player-section {
-      background: var(--bg-2);
-      padding: var(--space-md) 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .player-container {
-      position: relative;
-      width: 100%;
-      height: var(--player-height);
-      max-height: 70vh;
-      background: #000;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-    }
-
-    .player-placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-3);
-      color: var(--text-muted);
-      gap: var(--space-md);
-    }
-
-    .player-placeholder-icon {
-      font-size: 3rem;
-      color: var(--primary);
-    }
-
-    .player-iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .player-info {
-      margin-top: var(--space-md);
-    }
-
-    .player-title {
-      font-size: 1.2rem;
-      margin-bottom: var(--space-sm);
-    }
-
-    .player-meta {
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    /* Search Section */
-    .search-section {
-      padding: var(--space-xl) 0;
-    }
-
-    .search-container {
-      background: var(--bg-2);
-      border-radius: var(--radius-lg);
-      padding: var(--space-lg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .search-header {
-      margin-bottom: var(--space-lg);
-    }
-
-    .search-title {
-      margin-bottom: var(--space-sm);
-    }
-
-    .search-description {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    /* Search Form */
-    .search-form {
-      display: flex;
-      gap: var(--space-md);
-    }
-
-    .search-input-container {
-      flex: 1;
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: var(--space-md) var(--space-md) var(--space-md) 44px;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: var(--bg-3);
-      color: var(--text);
-      font-size: 1rem;
-      transition: all 0.2s;
-    }
-
-    .search-input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: var(--shadow-primary);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: var(--space-md);
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-    }
-
-    .search-button {
-      padding: 0 var(--space-lg);
-      border-radius: var(--radius-md);
-      background: var(--primary);
-      color: white;
-      border: none;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-
-    .search-button:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    .search-button:active {
-      transform: translateY(0);
-    }
-
-    /* Results Section */
-    .results-section {
-      padding-bottom: var(--space-xl);
-    }
-
-    .results-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-lg);
-    }
-
-    .results-title {
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-
-    .results-count {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    /* Results Grid */
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: var(--space-lg);
-    }
-
-    /* Video Card */
-    .video-card {
-      background: var(--bg-2);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .video-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .video-thumbnail {
-      width: 100%;
-      height: 180px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .video-thumbnail img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-
-    .video-card:hover .video-thumbnail img {
-      transform: scale(1.03);
-    }
-
-    .video-duration {
-      position: absolute;
-      bottom: var(--space-sm);
-      right: var(--space-sm);
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 2px 6px;
-      border-radius: var(--radius-sm);
-      font-size: 0.8rem;
-      font-weight: 500;
-    }
-
-    .video-content {
-      padding: var(--space-md);
-    }
-
-    .video-title {
-      font-size: 1rem;
-      margin-bottom: var(--space-sm);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .video-meta {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-xs);
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .video-channel {
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-
-    .channel-avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* Loading State */
-    .loading-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-xxl) 0;
-      gap: var(--space-md);
-    }
-
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgba(255, 255, 255, 0.1);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .loading-text {
-      color: var(--text-muted);
-    }
-
-    /* Empty State */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-xxl) 0;
-      gap: var(--space-md);
-      text-align: center;
-    }
-
-    .empty-icon {
-      font-size: 3rem;
-      color: var(--text-muted);
-    }
-
-    .empty-text {
-      color: var(--text-muted);
-      max-width: 500px;
-    }
-
-    /* Error State */
-    .error-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-xxl) 0;
-      gap: var(--space-md);
-      text-align: center;
-    }
-
-    .error-icon {
-      font-size: 3rem;
-      color: var(--danger);
-    }
-
-    .error-text {
-      color: var(--danger);
-      max-width: 500px;
-    }
-
-    .retry-button {
-      padding: var(--space-sm) var(--space-md);
-      border-radius: var(--radius-md);
-      background: var(--primary);
-      color: white;
-      border: none;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-
-    .retry-button:hover {
-      opacity: 0.9;
-    }
-
-    /* Footer */
-    footer {
-      background: var(--bg-2);
-      padding: var(--space-xl) 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .footer-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-md);
-      text-align: center;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: var(--space-lg);
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .footer-link {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      transition: color 0.2s;
-    }
-
-    .footer-link:hover {
-      color: var(--primary);
-    }
-
-    .discord-button {
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-      padding: var(--space-sm) var(--space-md);
-      background: var(--discord);
-      color: white;
-      border-radius: var(--radius-md);
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-
-    .discord-button:hover {
-      background: var(--discord-dark);
-      transform: translateY(-1px);
-      color: white;
-    }
-
-    .discord-button:active {
-      transform: translateY(0);
-    }
-
-    .discord-button i {
-      font-size: 1rem;
-    }
-
-    .footer-copyright {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    /* Utility Classes */
-    .hidden {
-      display: none !important;
-    }
-
-    .text-center {
-      text-align: center;
-    }
-
-    .text-muted {
-      color: var(--text-muted);
-    }
-
+    @media (max-width: 768px) { h1 { font-size: 1.5rem; } h2 { font-size: 1.3rem; } h3 { font-size: 1.1rem; } }
+    p { margin-bottom: var(--space-md); font-size: 0.95rem; }
+    a { color: var(--text-light); text-decoration: none; transition: all 0.2s; }
+    a:hover { color: var(--primary); }
+    .container { width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md); }
+    header { position: sticky; top: 0; z-index: 100; background: var(--bg-2); height: var(--header-height); display: flex; align-items: center; padding: 0 var(--space-md); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .header-container { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: var(--max-width); margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: var(--space-sm); font-weight: 500; font-size: 1.2rem; }
+    .logo-icon { color: var(--primary); font-size: 1.5rem; }
+    .app { display: grid; grid-template-columns: 1fr; min-height: calc(100vh - var(--header-height)); }
+    .player-section { background: var(--bg-2); padding: var(--space-md) 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .player-container { position: relative; width: 100%; height: var(--player-height); max-height: 70vh; background: #000; border-radius: var(--radius-md); overflow: hidden; }
+    .player-placeholder { display: flex; align-items: center; justify-content: center; flex-direction: column; width: 100%; height: 100%; background: var(--bg-3); color: var(--text-muted); gap: var(--space-md); }
+    .player-placeholder-icon { font-size: 3rem; color: var(--primary); }
+    .player-iframe { width: 100%; height: 100%; border: none; }
+    .player-info { margin-top: var(--space-md); }
+    .player-title { font-size: 1.2rem; margin-bottom: var(--space-sm); }
+    .player-meta { display: flex; align-items: center; gap: var(--space-md); color: var(--text-muted); font-size: 0.9rem; }
+    .search-section { padding: var(--space-xl) 0; }
+    .search-container { background: var(--bg-2); border-radius: var(--radius-lg); padding: var(--space-lg); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .search-header { margin-bottom: var(--space-lg); }
+    .search-title { margin-bottom: var(--space-sm); }
+    .search-description { color: var(--text-muted); font-size: 0.95rem; }
+    .search-form { display: flex; gap: var(--space-md); }
+    .search-input-container { flex: 1; position: relative; }
+    .search-input { width: 100%; padding: var(--space-md) var(--space-md) var(--space-md) 44px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1); background: var(--bg-3); color: var(--text); font-size: 1rem; transition: all 0.2s; }
+    .search-input:focus { outline: none; border-color: var(--primary); box-shadow: var(--shadow-primary); }
+    .search-icon { position: absolute; left: var(--space-md); top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+    .search-button { padding: 0 var(--space-lg); border-radius: var(--radius-md); background: var(--primary); color: white; border: none; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: var(--space-sm); }
+    .search-button:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .search-button:active { transform: translateY(0); }
+    .results-section { padding-bottom: var(--space-xl); }
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); }
+    .results-title { display: flex; align-items: center; gap: var(--space-sm); }
+    .results-count { color: var(--text-muted); font-size: 0.9rem; }
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-lg); }
+    .video-card { background: var(--bg-2); border-radius: var(--radius-md); overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; cursor: pointer; }
+    .video-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: rgba(255, 255, 255, 0.2); }
+    .video-thumbnail { width: 100%; height: 180px; position: relative; overflow: hidden; }
+    .video-thumbnail img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+    .video-card:hover .video-thumbnail img { transform: scale(1.03); }
+    .video-duration { position: absolute; bottom: var(--space-sm); right: var(--space-sm); background: rgba(0, 0, 0, 0.8); color: white; padding: 2px 6px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 500; }
+    .video-content { padding: var(--space-md); }
+    .video-title { font-size: 1rem; margin-bottom: var(--space-sm); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
+    .video-meta { display: flex; flex-direction: column; gap: var(--space-xs); font-size: 0.85rem; color: var(--text-muted); }
+    .video-channel { display: flex; align-items: center; gap: var(--space-sm); }
+    .channel-avatar { width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); }
+    .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-xxl) 0; gap: var(--space-md); }
+    .spinner { width: 48px; height: 48px; border: 4px solid rgba(255, 255, 255, 0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--text-muted); }
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-xxl) 0; gap: var(--space-md); text-align: center; }
+    .empty-icon { font-size: 3rem; color: var(--text-muted); }
+    .empty-text { color: var(--text-muted); max-width: 500px; }
+    .error-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-xxl) 0; gap: var(--space-md); text-align: center; }
+    .error-icon { font-size: 3rem; color: var(--danger); }
+    .error-text { color: var(--danger); max-width: 500px; }
+    .retry-button { padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); background: var(--primary); color: white; border: none; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: var(--space-sm); }
+    .retry-button:hover { opacity: 0.9; }
+    .load-more-button { padding: var(--space-md) var(--space-lg); border-radius: var(--radius-md); background: var(--primary); color: white; border: none; font-weight: 500; cursor: pointer; margin: var(--space-lg) auto; display: block; }
+    .load-more-button:hover { background: var(--primary-dark); }
+    footer { background: var(--bg-2); padding: var(--space-xl) 0; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    .footer-container { display: flex; flex-direction: column; align-items: center; gap: var(--space-md); text-align: center; }
+    .footer-links { display: flex; gap: var(--space-lg); flex-wrap: wrap; justify-content: center; align-items: center; }
+    .footer-link { color: var(--text-muted); font-size: 0.9rem; transition: color 0.2s; }
+    .footer-link:hover { color: var(--primary); }
+    .discord-button { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: var(--discord); color: white; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+    .discord-button:hover { background: var(--discord-dark); transform: translateY(-1px); color: white; }
+    .discord-button:active { transform: translateY(0); }
+    .discord-button i { font-size: 1rem; }
+    .footer-copyright { color: var(--text-muted); font-size: 0.85rem; }
+    .hidden { display: none !important; }
+    .text-center { text-align: center; }
+    .text-muted { color: var(--text-muted); }
     .mt-sm { margin-top: var(--space-sm); }
     .mt-md { margin-top: var(--space-md); }
     .mt-lg { margin-top: var(--space-lg); }
     .mt-xl { margin-top: var(--space-xl); }
-
     .mb-sm { margin-bottom: var(--space-sm); }
     .mb-md { margin-bottom: var(--space-md); }
     .mb-lg { margin-bottom: var(--space-lg); }
     .mb-xl { margin-bottom: var(--space-xl); }
-
-    /* Responsive Styles */
-    @media (max-width: 1200px) {
-      :root {
-        --player-height: 320px;
-      }
-    }
-
-    @media (max-width: 992px) {
-      :root {
-        --player-height: 280px;
-      }
-    }
-
+    @media (max-width: 1200px) { :root { --player-height: 320px; } }
+    @media (max-width: 992px) { :root { --player-height: 280px; } }
     @media (max-width: 768px) {
-      :root {
-        --player-height: 240px;
-      }
-      
-      .search-form {
-        flex-direction: column;
-      }
-      
-      .search-button {
-        width: 100%;
-        justify-content: center;
-        padding: var(--space-md);
-      }
-      
-      .results-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      }
-
-      .footer-links {
-        flex-direction: column;
-        gap: var(--space-md);
-      }
+      :root { --player-height: 240px; }
+      .search-form { flex-direction: column; }
+      .search-button { width: 100%; justify-content: center; padding: var(--space-md); }
+      .results-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+      .footer-links { flex-direction: column; gap: var(--space-md); }
     }
-
     @media (max-width: 576px) {
-      :root {
-        --player-height: 200px;
-        --space-xl: 24px;
-        --space-lg: 20px;
-        --space-md: 16px;
-      }
-      
-      .results-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .video-thumbnail {
-        height: 160px;
-      }
+      :root { --player-height: 200px; --space-xl: 24px; --space-lg: 20px; --space-md: 16px; }
+      .results-grid { grid-template-columns: 1fr; }
+      .video-thumbnail { height: 160px; }
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="container">
       <div class="header-container">
@@ -666,9 +166,7 @@
     </div>
   </header>
 
-  <!-- Main App -->
   <main class="app">
-    <!-- Player Section -->
     <section class="player-section">
       <div class="container">
         <div class="player-container" id="playerContainer">
@@ -676,15 +174,8 @@
             <i class="fab fa-youtube player-placeholder-icon"></i>
             <p>Select a video to start playing</p>
           </div>
-          <iframe 
-            class="player-iframe hidden" 
-            id="playerIframe"
-            frameborder="0" 
-            allowfullscreen
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          ></iframe>
+          <iframe class="player-iframe hidden" id="playerIframe" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
         </div>
-        
         <div class="player-info hidden" id="playerInfo">
           <h3 class="player-title" id="playerTitle"></h3>
           <div class="player-meta">
@@ -694,30 +185,18 @@
         </div>
       </div>
     </section>
-    
-    <!-- Search Section -->
+
     <section class="search-section">
       <div class="container">
         <div class="search-container">
           <div class="search-header">
             <h1 class="search-title">Search YouTube Videos</h1>
-            <p class="search-description">
-              Find and play videos instantly without leaving the site
-            </p>
+            <p class="search-description">Find and play videos instantly without leaving the site</p>
           </div>
-          
           <form class="search-form" id="searchForm">
             <div class="search-input-container">
               <i class="fas fa-search search-icon"></i>
-              <input 
-                type="search" 
-                class="search-input" 
-                id="searchInput" 
-                placeholder="Search for videos, e.g., 'Thai cooking tutorial'" 
-                aria-label="Search videos"
-                autocomplete="off"
-                required
-              >
+              <input type="search" class="search-input" id="searchInput" placeholder="Search for videos, e.g., 'Thai cooking tutorial'" aria-label="Search videos" autocomplete="off" required>
             </div>
             <button type="submit" class="search-button">
               <i class="fas fa-search"></i>
@@ -727,8 +206,7 @@
         </div>
       </div>
     </section>
-    
-    <!-- Results Section -->
+
     <section class="results-section">
       <div class="container">
         <div class="results-header">
@@ -737,31 +215,18 @@
             <span class="results-count" id="resultsCount"></span>
           </div>
         </div>
-        
-        <!-- Results Container -->
         <div id="resultsContainer" aria-live="polite">
-          <!-- Initial State -->
           <div class="empty-state">
-            <div class="empty-icon">
-              <i class="fas fa-search"></i>
-            </div>
+            <div class="empty-icon"><i class="fas fa-search"></i></div>
             <h3>Start Your Search</h3>
-            <p class="empty-text">
-              Enter a query in the search bar above to find YouTube videos
-            </p>
+            <p class="empty-text">Enter a query in the search bar above to find YouTube videos</p>
           </div>
-          
-          <!-- Loading State (Hidden by Default) -->
           <div class="loading-state hidden" id="loadingState">
             <div class="spinner"></div>
             <p class="loading-text">Searching for videos...</p>
           </div>
-          
-          <!-- Error State (Hidden by Default) -->
           <div class="error-state hidden" id="errorState">
-            <div class="error-icon">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
+            <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
             <h3>An Error Occurred</h3>
             <p class="error-text" id="errorText"></p>
             <button class="retry-button" id="retryButton">
@@ -769,18 +234,13 @@
               <span>Try Again</span>
             </button>
           </div>
-          
-          <!-- Results Grid (Hidden by Default) -->
           <div class="results-grid hidden" id="resultsGrid"></div>
-          
-          <!-- Load More Button -->
           <button class="load-more-button hidden" id="loadMoreButton">Load More</button>
         </div>
       </div>
     </section>
   </main>
-  
-  <!-- Footer -->
+
   <footer>
     <div class="container">
       <div class="footer-container">
@@ -794,9 +254,7 @@
             <span>Join Our Discord</span>
           </a>
         </div>
-        <p class="footer-copyright">
-          &copy; 2025 YouTube Player. All rights reserved.
-        </p>
+        <p class="footer-copyright">&copy; 2025 YouTube Player. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -804,6 +262,8 @@
   <script>
     const API_ENDPOINT = 'https://api.loopy5418.dev/yt-search';
     const DEFAULT_THUMBNAIL = 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg';
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 2000;
 
     // DOM Elements
     const searchForm = document.getElementById('searchForm');
@@ -836,7 +296,7 @@
     function init() {
       console.log('Initializing app...');
       setupEventListeners();
-      performSearch('example'); // โหลดผลการค้นหาเริ่มต้น
+      performSearch('example');
     }
 
     // Set up event listeners
@@ -850,7 +310,6 @@
           searchInput.focus();
         }
       });
-      // Debounce search input
       searchInput.addEventListener('input', debounce((e) => {
         const query = e.target.value.trim();
         if (query) {
@@ -879,8 +338,8 @@
       performSearch(query);
     }
 
-    // Perform the actual search
-    async function performSearch(query, pageToken = '') {
+    // Perform the actual search with retry logic
+    async function performSearch(query, pageToken = '', retryCount = 0) {
       const cacheKey = `${query}:${pageToken}`;
       if (cache.has(cacheKey)) {
         console.log('Using cached results for:', cacheKey);
@@ -895,21 +354,27 @@
         console.log('Fetching from:', url.toString());
         const response = await fetch(url.toString(), {
           method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
+          headers: { 'Accept': 'application/json' }
         });
         if (!response.ok) {
+          let errorMessage = 'An error occurred during the search';
           if (response.status === 400) {
-            throw new Error('Bad request. Please check the query or API configuration.');
+            errorMessage = 'Bad request. Please check the query or contact the administrator.';
+          } else if (response.status === 401) {
+            errorMessage = 'Unauthorized access. API key may be invalid.';
+          } else if (response.status === 429) {
+            if (retryCount < MAX_RETRIES) {
+              console.log(`Rate limit exceeded, retrying (${retryCount + 1}/${MAX_RETRIES})...`);
+              await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+              return performSearch(query, pageToken, retryCount + 1);
+            }
+            errorMessage = 'Rate limit exceeded. Please try again later.';
+          } else {
+            errorMessage = `HTTP error! status: ${response.status}`;
           }
-          if (response.status === 401) {
-            throw new Error('Invalid API key. Please contact the administrator.');
-          }
-          if (response.status === 429) {
-            throw new Error('Rate limit exceeded. Please try again later.');
-          }
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorData = await response.text();
+          console.error('Error response:', errorData);
+          throw new Error(errorMessage);
         }
         const data = await response.json();
         console.log('API response:', data);
@@ -917,35 +382,35 @@
         processResults(data);
       } catch (error) {
         console.error('Search error:', error);
-        showError(error.message || 'An error occurred during the search');
+        showError(error.message);
       }
     }
 
     // Process API results
     function processResults(data) {
-      if (!data || Object.keys(data).length === 0 || data.success === false) {
+      searchResults = nextPageToken ? searchResults : [];
+      nextPageToken = data.nextPageToken || '';
+      if (!data || data.success === false || (Object.keys(data).length === 0 && !Array.isArray(data))) {
         console.log('No results or invalid response:', data);
         showEmptyResults();
         return;
       }
-      nextPageToken = data.nextPageToken || '';
-      const newResults = [];
-      for (const key in data) {
-        if (key === 'success' || key === 'nextPageToken') continue;
-        const item = data[key];
-        if (item && item.title) {
-          newResults.push({
-            id: item.videoId || key,
-            title: item.title || 'No video title',
-            channel: item.channel || 'Unknown channel',
-            thumbnail: item.thumbnail || DEFAULT_THUMBNAIL,
-            link: item.link || `https://www.youtube.com/watch?v=${item.videoId || key}`,
-            views: item.views || 'Unknown views',
-            duration: item.duration || '--:--'
-          });
-        }
+      const newResults = Array.isArray(data) ? data : Object.values(data).filter(item => item && item.title && item !== true);
+      if (newResults.length === 0) {
+        showEmptyResults();
+        return;
       }
-      searchResults = pageToken ? [...searchResults, ...newResults] : newResults;
+      newResults.forEach(item => {
+        searchResults.push({
+          id: item.videoId || item.id,
+          title: item.title || 'No video title',
+          channel: item.channel || 'Unknown channel',
+          thumbnail: item.thumbnail || DEFAULT_THUMBNAIL,
+          link: item.link || `https://www.youtube.com/watch?v=${item.videoId || item.id}`,
+          views: item.views || 'Unknown views',
+          duration: item.duration || '--:--'
+        });
+      });
       console.log('Processed results:', searchResults);
       displayResults();
       loadMoreButton.classList.toggle('hidden', !nextPageToken);
@@ -1062,8 +527,7 @@
       const emptyState = document.querySelector('.empty-state');
       if (emptyState) {
         emptyState.querySelector('h3').textContent = 'No Results Found';
-        emptyState.querySelector('.empty-text').textContent = 
-          'No videos match your search. Try a different query.';
+        emptyState.querySelector('.empty-text').textContent = 'No videos match your search. Try a different query.';
       }
     }
 
