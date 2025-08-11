@@ -20,14 +20,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Test API connectivity
+      - name: Test API connectivity (GET)
         run: |
-          echo "Testing API connectivity..."
-          response=$(curl -s -w "%{http_code}" -H "API-KEY: $API_KEY" "https://api.loopy5418.dev/yt-search?q=example")
-          status=${response: -3}
-          echo "API response status: $status"
-          if [ "$status" -ne 200 ]; then
-            echo "API request failed with status $status"
+          echo "Testing API connectivity with GET..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -H "API-KEY: $API_KEY" "https://api.loopy5418.dev/yt-search?query=example")
+          STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "API response status: $STATUS"
+          echo "API response body: $BODY"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "API GET request failed with status $STATUS"
+          fi
+
+      - name: Test API connectivity (POST)
+        run: |
+          echo "Testing API connectivity with POST..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST -H "API-KEY: $API_KEY" -H "Content-Type: application/json" --data '{"query":"example"}' "https://api.loopy5418.dev/yt-search")
+          STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "API response status: $STATUS"
+          echo "API response body: $BODY"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "API POST request failed with status $STATUS"
             exit 1
           fi
 
