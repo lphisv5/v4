@@ -800,286 +800,235 @@
   </footer>
 
   <script>
-    const API_KEY = process.env.API_KEY;
-    const API_ENDPOINT = 'https://api.loopy5418.dev/yt-search';
-    const DEFAULT_THUMBNAIL = 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg';
-    
-    // DOM Elements
-    const searchForm = document.getElementById('searchForm');
-    const searchInput = document.getElementById('searchInput');
-    const playerContainer = document.getElementById('playerContainer');
-    const playerPlaceholder = document.getElementById('playerPlaceholder');
-    const playerIframe = document.getElementById('playerIframe');
-    const playerInfo = document.getElementById('playerInfo');
-    const playerTitle = document.getElementById('playerTitle');
-    const playerChannel = document.getElementById('playerChannel');
-    const playerViews = document.getElementById('playerViews');
-    const resultsContainer = document.getElementById('resultsContainer');
-    const resultsGrid = document.getElementById('resultsGrid');
-    const resultsTitle = document.getElementById('resultsTitle');
-    const resultsCount = document.getElementById('resultsCount');
-    const loadingState = document.getElementById('loadingState');
-    const errorState = document.getElementById('errorState');
-    const errorText = document.getElementById('errorText');
-    const retryButton = document.getElementById('retryButton');
-    
-    // App State
-    let currentQuery = '';
-    let currentVideo = null;
-    let searchResults = [];
-    
-    // Initialize the app
-    function init() {
-      setupEventListeners();
-    }
-    
-    // Set up event listeners
-    function setupEventListeners() {
-      // Search form
-      searchForm.addEventListener('submit', handleSearch);
-      
-      // Retry button
-      retryButton.addEventListener('click', retrySearch);
-      
-      // Keyboard shortcuts
-      document.addEventListener('keydown', (e) => {
-        // Focus search input when pressing '/'
-        if (e.key === '/' && document.activeElement !== searchInput) {
-          e.preventDefault();
-          searchInput.focus();
+  const API_ENDPOINT = 'https://api.loopy5418.dev/yt-search';
+  const DEFAULT_THUMBNAIL = 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg';
+
+  // DOM Elements
+  const searchForm = document.getElementById('searchForm');
+  const searchInput = document.getElementById('searchInput');
+  const playerContainer = document.getElementById('playerContainer');
+  const playerPlaceholder = document.getElementById('playerPlaceholder');
+  const playerIframe = document.getElementById('playerIframe');
+  const playerInfo = document.getElementById('playerInfo');
+  const playerTitle = document.getElementById('playerTitle');
+  const playerChannel = document.getElementById('playerChannel');
+  const playerViews = document.getElementById('playerViews');
+  const resultsContainer = document.getElementById('resultsContainer');
+  const resultsGrid = document.getElementById('resultsGrid');
+  const resultsTitle = document.getElementById('resultsTitle');
+  const resultsCount = document.getElementById('resultsCount');
+  const loadingState = document.getElementById('loadingState');
+  const errorState = document.getElementById('errorState');
+  const errorText = document.getElementById('errorText');
+  const retryButton = document.getElementById('retryButton');
+
+  // App State
+  let currentQuery = '';
+  let currentVideo = null;
+  let searchResults = [];
+
+  // Initialize the app
+  function init() {
+    setupEventListeners();
+    // Load initial results (optional)
+    performSearch('example');
+  }
+
+  // Set up event listeners
+  function setupEventListeners() {
+    searchForm.addEventListener('submit', handleSearch);
+    retryButton.addEventListener('click', retrySearch);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    });
+  }
+
+  // Handle search form submission
+  async function handleSearch(e) {
+    e.preventDefault();
+    const query = searchInput.value.trim();
+    if (!query) return;
+    currentQuery = query;
+    performSearch(query);
+  }
+
+  // Perform the actual search
+  async function performSearch(query) {
+    try {
+      showLoading();
+      const url = new URL(API_ENDPOINT);
+      url.searchParams.set('query', query);
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
         }
       });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      processResults(data);
+    } catch (error) {
+      console.error('Search error:', error);
+      showError(error.message || 'An error occurred during the search');
     }
-    
-    // Handle search form submission
-    async function handleSearch(e) {
-      e.preventDefault();
-      
-      const query = searchInput.value.trim();
-      if (!query) return;
-      
-      currentQuery = query;
-      performSearch(query);
+  }
+
+  // Process API results
+  function processResults(data) {
+    searchResults = [];
+    if (!data || Object.keys(data).length === 0 || (data.success === false)) {
+      showEmptyResults();
+      return;
     }
-    
-    // Perform the actual search
-    async function performSearch(query) {
-      try {
-        // Show loading state
-        showLoading();
-        
-        // Build API URL
-        const url = new URL(API_ENDPOINT);
-        url.searchParams.set('query', query);
-        
-        // Make API request
-        const response = await fetch(url.toString(), {
-          method: 'GET',
-          headers: {
-            'API-KEY': API_KEY,
-            'Accept': 'application/json'
-          }
+    for (const key in data) {
+      if (key === 'success') continue;
+      const item = data[key];
+      if (item && item.title) {
+        searchResults.push({
+          id: item.videoId || key,
+          title: item.title || 'No video title',
+          channel: item.channel || 'Unknown channel',
+          thumbnail: item.thumbnail || DEFAULT_THUMBNAIL,
+          link: item.link || `https://www.youtube.com/watch?v=${item.videoId || key}`,
+          views: item.views || 'Unknown views',
+          duration: item.duration || '--:--'
         });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Process and display results
-        processResults(data);
-      } catch (error) {
-        console.error('Search error:', error);
-        showError(error.message || 'An error occurred during the search');
       }
     }
-    
-    // Process API results
-    function processResults(data) {
-      // Clear previous results
-      searchResults = [];
-      
-      // Check if we have results
-      if (!data || Object.keys(data).length === 0 || (data.success === false)) {
-        showEmptyResults();
-        return;
-      }
-      
-      // Process results (assuming data is an object with video IDs as keys)
-      for (const key in data) {
-        if (key === 'success') continue;
-        
-        const item = data[key];
-        if (item && item.title) {
-          searchResults.push({
-            id: item.videoId || key,
-            title: item.title || 'No video title',
-            channel: item.channel || 'Unknown channel',
-            thumbnail: item.thumbnail || DEFAULT_THUMBNAIL,
-            link: item.link || `https://www.youtube.com/watch?v=${item.videoId || key}`,
-            views: item.views || 'Unknown views',
-            duration: item.duration || '--:--'
-          });
-        }
-      }
-      
-      // Display results
-      displayResults();
+    displayResults();
+  }
+
+  // Display search results
+  function displayResults() {
+    resultsTitle.textContent = `Results for "${currentQuery}"`;
+    resultsCount.textContent = `${searchResults.length} videos`;
+    resultsGrid.innerHTML = '';
+    searchResults.forEach(video => {
+      const videoCard = createVideoCard(video);
+      resultsGrid.appendChild(videoCard);
+    });
+    showResults();
+    if (!currentVideo && searchResults.length > 0) {
+      playVideo(searchResults[0]);
     }
-    
-    // Display search results
-    function displayResults() {
-      // Update results title
-      resultsTitle.textContent = `Results for "${currentQuery}"`;
-      resultsCount.textContent = `${searchResults.length} videos`;
-      
-      // Clear previous results
-      resultsGrid.innerHTML = '';
-      
-      // Render each video card
-      searchResults.forEach(video => {
-        const videoCard = createVideoCard(video);
-        resultsGrid.appendChild(videoCard);
-      });
-      
-      // Show results
-      showResults();
-      
-      // Play first video automatically if player is empty
-      if (!currentVideo && searchResults.length > 0) {
-        playVideo(searchResults[0]);
-      }
-    }
-    
-    // Create a video card element
-    function createVideoCard(video) {
-      const card = document.createElement('div');
-      card.className = 'video-card';
-      card.dataset.videoId = video.id;
-      
-      card.innerHTML = `
-        <div class="video-thumbnail">
-          <img src="${escapeHtml(video.thumbnail)}" alt="${escapeHtml(video.title)}" loading="lazy">
-          <span class="video-duration">${escapeHtml(video.duration)}</span>
-        </div>
-        <div class="video-content">
-          <h3 class="video-title">${escapeHtml(video.title)}</h3>
-          <div class="video-meta">
-            <div class="video-channel">
-              <div class="channel-avatar"></div>
-              <span>${escapeHtml(video.channel)}</span>
-            </div>
-            <span>${escapeHtml(video.views)}</span>
+  }
+
+  // Create a video card element
+  function createVideoCard(video) {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.dataset.videoId = video.id;
+    card.innerHTML = `
+      <div class="video-thumbnail">
+        <img src="${escapeHtml(video.thumbnail)}" alt="${escapeHtml(video.title)}" loading="lazy">
+        <span class="video-duration">${escapeHtml(video.duration)}</span>
+      </div>
+      <div class="video-content">
+        <h3 class="video-title">${escapeHtml(video.title)}</h3>
+        <div class="video-meta">
+          <div class="video-channel">
+            <div class="channel-avatar"></div>
+            <span>${escapeHtml(video.channel)}</span>
           </div>
+          <span>${escapeHtml(video.views)}</span>
         </div>
-      `;
-      
-      // Add click handler to play video
-      card.addEventListener('click', () => playVideo(video));
-      
-      return card;
+      </div>
+    `;
+    card.addEventListener('click', () => playVideo(video));
+    return card;
+  }
+
+  // Play a video in the player
+  function playVideo(video) {
+    currentVideo = video;
+    const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`;
+    playerIframe.src = embedUrl;
+    playerIframe.classList.remove('hidden');
+    playerPlaceholder.classList.add('hidden');
+    playerTitle.textContent = video.title;
+    playerChannel.textContent = video.channel;
+    playerViews.textContent = video.views;
+    playerInfo.classList.remove('hidden');
+    if (window.innerWidth < 768) {
+      playerContainer.scrollIntoView({ behavior: 'smooth' });
     }
-    
-    // Play a video in the player
-    function playVideo(video) {
-      currentVideo = video;
-      
-      // Update player iframe
-      const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`;
-      playerIframe.src = embedUrl;
-      
-      // Show iframe and hide placeholder
-      playerIframe.classList.remove('hidden');
-      playerPlaceholder.classList.add('hidden');
-      
-      // Update video info
-      playerTitle.textContent = video.title;
-      playerChannel.textContent = video.channel;
-      playerViews.textContent = video.views;
-      playerInfo.classList.remove('hidden');
-      
-      // Scroll player into view on mobile
-      if (window.innerWidth < 768) {
-        playerContainer.scrollIntoView({ behavior: 'smooth' });
+    highlightSelectedVideo(video.id);
+  }
+
+  // Highlight the selected video card
+  function highlightSelectedVideo(videoId) {
+    const allCards = document.querySelectorAll('.video-card');
+    allCards.forEach(card => {
+      if (card.dataset.videoId === videoId) {
+        card.style.borderColor = 'var(--primary)';
+        card.style.boxShadow = 'var(--shadow-primary)';
+      } else {
+        card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        card.style.boxShadow = 'none';
       }
-      
-      // Highlight selected video card
-      highlightSelectedVideo(video.id);
+    });
+  }
+
+  // Retry the last search
+  function retrySearch() {
+    if (currentQuery) {
+      performSearch(currentQuery);
     }
-    
-    // Highlight the selected video card
-    function highlightSelectedVideo(videoId) {
-      const allCards = document.querySelectorAll('.video-card');
-      
-      allCards.forEach(card => {
-        if (card.dataset.videoId === videoId) {
-          card.style.borderColor = 'var(--primary)';
-          card.style.boxShadow = 'var(--shadow-primary)';
-        } else {
-          card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-          card.style.boxShadow = 'none';
-        }
-      });
+  }
+
+  // Show loading state
+  function showLoading() {
+    loadingState.classList.remove('hidden');
+    errorState.classList.add('hidden');
+    resultsGrid.classList.add('hidden');
+  }
+
+  // Show results
+  function showResults() {
+    loadingState.classList.add('hidden');
+    errorState.classList.add('hidden');
+    resultsGrid.classList.remove('hidden');
+  }
+
+  // Show error state
+  function showError(message) {
+    errorText.textContent = message;
+    loadingState.classList.add('hidden');
+    errorState.classList.remove('hidden');
+    resultsGrid.classList.add('hidden');
+  }
+
+  // Show empty results state
+  function showEmptyResults() {
+    loadingState.classList.add('hidden');
+    errorState.classList.add('hidden');
+    resultsGrid.classList.add('hidden');
+    const emptyState = document.querySelector('.empty-state');
+    if (emptyState) {
+      emptyState.querySelector('h3').textContent = 'No Results Found';
+      emptyState.querySelector('.empty-text').textContent = 
+        'No videos match your search. Try a different query.';
     }
-    
-    // Retry the last search
-    function retrySearch() {
-      if (currentQuery) {
-        performSearch(currentQuery);
-      }
-    }
-    
-    // Show loading state
-    function showLoading() {
-      loadingState.classList.remove('hidden');
-      errorState.classList.add('hidden');
-      resultsGrid.classList.add('hidden');
-    }
-    
-    // Show results
-    function showResults() {
-      loadingState.classList.add('hidden');
-      errorState.classList.add('hidden');
-      resultsGrid.classList.remove('hidden');
-    }
-    
-    // Show error state
-    function showError(message) {
-      errorText.textContent = message;
-      loadingState.classList.add('hidden');
-      errorState.classList.remove('hidden');
-      resultsGrid.classList.add('hidden');
-    }
-    
-    // Show empty results state
-    function showEmptyResults() {
-      loadingState.classList.add('hidden');
-      errorState.classList.add('hidden');
-      resultsGrid.classList.add('hidden');
-      
-      // Update empty state message
-      const emptyState = document.querySelector('.empty-state');
-      if (emptyState) {
-        emptyState.querySelector('h3').textContent = 'No Results Found';
-        emptyState.querySelector('.empty-text').textContent = 
-          'No videos match your search. Try a different query.';
-      }
-    }
-    
-    // Helper function to escape HTML
-    function escapeHtml(unsafe) {
-      if (!unsafe) return '';
-      return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-    
-    // Initialize the app when DOM is loaded
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
+  }
+
+  // Helper function to escape HTML
+  function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // Initialize the app when DOM is loaded
+  document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
