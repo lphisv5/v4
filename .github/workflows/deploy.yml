@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       API_KEY: ${{ secrets.API_KEY }}
-      API_URL: ${{ secrets.API_URL }}
 
     steps:
       - name: Checkout repository
@@ -23,7 +22,8 @@ jobs:
       - name: Fetch API data and generate static HTML
         run: |
           echo "Fetching data from API with key $API_KEY"
-          DATA=$(curl -s "${API_URL}?key=${API_KEY}&q=example")
+          # สมมติ API URL ตายตัว
+          DATA=$(curl -s "https://api.example.com/data?key=${API_KEY}&q=example")
 
           mkdir -p public
           echo "<!DOCTYPE html><html><head><title>API Data</title></head><body><pre>" > public/index.html
