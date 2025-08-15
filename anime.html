@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://api.jikan.moe https://*.firebaseio.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com;">
+  <title>🎌 Anime Clash</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    :root {
+      --primary: #ff4d89;
+      --secondary: #6a5acd;
+      --dark: #1a1a2e;
+      --darker: #121212;
+      --light: #f8f9fa;
+      --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --radius: 12px;
+      --shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--darker);
+      color: var(--light);
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .auth-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .auth-box {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      padding: 40px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .logo {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .tagline {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 300;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--light);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 77, 137, 0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 24px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--light);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .auth-footer {
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+
+    .auth-footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-success {
+      background: rgba(40, 167, 69, 0.2);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+
+    .alert-error {
+      background: rgba(220, 53, 69, 0.2);
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+
+    .app-container {
+      display: none;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-logo {
+      font-size: 1.8rem;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+    }
+
+    .username {
+      font-weight: 500;
+    }
+
+    .sign-out-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .sign-out-btn:hover {
+      color: var(--primary);
+    }
+
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .select-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .select-wrapper::after {
+      content: '▼';
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      color: var(--light);
+      pointer-events: none;
+      font-size: 0.8rem;
+    }
+
+    .select-field {
+      width: 100%;
+      padding: 12px 15px;
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--light);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .battle-arena {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .anime-card {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      cursor: pointer;
+      aspect-ratio: 2/3;
+    }
+
+    .anime-card:hover {
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    .anime-card.selected {
+      box-shadow: 0 0 0 3px var(--primary), 0 0 20px rgba(255, 77, 137, 0.5);
+    }
+
+    .anime-card.winner::after {
+      content: '🏆';
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 30px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .anime-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .anime-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    }
+
+    .anime-title {
+      font-size: 1.3rem;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .anime-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      grid-column: 1 / -1;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .leaderboard-list {
+      list-style: none;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      transition: var(--transition);
+    }
+
+    .leaderboard-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .rank {
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 30px;
+    }
+
+    .anime-name {
+      flex: 1;
+      margin: 0 15px;
+    }
+
+    .score {
+      background: rgba(255, 77, 137, 0.2);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .comment-form {
+      margin-bottom: 20px;
+    }
+
+    .comment-box {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--light);
+      font-size: 1rem;
+      resize: none;
+      margin-bottom: 15px;
+      min-height: 100px;
+    }
+
+    .comment-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius);
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .comment-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .comment-user {
+      font-weight: 500;
+    }
+
+    .comment-anime {
+      font-size: 0.8rem;
+      color: var(--primary);
+      margin-left: 10px;
+    }
+
+    .comment-text {
+      margin-bottom: 10px;
+    }
+
+    .comment-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .reward-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .reward-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .reward-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    .reward-name {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .reward-price {
+      display: inline-block;
+      background: rgba(255, 215, 0, 0.2);
+      padding: 5px 15px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      color: gold;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .history-anime {
+      font-weight: 500;
+    }
+
+    .history-date {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .auth-box {
+        padding: 30px 20px;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Authentication Screen -->
+  <div id="authScreen" class="auth-container">
+    <div class="auth-box">
+      <div class="logo">🎌 Anime Clash</div>
+      <div class="tagline">Battle with your favorite anime characters and choose the ultimate champion!</div>
+      
+      <div id="authAlert" class="alert hidden"></div>
+      
+      <div id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" class="input-field" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="input-field" placeholder="Enter your password" required>
+        </div>
+        <div class="btn-group">
+          <button id="loginBtn" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i> Log In
+          </button>
+          <button id="showRegisterBtn" class="btn btn-outline">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+        </div>
+      </div>
+      
+      <div id="registerForm" class="hidden">
+        <div class="form-group">
+          <label for="registerEmail">Email</label>
+          <input type="email" id="registerEmail" class="input-field" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">Password</label>
+          <input type="password" id="registerPassword" class="input-field" placeholder="Create a password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm your password" required>
+        </div>
+        <div class="btn-group">
+          <button id="registerBtn" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Sign Up
+          </button>
+          <button id="showLoginBtn" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back to Login
+          </button>
+        </div>
+      </div>
+      
+      <div class="auth-footer">
+        By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Screen -->
+  <div id="appScreen" class="app-container">
+    <div class="container">
+      <header>
+        <div class="header-left">
+          <div class="header-logo">🎌 Anime Clash</div>
+        </div>
+        <div class="user-profile">
+          <div class="avatar" id="userAvatar">U</div>
+          <div>
+            <div class="username" id="username">User</div>
+            <button class="sign-out-btn" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="coins">0</div>
+          <div class="stat-label">Coins</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="battles">0</div>
+          <div class="stat-label">Battles</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="wins">0</div>
+          <div class="stat-label">Wins</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="streak">0</div>
+          <div class="stat-label">Win Streak</div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="select-wrapper">
+          <select id="genreSelect" class="select-field">
+            <option value="">All Genres</option>
+            <option value="1">Action</option>
+            <option value="2">Adventure</option>
+            <option value="4">Comedy</option>
+            <option value="10">Fantasy</option>
+            <option value="22">Romance</option>
+            <option value="27">Shounen</option>
+            <option value="25">Shoujo</option>
+            <option value="37">Supernatural</option>
+            <option value="30">Sports</option>
+            <option value="62">Isekai</option>
+          </select>
+        </div>
+        <button id="newBattleBtn" class="btn btn-primary">
+          <i class="fas fa-random"></i> New Battle
+        </button>
+        <button id="shareBtn" class="btn btn-outline hidden">
+          <i class="fas fa-share-alt"></i> Share
+        </button>
+      </div>
+
+      <div id="battleArena" class="battle-arena">
+        <div class="loader">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title"><i class="fas fa-trophy"></i> Leaderboard</h3>
+        <ul id="leaderboardList" class="leaderboard-list">
+          <!-- Leaderboard items will be inserted here -->
+        </ul>
+      </div>
+
+      <div id="commentSection" class="section hidden">
+        <h3 class="section-title"><i class="fas fa-comments"></i> Community</h3>
+        <div class="form-group">
+          <textarea id="commentBox" class="comment-box" placeholder="Why did you choose this anime?"></textarea>
+          <button id="submitCommentBtn" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i> Post Comment
+          </button>
+        </div>
+        <div id="commentsContainer">
+          <!-- Comments will be inserted here -->
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title"><i class="fas fa-gift"></i> Rewards</h3>
+        <div class="rewards-grid">
+          <div class="reward-card">
+            <div class="reward-icon"><i class="fas fa-palette"></i></div>
+            <div class="reward-name">Custom Theme</div>
+            <div class="reward-price">50 Coins</div>
+            <button class="btn btn-outline" data-reward="Custom Theme" data-cost="50">
+              <i class="fas fa-unlock"></i> Unlock
+            </button>
+          </div>
+          <div class="reward-card">
+            <div class="reward-icon"><i class="fas fa-id-badge"></i></div>
+            <div class="reward-name">Premium Badge</div>
+            <div class="reward-price">100 Coins</div>
+            <button class="btn btn-outline" data-reward="Premium Badge" data-cost="100">
+              <i class="fas fa-unlock"></i> Unlock
+            </button>
+          </div>
+          <div class="reward-card">
+            <div class="reward-icon"><i class="fas fa-user-astronaut"></i></div>
+            <div class="reward-name">Special Avatar</div>
+            <div class="reward-price">150 Coins</div>
+            <button class="btn btn-outline" data-reward="Special Avatar" data-cost="150">
+              <i class="fas fa-unlock"></i> Unlock
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title"><i class="fas fa-history"></i> Battle History</h3>
+        <div id="historyList">
+          <!-- History items will be inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
+
+    // Firebase Configuration (Warning: Move to backend in production)
+    console.warn('Firebase configuration is hardcoded in client-side code. In production, move this to a secure server-side environment.');
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXhQjlhxwoucAPNSqAzF3bXhSulijEELo",
+      authDomain: "anime-be8d4.firebaseapp.com",
+      projectId: "anime-be8d4",
+      storageBucket: "anime-be8d4.firebasestorage.app",
+      messagingSenderId: "794531180479",
+      appId: "1:794531180479:web:6ee28da415c3f729a47b0a",
+      measurementId: "G-F57EW6BTBQ"
+    };
+
+    // Encryption Key (Replace with secure, user-specific key in production)
+    const ENCRYPTION_KEY = 'your-secure-encryption-key-12345'; // TODO: Derive dynamically or fetch from server
+
+    // Initialize Firebase
+    let app, auth, db;
+    async function initializeFirebase() {
+      try {
+        const config = await fetchFirebaseConfig();
+        app = initializeApp(config);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        console.log('Firebase initialized successfully');
+      } catch (error) {
+        console.error('Firebase initialization failed:', error);
+        showAlert('Failed to initialize Firebase. Using offline mode.', 'error');
+      }
+    }
+
+    async function fetchFirebaseConfig() {
+      // Placeholder: In production, fetch from secure backend endpoint
+      // e.g., const response = await fetch('/api/firebase-config', { headers: { Authorization: `Bearer ${token}` } });
+      return firebaseConfig;
+    }
+
+    // DOM Elements
+    const elements = {
+      authScreen: document.getElementById('authScreen'),
+      appScreen: document.getElementById('appScreen'),
+      authAlert: document.getElementById('authAlert'),
+      loginForm: document.getElementById('loginForm'),
+      registerForm: document.getElementById('registerForm'),
+      loginEmail: document.getElementById('loginEmail'),
+      loginPassword: document.getElementById('loginPassword'),
+      registerEmail: document.getElementById('registerEmail'),
+      registerPassword: document.getElementById('registerPassword'),
+      confirmPassword: document.getElementById('confirmPassword'),
+      userAvatar: document.getElementById('userAvatar'),
+      username: document.getElementById('username'),
+      coins: document.getElementById('coins'),
+      battles: document.getElementById('battles'),
+      wins: document.getElementById('wins'),
+      streak: document.getElementById('streak'),
+      battleArena: document.getElementById('battleArena'),
+      leaderboardList: document.getElementById('leaderboardList'),
+      commentsContainer: document.getElementById('commentsContainer'),
+      commentSection: document.getElementById('commentSection'),
+      commentBox: document.getElementById('commentBox'),
+      shareBtn: document.getElementById('shareBtn'),
+      historyList: document.getElementById('historyList'),
+      genreSelect: document.getElementById('genreSelect'),
+      loginBtn: document.getElementById('loginBtn'),
+      registerBtn: document.getElementById('registerBtn'),
+      showRegisterBtn: document.getElementById('showRegisterBtn'),
+      showLoginBtn: document.getElementById('showLoginBtn'),
+      newBattleBtn: document.getElementById('newBattleBtn'),
+      submitCommentBtn: document.getElementById('submitCommentBtn'),
+      logoutBtn: document.getElementById('logoutBtn')
+    };
+
+    // Game State
+    let currentUser = null;
+    let userData = {
+      coins: 0,
+      battles: 0,
+      wins: 0,
+      streak: 0,
+      leaderboard: {},
+      comments: [],
+      history: [],
+      unlockedRewards: []
+    };
+    let selectedAnime = null;
+
+    // Event Listeners
+    function setupEventListeners() {
+      if (elements.loginBtn) elements.loginBtn.addEventListener('click', login);
+      if (elements.registerBtn) elements.registerBtn.addEventListener('click', register);
+      if (elements.showRegisterBtn) elements.showRegisterBtn.addEventListener('click', showRegisterForm);
+      if (elements.showLoginBtn) elements.showLoginBtn.addEventListener('click', showLoginForm);
+      if (elements.newBattleBtn) elements.newBattleBtn.addEventListener('click', loadBattle);
+      if (elements.submitCommentBtn) elements.submitCommentBtn.addEventListener('click', submitComment);
+      if (elements.shareBtn) elements.shareBtn.addEventListener('click', shareBattle);
+      if (elements.logoutBtn) elements.logoutBtn.addEventListener('click', logout);
+      if (elements.genreSelect) elements.genreSelect.addEventListener('change', loadBattle);
+      document.querySelectorAll('.reward-card button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const reward = btn.dataset.reward;
+          const cost = parseInt(btn.dataset.cost);
+          unlockReward(reward, cost);
+        });
+      });
+    }
+
+    // Initialize the app
+    async function init() {
+      await initializeFirebase();
+      if (!auth) {
+        console.error('Firebase auth not initialized');
+        showAlert('Cannot connect to Firebase. Using offline mode.', 'error');
+        loadFromLocalStorage();
+        setupEventListeners();
+        return;
+      }
+
+      onAuthStateChanged(auth, user => {
+        console.log('Auth state changed:', user ? 'User logged in' : 'No user');
+        currentUser = user;
+        if (user) {
+          showAppScreen();
+          loadUserData();
+        } else {
+          showAuthScreen();
+        }
+      });
+      setupEventListeners();
+    }
+
+    // Show authentication screen
+    function showAuthScreen() {
+      if (elements.authScreen && elements.appScreen) {
+        elements.authScreen.style.display = 'flex';
+        elements.appScreen.style.display = 'none';
+        showLoginForm();
+      }
+    }
+
+    // Show app screen
+    function showAppScreen() {
+      if (elements.authScreen && elements.appScreen) {
+        elements.authScreen.style.display = 'none';
+        elements.appScreen.style.display = 'block';
+        updateUserProfile();
+        loadBattle();
+      }
+    }
+
+    // Show login form
+    function showLoginForm() {
+      if (elements.loginForm && elements.registerForm) {
+        elements.loginForm.classList.remove('hidden');
+        elements.registerForm.classList.add('hidden');
+        hideAlert();
+      }
+    }
+
+    // Show register form
+    function showRegisterForm() {
+      if (elements.loginForm && elements.registerForm) {
+        elements.loginForm.classList.add('hidden');
+        elements.registerForm.classList.remove('hidden');
+        hideAlert();
+      }
+    }
+
+    // Show alert message
+    function showAlert(message, type) {
+      if (elements.authAlert) {
+        elements.authAlert.textContent = message;
+        elements.authAlert.className = `alert alert-${type}`;
+        elements.authAlert.classList.remove('hidden');
+      }
+    }
+
+    // Hide alert message
+    function hideAlert() {
+      if (elements.authAlert) {
+        elements.authAlert.classList.add('hidden');
+      }
+    }
+
+    // Login function
+    async function login() {
+      const email = elements.loginEmail?.value.trim();
+      const password = elements.loginPassword?.value.trim();
+      
+      if (!email || !password) {
+        showAlert('Please enter both email and password.', 'error');
+        return;
+      }
+      
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        console.log('Login successful');
+        showAlert('Login successful!', 'success');
+      } catch (error) {
+        console.error('Login error:', error);
+        showAlert(getAuthErrorMessage(error), 'error');
+      }
+    }
+
+    // Register function
+    async function register() {
+      const email = elements.registerEmail?.value.trim();
+      const password = elements.registerPassword?.value.trim();
+      const confirm = elements.confirmPassword?.value.trim();
+      
+      if (!email || !password || !confirm) {
+        showAlert('Please fill in all fields.', 'error');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showAlert('Passwords do not match.', 'error');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showAlert('Password must be at least 6 characters long.', 'error');
+        return;
+      }
+      
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        console.log('Registration successful');
+        showAlert('Sign-up successful! Please log in.', 'success');
+        showLoginForm();
+        elements.registerEmail.value = '';
+        elements.registerPassword.value = '';
+        elements.confirmPassword.value = '';
+      } catch (error) {
+        console.error('Register error:', error);
+        showAlert(getAuthErrorMessage(error), 'error');
+      }
+    }
+
+    // Logout function
+    async function logout() {
+      try {
+        await signOut(auth);
+        console.log('Logout successful');
+        showAlert('Logout successful.', 'success');
+      } catch (error) {
+        console.error('Logout error:', error);
+        showAlert('An error occurred while logging out.', 'error');
+      }
+    }
+
+    // Get auth error messages
+    function getAuthErrorMessage(error) {
+      switch (error.code) {
+        case 'auth/invalid-email':
+          return 'Invalid email address.';
+        case 'auth/user-disabled':
+          return 'This account has been disabled.';
+        case 'auth/user-not-found':
+          return 'User not found.';
+        case 'auth/wrong-password':
+          return 'Incorrect password.';
+        case 'auth/email-already-in-use':
+          return 'This email is already in use.';
+        case 'auth/weak-password':
+          return 'Password is too weak.';
+        case 'auth/invalid-credential':
+          return 'Invalid login credentials.';
+        case 'auth/too-many-requests':
+          return 'Too many requests. Please try again later.';
+        case 'auth/configuration-not-found':
+          return 'Project configuration not found. Please check Firebase settings.';
+        case 'auth/network-request-failed':
+          return 'Network connection failed. Please check your internet connection.';
+        default:
+          return `An error occurred: ${error.message}`;
+      }
+    }
+
+    // Update user profile in UI
+    function updateUserProfile() {
+      if (!currentUser) return;
+      
+      const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+      if (elements.username && elements.userAvatar) {
+        elements.username.textContent = displayName;
+        elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
+      }
+    }
+
+    // Load user data from Firestore or localStorage
+    async function loadUserData() {
+      if (!currentUser || !db) {
+        console.warn('No Firebase connection, attempting to load from localStorage');
+        loadFromLocalStorage();
+        return;
+      }
+      
+      try {
+        const userDoc = doc(db, 'users', currentUser.uid);
+        const docSnap = await getDoc(userDoc);
+        
+        if (docSnap.exists()) {
+          userData = { ...userData, ...docSnap.data() };
+          console.log('User data loaded from Firestore:', userData);
+          saveToLocalStorage();
+        } else {
+          console.log('No user data found in Firestore, checking localStorage');
+          loadFromLocalStorage();
+          await saveUserData();
+        }
+        updateStatsUI();
+        renderLeaderboard();
+        renderComments();
+        renderHistory();
+      } catch (error) {
+        console.error('Error loading user data from Firestore:', error);
+        showAlert('Failed to load user data from cloud. Loading from local storage.', 'error');
+        loadFromLocalStorage();
+      }
+    }
+
+    // Save user data to Firestore and localStorage
+    async function saveUserData() {
+      if (!currentUser || !db) {
+        console.warn('No Firebase connection, saving to localStorage');
+        saveToLocalStorage();
+        return;
+      }
+      
+      try {
+        await setDoc(doc(db, 'users', currentUser.uid), userData, { merge: true });
+        console.log('User data saved to Firestore');
+        saveToLocalStorage();
+      } catch (error) {
+        console.error('Error saving user data to Firestore:', error);
+        showAlert('Failed to save user data to cloud. Saving locally.', 'error');
+        saveToLocalStorage();
+      }
+    }
+
+    // Save user data to localStorage with encryption
+    function saveToLocalStorage() {
+      try {
+        const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(userData), ENCRYPTION_KEY).toString();
+        localStorage.setItem(`userData_${currentUser?.uid || 'offline'}`, encryptedData);
+        console.log('User data saved to localStorage');
+      } catch (error) {
+        console.error('Error saving to localStorage:', error);
+        showAlert('Failed to save data locally.', 'error');
+      }
+    }
+
+    // Load and decrypt user data from localStorage
+    function loadFromLocalStorage() {
+      try {
+        const encryptedData = localStorage.getItem(`userData_${currentUser?.uid || 'offline'}`);
+        if (encryptedData) {
+          const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
+          const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+          userData = { ...userData, ...decryptedData };
+          console.log('User data loaded from localStorage:', userData);
+          updateStatsUI();
+          renderLeaderboard();
+          renderComments();
+          renderHistory();
+        } else {
+          console.log('No local data found');
+        }
+      } catch (error) {
+        console.error('Error loading from localStorage:', error);
+        showAlert('Failed to load local data.', 'error');
+      }
+    }
+
+    // Update stats in UI
+    function updateStatsUI() {
+      if (elements.coins) elements.coins.textContent = userData.coins || 0;
+      if (elements.battles) elements.battles.textContent = userData.battles || 0;
+      if (elements.wins) elements.wins.textContent = userData.wins || 0;
+      if (elements.streak) elements.streak.textContent = userData.streak || 0;
+    }
+
+    // Load anime battle
+    async function loadBattle() {
+      if (elements.battleArena) {
+        elements.battleArena.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+      }
+      if (elements.commentSection) elements.commentSection.classList.add('hidden');
+      if (elements.shareBtn) elements.shareBtn.classList.add('hidden');
+      selectedAnime = null;
+      
+      const genre = elements.genreSelect?.value;
+      
+      try {
+        const [anime1, anime2] = await Promise.all([
+          fetchRandomAnime(genre),
+          fetchRandomAnime(genre)
+        ]);
+        
+        if (!anime1 || !anime2) {
+          throw new Error('Failed to load anime data');
+        }
+        
+        if (elements.battleArena) {
+          elements.battleArena.innerHTML = '';
+          elements.battleArena.appendChild(createAnimeCard(anime1));
+          elements.battleArena.appendChild(createAnimeCard(anime2));
+        }
+      } catch (error) {
+        console.error('Error loading battle:', error);
+        if (elements.battleArena) {
+          elements.battleArena.innerHTML = '<div class="alert alert-error">Failed to load anime data. Please try again.</div>';
+        }
+      }
+    }
+
+    // Fetch random anime from Jikan API
+    async function fetchRandomAnime(genre = '') {
+      try {
+        const url = genre 
+          ? `https://api.jikan.moe/v4/anime?genres=${genre}&page=${Math.floor(Math.random() * 10) + 1}`
+          : `https://api.jikan.moe/v4/anime?page=${Math.floor(Math.random() * 10) + 1}`;
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+        
+        const data = await response.json();
+        return data.data[Math.floor(Math.random() * data.data.length)];
+      } catch (error) {
+        console.error('Error fetching anime:', error);
+        return null;
+      }
+    }
+
+    // Create anime card element
+    function createAnimeCard(anime) {
+      const card = document.createElement('div');
+      card.className = 'anime-card';
+      
+      const imageUrl = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || 'https://via.placeholder.com/300x450?text=No+Image';
+      const title = anime.title || 'No Title';
+      const score = anime.score ? anime.score.toFixed(1) : 'N/A';
+      const episodes = anime.episodes || '?';
+      const year = anime.year || anime.aired?.prop?.from?.year || '?';
+      
+      card.innerHTML = `
+        <img src="${imageUrl}" alt="${title}" class="anime-image">
+        <div class="anime-info">
+          <div class="anime-title">${title}</div>
+          <div class="anime-details">
+            <span>⭐ ${score}</span>
+            <span>📺 ${episodes}</span>
+            <span>📅 ${year}</span>
+          </div>
+        </div>
+      `;
+      
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.anime-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectAnime(title);
+      });
+      
+      return card;
+    }
+
+    // Handle anime selection
+    function selectAnime(title) {
+      selectedAnime = title;
+      if (elements.commentSection) elements.commentSection.classList.remove('hidden');
+      if (elements.shareBtn) elements.shareBtn.classList.remove('hidden');
+      
+      userData.battles = (userData.battles || 0) + 1;
+      userData.wins = (userData.wins || 0) + 1;
+      userData.streak = (userData.streak || 0) + 1;
+      userData.coins = (userData.coins || 0) + 10;
+      
+      userData.leaderboard = userData.leaderboard || {};
+      userData.leaderboard[title] = (userData.leaderboard[title] || 0) + 1;
+      
+      userData.history = userData.history || [];
+      userData.history.unshift({
+        anime: title,
+        date: new Date().toISOString()
+      });
+      
+      if (userData.history.length > 10) {
+        userData.history.pop();
+      }
+      
+      updateStatsUI();
+      renderLeaderboard();
+      renderHistory();
+      saveUserData();
+    }
+
+    // Render leaderboard
+    function renderLeaderboard() {
+      if (!elements.leaderboardList) return;
+      
+      elements.leaderboardList.innerHTML = '';
+      
+      const sorted = Object.entries(userData.leaderboard || {})
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      
+      if (sorted.length === 0) {
+        elements.leaderboardList.innerHTML = '<div class="alert">No battle data yet. Start battling to see rankings!</div>';
+        return;
+      }
+      
+      sorted.forEach(([title, score], index) => {
+        const li = document.createElement('li');
+        li.className = 'leaderboard-item';
+        li.innerHTML = `
+          <div class="rank">${index + 1}</div>
+          <div class="anime-name">${title}</div>
+          <div class="score">${score} Wins</div>
+        `;
+        elements.leaderboardList.appendChild(li);
+      });
+    }
+
+    // Render comments
+    function renderComments() {
+      if (!elements.commentsContainer) return;
+      
+      elements.commentsContainer.innerHTML = '';
+      
+      if (!userData.comments || userData.comments.length === 0) {
+        elements.commentsContainer.innerHTML = '<div class="alert">No comments yet. Be the first to comment!</div>';
+        return;
+      }
+      
+      userData.comments.slice(0, 5).forEach(comment => {
+        const commentEl = document.createElement('div');
+        commentEl.className = 'comment-card';
+        commentEl.innerHTML = `
+          <div class="comment-header">
+            <div class="comment-avatar">${comment.user.charAt(0).toUpperCase()}</div>
+            <div class="comment-user">${comment.user}</div>
+            <div class="comment-anime">about ${comment.anime}</div>
+          </div>
+          <div class="comment-text">${comment.text}</div>
+          <div class="comment-footer">
+            <div class="comment-date">${new Date(comment.date).toLocaleString('en-US')}</div>
+            <div class="comment-likes">❤️ ${comment.likes || 0}</div>
+          </div>
+        `;
+        elements.commentsContainer.appendChild(commentEl);
+      });
+    }
+
+    // Render history
+    function renderHistory() {
+      if (!elements.historyList) return;
+      
+      elements.historyList.innerHTML = '';
+      
+      if (!userData.history || userData.history.length === 0) {
+        elements.historyList.innerHTML = '<div class="alert">No battle history yet.</div>';
+        return;
+      }
+      
+      userData.history.forEach(item => {
+        const historyEl = document.createElement('div');
+        historyEl.className = 'history-item';
+        historyEl.innerHTML = `
+          <div class="history-anime">${item.anime}</div>
+          <div class="history-date">${new Date(item.date).toLocaleString('en-US')}</div>
+        `;
+        elements.historyList.appendChild(historyEl);
+      });
+    }
+
+    // Submit comment
+    function submitComment() {
+      const text = elements.commentBox?.value.trim();
+      
+      if (!text || !selectedAnime) {
+        showAlert('Please select an anime and enter a comment.', 'error');
+        return;
+      }
+      
+      const comment = {
+        user: elements.username?.textContent || 'User',
+        anime: selectedAnime,
+        text: text,
+        date: new Date().toISOString(),
+        likes: 0
+      };
+      
+      userData.comments = userData.comments || [];
+      userData.comments.unshift(comment);
+      
+      if (userData.comments.length > 50) {
+        userData.comments.pop();
+      }
+      
+      if (elements.commentBox) elements.commentBox.value = '';
+      renderComments();
+      saveUserData();
+    }
+
+    // Unlock reward
+    function unlockReward(reward, cost) {
+      if (userData.coins < cost) {
+        showAlert(`You need ${cost} coins to unlock this reward!`, 'error');
+        return;
+      }
+      
+      if (userData.unlockedRewards.includes(reward)) {
+        showAlert('You already have this reward!', 'error');
+        return;
+      }
+      
+      userData.coins -= cost;
+      userData.unlockedRewards.push(reward);
+      updateStatsUI();
+      saveUserData();
+      
+      showAlert(`Congratulations! You unlocked ${reward}!`, 'success');
+      
+      if (reward === 'Custom Theme') {
+        document.documentElement.style.setProperty('--primary', '#ff9ff3');
+        document.documentElement.style.setProperty('--secondary', '#feca57');
+      }
+    }
+
+    // Share battle
+    function shareBattle() {
+      if (!selectedAnime) return;
+      
+      const shareData = {
+        title: 'Anime Clash',
+        text: `I chose ${selectedAnime} as the winner in Anime Clash! Can you beat my choice?`,
+        url: window.location.href
+      };
+      
+      if (navigator.share) {
+        navigator.share(shareData)
+          .catch(err => {
+            console.error('Error sharing:', err);
+            fallbackShare();
+          });
+      } else {
+        fallbackShare();
+      }
+    }
+
+    // Fallback share method
+    function fallbackShare() {
+      const shareText = `I chose ${selectedAnime} as the winner in Anime Clash! ${window.location.href}`;
+      navigator.clipboard.writeText(shareText)
+        .then(() => alert('Link copied to clipboard!'))
+        .catch(() => prompt('Copy this link to share:', shareText));
+    }
+
+    // Initialize app
+    init();
+  </script>
+
+  <script>
+    // Anti-inspection protections
+    (function detectDevTools() {
+      const devtools = /./;
+      devtools.toString = function() { return 'devtools'; };
+      
+      let isDevToolsOpen = false;
+      const threshold = 160;
+      
+      function checkDevTools() {
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        
+        if (widthThreshold || heightThreshold || window.console.log.toString().includes('devtools')) {
+          if (!isDevToolsOpen) {
+            isDevToolsOpen = true;
+            console.warn('Developer tools detected. Access may be restricted.');
+            showAlert('Developer tools detected. Some features may be restricted.', 'warning');
+            // Optional: Blur screen
+            // document.body.style.filter = 'blur(5px)';
+          }
+        } else {
+          isDevToolsOpen = false;
+          // document.body.style.filter = 'none';
+        }
+      }
+      
+      setInterval(checkDevTools, 1000);
+    })();
+
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      console.warn('Right-click disabled for security.');
+      showAlert('Right-click is disabled for security.', 'warning');
+    });
+
+    // Disable common DevTools shortcuts
+    document.addEventListener('keydown', e => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+        (e.ctrlKey && e.key === 'U')
+      ) {
+        e.preventDefault();
+        console.warn('DevTools shortcuts disabled.');
+        showAlert('Developer tools access is restricted.', 'warning');
+      }
+    });
+  </script>
+</body>
+</html>
