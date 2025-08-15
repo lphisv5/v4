@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://api.jikan.moe https://*.firebaseio.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com;">
   <title>🎌 Anime Clash</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <style>
     :root {
       --primary: #ff4d89;
@@ -43,6 +41,7 @@
       padding: 20px;
     }
 
+    /* Auth Screen */
     .auth-container {
       display: flex;
       flex-direction: column;
@@ -180,6 +179,7 @@
       border: 1px solid var(--danger);
     }
 
+    /* App Screen */
     .app-container {
       display: none;
     }
@@ -783,12 +783,12 @@
   </div>
 
   <script type="module">
+    // Import Firebase SDK
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
     import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
-    // Firebase Configuration (Warning: Move to backend in production)
-    console.warn('Firebase configuration is hardcoded in client-side code. In production, move this to a secure server-side environment.');
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCXhQjlhxwoucAPNSqAzF3bXhSulijEELo",
       authDomain: "anime-be8d4.firebaseapp.com",
@@ -799,28 +799,16 @@
       measurementId: "G-F57EW6BTBQ"
     };
 
-    // Encryption Key (Replace with secure, user-specific key in production)
-    const ENCRYPTION_KEY = 'your-secure-encryption-key-12345'; // TODO: Derive dynamically or fetch from server
-
     // Initialize Firebase
     let app, auth, db;
-    async function initializeFirebase() {
-      try {
-        const config = await fetchFirebaseConfig();
-        app = initializeApp(config);
-        auth = getAuth(app);
-        db = getFirestore(app);
-        console.log('Firebase initialized successfully');
-      } catch (error) {
-        console.error('Firebase initialization failed:', error);
-        showAlert('Failed to initialize Firebase. Using offline mode.', 'error');
-      }
-    }
-
-    async function fetchFirebaseConfig() {
-      // Placeholder: In production, fetch from secure backend endpoint
-      // e.g., const response = await fetch('/api/firebase-config', { headers: { Authorization: `Bearer ${token}` } });
-      return firebaseConfig;
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      console.log('Firebase initialized successfully');
+    } catch (error) {
+      console.error('Firebase initialization failed:', error);
+      alert('Failed to initialize Firebase. Please check the configuration.');
     }
 
     // DOM Elements
@@ -893,13 +881,10 @@
     }
 
     // Initialize the app
-    async function init() {
-      await initializeFirebase();
+    function init() {
       if (!auth) {
         console.error('Firebase auth not initialized');
-        showAlert('Cannot connect to Firebase. Using offline mode.', 'error');
-        loadFromLocalStorage();
-        setupEventListeners();
+        showAlert('Cannot connect to Firebase. Please check the configuration.', 'error');
         return;
       }
 
@@ -1075,13 +1060,9 @@
       }
     }
 
-    // Load user data from Firestore or localStorage
+    // Load user data from Firestore
     async function loadUserData() {
-      if (!currentUser || !db) {
-        console.warn('No Firebase connection, attempting to load from localStorage');
-        loadFromLocalStorage();
-        return;
-      }
+      if (!currentUser || !db) return;
       
       try {
         const userDoc = doc(db, 'users', currentUser.uid);
@@ -1089,74 +1070,31 @@
         
         if (docSnap.exists()) {
           userData = { ...userData, ...docSnap.data() };
-          console.log('User data loaded from Firestore:', userData);
-          saveToLocalStorage();
-        } else {
-          console.log('No user data found in Firestore, checking localStorage');
-          loadFromLocalStorage();
-          await saveUserData();
-        }
-        updateStatsUI();
-        renderLeaderboard();
-        renderComments();
-        renderHistory();
-      } catch (error) {
-        console.error('Error loading user data from Firestore:', error);
-        showAlert('Failed to load user data from cloud. Loading from local storage.', 'error');
-        loadFromLocalStorage();
-      }
-    }
-
-    // Save user data to Firestore and localStorage
-    async function saveUserData() {
-      if (!currentUser || !db) {
-        console.warn('No Firebase connection, saving to localStorage');
-        saveToLocalStorage();
-        return;
-      }
-      
-      try {
-        await setDoc(doc(db, 'users', currentUser.uid), userData, { merge: true });
-        console.log('User data saved to Firestore');
-        saveToLocalStorage();
-      } catch (error) {
-        console.error('Error saving user data to Firestore:', error);
-        showAlert('Failed to save user data to cloud. Saving locally.', 'error');
-        saveToLocalStorage();
-      }
-    }
-
-    // Save user data to localStorage with encryption
-    function saveToLocalStorage() {
-      try {
-        const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(userData), ENCRYPTION_KEY).toString();
-        localStorage.setItem(`userData_${currentUser?.uid || 'offline'}`, encryptedData);
-        console.log('User data saved to localStorage');
-      } catch (error) {
-        console.error('Error saving to localStorage:', error);
-        showAlert('Failed to save data locally.', 'error');
-      }
-    }
-
-    // Load and decrypt user data from localStorage
-    function loadFromLocalStorage() {
-      try {
-        const encryptedData = localStorage.getItem(`userData_${currentUser?.uid || 'offline'}`);
-        if (encryptedData) {
-          const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
-          const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-          userData = { ...userData, ...decryptedData };
-          console.log('User data loaded from localStorage:', userData);
+          console.log('User data loaded:', userData);
           updateStatsUI();
           renderLeaderboard();
           renderComments();
           renderHistory();
         } else {
-          console.log('No local data found');
+          console.log('No user data found, initializing new data');
+          await saveUserData();
         }
       } catch (error) {
-        console.error('Error loading from localStorage:', error);
-        showAlert('Failed to load local data.', 'error');
+        console.error('Error loading user data:', error);
+        showAlert('Failed to load user data.', 'error');
+      }
+    }
+
+    // Save user data to Firestore
+    async function saveUserData() {
+      if (!currentUser || !db) return;
+      
+      try {
+        await setDoc(doc(db, 'users', currentUser.uid), userData, { merge: true });
+        console.log('User data saved');
+      } catch (error) {
+        console.error('Error saving user data:', error);
+        showAlert('Failed to save user data.', 'error');
       }
     }
 
@@ -1449,57 +1387,6 @@
 
     // Initialize app
     init();
-  </script>
-
-  <script>
-    // Anti-inspection protections
-    (function detectDevTools() {
-      const devtools = /./;
-      devtools.toString = function() { return 'devtools'; };
-      
-      let isDevToolsOpen = false;
-      const threshold = 160;
-      
-      function checkDevTools() {
-        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-        
-        if (widthThreshold || heightThreshold || window.console.log.toString().includes('devtools')) {
-          if (!isDevToolsOpen) {
-            isDevToolsOpen = true;
-            console.warn('Developer tools detected. Access may be restricted.');
-            showAlert('Developer tools detected. Some features may be restricted.', 'warning');
-            // Optional: Blur screen
-            // document.body.style.filter = 'blur(5px)';
-          }
-        } else {
-          isDevToolsOpen = false;
-          // document.body.style.filter = 'none';
-        }
-      }
-      
-      setInterval(checkDevTools, 1000);
-    })();
-
-    // Disable right-click context menu
-    document.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      console.warn('Right-click disabled for security.');
-      showAlert('Right-click is disabled for security.', 'warning');
-    });
-
-    // Disable common DevTools shortcuts
-    document.addEventListener('keydown', e => {
-      if (
-        e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-        (e.ctrlKey && e.key === 'U')
-      ) {
-        e.preventDefault();
-        console.warn('DevTools shortcuts disabled.');
-        showAlert('Developer tools access is restricted.', 'warning');
-      }
-    });
   </script>
 </body>
 </html>
