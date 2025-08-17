@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinGecko Dashboard Pro Advanced</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+  --primary: #4a90e2;
+  --secondary: #50e3c2;
+  --bg: #1e1e2f;
+  --card-bg: #2b2b3d;
+  --text: #f5f5f5;
+  --error: #ff5c5c;
+  --radius: 12px;
+  --transition: 0.3s ease-in-out;
+}
+* { box-sizing: border-box; margin:0; padding:0; font-family:'Roboto', sans-serif; }
+body { background: var(--bg); color: var(--text); min-height:100vh; }
+header { padding:1rem; background: var(--card-bg); display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--primary); flex-wrap:wrap;}
+header h1 { color: var(--primary); font-size:1.5rem; flex:1; }
+main { padding:1rem; max-width:1400px; margin:0 auto; }
+.loader { border:6px solid #f3f3f3; border-top:6px solid var(--primary); border-radius:50%; width:50px; height:50px; animation:spin 1s linear infinite; margin:50px auto; }
+@keyframes spin{100%{transform:rotate(360deg);}}
+.card { background: var(--card-bg); border-radius: var(--radius); padding:1rem; margin:1rem 0; transition:var(--transition); overflow-x:auto; }
+.card:hover{ transform: translateY(-5px); box-shadow:0 5px 20px rgba(0,0,0,0.3); }
+table { width:100%; border-collapse:collapse; min-width:600px; }
+th,td { padding:0.5rem 0.75rem; text-align:left; border-bottom:1px solid #444; word-wrap: break-word; word-break: break-word; white-space: normal; }
+th { background: var(--primary); color:#fff; cursor:pointer; position:sticky; top:0; z-index:1; }
+tr:hover { background: rgba(255,255,255,0.05); }
+.filter-input { padding:0.5rem 1rem; margin-bottom:1rem; width:100%; max-width:400px; border-radius: var(--radius); border:none; outline:none; font-size:1rem; }
+.error { padding:1rem; background: var(--error); color:#fff; border-radius: var(--radius); margin:1rem 0; text-align:center; }
+.pagination { display:flex; gap:0.5rem; justify-content:center; margin-top:1rem; flex-wrap:wrap;}
+.pagination button { padding:0.5rem 1rem; border:none; border-radius:var(--radius); background:var(--primary); color:#fff; cursor:pointer; transition: var(--transition);}
+.pagination button:disabled { background:#444; cursor:not-allowed; }
+
+/* Responsive */
+@media(max-width:768px){
+  table { min-width:100%; }
+  th, td { font-size:0.8rem; padding:0.4rem 0.5rem; }
+  header h1 { font-size:1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CoinGecko Dashboard Pro Advanced</h1>
+  <span>🪙 Real-time Crypto Analytics</span>
+</header>
+
+<main>
+  <div id="loader" class="loader"></div>
+  <div id="error" class="error" style="display:none;"></div>
+  <input type="text" id="filter" class="filter-input" placeholder="Filter coins/exchanges...">
+
+  <!-- Coins Table with Pagination -->
+  <div class="card">
+    <h2>Coins Market (USD)</h2>
+    <table id="coins-table">
+      <thead>
+        <tr>
+          <th data-sort="market_cap_rank">Rank</th>
+          <th data-sort="name">Name</th>
+          <th data-sort="symbol">Symbol</th>
+          <th data-sort="current_price">Price</th>
+          <th data-sort="market_cap">Market Cap</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="pagination" id="coins-pagination"></div>
+  </div>
+
+  <!-- Exchanges Table with Pagination -->
+  <div class="card">
+    <h2>Exchanges</h2>
+    <table id="exchanges-table">
+      <thead>
+        <tr>
+          <th data-sort="name">Name</th>
+          <th data-sort="year_established">Year</th>
+          <th data-sort="country">Country</th>
+          <th data-sort="trust_score">Trust Score</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="pagination" id="exchanges-pagination"></div>
+  </div>
+
+  <!-- Real-time Coin Price Chart -->
+  <div class="card">
+    <h2>BTC Price (USD) Real-time</h2>
+    <canvas id="btc-chart" height="150"></canvas>
+  </div>
+</main>
+
+<script>
+const loader = document.getElementById('loader');
+const errorDiv = document.getElementById('error');
+const filterInput = document.getElementById('filter');
+
+let coinsMarket = [], exchanges = [];
+let coinsPage = 1, exchangesPage = 1, perPage = 20;
+let sortState = { coins: {}, exchanges: {} };
+
+// ดึงค่าจาก CSS variable
+const rootStyles = getComputedStyle(document.documentElement);
+const primaryColor = rootStyles.getPropertyValue('--primary').trim();
+const secondaryColor = rootStyles.getPropertyValue('--secondary').trim();
+
+// Caching function
+async function fetchWithCache(url, cacheKey, ttl=60000){
+  const cached = JSON.parse(localStorage.getItem(cacheKey)||'{}');
+  if(cached.time && (Date.now()-cached.time)<ttl) return cached.data;
+  const res = await fetch(url);
+  if(res.status===429) throw new Error('Rate limit exceeded');
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  localStorage.setItem(cacheKey, JSON.stringify({time:Date.now(), data}));
+  return data;
+}
+
+// Load data
+async function loadData(){
+  try{
+    loader.style.display='block';
+    coinsMarket = await fetchWithCache('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd','coinsMarket');
+    exchanges = await fetchWithCache('https://api.coingecko.com/api/v3/exchanges','exchanges');
+    renderCoinsTable();
+    renderExchangesTable();
+    startBTCChart();
+  }catch(e){
+    console.error(e);
+    errorDiv.style.display='block';
+    errorDiv.textContent = `Error: ${e.message}`;
+  }finally{ loader.style.display='none'; }
+}
+
+// Pagination Render
+function renderPagination(containerId, totalItems, page, callback){
+  const container = document.getElementById(containerId);
+  const totalPages = Math.ceil(totalItems/perPage);
+  container.innerHTML='';
+  const prev = document.createElement('button');
+  prev.textContent='Prev'; prev.disabled=page<=1;
+  prev.onclick=()=>callback(page-1);
+  const next = document.createElement('button');
+  next.textContent='Next'; next.disabled=page>=totalPages;
+  next.onclick=()=>callback(page+1);
+  container.appendChild(prev);
+  container.appendChild(next);
+}
+
+// Coins Table Render
+function renderCoinsTable(){
+  const tbody = document.querySelector('#coins-table tbody');
+  let filtered = coinsMarket.filter(c=>c.name.toLowerCase().includes(filterInput.value.toLowerCase()));
+  const start = (coinsPage-1)*perPage;
+  const end = start+perPage;
+  tbody.innerHTML = filtered.slice(start,end).map(c=>`
+    <tr>
+      <td>${c.market_cap_rank||'-'}</td>
+      <td>${c.name}</td>
+      <td>${c.symbol.toUpperCase()}</td>
+      <td>$${c.current_price?.toLocaleString()||'-'}</td>
+      <td>$${c.market_cap?.toLocaleString()||'-'}</td>
+    </tr>
+  `).join('');
+  renderPagination('coins-pagination', filtered.length, coinsPage, (p)=>{ coinsPage=p; renderCoinsTable(); });
+}
+
+// Exchanges Table Render
+function renderExchangesTable(){
+  const tbody = document.querySelector('#exchanges-table tbody');
+  let filtered = exchanges.filter(e=>e.name.toLowerCase().includes(filterInput.value.toLowerCase()));
+  const start = (exchangesPage-1)*perPage;
+  const end = start+perPage;
+  tbody.innerHTML = filtered.slice(start,end).map(e=>`
+    <tr>
+      <td>${e.name}</td>
+      <td>${e.year_established||'-'}</td>
+      <td>${e.country||'-'}</td>
+      <td>${e.trust_score||'-'}</td>
+    </tr>
+  `).join('');
+  renderPagination('exchanges-pagination', filtered.length, exchangesPage, (p)=>{ exchangesPage=p; renderExchangesTable(); });
+}
+
+// Filter
+filterInput.addEventListener('input', ()=>{
+  coinsPage=1; exchangesPage=1;
+  renderCoinsTable();
+  renderExchangesTable();
+});
+
+// Sorting
+document.querySelectorAll('#coins-table th').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const key = th.dataset.sort;
+    const dir = sortState.coins[key]==='asc'?'desc':'asc';
+    coinsMarket.sort((a,b)=>{
+      const va = a[key]??0;
+      const vb = b[key]??0;
+      return (va-vb)*(dir==='asc'?1:-1);
+    });
+    sortState.coins[key]=dir;
+    renderCoinsTable();
+  });
+});
+document.querySelectorAll('#exchanges-table th').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const key = th.dataset.sort;
+    const dir = sortState.exchanges[key]==='asc'?'desc':'asc';
+    exchanges.sort((a,b)=>{
+      const va = a[key]??'';
+      const vb = b[key]??'';
+      if(typeof va==='string') return dir==='asc'?va.localeCompare(vb):vb.localeCompare(va);
+      return (va-vb)*(dir==='asc'?1:-1);
+    });
+    sortState.exchanges[key]=dir;
+    renderExchangesTable();
+  });
+});
+
+// BTC Chart
+let btcChart;
+async function startBTCChart(){
+  const ctx = document.getElementById('btc-chart').getContext('2d');
+  const data = await fetchWithCache('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=minute','btcChart',60000);
+  const labels = data.prices.map(p=>new Date(p[0]).toLocaleTimeString());
+  const prices = data.prices.map(p=>p[1]);
+  btcChart = new Chart(ctx,{
+    type:'line',
+    data:{ labels, datasets:[{ label:'BTC/USD', data:prices, borderColor: secondaryColor, backgroundColor:'rgba(80,227,194,0.2)', fill:true }] },
+    options:{ responsive:true, plugins:{ legend:{ display:true } }, scales:{ x:{ display:true }, y:{ display:true } } }
+  });
+
+  setInterval(async()=>{
+    const newData = await fetchWithCache('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=minute','btcChart',60000);
+    btcChart.data.labels = newData.prices.map(p=>new Date(p[0]).toLocaleTimeString());
+    btcChart.data.datasets[0].data = newData.prices.map(p=>p[1]);
+    btcChart.update();
+  },60000);
+}
+
+loadData();
+</script>
+
+</body>
+</html>
