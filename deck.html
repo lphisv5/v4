@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Card Table AI</title>
+<style>
+:root {
+  --card-width: 100px;
+  --card-height: 145px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #121212;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#table {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #5a3e36 0%, #3b2720 50%, #5a3e36 100%);
+  border-radius: 40px;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.6),
+              0 15px 30px rgba(0,0,0,0.5);
+  perspective: 1200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card {
+  position: absolute;
+  width: var(--card-width);
+  height: var(--card-height);
+  border-radius: 12px;
+  background: linear-gradient(to bottom, #fff 0%, #e8e8e8 100%);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 5px rgba(0,0,0,0.2) inset;
+  transform-style: preserve-3d;
+  cursor: grab;
+  transition: transform 0.2s;
+  user-select: none;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 5px; left: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  border-radius: 8px;
+  background: linear-gradient(to bottom right, rgba(255,255,255,0.2), transparent);
+  pointer-events: none;
+}
+
+.card img {
+  width: 90%;
+  height: 90%;
+  margin: 5%;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.card.dragging {
+  cursor: grabbing;
+  z-index: 999;
+}
+
+</style>
+</head>
+<body>
+<div id="table"></div>
+
+<script>
+const table = document.getElementById('table');
+const CARD_WIDTH = 100;
+const CARD_HEIGHT = 145;
+let cards = [];
+
+function getRandomCount() {
+  return Math.floor(Math.random() * 5) + 5;
+}
+
+function randomPosition() {
+  const x = Math.random() * (table.clientWidth - CARD_WIDTH);
+  const y = Math.random() * (table.clientHeight - CARD_HEIGHT);
+  const rotX = Math.random() * 15 - 7.5;
+  const rotY = Math.random() * 15 - 7.5;
+  const rotZ = Math.random() * 60 - 30;
+  return { x, y, rotX, rotY, rotZ };
+}
+
+async function loadCards() {
+  const total = getRandomCount() * 2;
+  const url = `https://deckofcardsapi.com/api/deck/new/draw/?count=${total}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    cards = data.cards;
+
+    cards.forEach((card, index) => {
+      const { x, y, rotX, rotY, rotZ } = randomPosition();
+      const cardDiv = document.createElement('div');
+      cardDiv.className = 'card';
+      cardDiv.style.left = `${x}px`;
+      cardDiv.style.top = `${y}px`;
+      cardDiv.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`;
+      cardDiv.dataset.index = index;
+      cardDiv.dataset.owner = index < total/2 ? 'user' : 'AI';
+      cardDiv.innerHTML = `<img src="${card.image}" alt="${card.value} of ${card.suit}">`;
+      table.appendChild(cardDiv);
+
+      if(cardDiv.dataset.owner === 'user'){
+        enableDrag(cardDiv);
+      }
+    });
+
+    setTimeout(aiPlay, 2000);
+  } catch(err) {
+    console.error('Error loading cards:', err);
+  }
+}
+function enableDrag(card) {
+  let offsetX, offsetY, initialX, initialY;
+
+  function onMouseDown(e) {
+    e.preventDefault();
+    card.classList.add('dragging');
+    initialX = card.offsetLeft;
+    initialY = card.offsetTop;
+    offsetX = e.clientX - initialX;
+    offsetY = e.clientY - initialY;
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }
+
+  function onMouseMove(e) {
+    let newX = e.clientX - offsetX;
+    let newY = e.clientY - offsetY;
+
+    newX = Math.max(0, Math.min(newX, table.clientWidth - CARD_WIDTH));
+    newY = Math.max(0, Math.min(newY, table.clientHeight - CARD_HEIGHT));
+
+    card.style.left = newX + 'px';
+    card.style.top = newY + 'px';
+  }
+
+  function onMouseUp() {
+    card.classList.remove('dragging');
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+
+    setTimeout(aiPlay, 1000);
+  }
+
+  card.addEventListener('mousedown', onMouseDown);
+}
+
+function aiPlay() {
+  const aiCards = Array.from(table.querySelectorAll('.card')).filter(c=>c.dataset.owner==='AI');
+  if(aiCards.length === 0) return;
+
+  const card = aiCards[Math.floor(Math.random() * aiCards.length)];
+  const newX = Math.random() * (table.clientWidth - CARD_WIDTH);
+  const newY = Math.random() * (table.clientHeight - CARD_HEIGHT);
+  const rotZ = Math.random() * 60 - 30;
+
+  card.style.transition = 'all 0.8s ease';
+  card.style.left = newX + 'px';
+  card.style.top = newY + 'px';
+  card.style.transform = `rotateX(0deg) rotateY(0deg) rotateZ(${rotZ}deg)`;
+  setTimeout(()=>{ card.style.transition='transform 0.2s'; }, 800);
+}
+
+loadCards();
+</script>
+</body>
+</html>
