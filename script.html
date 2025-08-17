@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Script</title>
+  <title>YANZ - Search Script</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onerror="this.href='/local/font-awesome.css'">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" onerror="this.src='/local/purify.min.js'"></script>
   <style>
@@ -24,7 +24,9 @@
       --gradient: linear-gradient(135deg, #1a1a1a, #4a90e2);
       --transition: all 0.3s ease;
       --font-scale: calc(1 + (var(--dpi, 1) - 1) * 0.2);
-      --icon-scale: calc(1 + (var(--dpi, 1) - 1) * 0.3);
+      --icon-scale:
+
+ calc(1 + (var(--dpi, 1) - 1) * 0.3);
     }
 
     * {
@@ -398,7 +400,7 @@
     .card {
       background: var(--card);
       border-radius: var(--border-radius);
-      overflow: hidden;
+      overflow: visible; /* Allow image to display fully */
       box-shadow: var(--box-shadow);
       transition: var(--transition);
       opacity: 0;
@@ -415,10 +417,22 @@
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     }
 
+    .card > div:first-child {
+      position: relative;
+      height: auto; /* Adapt to image height */
+      width: 100%;
+      aspect-ratio: 16 / 9; /* Match ScriptBlox image ratio */
+      overflow: hidden; /* Ensure badges stay within bounds */
+    }
+
     .card-img {
       width: 100%;
-      height: calc(160px * var(--font-scale));
-      object-fit: cover;
+      height: auto; /* Allow natural height */
+      max-height: calc(270px * var(--font-scale)); /* Match ScriptBlox image height */
+      object-fit: contain; /* Show full image without cropping */
+      display: block; /* Remove inline spacing */
+      aspect-ratio: 16 / 9; /* Consistent with ScriptBlox */
+      border-radius: var(--border-radius) var(--border-radius) 0 0; /* Match card border */
     }
 
     .card-badge {
@@ -431,6 +445,7 @@
       border-radius: 6px;
       font-size: calc(0.8rem * var(--font-scale));
       font-weight: 600;
+      z-index: 1; /* Ensure badges are above image */
     }
 
     .card-content {
@@ -651,7 +666,9 @@
         grid-template-columns: 1fr;
         padding: calc(1.5rem * var(--font-scale));
       }
-      .card-img { height: calc(140px * var(--font-scale)); }
+      .card-img {
+        max-height: calc(200px * var(--font-scale));
+      }
       .skeleton-card { height: calc(280px * var(--font-scale)); }
       #loading {
         padding: calc(0.6rem * var(--font-scale));
@@ -682,7 +699,7 @@
 
       .search-btn { padding: calc(0.4rem * var(--font-scale)) calc(0.8rem * var(--font-scale)); }
       .filter-panel { width: min(calc(140px * var(--font-scale)), 80vw); }
-      .card-img { height: calc(120px * var(--font-scale)); }
+      .card-img { max-height: calc(150px * var(--font-scale)); } /* Adjusted for mobile */
       .skeleton-card { height: calc(260px * var(--font-scale)); }
       #loading {
         padding: calc(0.5rem * var(--font-scale));
@@ -732,7 +749,7 @@
       <div class="icon-wrapper" id="iconWrapper">
         <img src="https://i.postimg.cc/g0zJXrYK/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="Icon" onerror="this.src='/images/fallback.webp'">
       </div>
-      <div class="title-slide hidden" id="titleSlide">Search Script</div>
+      <div class="title-slide hidden" id="titleSlide">YANZ - Search Script</div>
     </div>
     <div class="search-container">
       <div class="search-box">
@@ -764,7 +781,7 @@
         <i class="fas fa-trash"></i> Clear Cache
       </button>
       <a href="https://discord.com/invite/mNGeUVcjKB" class="discord-btn" aria-label="Join our Discord">
-        <i class="fab fa-discord"></i> Join Discord
+        <i class="fab fa-discord"></i> Discord
       </a>
     </div>
   </header>
@@ -1157,7 +1174,7 @@
         scriptType: "free",
         isUniversal: true,
         isPatched: false,
-        image: "/images/script/0-1748711753445.png",
+        image: "https://scriptblox.com/images/script/0-1748711753445.png",
         lastBump: "2025-08-16T14:57:50.845Z",
         likeCount: 19,
         dislikeCount: 10,
