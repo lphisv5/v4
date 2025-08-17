@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Search Script</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onerror="this.href='/local/font-awesome.css'">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" onerror="this.src='/local/purify.min.js'"></script>
   <style>
     :root {
       --bg: #0d0d0d;
@@ -78,6 +78,7 @@
       transform: translateX(0);
       transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       z-index: 2;
+      will-change: transform;
     }
 
     .icon-wrapper img {
@@ -111,6 +112,7 @@
       text-shadow: var(--glow);
       white-space: nowrap;
       letter-spacing: 1px;
+      will-change: transform, opacity;
     }
 
     .title-slide.show {
@@ -585,6 +587,19 @@
     .toast.danger { background: var(--danger); }
     .toast.warning { background: var(--warning); }
 
+    .skeleton-card {
+      background: var(--card);
+      border-radius: var(--border-radius);
+      height: calc(300px * var(--font-scale));
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { background-color: rgba(255, 255, 255, 0.05); }
+      50% { background-color: rgba(255, 255, 255, 0.1); }
+      100% { background-color: rgba(255, 255, 255, 0.05); }
+    }
+
     @media (max-width: 768px) {
       :root {
         --font-scale: calc(0.85 + (var(--dpi, 1) - 1) * 0.15);
@@ -637,6 +652,7 @@
         padding: calc(1.5rem * var(--font-scale));
       }
       .card-img { height: calc(140px * var(--font-scale)); }
+      .skeleton-card { height: calc(280px * var(--font-scale)); }
       #loading {
         padding: calc(0.6rem * var(--font-scale));
         font-size: calc(0.85rem * var(--font-scale));
@@ -667,6 +683,7 @@
       .search-btn { padding: calc(0.4rem * var(--font-scale)) calc(0.8rem * var(--font-scale)); }
       .filter-panel { width: min(calc(140px * var(--font-scale)), 80vw); }
       .card-img { height: calc(120px * var(--font-scale)); }
+      .skeleton-card { height: calc(260px * var(--font-scale)); }
       #loading {
         padding: calc(0.5rem * var(--font-scale));
         font-size: calc(0.75rem * var(--font-scale));
@@ -713,7 +730,7 @@
   <header>
     <div class="logo-container">
       <div class="icon-wrapper" id="iconWrapper">
-        <img src="https://i.postimg.cc/g0zJXrYK/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="Icon">
+        <img src="https://i.postimg.cc/g0zJXrYK/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="Icon" onerror="this.src='/images/fallback.webp'">
       </div>
       <div class="title-slide hidden" id="titleSlide">Search Script</div>
     </div>
@@ -758,7 +775,7 @@
   </div>
 
   <div id="results"></div>
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" aria-live="polite"></div>
 
   <script>
     document.documentElement.style.setProperty('--dpi', window.devicePixelRatio || 1);
@@ -771,11 +788,13 @@
       CORS_PROXY: "https://api.allorigins.win/get?url=",
       SUGGESTED_QUERIES: ["Blox Fruits", "Adopt Me", "Murder Mystery 2", "Pet Simulator X"],
       TITLE_TIMEOUT: 3000,
+      ITEMS_PER_PAGE: 20,
     };
 
     const state = {
       scripts: [],
       currentQuery: "",
+      currentPage: 1,
       isLoading: false,
       lastError: null,
       filters: { scriptType: "all" },
@@ -783,6 +802,7 @@
       isTitleVisible: false,
       titleTimeout: null,
       observer: null,
+      hasMore: true,
     };
 
     const elements = {
@@ -806,6 +826,7 @@
       setupEventListeners();
       setupDropdown();
       setupIntersectionObserver();
+      setupInfiniteScroll();
       loadRandomQuery();
       setupIconAnimation();
     };
@@ -826,9 +847,7 @@
         elements.iconWrapper.classList.toggle('active', state.isTitleVisible);
         elements.titleSlide.classList.toggle('show', state.isTitleVisible);
         elements.titleSlide.classList.toggle('hidden', !state.isTitleVisible);
-
         elements.iconWrapper.style.transform = '';
-
         if (state.isTitleVisible) {
           state.titleTimeout = setTimeout(resetTitleAndIcon, CONFIG.TITLE_TIMEOUT);
         }
@@ -841,9 +860,7 @@
         elements.iconWrapper.classList.toggle('active', state.isTitleVisible);
         elements.titleSlide.classList.toggle('show', state.isTitleVisible);
         elements.titleSlide.classList.toggle('hidden', !state.isTitleVisible);
-
         elements.iconWrapper.style.transform = '';
-
         if (state.isTitleVisible) {
           state.titleTimeout = setTimeout(resetTitleAndIcon, CONFIG.TITLE_TIMEOUT);
         }
@@ -856,7 +873,9 @@
         clearTimeout(debounceTimeout);
         debounceTimeout = setTimeout(() => {
           state.currentQuery = elements.searchInput.value.trim();
-          renderResults();
+          state.currentPage = 1;
+          state.hasMore = true;
+          fetchResults(true);
         }, 300);
       });
 
@@ -864,12 +883,16 @@
         if (e.key === "Enter") {
           e.preventDefault();
           state.currentQuery = elements.searchInput.value.trim();
+          state.currentPage = 1;
+          state.hasMore = true;
           fetchResults(true);
         }
       });
 
       elements.searchButton.addEventListener("click", () => {
         state.currentQuery = elements.searchInput.value.trim();
+        state.currentPage = 1;
+        state.hasMore = true;
         fetchResults(true);
       });
 
@@ -933,6 +956,8 @@
           item.classList.add("selected");
           menu.classList.remove("show");
           toggle.setAttribute("aria-expanded", "false");
+          state.currentPage = 1;
+          state.hasMore = true;
           fetchResults(true);
         });
       });
@@ -959,6 +984,22 @@
       document.querySelectorAll(".card").forEach((card) => state.observer.observe(card));
     };
 
+    const setupInfiniteScroll = () => {
+      const debounce = (func, wait) => {
+        let timeout;
+        return (...args) => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func(...args), wait);
+        };
+      };
+
+      window.addEventListener('scroll', debounce(() => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !state.isLoading && state.hasMore) {
+          fetchResults(false);
+        }
+      }, 100));
+    };
+
     const showToast = (message, type = "success") => {
       elements.toast.textContent = message;
       elements.toast.className = `toast ${type} show`;
@@ -971,11 +1012,13 @@
     const loadRandomQuery = () => {
       state.currentQuery = CONFIG.RANDOM_QUERIES[Math.floor(Math.random() * CONFIG.RANDOM_QUERIES.length)];
       elements.searchInput.value = state.currentQuery;
+      state.currentPage = 1;
+      state.hasMore = true;
       fetchResults(true);
     };
 
-    const getCachedResults = (query) => {
-      const cacheKey = `scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}`;
+    const getCachedResults = (query, page) => {
+      const cacheKey = `scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}_page${page}`;
       const cached = localStorage.getItem(cacheKey);
       if (!cached) return null;
       const { data, timestamp } = JSON.parse(cached);
@@ -986,8 +1029,8 @@
       return data;
     };
 
-    const cacheResults = (data, query) => {
-      localStorage.setItem(`scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}`, JSON.stringify({
+    const cacheResults = (data, query, page) => {
+      localStorage.setItem(`scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}_page${page}`, JSON.stringify({
         data,
         timestamp: Date.now(),
       }));
@@ -998,35 +1041,59 @@
         .filter((key) => key.startsWith(`scripts_${CONFIG.CACHE_VERSION}_`))
         .forEach((key) => localStorage.removeItem(key));
       state.scripts = [];
+      state.currentPage = 1;
+      state.hasMore = true;
       renderResults();
       fetchResults(true);
     };
 
+    const validateScriptData = (script) => {
+      return (
+        script &&
+        typeof script._id === 'string' &&
+        typeof script.title === 'string' &&
+        typeof script.game === 'object' &&
+        typeof script.game.name === 'string'
+      );
+    };
+
     const fetchResults = async (reset = false) => {
-      if (state.isLoading) return;
+      if (state.isLoading || !state.hasMore) return;
       state.isLoading = true;
       state.lastError = null;
-      elements.loadingMessage.textContent = `Loading scripts for "${state.currentQuery || "free"}"...`;
+      elements.loadingMessage.textContent = `Loading scripts for "${state.currentQuery || "free"}" (Page ${state.currentPage})... Please wait.`;
       elements.loading.style.display = "flex";
 
-      if (reset) state.scripts = [];
+      if (reset) {
+        state.scripts = [];
+        state.currentPage = 1;
+        state.hasMore = true;
+      }
 
       try {
         const query = state.currentQuery || "free";
-        const cached = getCachedResults(query);
+        const cached = getCachedResults(query, state.currentPage);
         if (cached) {
-          state.scripts = cached;
+          state.scripts = reset ? cached : [...state.scripts, ...cached];
           renderResults();
           showToast(`Loaded ${cached.length} scripts from cache`, "success");
+          state.currentPage++;
           return;
         }
 
         const url = new URL(CONFIG.API_URL);
         url.searchParams.append("q", query);
-        url.searchParams.append("page", "1");
-        url.searchParams.append("max", "20");
+        url.searchParams.append("page", state.currentPage);
+        url.searchParams.append("max", CONFIG.ITEMS_PER_PAGE);
 
-        const res = await fetchWithRetry(CONFIG.CORS_PROXY + encodeURIComponent(url));
+        let res;
+        try {
+          res = await fetchWithRetry(CONFIG.CORS_PROXY + encodeURIComponent(url));
+        } catch (proxyErr) {
+          console.warn("CORS proxy failed, trying direct API...");
+          res = await fetchWithRetry(url);
+        }
+
         if (!res.ok) throw new Error(`API failed: ${res.status}`);
         const data = await res.json();
         if (!data.contents) throw new Error("Invalid API response: Missing contents");
@@ -1034,19 +1101,23 @@
         if (!parsed.result || !Array.isArray(parsed.result.scripts)) {
           throw new Error("Invalid API response: Missing or invalid scripts array");
         }
-        state.scripts = parsed.result.scripts;
-        cacheResults(state.scripts, query);
+        const newScripts = parsed.result.scripts.filter(validateScriptData);
+        state.scripts = reset ? newScripts : [...state.scripts, ...newScripts];
+        state.hasMore = newScripts.length === CONFIG.ITEMS_PER_PAGE;
+        cacheResults(newScripts, query, state.currentPage);
         renderResults();
-        showToast(`Loaded ${state.scripts.length} scripts`, state.scripts.length ? "success" : "warning");
-        if (!state.scripts.length) {
+        showToast(`Loaded ${newScripts.length} scripts`, newScripts.length ? "success" : "warning");
+        if (!state.scripts.length && reset) {
           state.scripts = getSampleData();
           renderResults();
         }
+        state.currentPage++;
       } catch (err) {
         state.lastError = err;
         showToast(`Error: ${err.message}. Using sample data.`, "danger");
         if (reset) {
-          state.scripts = getSampleData();
+          const cached = getCachedResults(query, 1) || getSampleData();
+          state.scripts = cached;
           renderResults();
         }
       } finally {
@@ -1059,12 +1130,19 @@
       for (let i = 0; i < retries; i++) {
         try {
           const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+          if (res.status === 429) {
+            const retryAfter = res.headers.get('Retry-After') || delay * 2 ** i;
+            await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+            continue;
+          }
           if (res.ok) return res;
+          throw new Error(`HTTP ${res.status}`);
         } catch (err) {
           if (i < retries - 1) await new Promise((resolve) => setTimeout(resolve, delay * 2 ** i));
+          else throw err;
         }
       }
-      throw new Error("Max retries reached. Consider hosting your own API proxy.");
+      throw new Error("Max retries reached.");
     };
 
     const getSampleData = () => [
@@ -1113,37 +1191,43 @@
     ];
 
     const renderResults = () => {
-      const container = elements.results;
-      if (state.lastError) {
-        container.innerHTML = `
-          <div class="error-state">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>Error Loading Scripts</h3>
-            <p>${sanitizeHTML(state.lastError.message)}</p>
-            <button class="retry-btn" onclick="fetchResults(true)">Retry</button>
-            <div class="empty-state-suggestions">
-              ${CONFIG.SUGGESTED_QUERIES.map((q) => `<button class="suggestion-btn" onclick="searchSuggestion('${sanitizeHTML(q)}')">${sanitizeHTML(q)}</button>`).join("")}
-            </div>
-          </div>`;
-        return;
-      }
+      requestAnimationFrame(() => {
+        const container = elements.results;
+        if (state.isLoading) {
+          container.innerHTML = Array(6).fill().map(() => '<div class="skeleton-card"></div>').join("");
+          return;
+        }
+        if (state.lastError) {
+          container.innerHTML = `
+            <div class="error-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <h3>Error Loading Scripts</h3>
+              <p>${sanitizeHTML(state.lastError.message)}</p>
+              <button class="retry-btn" onclick="fetchResults(true)">Retry</button>
+              <div class="empty-state-suggestions">
+                ${CONFIG.SUGGESTED_QUERIES.map((q) => `<button class="suggestion-btn" onclick="searchSuggestion('${sanitizeHTML(q)}')">${sanitizeHTML(q)}</button>`).join("")}
+              </div>
+            </div>`;
+          return;
+        }
 
-      const scripts = filterScripts();
-      if (!scripts.length) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-file-code"></i>
-            <h3>No scripts found</h3>
-            <p>Try a different search term:</p>
-            <div class="empty-state-suggestions">
-              ${CONFIG.SUGGESTED_QUERIES.map((q) => `<button class="suggestion-btn" onclick="searchSuggestion('${sanitizeHTML(q)}')">${sanitizeHTML(q)}</button>`).join("")}
-            </div>
-          </div>`;
-        return;
-      }
+        const scripts = filterScripts();
+        if (!scripts.length) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-file-code"></i>
+              <h3>No scripts found</h3>
+              <p>Try a different search term:</p>
+              <div class="empty-state-suggestions">
+                ${CONFIG.SUGGESTED_QUERIES.map((q) => `<button class="suggestion-btn" onclick="searchSuggestion('${sanitizeHTML(q)}')">${sanitizeHTML(q)}</button>`).join("")}
+              </div>
+            </div>`;
+          return;
+        }
 
-      container.innerHTML = scripts.map(createScriptCard).join("");
-      setupIntersectionObserver();
+        container.innerHTML = scripts.map(createScriptCard).join("");
+        setupIntersectionObserver();
+      });
     };
 
     const sanitizeHTML = (str) => DOMPurify.sanitize(str || "");
@@ -1165,7 +1249,7 @@
     };
 
     const createScriptCard = (script) => {
-      const imgSrc = sanitizeHTML(script.image || script.game.imageUrl);
+      const imgSrc = sanitizeHTML(script.image || script.game.imageUrl || '/images/fallback.webp');
       const createdAt = new Date(script.createdAt).toLocaleDateString();
       const lastBump = new Date(script.lastBump).toLocaleDateString();
       const matchedFields = script.matched ? script.matched.join(", ") : "None";
@@ -1236,6 +1320,8 @@
     const searchSuggestion = (query) => {
       state.currentQuery = query;
       elements.searchInput.value = query;
+      state.currentPage = 1;
+      state.hasMore = true;
       fetchResults(true);
     };
 
