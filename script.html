@@ -3,25 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YANZ - Search Script</title>
+  <title>Search Script</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
   <style>
     :root {
       --bg: #0d0d0d;
       --card: #1e1e1e;
       --text: #f0f0f0;
       --accent: #4a90e2;
-      --accent-light: #6aa0f5;
+      --accent-hover: #6aa0f5;
       --danger: #e74c3c;
       --success: #2ecc71;
       --warning: #f39c12;
+      --discord-bg: #5865F2;
+      --discord-hover: #7289DA;
       --border-radius: 12px;
-      --box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-      --gradient: linear-gradient(135deg, #4a90e2, #6aa0f5);
-      --discord-gradient: linear-gradient(135deg, #5865F2, #7289DA);
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --glow: 0 0 8px rgba(255, 255, 255, 0.5);
+      --gradient: linear-gradient(135deg, #1a1a1a, #4a90e2);
       --transition: all 0.3s ease;
-      --font-scale: calc(1 + (var(--dpi, 1) - 1) * 0.25);
-      --icon-scale: calc(1 + (var(--dpi, 1) - 1) * 0.35);
+      --font-scale: calc(1 + (var(--dpi, 1) - 1) * 0.2);
+      --icon-scale: calc(1 + (var(--dpi, 1) - 1) * 0.3);
     }
 
     * {
@@ -31,145 +34,202 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.5;
       font-size: calc(16px * var(--font-scale));
-      touch-action: manipulation;
       min-height: 100vh;
       overflow-y: auto;
-    }
-
-    header {
-      padding: calc(1rem * var(--font-scale)) 2rem;
-      background: var(--card);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+    }
+
+    header {
+      padding: calc(1.5rem * var(--font-scale));
+      background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
       box-shadow: var(--box-shadow);
+      text-align: center;
+      width: 100%;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
     }
 
     .logo-container {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 1rem;
+      justify-content: flex-start;
+      margin-bottom: 1rem;
+      position: relative;
+      height: calc(80px * var(--icon-scale));
       width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+    .icon-wrapper {
+      position: absolute;
+      cursor: pointer;
+      width: calc(60px * var(--icon-scale));
+      height: calc(60px * var(--icon-scale));
+      left: 0;
+      transform: translateX(0);
+      transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 2;
     }
 
-    .logo i {
-      color: var(--accent);
-      font-size: calc(1.4rem * var(--icon-scale));
+    .icon-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: var(--box-shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    h1 {
-      margin: 0;
-      font-size: calc(1.4rem * var(--font-scale));
+    .icon-wrapper:hover img {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .icon-wrapper.active {
+      transform: translateX(calc(100% - calc(60px * var(--icon-scale))));
+    }
+
+    .title-slide {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateX(-100%);
+      opacity: 0;
+      transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease;
+      font-size: calc(1.5rem * var(--font-scale));
       font-weight: 700;
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffffff;
+      text-shadow: var(--glow);
+      white-space: nowrap;
+      letter-spacing: 1px;
+    }
+
+    .title-slide.show {
+      transform: translate(-50%, -50%) translateX(0);
+      opacity: 1;
+    }
+
+    .title-slide.hidden {
+      transform: translate(-50%, -50%) translateX(-100%);
+      opacity: 0;
     }
 
     .search-container {
       display: flex;
+      flex-direction: column;
       align-items: center;
       max-width: 600px;
-      width: 100%;
       margin: 0 auto;
       gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: calc(0.75rem * var(--font-scale));
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+
+    .search-container:hover {
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .search-box {
       position: relative;
-      flex: 1;
-      min-width: 200px;
       display: flex;
       align-items: center;
-    }
-
-    .search-box i.fa-search {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #777;
-      font-size: calc(1.1rem * var(--icon-scale));
-    }
-
-    input, textarea {
-      border-radius: var(--border-radius);
-      border: none;
-      font-size: calc(0.85rem * var(--font-scale));
-      transition: var(--transition);
-    }
-
-    .search-box input {
       width: 100%;
       background: #2a2a2a;
-      color: #fff;
-      padding: calc(0.75rem * var(--font-scale)) calc(2.5rem * var(--font-scale));
-    }
-
-    input:focus {
-      outline: 2px solid var(--accent);
-      background: #333;
-    }
-
-    button {
-      background: var(--gradient);
-      color: #fff;
-      cursor: pointer;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      white-space: nowrap;
-      border: none;
       border-radius: var(--border-radius);
-      font-size: calc(0.85rem * var(--font-scale));
+      padding: calc(0.3rem * var(--font-scale));
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
       transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    button:hover {
-      background: var(--accent-light);
-      transform: scale(1.05);
+    .search-box:focus-within {
+      box-shadow: 0 0 0 2px var(--accent), var(--glow);
+      border-color: var(--accent);
     }
 
-    button:active {
-      transform: scale(1);
+    input {
+      flex: 1;
+      background: transparent;
+      color: var(--text);
+      padding: calc(0.7rem * var(--font-scale));
+      border: none;
+      font-size: calc(0.95rem * var(--font-scale));
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #888;
+      font-style: italic;
     }
 
     .search-btn {
+      background: var(--gradient);
+      color: #fff;
+      padding: calc(0.7rem * var(--font-scale)) calc(1.2rem * var(--font-scale));
+      border-radius: calc(var(--border-radius) - 2px);
+      font-size: calc(0.95rem * var(--font-scale));
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+    }
+
+    .search-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .search-btn::before {
+      content: '';
       position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      padding: calc(0.5rem * var(--font-scale));
-      width: calc(2rem * var(--icon-scale));
-      height: calc(2rem * var(--icon-scale));
-      border-radius: 50%;
-      font-size: calc(0.9rem * var(--icon-scale));
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .search-btn:hover::before {
+      left: 100%;
+    }
+
+    .search-btn:active {
+      transform: scale(1);
     }
 
     .filter-btn {
-      padding: calc(0.75rem * var(--font-scale));
-      width: calc(2.5rem * var(--icon-scale));
-      height: calc(2.5rem * var(--icon-scale));
+      background: var(--gradient);
+      color: #fff;
+      padding: calc(0.6rem * var(--font-scale));
+      width: calc(2.2rem * var(--icon-scale));
+      height: calc(2.2rem * var(--icon-scale));
       border-radius: 50%;
-      order: -1; /* Move to the left of search-box */
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+
+    .filter-btn:hover {
+      transform: rotate(90deg);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
 
     .close-panel-btn {
@@ -179,150 +239,149 @@
       height: calc(2rem * var(--icon-scale));
       border-radius: 50%;
       align-self: flex-end;
+      transition: var(--transition);
     }
 
     .close-panel-btn:hover {
       background: #ff6655;
+      transform: scale(1.1);
     }
 
-    .clear-cache-btn {
+    .clear-cache-btn, .discord-btn {
       background: var(--danger);
-      padding: calc(0.5rem * var(--font-scale));
+      color: #fff;
+      padding: calc(0.6rem * var(--font-scale));
+      width: 100%;
+      display: flex;
+      align-items: center;
       justify-content: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+
+    .discord-btn {
+      background: var(--discord-bg);
+      text-decoration: none;
     }
 
     .clear-cache-btn:hover {
       background: #ff6655;
-    }
-
-    .discord-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition);
+      transform: scale(1.02);
     }
 
     .discord-btn:hover {
-      transform: scale(1.1);
-    }
-
-    .discord-btn i {
-      font-size: calc(1.4rem * var(--icon-scale));
-      color: #7289DA;
+      background: var(--discord-hover);
+      transform: scale(1.02);
     }
 
     .filter-panel {
       position: fixed;
       top: 0;
       right: 0;
-      width: calc(200px * var(--font-scale));
+      width: min(calc(200px * var(--font-scale)), 80vw);
       height: 100vh;
       background: var(--card);
       padding: calc(1rem * var(--font-scale));
-      border-radius: 0;
       box-shadow: var(--box-shadow);
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 1.5rem;
       z-index: 1000;
       transform: translateX(100%);
       transition: transform 0.3s ease-in-out;
-      animation: rgb-border 4s linear infinite;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .filter-panel.show {
       transform: translateX(0);
     }
 
-    @keyframes rgb-border {
-      0% {
-        border-left: 2px solid #ff0000;
-      }
-      25% {
-        border-left: 2px solid #00ff00;
-      }
-      50% {
-        border-left: 2px solid #0000ff;
-      }
-      75% {
-        border-left: 2px solid #ff00ff;
-      }
-      100% {
-        border-left: 2px solid #ff0000;
-      }
-    }
-
     .filter-group {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
     .filter-group label {
-      font-size: calc(0.8rem * var(--font-scale));
-      font-weight: 500;
+      font-size: calc(0.85rem * var(--font-scale));
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
     }
 
-    .custom-select {
+    .dropdown-container {
       position: relative;
       width: 100%;
     }
 
-    .custom-select-toggle {
+    .dropdown-toggle {
       background: #2a2a2a;
-      color: #fff;
-      padding: calc(0.5rem * var(--font-scale));
+      color: var(--text);
+      padding: calc(0.7rem * var(--font-scale));
       border-radius: var(--border-radius);
+      font-size: calc(0.95rem * var(--font-scale));
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      font-size: calc(0.8rem * var(--font-scale));
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--box-shadow);
     }
 
-    .custom-select-toggle:focus {
-      outline: 2px solid var(--accent);
+    .dropdown-toggle:hover {
       background: #333;
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
     }
 
-    .custom-select-toggle::after {
+    .dropdown-toggle::after {
       content: '\f078';
       font-family: 'Font Awesome 6 Free';
       font-weight: 900;
-      color: #777;
-      font-size: calc(0.7rem * var(--icon-scale));
+      color: #888;
+      font-size: calc(0.85rem * var(--icon-scale));
     }
 
-    .custom-select-options {
-      display: none;
+    .dropdown-menu {
       position: absolute;
-      top: 100%;
+      top: calc(100% + 0.5rem);
       left: 0;
       right: 0;
       background: #2a2a2a;
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
       z-index: 10;
-      margin-top: 0.25rem;
+      overflow: hidden;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.2s ease-in-out;
     }
 
-    .custom-select-options.show {
-      display: block;
+    .dropdown-menu.show {
+      transform: scaleY(1);
     }
 
-    .custom-select-option {
-      padding: calc(0.5rem * var(--font-scale));
+    .dropdown-item {
+      padding: calc(0.7rem * var(--font-scale));
+      font-size: calc(0.95rem * var(--font-scale));
+      color: var(--text);
       cursor: pointer;
-      font-size: calc(0.8rem * var(--font-scale));
+      transition: var(--transition);
+    }
+
+    .dropdown-item:hover {
+      background: var(--accent);
       color: #fff;
     }
 
-    .custom-select-option:hover {
-      background: #333;
-    }
-
-    .custom-select-option.selected {
+    .dropdown-item.selected {
       background: var(--accent);
+      color: #fff;
+      font-weight: 600;
     }
 
     #results {
@@ -330,15 +389,14 @@
       grid-template-columns: repeat(auto-fill, minmax(calc(280px * var(--font-scale)), 1fr));
       gap: 1.5rem;
       padding: calc(2rem * var(--font-scale));
-      padding-top: calc(1.5rem * var(--font-scale));
+      width: 100%;
+      max-width: 1200px;
     }
 
     .card {
       background: var(--card);
       border-radius: var(--border-radius);
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
       box-shadow: var(--box-shadow);
       transition: var(--transition);
       opacity: 0;
@@ -348,19 +406,17 @@
     .card.visible {
       opacity: 1;
       transform: translateY(0);
-      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     }
 
     .card-img {
       width: 100%;
       height: calc(160px * var(--font-scale));
       object-fit: cover;
-      border-bottom: 1px solid #333;
     }
 
     .card-badge {
@@ -369,136 +425,102 @@
       right: 0.5rem;
       background: var(--gradient);
       color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: calc(0.75rem * var(--font-scale));
-      font-weight: bold;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: calc(0.8rem * var(--font-scale));
+      font-weight: 600;
     }
 
     .card-content {
-      padding: calc(1.25rem * var(--font-scale));
-      flex: 1;
+      padding: calc(1.2rem * var(--font-scale));
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
     }
 
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-
     .card-title {
-      margin: 0;
       font-size: calc(1.1rem * var(--font-scale));
-      font-weight: 600;
+      font-weight: 700;
       color: #fff;
     }
 
-    .card-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    .card-meta, .card-game, .card-status, .card-likes {
       font-size: calc(0.85rem * var(--font-scale));
-      color: #aaa;
-    }
-
-    .card-meta i {
-      color: var(--accent);
-      font-size: calc(0.9rem * var(--icon-scale));
-    }
-
-    .card-game {
+      color: #bbb;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: calc(0.9rem * var(--font-scale));
-      color: #ccc;
     }
 
-    .card-game i {
-      color: var(--warning);
-      font-size: calc(0.9rem * var(--icon-scale));
+    .card-meta i, .card-game i, .card-status i {
+      font-size: calc(0.95rem * var(--icon-scale));
     }
 
-    .card-footer {
-      margin-top: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+    .card-game i { color: var(--warning); }
+    .verified { color: var(--success); }
+    .key-required { color: var(--warning); }
+    .universal { color: var(--accent); }
+    .patched { color: var(--danger); }
+    .card-likes i.fa-thumbs-up { color: var(--success); }
+    .card-likes i.fa-thumbs-down { color: var(--danger); }
 
     .script-display-container {
       position: relative;
-      width: 100%;
     }
 
     .script-display {
       width: 100%;
       background: #2a2a2a;
       color: #fff;
-      padding: calc(2rem * var(--font-scale)) 0.75rem 0.75rem 0.75rem;
-      font-family: 'Courier New', Courier, monospace;
+      padding: calc(0.8rem * var(--font-scale));
+      font-family: 'Courier New', monospace;
       font-size: calc(0.85rem * var(--font-scale));
-      overflow-x: auto;
-      white-space: pre;
       border-radius: var(--border-radius);
       resize: none;
-      min-height: calc(80px * var(--font-scale));
-    }
-
-    .script-display::-webkit-scrollbar {
-      height: 8px;
-    }
-
-    .script-display::-webkit-scrollbar-track {
-      background: #333;
-      border-radius: 4px;
-    }
-
-    .script-display::-webkit-scrollbar-thumb {
-      background: #fff;
-      border-radius: 4px;
-    }
-
-    .script-display::-webkit-scrollbar-thumb:hover {
-      background: #ddd;
+      min-height: calc(70px * var(--font-scale));
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .script-copy-btn {
       position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      width: calc(1.5rem * var(--icon-scale));
-      height: calc(1.5rem * var(--icon-scale));
+      top: calc(0.6rem * var(--font-scale));
+      right: calc(0.6rem * var(--font-scale));
+      background: var(--accent);
+      padding: calc(0.4rem * var(--font-scale));
       border-radius: 50%;
-      padding: 0;
-      font-size: calc(0.75rem * var(--icon-scale));
-      background: var(--gradient);
+      cursor: pointer;
+      z-index: 1;
+      transition: var(--transition);
+    }
+
+    .script-copy-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.1);
     }
 
     #loading {
       position: fixed;
-      top: 1rem;
-      right: 1rem;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background: var(--gradient);
-      padding: calc(0.75rem * var(--font-scale)) calc(1.25rem * var(--font-scale));
+      padding: calc(0.8rem * var(--font-scale));
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
       z-index: 1000;
       display: none;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
+      color: #fff;
+      font-size: calc(0.95rem * var(--font-scale));
     }
 
     .spinner {
-      width: calc(1rem * var(--icon-scale));
-      height: calc(1rem * var(--icon-scale));
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
+      width: calc(1.2rem * var(--icon-scale));
+      height: calc(1.2rem * var(--icon-scale));
+      border: 3px solid rgba(255, 255, 255, 0.3);
       border-top-color: #fff;
+      border-radius: 50%;
       animation: spin 1s ease-in-out infinite;
     }
 
@@ -506,283 +528,177 @@
       to { transform: rotate(360deg); }
     }
 
-    .empty-state {
+    .empty-state, .error-state {
       grid-column: 1 / -1;
       text-align: center;
-      padding: calc(3rem * var(--font-scale));
-      color: #777;
-    }
-
-    .empty-state i {
-      font-size: calc(3rem * var(--icon-scale));
-      margin-bottom: 1rem;
-      color: #444;
-    }
-
-    .empty-state-suggestions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-
-    .suggestion-btn {
-      background: var(--gradient);
-      color: #fff;
-      padding: calc(0.5rem * var(--font-scale)) calc(1rem * var(--font-scale));
-      border-radius: var(--border-radius);
-      border: none;
-      font-size: calc(0.85rem * var(--font-scale));
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .suggestion-btn:hover {
-      background: var(--accent-light);
-      transform: scale(1.05);
-    }
-
-    .suggestion-btn:active {
-      transform: scale(1);
+      padding: calc(2.5rem * var(--font-scale));
+      color: #888;
     }
 
     .error-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: calc(3rem * var(--font-scale));
-      color: #e74c3c;
+      color: var(--danger);
       background: rgba(231, 76, 60, 0.1);
       border-radius: var(--border-radius);
-      margin: 1rem;
     }
 
-    .error-state i {
-      font-size: calc(3rem * var(--icon-scale));
-      margin-bottom: 1rem;
+    .empty-state i, .error-state i {
+      font-size: calc(2.5rem * var(--icon-scale));
+      margin-bottom: 0.75rem;
     }
 
-    .retry-btn {
-      margin-top: 1rem;
-      background: var(--danger);
+    .suggestion-btn, .retry-btn {
+      background: var(--gradient);
+      color: #fff;
+      padding: calc(0.6rem * var(--font-scale)) calc(1.2rem * var(--font-scale));
+      border-radius: var(--border-radius);
+      font-size: calc(0.85rem * var(--font-scale));
+      font-weight: 600;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+
+    .suggestion-btn:hover, .retry-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.05);
     }
 
     .toast {
       position: fixed;
-      bottom: 1rem;
+      bottom: 1.5rem;
       left: 50%;
       transform: translateX(-50%);
       background: var(--success);
       color: white;
-      padding: calc(0.75rem * var(--font-scale)) calc(1.5rem * var(--font-scale));
+      padding: calc(0.6rem * var(--font-scale)) calc(1.2rem * var(--font-scale));
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
       z-index: 1000;
       opacity: 0;
       transition: var(--transition);
-      max-width: 90%;
-      font-size: calc(0.85rem * var(--font-scale));
     }
 
     .toast.show {
       opacity: 1;
-      bottom: 2rem;
+      bottom: 2.5rem;
     }
 
-    .toast.danger {
-      background: var(--danger);
-    }
-
-    .toast.warning {
-      background: var(--warning);
-    }
+    .toast.danger { background: var(--danger); }
+    .toast.warning { background: var(--warning); }
 
     @media (max-width: 768px) {
       :root {
-        --font-scale: calc(0.85 + (var(--dpi, 1) - 1) * 0.2);
-        --icon-scale: calc(0.9 + (var(--dpi, 1) - 1) * 0.3);
+        --font-scale: calc(0.85 + (var(--dpi, 1) - 1) * 0.15);
+        --icon-scale: calc(0.9 + (var(--dpi, 1) - 1) * 0.25);
       }
 
-      header {
-        flex-direction: column;
-        align-items: stretch;
-        padding: calc(0.9rem * var(--font-scale));
-      }
-
-      .logo-container {
-        justify-content: flex-start;
-        max-width: none;
-        margin: 0;
-      }
-
+      header { padding: calc(1rem * var(--font-scale)); }
       .search-container {
-        flex-direction: column;
-        gap: 0.65rem;
-        margin: 0;
+        padding: calc(0.5rem * var(--font-scale));
       }
-
       .search-box {
-        width: 100%;
+        padding: calc(0.2rem * var(--font-scale));
       }
-
-      .search-box input {
-        padding: calc(0.7rem * var(--font-scale)) calc(2.3rem * var(--font-scale));
-        font-size: calc(0.8rem * var(--font-scale));
+      input {
+        padding: calc(0.5rem * var(--font-scale));
+        font-size: calc(0.85rem * var(--font-scale));
       }
-
-      .search-box i.fa-search {
-        font-size: calc(1rem * var(--icon-scale));
-        left: 8px;
-      }
-
       .search-btn {
-        right: 8px;
-        padding: calc(0.4rem * var(--font-scale));
-        width: calc(1.8rem * var(--icon-scale));
-        height: calc(1.8rem * var(--icon-scale));
-        font-size: calc(0.8rem * var(--icon-scale));
+        padding: calc(0.5rem * var(--font-scale)) calc(1rem * var(--font-scale));
+        font-size: calc(0.85rem * var(--font-scale));
       }
-
       .filter-btn {
-        padding: calc(0.4rem * var(--font-scale));
+        margin-top: calc(0.5rem * var(--font-scale));
         width: calc(2rem * var(--icon-scale));
         height: calc(2rem * var(--icon-scale));
-        font-size: calc(0.8rem * var(--icon-scale));
       }
-
       .close-panel-btn {
         padding: calc(0.4rem * var(--font-scale));
         width: calc(1.8rem * var(--icon-scale));
         height: calc(1.8rem * var(--icon-scale));
-        font-size: calc(0.8rem * var(--icon-scale));
       }
-
-      .clear-cache-btn {
+      .clear-cache-btn, .discord-btn {
         padding: calc(0.5rem * var(--font-scale));
+        font-size: calc(0.85rem * var(--font-scale));
       }
-
       .filter-panel {
-        width: calc(180px * var(--font-scale));
-        padding: calc(0.6rem * var(--font-scale));
+        width: min(calc(160px * var(--font-scale)), 80vw);
+        padding: calc(0.75rem * var(--font-scale));
       }
-
-      .filter-group label {
-        font-size: calc(0.75rem * var(--font-scale));
+      .dropdown-toggle {
+        padding: calc(0.5rem * var(--font-scale));
+        font-size: calc(0.85rem * var(--font-scale));
       }
-
-      .custom-select-toggle, .custom-select-option {
-        padding: calc(0.4rem * var(--font-scale));
-        font-size: calc(0.75rem * var(--font-scale));
+      .dropdown-item {
+        padding: calc(0.5rem * var(--font-scale));
+        font-size: calc(0.85rem * var(--font-scale));
       }
-
-      .custom-select-toggle::after {
-        font-size: calc(0.65rem * var(--icon-scale));
-      }
-
       #results {
         grid-template-columns: 1fr;
-        padding: calc(0.9rem * var(--font-scale));
-        padding-top: calc(1.3rem * var(--font-scale));
+        padding: calc(1.5rem * var(--font-scale));
       }
-
-      .card-img {
-        height: calc(140px * var(--font-scale));
+      .card-img { height: calc(140px * var(--font-scale)); }
+      #loading {
+        padding: calc(0.6rem * var(--font-scale));
+        font-size: calc(0.85rem * var(--font-scale));
       }
-
-      .card-title {
-        font-size: calc(1rem * var(--font-scale));
+      .logo-container {
+        height: calc(70px * var(--icon-scale));
       }
-
-      .card-meta, .card-game {
-        font-size: calc(0.8rem * var(--font-scale));
+      .icon-wrapper {
+        width: calc(50px * var(--icon-scale));
+        height: calc(50px * var(--icon-scale));
+        left: 0;
+        transform: translateX(0);
       }
-
-      .script-display {
-        font-size: calc(0.8rem * var(--font-scale));
-        min-height: calc(70px * var(--font-scale));
+      .icon-wrapper.active {
+        transform: translateX(calc(100% - calc(50px * var(--icon-scale))));
+      }
+      .title-slide {
+        font-size: calc(1.2rem * var(--font-scale));
       }
     }
 
     @media (max-width: 480px) {
       :root {
-        --font-scale: calc(0.8 + (var(--dpi, 1) - 1) * 0.15);
-        --icon-scale: calc(0.85 + (var(--dpi, 1) - 1) * 0.25);
+        --font-scale: calc(0.8 + (var(--dpi, 1) - 1) * 0.1);
+        --icon-scale: calc(0.85 + (var(--dpi, 1) - 1) * 0.2);
       }
 
-      #results {
-        grid-template-columns: 1fr;
-      }
-
-      .search-box input {
-        padding: calc(0.65rem * var(--font-scale)) calc(2.2rem * var(--font-scale));
-        font-size: calc(0.8rem * var(--font-scale));
-      }
-
-      .logo i {
-        font-size: calc(1.1rem * var(--icon-scale));
-      }
-
-      h1 {
-        font-size: calc(1.2rem * var(--font-scale));
-      }
-
-      .card-title {
-        font-size: calc(0.9rem * var(--font-scale));
-      }
-
-      .card-img {
-        height: calc(120px * var(--font-scale));
-      }
-
-      .toast {
-        padding: calc(0.55rem * var(--font-scale)) calc(1.1rem * var(--font-scale));
-        font-size: calc(0.8rem * var(--font-scale));
-      }
-
-      .search-btn {
-        padding: calc(0.35rem * var(--font-scale));
-        width: calc(1.6rem * var(--icon-scale));
-        height: calc(1.6rem * var(--icon-scale));
-        font-size: calc(0.7rem * var(--icon-scale));
-      }
-
-      .filter-btn {
-        padding: calc(0.35rem * var(--font-scale));
-        width: calc(1.8rem * var(--icon-scale));
-        height: calc(1.8rem * var(--icon-scale));
-        font-size: calc(0.7rem * var(--icon-scale));
-      }
-
-      .close-panel-btn {
-        padding: calc(0.35rem * var(--font-scale));
-        width: calc(1.6rem * var(--icon-scale));
-        height: calc(1.6rem * var(--icon-scale));
-        font-size: calc(0.7rem * var(--icon-scale));
-      }
-
-      .clear-cache-btn {
-        padding: calc(0.45rem * var(--font-scale));
-      }
-
-      .filter-panel {
-        width: calc(160px * var(--font-scale));
+      .search-btn { padding: calc(0.4rem * var(--font-scale)) calc(0.8rem * var(--font-scale)); }
+      .filter-panel { width: min(calc(140px * var(--font-scale)), 80vw); }
+      .card-img { height: calc(120px * var(--font-scale)); }
+      #loading {
         padding: calc(0.5rem * var(--font-scale));
+        font-size: calc(0.75rem * var(--font-scale));
       }
-
-      .filter-group label {
-        font-size: calc(0.7rem * var(--font-scale));
+      .logo-container {
+        height: calc(60px * var(--icon-scale));
       }
-
-      .custom-select-toggle, .custom-select-option {
-        padding: calc(0.35rem * var(--font-scale));
-        font-size: calc(0.7rem * var(--font-scale));
+      .icon-wrapper {
+        width: calc(40px * var(--icon-scale));
+        height: calc(40px * var(--icon-scale));
+        left: 0;
+        transform: translateX(0);
       }
+      .icon-wrapper.active {
+        transform: translateX(calc(100% - calc(40px * var(--icon-scale))));
+      }
+      .title-slide {
+        font-size: calc(1rem * var(--font-scale));
+      }
+    }
 
-      .custom-select-toggle::after {
-        font-size: calc(0.6rem * var(--icon-scale));
+    @media (min-width: 769px) {
+      .search-container {
+        flex-direction: row;
+        align-items: center;
+      }
+      .filter-btn {
+        margin-right: calc(0.5rem * var(--font-scale));
+        margin-top: 0;
+      }
+      .search-box {
+        flex: 1;
       }
     }
 
@@ -796,55 +712,53 @@
 <body>
   <header>
     <div class="logo-container">
-      <div class="logo">
-        <i class="fas fa-code"></i>
-        <h1>YANZ - Search Script</h1>
+      <div class="icon-wrapper" id="iconWrapper">
+        <img src="https://i.postimg.cc/g0zJXrYK/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="Icon">
       </div>
-      <a href="https://discord.com/invite/mNGeUVcjKB" target="_blank" class="discord-btn" aria-label="Join our Discord">
-        <i class="fab fa-discord"></i>
-      </a>
+      <div class="title-slide hidden" id="titleSlide">Search Script</div>
     </div>
     <div class="search-container">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search scripts..." aria-label="Search scripts">
+        <button class="search-btn" id="searchButton" aria-label="Search">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </div>
       <button class="filter-btn" id="filterButton" aria-label="Toggle filters">
         <i class="fas fa-bars"></i>
       </button>
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search scripts..." aria-label="Search scripts">
-        <button class="search-btn" id="searchButton" aria-label="Search">
-          <i class="fas fa-search"></i>
-        </button>
-      </div>
     </div>
-    <div class="filter-panel" id="filterPanel">
+    <div class="filter-panel" id="filterPanel" tabindex="-1">
       <button class="close-panel-btn" id="closePanelButton" aria-label="Close filter panel">
         <i class="fas fa-times"></i>
       </button>
       <div class="filter-group">
         <label for="scriptTypeFilter">Script Type</label>
-        <div class="custom-select" id="scriptTypeFilter">
-          <div class="custom-select-toggle" tabindex="0" aria-label="Filter by script type">All</div>
-          <div class="custom-select-options">
-            <div class="custom-select-option" data-value="all">All</div>
-            <div class="custom-select-option" data-value="free">Free</div>
-            <div class="custom-select-option" data-value="premium">paid</div>
+        <div class="dropdown-container" id="scriptTypeFilter">
+          <div class="dropdown-toggle" tabindex="0" aria-expanded="false">All</div>
+          <div class="dropdown-menu">
+            <div class="dropdown-item" data-value="all">All</div>
+            <div class="dropdown-item" data-value="free">Free</div>
+            <div class="dropdown-item" data-value="premium">Paid</div>
           </div>
         </div>
       </div>
       <button class="clear-cache-btn" id="clearCacheButton" aria-label="Clear cache">
         <i class="fas fa-trash"></i> Clear Cache
       </button>
+      <a href="https://discord.com/invite/mNGeUVcjKB" class="discord-btn" aria-label="Join our Discord">
+        <i class="fab fa-discord"></i> Join Discord
+      </a>
     </div>
   </header>
 
   <div id="loading">
     <div class="spinner"></div>
-    <span>Loading scripts...</span>
+    <span id="loadingMessage">Loading scripts...</span>
   </div>
 
   <div id="results"></div>
-
-  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+  <div class="toast" id="toast"></div>
 
   <script>
     document.documentElement.style.setProperty('--dpi', window.devicePixelRatio || 1);
@@ -853,35 +767,22 @@
       API_URL: "https://scriptblox.com/api/script/search",
       CACHE_DURATION: 1000 * 60 * 60,
       CACHE_VERSION: "v1",
-      RANDOM_QUERIES: [
-        "Blox Fruits",
-        "Prison Life",
-        "Adopt Me",
-        "Murder Mystery 2",
-        "Brookhaven",
-        "Arsenal",
-        "Doors",
-        "Pet Simulator X",
-      ],
+      RANDOM_QUERIES: ["Blox Fruits", "Adopt Me", "Murder Mystery 2", "Pet Simulator X"],
       CORS_PROXY: "https://api.allorigins.win/get?url=",
-      SUGGESTED_QUERIES: [
-        "Blox Fruits",
-        "Adopt Me",
-        "Murder Mystery 2 optimized",
-        "Pet Simulator X",
-      ],
+      SUGGESTED_QUERIES: ["Blox Fruits", "Adopt Me", "Murder Mystery 2", "Pet Simulator X"],
+      TITLE_TIMEOUT: 3000,
     };
 
     const state = {
       scripts: [],
-      filteredScripts: [],
       currentQuery: "",
       isLoading: false,
       lastError: null,
-      filters: {
-        scriptType: "all",
-      },
+      filters: { scriptType: "all" },
       isFilterPanelVisible: false,
+      isTitleVisible: false,
+      titleTimeout: null,
+      observer: null,
     };
 
     const elements = {
@@ -894,17 +795,62 @@
       scriptTypeFilter: document.getElementById("scriptTypeFilter"),
       results: document.getElementById("results"),
       loading: document.getElementById("loading"),
+      loadingMessage: document.getElementById("loadingMessage"),
       toast: document.getElementById("toast"),
+      iconWrapper: document.getElementById("iconWrapper"),
+      titleSlide: document.getElementById("titleSlide"),
+      logoContainer: document.querySelector(".logo-container"),
     };
 
-    function init() {
+    const init = () => {
       setupEventListeners();
-      setupCustomSelects();
+      setupDropdown();
       setupIntersectionObserver();
       loadRandomQuery();
-    }
+      setupIconAnimation();
+    };
 
-    function setupEventListeners() {
+    const resetTitleAndIcon = () => {
+      state.isTitleVisible = false;
+      elements.iconWrapper.classList.remove('active');
+      elements.titleSlide.classList.remove('show');
+      elements.titleSlide.classList.add('hidden');
+      elements.iconWrapper.style.transform = '';
+      clearTimeout(state.titleTimeout);
+    };
+
+    const setupIconAnimation = () => {
+      elements.iconWrapper.addEventListener('click', () => {
+        clearTimeout(state.titleTimeout);
+        state.isTitleVisible = !state.isTitleVisible;
+        elements.iconWrapper.classList.toggle('active', state.isTitleVisible);
+        elements.titleSlide.classList.toggle('show', state.isTitleVisible);
+        elements.titleSlide.classList.toggle('hidden', !state.isTitleVisible);
+
+        elements.iconWrapper.style.transform = '';
+
+        if (state.isTitleVisible) {
+          state.titleTimeout = setTimeout(resetTitleAndIcon, CONFIG.TITLE_TIMEOUT);
+        }
+      });
+
+      elements.iconWrapper.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        clearTimeout(state.titleTimeout);
+        state.isTitleVisible = !state.isTitleVisible;
+        elements.iconWrapper.classList.toggle('active', state.isTitleVisible);
+        elements.titleSlide.classList.toggle('show', state.isTitleVisible);
+        elements.titleSlide.classList.toggle('hidden', !state.isTitleVisible);
+
+        elements.iconWrapper.style.transform = '';
+
+        if (state.isTitleVisible) {
+          state.titleTimeout = setTimeout(resetTitleAndIcon, CONFIG.TITLE_TIMEOUT);
+        }
+      });
+    };
+
+    const setupEventListeners = () => {
       let debounceTimeout;
       elements.searchInput.addEventListener("input", () => {
         clearTimeout(debounceTimeout);
@@ -913,6 +859,7 @@
           renderResults();
         }, 300);
       });
+
       elements.searchInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
@@ -920,124 +867,114 @@
           fetchResults(true);
         }
       });
-      elements.searchButton.addEventListener("click", (e) => {
-        e.preventDefault();
+
+      elements.searchButton.addEventListener("click", () => {
         state.currentQuery = elements.searchInput.value.trim();
         fetchResults(true);
       });
+
       elements.filterButton.addEventListener("click", () => {
         state.isFilterPanelVisible = !state.isFilterPanelVisible;
         elements.filterPanel.classList.toggle("show", state.isFilterPanelVisible);
+        if (state.isFilterPanelVisible) elements.filterPanel.focus();
       });
+
       elements.closePanelButton.addEventListener("click", () => {
         state.isFilterPanelVisible = false;
         elements.filterPanel.classList.remove("show");
+        elements.filterButton.focus();
       });
+
+      elements.filterPanel.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          state.isFilterPanelVisible = false;
+          elements.filterPanel.classList.remove("show");
+          elements.filterButton.focus();
+        }
+      });
+
       elements.clearCacheButton.addEventListener("click", () => {
         clearCache();
-        showToast("Cache cleared successfully!", "success");
+        showToast("Cache cleared!", "success");
       });
+
       document.addEventListener("click", (e) => {
-        if (
-          !e.target.closest(".filter-panel") &&
-          !e.target.closest(".filter-btn") &&
-          state.isFilterPanelVisible
-        ) {
+        if (!e.target.closest(".filter-panel") && !e.target.closest(".filter-btn") && state.isFilterPanelVisible) {
           state.isFilterPanelVisible = false;
           elements.filterPanel.classList.remove("show");
         }
       });
-    }
+    };
 
-    function setupCustomSelects() {
-      const selects = [
-        { element: elements.scriptTypeFilter, key: "scriptType", options: ["all", "free", "premium"] },
-      ];
+    const setupDropdown = () => {
+      const dropdown = elements.scriptTypeFilter;
+      const toggle = dropdown.querySelector(".dropdown-toggle");
+      const menu = dropdown.querySelector(".dropdown-menu");
+      const items = dropdown.querySelectorAll(".dropdown-item");
 
-      selects.forEach(({ element, key, options }) => {
-        const toggle = element.querySelector(".custom-select-toggle");
-        const optionsContainer = element.querySelector(".custom-select-options");
-        const optionElements = element.querySelectorAll(".custom-select-option");
+      const toggleDropdown = () => {
+        menu.classList.toggle("show");
+        toggle.setAttribute("aria-expanded", menu.classList.contains("show"));
+      };
 
-        toggle.addEventListener("click", () => {
-          optionsContainer.classList.toggle("show");
-        });
-
-        toggle.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            optionsContainer.classList.toggle("show");
-          }
-        });
-
-        optionElements.forEach((option) => {
-          option.addEventListener("click", () => {
-            const value = option.dataset.value;
-            state.filters[key] = value;
-            toggle.textContent = option.textContent;
-            optionElements.forEach((opt) => opt.classList.remove("selected"));
-            option.classList.add("selected");
-            optionsContainer.classList.remove("show");
-            renderResults();
-          });
-        });
-
-        const selectedOption = Array.from(optionElements).find((opt) => opt.dataset.value === state.filters[key]);
-        if (selectedOption) {
-          toggle.textContent = selectedOption.textContent;
-          selectedOption.classList.add("selected");
+      toggle.addEventListener("click", toggleDropdown);
+      toggle.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleDropdown();
         }
+      });
+
+      items.forEach((item) => {
+        item.addEventListener("click", () => {
+          state.filters.scriptType = item.dataset.value;
+          toggle.textContent = item.textContent;
+          items.forEach((i) => i.classList.remove("selected"));
+          item.classList.add("selected");
+          menu.classList.remove("show");
+          toggle.setAttribute("aria-expanded", "false");
+          fetchResults(true);
+        });
       });
 
       document.addEventListener("click", (e) => {
-        if (!e.target.closest(".custom-select")) {
-          document.querySelectorAll(".custom-select-options").forEach((container) => {
-            container.classList.remove("show");
-          });
+        if (!e.target.closest(".dropdown-container")) {
+          menu.classList.remove("show");
+          toggle.setAttribute("aria-expanded", "false");
         }
       });
-    }
+    };
 
-    function setupIntersectionObserver() {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-              observer.unobserve(entry.target);
-            }
-          });
-        },
+    const setupIntersectionObserver = () => {
+      if (state.observer) state.observer.disconnect();
+      state.observer = new IntersectionObserver(
+        (entries) => entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            state.observer.unobserve(entry.target);
+          }
+        }),
         { rootMargin: "0px 0px 100px 0px", threshold: 0.1 }
       );
+      document.querySelectorAll(".card").forEach((card) => state.observer.observe(card));
+    };
 
-      const cards = document.querySelectorAll(".card");
-      cards.forEach((card) => observer.observe(card));
-    }
+    const showToast = (message, type = "success") => {
+      elements.toast.textContent = message;
+      elements.toast.className = `toast ${type} show`;
+      setTimeout(() => elements.toast.classList.remove("show"), 3000);
+    };
 
-    function showToast(message, type = "success") {
-      const toast = elements.toast;
-      toast.textContent = message;
-      toast.className = "toast";
-      toast.classList.add(type, "show");
-      setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3000);
-    }
+    const normalizeQuery = (query) =>
+      query.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ");
 
-    function normalizeQuery(query) {
-      return query.trim().toLowerCase().replace(/\s+/g, " ");
-    }
-
-    function loadRandomQuery() {
-      const randomQuery =
-        CONFIG.RANDOM_QUERIES[Math.floor(Math.random() * CONFIG.RANDOM_QUERIES.length)];
-      state.currentQuery = randomQuery;
-      elements.searchInput.value = randomQuery;
+    const loadRandomQuery = () => {
+      state.currentQuery = CONFIG.RANDOM_QUERIES[Math.floor(Math.random() * CONFIG.RANDOM_QUERIES.length)];
+      elements.searchInput.value = state.currentQuery;
       fetchResults(true);
-    }
+    };
 
-    function getCachedResults(query) {
+    const getCachedResults = (query) => {
       const cacheKey = `scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}`;
       const cached = localStorage.getItem(cacheKey);
       if (!cached) return null;
@@ -1047,31 +984,29 @@
         return null;
       }
       return data;
-    }
+    };
 
-    function cacheResults(data, query) {
-      const cacheKey = `scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}`;
-      localStorage.setItem(cacheKey, JSON.stringify({
+    const cacheResults = (data, query) => {
+      localStorage.setItem(`scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}`, JSON.stringify({
         data,
         timestamp: Date.now(),
       }));
-    }
+    };
 
-    function clearCache() {
+    const clearCache = () => {
       Object.keys(localStorage)
         .filter((key) => key.startsWith(`scripts_${CONFIG.CACHE_VERSION}_`))
         .forEach((key) => localStorage.removeItem(key));
       state.scripts = [];
-      state.filteredScripts = [];
       renderResults();
       fetchResults(true);
-    }
+    };
 
-    async function fetchResults(reset = false) {
+    const fetchResults = async (reset = false) => {
       if (state.isLoading) return;
-
       state.isLoading = true;
       state.lastError = null;
+      elements.loadingMessage.textContent = `Loading scripts for "${state.currentQuery || "free"}"...`;
       elements.loading.style.display = "flex";
 
       if (reset) state.scripts = [];
@@ -1081,257 +1016,230 @@
         const cached = getCachedResults(query);
         if (cached) {
           state.scripts = cached;
-          state.filteredScripts = cached;
           renderResults();
-          showToast(`Loaded scripts for "${query}" from cache`, "success");
-          state.isLoading = false;
-          elements.loading.style.display = "none";
+          showToast(`Loaded ${cached.length} scripts from cache`, "success");
           return;
         }
 
         const url = new URL(CONFIG.API_URL);
         url.searchParams.append("q", query);
         url.searchParams.append("page", "1");
-        url.searchParams.append("max", "100000");
+        url.searchParams.append("max", "20");
 
-        const proxyUrl = CONFIG.CORS_PROXY + encodeURIComponent(url.toString());
-        const res = await fetchWithRetry(proxyUrl, 3, 1000);
-
-        if (!res.ok) {
-          throw new Error(`API request failed with status ${res.status}: ${res.statusText}`);
-        }
-
+        const res = await fetchWithRetry(CONFIG.CORS_PROXY + encodeURIComponent(url));
+        if (!res.ok) throw new Error(`API failed: ${res.status}`);
         const data = await res.json();
-
-        if (!data.contents) {
-          throw new Error("Invalid API response format");
+        if (!data.contents) throw new Error("Invalid API response: Missing contents");
+        const parsed = JSON.parse(data.contents);
+        if (!parsed.result || !Array.isArray(parsed.result.scripts)) {
+          throw new Error("Invalid API response: Missing or invalid scripts array");
         }
-
-        let json;
-        try {
-          json = JSON.parse(data.contents);
-        } catch (e) {
-          throw new Error("Failed to parse API response");
-        }
-
-        state.scripts = json.result?.scripts || [];
-        state.filteredScripts = state.scripts;
+        state.scripts = parsed.result.scripts;
         cacheResults(state.scripts, query);
         renderResults();
-
-        if (state.scripts.length > 0) {
-          showToast(`Loaded ${state.scripts.length} scripts for "${query}"`, "success");
-        } else {
-          showToast("No scripts found. Showing sample data.", "warning");
+        showToast(`Loaded ${state.scripts.length} scripts`, state.scripts.length ? "success" : "warning");
+        if (!state.scripts.length) {
           state.scripts = getSampleData();
-          state.filteredScripts = state.scripts;
           renderResults();
         }
-
-        if (state.scripts.length < 1000) {
-          showToast("API may have limited results. Try a suggested query.", "warning");
-        }
       } catch (err) {
-        console.error("Fetch error:", err);
         state.lastError = err;
-        showToast("Failed to load scripts. Showing sample data.", "danger");
-
+        showToast(`Error: ${err.message}. Using sample data.`, "danger");
         if (reset) {
           state.scripts = getSampleData();
-          state.filteredScripts = state.scripts;
           renderResults();
         }
       } finally {
         state.isLoading = false;
         elements.loading.style.display = "none";
       }
-    }
+    };
 
-    async function fetchWithRetry(url, retries = 3, delay = 1000) {
+    const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
       for (let i = 0; i < retries; i++) {
         try {
-          const res = await fetch(url, {
-            headers: { 'Accept': 'application/json' },
-          });
+          const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
           if (res.ok) return res;
         } catch (err) {
           if (i < retries - 1) await new Promise((resolve) => setTimeout(resolve, delay * 2 ** i));
         }
       }
-      throw new Error("Max retries reached");
-    }
+      throw new Error("Max retries reached. Consider hosting your own API proxy.");
+    };
 
-    function getSampleData() {
-      return [
-        {
-          _id: "1",
-          title: "Blox Fruits Auto Farm",
-          game: { name: "Blox Fruits", imageUrl: "https://via.placeholder.com/480x270?text=Blox+Fruits" },
-          slug: "#",
-          views: 12345,
-          scriptType: "free",
-          createdAt: new Date().toISOString(),
-          script: "print('Auto farming script for Blox Fruits')",
+    const getSampleData = () => [
+      {
+        _id: "683b3949a348d24efdf83b72",
+        title: "Forge Hub (10+ GAMES, OP FEATURES, AUTOFARMS AND LOTS MORE!)",
+        game: { gameId: 0, name: "Universal Script 📌", imageUrl: "/images/no-script.webp" },
+        slug: "Universal-Script-Forge-Hub-41461",
+        verified: true,
+        key: true,
+        views: 3137720,
+        scriptType: "free",
+        isUniversal: true,
+        isPatched: false,
+        image: "/images/script/0-1748711753445.png",
+        lastBump: "2025-08-16T14:57:50.845Z",
+        likeCount: 19,
+        dislikeCount: 10,
+        createdAt: "2025-05-31T17:15:53.512Z",
+        script: "loadstring(game:HttpGet(\"https://rawscripts.net/raw/Universal-Script-Forge-Hub-41461\"))()",
+        matched: ["title", "features"],
+      },
+      {
+        _id: "689a6cc770d65046a249e924",
+        title: "Garden Tower Defense ( OP script free gui Xenith )",
+        game: {
+          gameId: 108533757090220,
+          name: "[😱] Garden Tower Defense 🌻",
+          imageUrl: "https://tr.rbxcdn.com/180DAY-5bdc7bca1f2489f0caed6fabf50a1b24/480/270/Image/Png/noFilter",
         },
-        {
-          _id: "2",
-          title: "Prison Life ESP",
-          game: { name: "Prison Life", imageUrl: "https://via.placeholder.com/480x270?text=Prison+Life" },
-          slug: "#",
-          views: 8765,
-          scriptType: "free",
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          script: "print('ESP script for Prison Life')",
-        },
-        {
-          _id: "3",
-          title: "Murder Mystery 2 Auto Win",
-          game: { name: "Murder Mystery 2", imageUrl: "https://via.placeholder.com/480x270?text=MM2" },
-          slug: "#",
-          views: 5432,
-          scriptType: "paid",
-          createdAt: new Date(Date.now() - 172800000).toISOString(),
-          script: "print('Auto win script for MM2')",
-        },
-      ];
-    }
+        slug: "Garden-Tower-Defense-Garden-Tower-Defense-OP-script-free-gui-Xenith-48253",
+        verified: true,
+        key: true,
+        views: 28298,
+        scriptType: "free",
+        isUniversal: false,
+        isPatched: false,
+        image: "https://tr.rbxcdn.com/180DAY-5bdc7bca1f2489f0caed6fabf50a1b24/480/270/Image/Png/noFilter",
+        lastBump: "2025-08-11T22:20:55.822Z",
+        likeCount: 1,
+        dislikeCount: 1,
+        createdAt: "2025-08-11T22:20:55.824Z",
+        script: "loadstring(game:HttpGet(\"https://rawscripts.net/raw/Garden-Tower-Defense-Garden-Tower-Defense-OP-script-free-gui-Xenith-48253\"))()",
+        matched: ["features"],
+      },
+    ];
 
-    function renderResults() {
+    const renderResults = () => {
       const container = elements.results;
-
       if (state.lastError) {
         container.innerHTML = `
           <div class="error-state">
             <i class="fas fa-exclamation-triangle"></i>
             <h3>Error Loading Scripts</h3>
-            <p>${sanitizeHTML(state.lastError.message || "Unknown error occurred")}</p>
-            <button class="retry-btn" onclick="fetchResults(true)" aria-label="Retry loading scripts">
-              <i class="fas fa-sync-alt"></i> Retry
-            </button>
+            <p>${sanitizeHTML(state.lastError.message)}</p>
+            <button class="retry-btn" onclick="fetchResults(true)">Retry</button>
             <div class="empty-state-suggestions">
-              <p>Try these popular searches:</p>
-              ${CONFIG.SUGGESTED_QUERIES.map(
-                (query) => `
-                  <button class="suggestion-btn" onclick="searchSuggestion('${query}')" aria-label="Search for ${query}">
-                    ${sanitizeHTML(query)}
-                  </button>
-                `
-              ).join("")}
+              ${CONFIG.SUGGESTED_QUERIES.map((q) => `<button class="suggestion-btn" onclick="searchSuggestion('${sanitizeHTML(q)}')">${sanitizeHTML(q)}</button>`).join("")}
             </div>
-          </div>
-        `;
+          </div>`;
         return;
       }
 
       const scripts = filterScripts();
-      if (scripts.length === 0) {
+      if (!scripts.length) {
         container.innerHTML = `
           <div class="empty-state">
             <i class="fas fa-file-code"></i>
             <h3>No scripts found</h3>
-            <p>Try a different search term or explore these suggestions:</p>
+            <p>Try a different search term:</p>
             <div class="empty-state-suggestions">
-              ${CONFIG.SUGGESTED_QUERIES.map(
-                (query) => `
-                  <button class="suggestion-btn" onclick="searchSuggestion('${query}')" aria-label="Search for ${query}">
-                    ${sanitizeHTML(query)}
-                  </button>
-                `
-              ).join("")}
+              ${CONFIG.SUGGESTED_QUERIES.map((q) => `<button class="suggestion-btn" onclick="searchSuggestion('${sanitizeHTML(q)}')">${sanitizeHTML(q)}</button>`).join("")}
             </div>
-          </div>
-        `;
+          </div>`;
         return;
       }
 
-      container.innerHTML = scripts.map((script) => createScriptCard(script)).join("");
+      container.innerHTML = scripts.map(createScriptCard).join("");
       setupIntersectionObserver();
-    }
+    };
 
-    function sanitizeHTML(str) {
-      const div = document.createElement("div");
-      div.textContent = str;
-      return div.innerHTML;
-    }
+    const sanitizeHTML = (str) => DOMPurify.sanitize(str || "");
 
-    function filterScripts() {
+    const filterScripts = () => {
       let filtered = state.scripts;
-
       const query = normalizeQuery(state.currentQuery);
       if (query) {
-        filtered = filtered.filter((script) => {
-          const title = normalizeQuery(script.title || "");
-          const gameName = normalizeQuery(script.game?.name || "");
-          return title.includes(query) || gameName.includes(query);
-        });
+        filtered = filtered.filter((script) =>
+          [script.title, script.game?.name, script.slug, script.matched?.join(" ")].some((field) =>
+            normalizeQuery(field || "").includes(query)
+          )
+        );
       }
-
       if (state.filters.scriptType !== "all") {
         filtered = filtered.filter((script) => script.scriptType === state.filters.scriptType);
       }
-
-      state.filteredScripts = filtered;
       return filtered;
-    }
+    };
 
-    function createScriptCard(script) {
-      const imgSrc = sanitizeHTML(script.game.imageUrl);
+    const createScriptCard = (script) => {
+      const imgSrc = sanitizeHTML(script.image || script.game.imageUrl);
       const createdAt = new Date(script.createdAt).toLocaleDateString();
+      const lastBump = new Date(script.lastBump).toLocaleDateString();
+      const matchedFields = script.matched ? script.matched.join(", ") : "None";
 
       return `
         <div class="card" data-id="${sanitizeHTML(script._id)}">
           <div style="position: relative;">
             <img src="${imgSrc}" class="card-img" loading="lazy" alt="${sanitizeHTML(script.game.name)}">
             ${script.scriptType === "paid" ? '<span class="card-badge">PREMIUM</span>' : ""}
+            ${script.isUniversal ? '<span class="card-badge universal">UNIVERSAL</span>' : ""}
+            ${script.isPatched ? '<span class="card-badge patched">PATCHED</span>' : ""}
           </div>
           <div class="card-content">
             <div class="card-header">
               <h3 class="card-title">${sanitizeHTML(script.title)}</h3>
               <div class="card-meta">
-                <i class="fas fa-eye"></i>
-                <span>${script.views.toLocaleString()}</span>
+                <i class="fas fa-eye"></i> ${script.views.toLocaleString()}
               </div>
             </div>
             <div class="card-game">
-              <i class="fas fa-gamepad"></i>
-              <span>${sanitizeHTML(script.game.name)}</span>
+              <i class="fas fa-gamepad"></i> ${sanitizeHTML(script.game.name)}
             </div>
             <div class="card-meta">
-              <i class="fas fa-calendar-alt"></i>
-              <span>${createdAt}</span>
+              <i class="fas fa-id-badge"></i> ID: ${sanitizeHTML(script._id)}
             </div>
-            <div class="card-footer">
-              <div class="script-display-container">
-                <textarea class="script-display" readonly>${sanitizeHTML(script.script)}</textarea>
-                <button class="script-copy-btn" onclick="copyScript('${encodeURIComponent(script.script)}')" aria-label="Copy script">
-                  <i class="fas fa-copy"></i>
-                </button>
-              </div>
+            <div class="card-meta">
+              <i class="fas fa-link"></i> Slug: ${sanitizeHTML(script.slug)}
+            </div>
+            <div class="card-meta">
+              <i class="fas fa-gamepad"></i> Game ID: ${script.game.gameId}
+            </div>
+            <div class="card-meta">
+              <i class="fas fa-calendar-alt"></i> Created: ${createdAt}
+            </div>
+            <div class="card-meta">
+              <i class="fas fa-calendar-check"></i> Last Bump: ${lastBump}
+            </div>
+            <div class="card-meta">
+              <i class="fas fa-tags"></i> Matched: ${sanitizeHTML(matchedFields)}
+            </div>
+            <div class="card-likes">
+              <span><i class="fas fa-thumbs-up"></i> ${script.likeCount}</span>
+              <span><i class="fas fa-thumbs-down"></i> ${script.dislikeCount}</span>
+            </div>
+            <div class="card-status">
+              ${script.verified ? '<span class="verified"><i class="fas fa-check-circle"></i> Verified</span>' : ''}
+              ${script.key ? '<span class="key-required"><i class="fas fa-key"></i> Key Required</span>' : ''}
+            </div>
+            <div class="script-display-container">
+              <textarea class="script-display" readonly>${sanitizeHTML(script.script)}</textarea>
+              <button class="script-copy-btn" onclick="copyScript('${sanitizeHTML(script.script)}')">
+                <i class="fas fa-copy"></i>
+              </button>
             </div>
           </div>
-        </div>
-      `;
-    }
+        </div>`;
+    };
 
-    function copyScript(encodedScript) {
+    const copyScript = (script) => {
       try {
-        const script = decodeURIComponent(encodedScript);
         navigator.clipboard.writeText(script);
-        showToast("Script copied to clipboard!", "success");
+        showToast("Script copied!", "success");
       } catch (err) {
-        console.error("Copy failed:", err);
-        showToast("Failed to copy script", "danger");
+        showToast("Copy failed", "danger");
       }
-    }
+    };
 
-    function searchSuggestion(query) {
+    const searchSuggestion = (query) => {
       state.currentQuery = query;
       elements.searchInput.value = query;
       fetchResults(true);
-    }
+    };
 
     document.addEventListener("DOMContentLoaded", init);
-
     window.copyScript = copyScript;
     window.fetchResults = fetchResults;
     window.searchSuggestion = searchSuggestion;
