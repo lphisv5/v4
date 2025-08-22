@@ -1,217 +1,252 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-  <meta charset="UTF-8" />  
-  <meta name="viewport" content="width=device-width, initial-scale=1" />  
-  <title>Binance Dashboard</title>  
-  <style>  
-    :root {  
-      --bg: #0d1117;  
-      --card: #161b22;  
-      --text: #e6edf3;  
-      --green: #2ecc71;  
-      --red: #e74c3c;  
-      --blue: #3498db;  
-      --yellow: #f1c40f;  
-      --radius: 12px;  
-      --shadow: 0 4px 12px rgba(0,0,0,0.5);  
-    }  
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }  
-    body { background: var(--bg); color: var(--text); }  
-  
-    header {  
-      display: flex; justify-content: center; align-items: center;  
-      background: var(--card); padding: 1rem;  
-      box-shadow: var(--shadow);  
-      position: relative;  
-    }  
-    header h1 { font-size: 1.4rem; color: var(--blue); text-align: center; }  
-    .menu-btn {  
-      font-size: 1.5rem; cursor: pointer;  
-      position: absolute; right: 1rem;  
-    }  
-  
-    nav {  
-      display: none;  
-      flex-direction: column;  
-      background: var(--card);  
-      padding: 1rem;  
-      text-align: center;  
-    }  
-    nav a {  
-      color: var(--text); text-decoration: none;  
-      margin: 0.5rem 0; font-weight: bold;  
-      transition: color 0.2s;  
-      display: block;  
-    }  
-    nav a:hover { color: var(--yellow); }  
-  
-    #container {  
-      padding: 1rem;  
-      display: grid;  
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));  
-      gap: 1rem;  
-    }  
-    .card {  
-      background: var(--card);  
-      border-radius: var(--radius);  
-      padding: 1rem;  
-      box-shadow: var(--shadow);  
-      transition: transform 0.2s;  
-    }  
-    .card:hover { transform: scale(1.03); }  
-    .symbol { font-size: 1rem; font-weight: bold; color: var(--yellow); }  
-    .index { font-size: 0.9rem; opacity: 0.7; margin-bottom: 0.3rem; }  
-    .price { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem; }  
-    .green { color: var(--green); }  
-    .red { color: var(--red); }  
-    .details { font-size: 0.85rem; line-height: 1.4; }  
-    .time-box {  
-      text-align: center;  
-      font-size: 1.3rem;  
-      font-weight: bold;  
-      color: var(--yellow);  
-    }  
-  </style>  
-</head>  
-<body>  
-  <header>  
-    <h1>📊 Binance Dashboard</h1>  
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>  
-  </header>  
-  <nav id="menu">  
-    <a href="#" onclick="showPage('ticker')">Ticker 24hr</a>  
-    <a href="#" onclick="showPage('exchange')">Exchange Info</a>  
-    <a href="#" onclick="showPage('time')">Server Time</a>  
-    <a href="#" onclick="showPage('currency')">USD Exchange Rates</a>  
-  </nav>  
-  
-  <main id="container"></main>  
-  
-  <script>  
-    let currentPage = "ticker";  
-    let intervalId = null;  
-    let lastRates = {};  
-  
-    function toggleMenu() {  
-      const menu = document.getElementById("menu");  
-      menu.style.display = menu.style.display === "flex" ? "none" : "flex";  
-    }  
-  
-    function showPage(page) {  
-      currentPage = page;  
-      document.getElementById("menu").style.display = "none";  
-      loadPage();  
-    }  
-  
-    async function loadTicker() {  
-      const res = await fetch("https://api.binance.com/api/v3/ticker/24hr");  
-      const data = await res.json();  
-      const container = document.getElementById("container");  
-      container.innerHTML = "";  
-      data.forEach((item, index) => {  
-        const priceClass = parseFloat(item.priceChangePercent) >= 0 ? "green" : "red";  
-        const card = document.createElement("div");  
-        card.className = "card";  
-        card.innerHTML = `  
-          <div class="index">#${index + 1}</div>  
-          <div class="symbol">${item.symbol}</div>  
-          <div class="price ${priceClass}">${item.lastPrice}</div>  
-          <div class="details">  
-            Change: <span class="${priceClass}">${item.priceChange} (${item.priceChangePercent}%)</span><br>  
-            High: ${item.highPrice} | Low: ${item.lowPrice}<br>  
-            Volume: ${item.volume}<br>  
-            Quote Volume: ${item.quoteVolume}  
-          </div>  
-        `;  
-        container.appendChild(card);  
-      });  
-    }  
-  
-    async function loadExchange() {  
-      const res = await fetch("https://api.binance.com/api/v3/exchangeInfo");  
-      const data = await res.json();  
-      const container = document.getElementById("container");  
-      container.innerHTML = "";  
-      data.symbols.forEach((item, index) => {  
-        const card = document.createElement("div");  
-        card.className = "card";  
-        card.innerHTML = `  
-          <div class="index">#${index + 1}</div>  
-          <div class="symbol">${item.symbol}</div>  
-          <div class="details">  
-            Base Asset: ${item.baseAsset}<br>  
-            Quote Asset: ${item.quoteAsset}<br>  
-            Status: ${item.status}<br>  
-            Order Types: ${item.orderTypes.join(", ")}  
-          </div>  
-        `;  
-        container.appendChild(card);  
-      });  
-    }  
-  
-    async function loadTime() {  
-      const res = await fetch("https://api.binance.com/api/v3/time");  
-      const data = await res.json();  
-      const container = document.getElementById("container");  
-      container.innerHTML = "";  
-      const card = document.createElement("div");  
-      card.className = "card time-box";  
-      const serverDate = new Date(data.serverTime);  
-      const localDate = new Date();  
-      card.innerHTML = `  
-        Binance Server Time<br>  
-        ${serverDate.toUTCString()}<br>  
-        (ms: ${data.serverTime})<br><br>  
-        Local Time: ${localDate.toLocaleString()}  
-      `;  
-      container.appendChild(card);  
-    }  
-  
-    async function loadCurrency() {  
-      try {  
-        const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");  
-        const data = await res.json();  
-        const container = document.getElementById("container");  
-        container.innerHTML = "";  
-        let index = 1;  
-        Object.keys(data.rates).forEach(key => {  
-          const card = document.createElement("div");  
-          card.className = "card";  
-          const prevRate = lastRates[key] || data.rates[key];  
-          const changeClass = data.rates[key] >= prevRate ? "green" : "red";  
-          card.innerHTML = `  
-            <div class="index">#${index}</div>  
-            <div class="symbol">${key}</div>  
-            <div class="price ${changeClass}">${data.rates[key]}</div>  
-          `;  
-          container.appendChild(card);  
-          lastRates[key] = data.rates[key];  
-          index++;  
-        });  
-      } catch (err) {  
-        console.error("Error fetching currency rates:", err);  
-      }  
-    }  
-  
-    function loadPage() {  
-      clearInterval(intervalId);  
-      if (currentPage === "ticker") {  
-        loadTicker();  
-        intervalId = setInterval(loadTicker, 1000);  
-      } else if (currentPage === "exchange") {  
-        loadExchange();  
-        intervalId = setInterval(loadExchange, 1000);  
-      } else if (currentPage === "time") {  
-        loadTime();  
-        intervalId = setInterval(loadTime, 1000);  
-      } else if (currentPage === "currency") {  
-        loadCurrency();  
-        intervalId = setInterval(loadCurrency, 1000);  
-      }  
-    }  
-  
-    loadPage();  
-  </script>  
-</body>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Binance Dashboard</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --text: #e6edf3;
+      --green: #2ecc71;
+      --red: #e74c3c;
+      --blue: #3498db;
+      --yellow: #f1c40f;
+      --radius: 12px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: 0;
+    }
+    header {
+      background: var(--card);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+    header h1 {
+      font-size: 1.2rem;
+      color: var(--blue);
+    }
+    .menu-btn {
+      font-size: 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    nav {
+      background: var(--card);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    nav.open {
+      max-height: 300px;
+    }
+    nav ul {
+      list-style: none;
+      padding: 0.5rem;
+    }
+    nav li {
+      padding: 0.5rem 0;
+      cursor: pointer;
+      color: var(--yellow);
+    }
+    nav li:hover {
+      color: var(--blue);
+    }
+    main {
+      padding: 1rem;
+    }
+    #ticker-container, #exchange-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .symbol {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: var(--yellow);
+    }
+    .price {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .details {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      opacity: 0.9;
+    }
+    .number {
+      font-size: 0.8rem;
+      color: var(--blue);
+      margin-bottom: 0.3rem;
+    }
+    .time-box {
+      font-size: 1.4rem;
+      font-weight: bold;
+      text-align: center;
+      color: var(--yellow);
+      padding: 1rem;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Binance Dashboard</h1>
+    <div class="menu-btn">☰</div>
+  </header>
+
+  <nav>
+    <ul>
+      <li onclick="showPage('ticker')">📊 24h Ticker</li>
+      <li onclick="showPage('exchange')">📑 Exchange Info</li>
+      <li onclick="showPage('time')">⏰ Server Time</li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="ticker" class="page">
+      <h2>📊 Binance 24h Ticker</h2>
+      <div id="ticker-container"></div>
+    </section>
+
+    <section id="exchange" class="page" style="display:none;">
+      <h2>📑 Binance Exchange Info</h2>
+      <div id="exchange-container"></div>
+    </section>
+
+    <section id="time" class="page" style="display:none;">
+      <h2>⏰ Binance Server Time</h2>
+      <div id="time-container" class="time-box">Loading...</div>
+    </section>
+  </main>
+
+  <script>
+    const menuBtn = document.querySelector(".menu-btn");
+    const nav = document.querySelector("nav");
+    menuBtn.addEventListener("click", () => {
+      nav.classList.toggle("open");
+    });
+
+    function showPage(id) {
+      document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+      document.getElementById(id).style.display = "block";
+      nav.classList.remove("open");
+    }
+
+    async function fetchTicker() {
+      try {
+        const res = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+        const data = await res.json();
+
+        const container = document.getElementById("ticker-container");
+        container.innerHTML = "";
+
+        data.forEach((item, idx) => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          const priceClass = parseFloat(item.priceChangePercent) >= 0 ? "green" : "red";
+
+          card.innerHTML = `
+            <div class="number">#${idx+1}</div>
+            <div class="symbol">${item.symbol}</div>
+            <div class="price ${priceClass}">${item.lastPrice}</div>
+            <div class="details">
+              <div>Change: <span class="${priceClass}">${item.priceChange} (${item.priceChangePercent}%)</span></div>
+              <div>High: ${item.highPrice} | Low: ${item.lowPrice}</div>
+              <div>Volume: ${item.volume}</div>
+              <div>Quote Volume: ${item.quoteVolume}</div>
+              <div>Open: ${item.openPrice}</div>
+              <div>Prev Close: ${item.prevClosePrice}</div>
+              <div>Bid: ${item.bidPrice} (${item.bidQty})</div>
+              <div>Ask: ${item.askPrice} (${item.askQty})</div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Error fetching ticker:", err);
+      }
+    }
+
+    async function fetchExchangeInfo() {
+      try {
+        const res = await fetch("https://api.binance.com/api/v3/exchangeInfo");
+        const data = await res.json();
+
+        const container = document.getElementById("exchange-container");
+        container.innerHTML = "";
+
+        data.symbols.forEach((item, idx) => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          card.innerHTML = `
+            <div class="number">#${idx+1}</div>
+            <div class="symbol">${item.symbol}</div>
+            <div class="details">
+              <div>Status: ${item.status}</div>
+              <div>Base Asset: ${item.baseAsset}</div>
+              <div>Quote Asset: ${item.quoteAsset}</div>
+              <div>Order Types: ${item.orderTypes.join(", ")}</div>
+              <div>Permissions: ${item.permissions.join(", ")}</div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Error fetching exchange info:", err);
+      }
+    }
+
+    async function fetchServerTime() {
+      try {
+        const res = await fetch("https://api.binance.com/api/v3/time");
+        const data = await res.json();
+        const serverTime = new Date(data.serverTime);
+
+        document.getElementById("time-container").textContent =
+          serverTime.toLocaleString();
+      } catch (err) {
+        console.error("Error fetching time:", err);
+      }
+    }
+
+    setInterval(fetchTicker, 1000);
+    setInterval(fetchExchangeInfo, 1000);
+    setInterval(fetchServerTime, 1000);
+
+    fetchTicker();
+    fetchExchangeInfo();
+    fetchServerTime();
+  </script>
+</body>
 </html>
