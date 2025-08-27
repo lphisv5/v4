@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Grow A Garden – Weather</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
       --bg: #f5f7fa;
@@ -13,6 +14,9 @@
       --muted: #a0aec0;
       --radius: 12px;
       --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --success: #48bb78;
+      --warning: #ed8936;
+      --danger: #f56565;
     }
 
     * {
@@ -31,16 +35,78 @@
       min-height: 100vh;
     }
 
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
     h1 {
-      text-align: center;
       font-size: 1.8rem;
       font-weight: 600;
-      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .last-updated {
+      font-size: 0.85rem;
+      color: var(--muted);
+      background: var(--card-bg);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--muted);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--muted);
+      font-size: 1rem;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
     }
 
     #weather-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 1rem;
       flex: 1;
     }
@@ -53,6 +119,9 @@
       text-align: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .card.active {
@@ -76,10 +145,10 @@
     }
 
     .card img {
-      width: 48px;
-      height: 48px;
+      width: 64px;
+      height: 64px;
       object-fit: contain;
-      margin-bottom: 0.5rem;
+      margin: 0.5rem auto;
     }
 
     .card .name {
@@ -91,27 +160,74 @@
 
     .card .status {
       font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
     }
 
     .card .status.active {
-      color: var(--accent);
+      color: var(--success);
       font-weight: 600;
     }
 
-    .card .duration {
-      font-size: 0.75rem;
+    .card .status.inactive {
       color: var(--muted);
+    }
+
+    .card .duration {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: auto;
+    }
+
+    .card .countdown {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 0.5rem;
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      grid-column: 1 / -1;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-left-color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     #next-page-container {
       text-align: center;
       padding: 1.5rem 0;
+      margin-top: 1rem;
     }
 
     .next-button {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
       padding: 0.75rem 1.5rem;
       background: var(--accent);
       color: #fff;
@@ -131,31 +247,103 @@
       transform: translateY(0);
     }
 
+    .connection-status {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    .connection-status.connected {
+      background: var(--success);
+      color: white;
+    }
+
+    .connection-status.disconnected {
+      background: var(--danger);
+      color: white;
+    }
+
     @media (min-width: 600px) {
       #weather-container {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       }
 
       h1 {
         font-size: 2rem;
       }
     }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+      
+      header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .controls {
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Grow A Garden</h1>
-  <div id="weather-container"></div>
+  <header>
+    <h1><i class="fas fa-cloud-sun"></i> Grow A Garden</h1>
+    <div class="last-updated" id="last-updated">Last updated: <span id="update-time">-</span></div>
+  </header>
+
+  <div class="controls">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="active">Active</button>
+    <button class="filter-btn" data-filter="inactive">Inactive</button>
+  </div>
+
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" id="search-input" placeholder="Search weather...">
+  </div>
+
+  <div id="weather-container">
+    <div class="loading">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
   <div id="next-page-container">
-    <a href="https://lphisv5.github.io/webv4/growagarden-stock" class="next-button">STOCK</a>
+    <a href="https://lphisv5.github.io/webv4/growagarden-stock" class="next-button">
+      <i class="fas fa-seedling"></i> STOCK
+    </a>
+  </div>
+
+  <div id="connection-status" class="connection-status disconnected">
+    <i class="fas fa-wifi"></i> <span>Disconnected</span>
   </div>
 
   <script>
     const JSTUDIO_KEY = 'js_52f39c0a889f9fc7e0f48880d98dd03ceebf0aada452435cb854596b9270fc00';
     let lastDataHash = '';
     let timers = {};
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let weatherData = [];
+    let timeUpdateInterval;
 
-    // Function to generate a hash from data for comparison
     function generateHash(data) {
+      if (!data || !data.weather || !Array.isArray(data.weather)) {
+        console.warn('Invalid or missing weather data:', data);
+        return '';
+      }
       return JSON.stringify(data.weather.map(w => ({
         id: w.weather_id,
         active: w.active,
@@ -164,6 +352,26 @@
         duration: w.duration,
         end_duration_unix: w.end_duration_unix
       }))).split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
+    }
+
+    function updateLastUpdated() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      const timeString = `${hours}:${minutes}:${seconds}`;
+      document.getElementById('update-time').textContent = timeString;
+    }
+
+    function startRealTimeClock() {
+      updateLastUpdated();
+      timeUpdateInterval = setInterval(updateLastUpdated, 1000);
+    }
+
+    function stopRealTimeClock() {
+      if (timeUpdateInterval) {
+        clearInterval(timeUpdateInterval);
+      }
     }
 
     async function fetchWeather() {
@@ -175,6 +383,9 @@
         });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
+        if (!data || !data.weather || !Array.isArray(data.weather)) {
+          throw new Error('Invalid API response structure');
+        }
         return data;
       } catch (err) {
         console.error('Error fetching weather:', err);
@@ -183,51 +394,104 @@
     }
 
     function updateUI(data) {
+      if (!data || !data.weather) {
+        console.warn('No valid weather data to update UI');
+        return;
+      }
+      weatherData = data.weather;
+      applyFilters();
+      updateLastUpdated();
+    }
+
+    function applyFilters() {
       const container = document.getElementById('weather-container');
-      container.innerHTML = '';
-
-      Object.values(timers).forEach(clearInterval);
+      
+      Object.values(timers).forEach(timer => clearInterval(timer));
       timers = {};
-
-      data.weather.forEach(w => {
+      
+      let filteredData = weatherData;
+      
+      if (currentFilter === 'active') {
+        filteredData = filteredData.filter(w => w.active);
+      } else if (currentFilter === 'inactive') {
+        filteredData = filteredData.filter(w => !w.active);
+      }
+      
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filteredData = filteredData.filter(w => 
+          w.weather_name && w.weather_name.toLowerCase().includes(query)
+        );
+      }
+      
+      if (filteredData.length === 0) {
+        container.innerHTML = `
+          <div class="no-results">
+            <i class="fas fa-cloud" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h3>No weather conditions found</h3>
+            <p>Try adjusting your search or filter</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = '';
+      
+      filteredData.forEach(w => {
         const card = document.createElement('div');
         card.className = `card ${w.active ? 'active' : ''}`;
+        card.dataset.id = w.weather_id;
 
         const img = document.createElement('img');
-        img.src = w.icon;
-        img.alt = w.weather_name;
+        img.src = w.icon || 'https://via.placeholder.com/64';
+        img.alt = w.weather_name || 'Weather';
         card.appendChild(img);
 
         const name = document.createElement('div');
         name.className = 'name';
-        name.textContent = w.weather_name;
+        name.textContent = w.weather_name || 'Unknown';
         card.appendChild(name);
 
         const status = document.createElement('div');
-        status.className = 'status';
-        status.textContent = w.active ? 'Active' : 'Inactive';
-        if (w.active) status.classList.add('active');
+        status.className = `status ${w.active ? 'active' : 'inactive'}`;
+        status.innerHTML = w.active 
+          ? '<i class="fas fa-check-circle"></i> Active' 
+          : '<i class="fas fa-times-circle"></i> Inactive';
         card.appendChild(status);
 
         const dur = document.createElement('div');
         dur.className = 'duration';
+        dur.textContent = `Duration: ${w.duration || 0} sec`;
+        card.appendChild(dur);
+
         if (w.active && w.end_duration_unix > 0) {
+          const countdown = document.createElement('div');
+          countdown.className = 'countdown';
+          
           const updateTimer = () => {
             const now = Math.floor(Date.now() / 1000);
             const remaining = w.end_duration_unix - now;
+            
             if (remaining <= 0) {
               clearInterval(timers[w.weather_id]);
-              dur.textContent = 'Expired';
+              countdown.textContent = 'Expired';
+              countdown.style.color = 'var(--danger)';
+              status.innerHTML = '<i class="fas fa-times-circle"></i> Inactive';
+              status.className = 'status inactive';
+              card.classList.remove('active');
             } else {
-              dur.textContent = `Time left: ${remaining} sec`;
+              const hours = Math.floor(remaining / 3600);
+              const minutes = Math.floor((remaining % 3600) / 60);
+              const seconds = remaining % 60;
+              
+              countdown.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }
           };
+          
           updateTimer();
           timers[w.weather_id] = setInterval(updateTimer, 1000);
-        } else {
-          dur.textContent = `Duration: ${w.duration} sec`;
+          card.appendChild(countdown);
         }
-        card.appendChild(dur);
 
         container.appendChild(card);
       });
@@ -239,6 +503,17 @@
           block: 'center',
           inline: 'nearest'
         });
+      }
+    }
+
+    function updateConnectionStatus(connected) {
+      const statusEl = document.getElementById('connection-status');
+      if (connected) {
+        statusEl.className = 'connection-status connected';
+        statusEl.innerHTML = '<i class="fas fa-wifi"></i> <span>Connected</span>';
+      } else {
+        statusEl.className = 'connection-status disconnected';
+        statusEl.innerHTML = '<i class="fas fa-wifi-slash"></i> <span>Disconnected</span>';
       }
     }
 
@@ -254,48 +529,116 @@
         } else {
           console.log('No update needed');
         }
+        
+        updateConnectionStatus(true);
       } catch (err) {
         const container = document.getElementById('weather-container');
-        container.innerHTML = '<p style="text-align: center; color: #e53e3e;">ไม่สามารถโหลดข้อมูลได้</p>';
+        container.innerHTML = `
+          <div class="no-results">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Failed to load weather data</p>
+          </div>`;
+        updateConnectionStatus(false);
       }
     }
 
     function setupWebSocket() {
       const ws = new WebSocket('wss://api.joshlei.com/v2/growagarden/weather/ws');
+      
       ws.onopen = () => {
         console.log('WebSocket connected');
         ws.send(JSON.stringify({ key: JSTUDIO_KEY }));
+        updateConnectionStatus(true);
       };
+      
       ws.onmessage = async (event) => {
-        const data = JSON.parse(event.data);
-        const newHash = generateHash(data);
-        if (newHash !== lastDataHash) {
-          lastDataHash = newHash;
-          updateUI(data);
-          console.log('UI updated via WebSocket');
+        try {
+          console.log('WebSocket data:', event.data);
+          const data = JSON.parse(event.data);
+          if (!data || !data.weather || !Array.isArray(data.weather)) {
+            throw new Error('Invalid WebSocket data structure');
+          }
+          const newHash = generateHash(data);
+          
+          if (newHash !== lastDataHash) {
+            lastDataHash = newHash;
+            weatherData = data.weather;
+            applyFilters();
+            updateLastUpdated();
+            console.log('UI updated via WebSocket');
+          }
+          
+          updateConnectionStatus(true);
+        } catch (err) {
+          console.error('Error processing WebSocket message:', err);
+          updateConnectionStatus(false);
         }
       };
+      
       ws.onerror = (err) => {
         console.error('WebSocket error:', err);
+        updateConnectionStatus(false);
         startPolling();
       };
+      
       ws.onclose = () => {
         console.log('WebSocket closed, switching to polling');
+        updateConnectionStatus(false);
         startPolling();
       };
+      
+      return ws;
     }
 
     function startPolling() {
       checkForUpdates(true);
-      setInterval(() => checkForUpdates(false), 30000);
+      return setInterval(() => checkForUpdates(false), 30000);
     }
 
     window.addEventListener('load', () => {
+      startRealTimeClock();
+      
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          applyFilters();
+        });
+      });
+      
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        applyFilters();
+      });
+      
+      let pollingInterval;
+      let ws;
+      
       if ('WebSocket' in window) {
-        setupWebSocket();
+        ws = setupWebSocket();
       } else {
-        startPolling();
+        pollingInterval = startPolling();
       }
+      
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          stopRealTimeClock();
+          if (ws) {
+            ws.close();
+          }
+          if (pollingInterval) {
+            clearInterval(pollingInterval);
+          }
+        } else {
+          startRealTimeClock();
+          if ('WebSocket' in window) {
+            ws = setupWebSocket();
+          } else {
+            pollingInterval = startPolling();
+          }
+        }
+      });
     });
   </script>
 </body>
