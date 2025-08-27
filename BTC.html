@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BTC Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+:root {
+  --primary-bg: linear-gradient(135deg,#0d0d1a,#1a1a33);
+  --card-bg: rgba(255,255,255,0.05);
+  --text-color: #f0f0f0;
+  --accent-color: #ffd700;
+  --up-color: #00ff00;
+  --down-color: #ff4c4c;
+  --sidebar-bg: rgba(0,0,0,0.95);
+  --header-bg: rgba(0,0,0,0.7);
+}
+
+.light-mode {
+  --primary-bg: linear-gradient(135deg, #e6e9f0, #eef1f5);
+  --card-bg: rgba(255,255,255,0.7);
+  --text-color: #333;
+  --accent-color: #6c5ce7;
+  --up-color: #00b894;
+  --down-color: #d63031;
+  --sidebar-bg: rgba(255,255,255,0.95);
+  --header-bg: rgba(255,255,255,0.7);
+}
+
+body{
+  background:var(--primary-bg);
+  color:var(--text-color);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:0;
+  overflow-x:hidden;
+  transition: background 0.5s ease;
+}
+
+.header {
+  width: 100%;
+  background: var(--header-bg);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.last-updated {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.hamburger{
+  position:fixed;
+  top:20px;
+  right:20px;
+  width:40px;
+  height:30px;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  z-index:10000;
+}
+.hamburger div{height:4px;background:var(--accent-color);border-radius:2px;transition:0.3s;}
+
+.sidebar{
+  position:fixed;
+  top:0; right:-380px;
+  width:380px;
+  height:100%;
+  background:var(--sidebar-bg);
+  box-shadow:-5px 0 20px rgba(0,0,0,0.7);
+  padding:2rem 1rem;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  transition:0.5s;
+  z-index:9999;
+  overflow-y:auto;
+}
+.sidebar.open{right:0;}
+.sidebar h3{color:var(--accent-color);margin-bottom:0.5rem;}
+.tab-buttons{display:flex;gap:0.5rem;margin-bottom:1rem;}
+.tab-buttons button{
+  flex:1;
+  padding:0.5rem;
+  border:none;
+  border-radius:8px;
+  background: rgba(255,255,255,0.05);
+  color:var(--text-color);
+  cursor:pointer;
+  transition:0.3s;
+}
+.tab-buttons button.active{background:var(--accent-color);color:#000;}
+
+.search-box {
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.sidebar table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+.sidebar th, .sidebar td{
+  padding:0.6rem;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.sidebar th{background: rgba(255,255,255,0.1); color:var(--accent-color);}
+
+.container{
+  width:100%;
+  max-width:1300px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:1.5rem;
+  margin-top:20px;
+  padding: 2rem;
+}
+.rate-card{
+  background: var(--card-bg);
+  border-radius:20px;
+  padding:1.5rem 1rem;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,0.7);
+  transition:transform 0.4s, box-shadow 0.4s;
+  backdrop-filter:blur(12px);
+  position:relative;
+  overflow:hidden;
+}
+.rate-card::before{
+  content:"";
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.05), rgba(255,255,255,0.1), rgba(0,255,234,0.2));
+  background-size:200% 200%;
+  border-radius:20px;
+  z-index:0;
+  animation:gradientShift 5s ease infinite;
+}
+@keyframes gradientShift{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+.rate-card:hover{transform:translateY(-8px);box-shadow:0 15px 30px rgba(0,0,0,0.9);}
+.rate-card>*{position:relative;z-index:1;}
+.currency{font-weight:700;font-size:1.3rem;margin-bottom:0.5rem;color:var(--accent-color);}
+.value{font-size:1.1rem;color:#00ffea;transition:color 0.5s; margin-bottom: 0.3rem;}
+.value.up{color:var(--up-color);}
+.value.down{color:var(--down-color);}
+.percent-change {
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+.percent-change.up{color:var(--up-color);}
+.percent-change.down{color:var(--down-color);}
+canvas{margin-top:0.8rem;background: rgba(0,0,0,0.15);border-radius:10px;padding:0.3rem; width: 100% !important;}
+.loader{
+  border:5px solid rgba(255,255,255,0.1);
+  border-top:5px solid var(--accent-color);
+  border-radius:50%;
+  width:60px;
+  height:60px;
+  animation:spin 1s linear infinite;
+  margin:4rem auto;
+  grid-column: 1 / -1;
+}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+
+.notifications-list{
+  display:flex;
+  flex-direction:column-reverse;
+  gap:0.4rem;
+  max-height:60vh;
+  overflow-y:auto;
+}
+.notification{
+  background: rgba(0,0,0,0.85);
+  color:#fff;
+  padding:0.8rem 1rem;
+  border-radius:10px;
+  font-size:0.95rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  transition: transform 0.3s;
+}
+.notification.up{color:var(--up-color); border-left: 4px solid var(--up-color);}
+.notification.down{color:var(--down-color); border-left: 4px solid var(--down-color);}
+.notification i {
+  margin-right: 0.5rem;
+}
+
+.mobile-warning {
+  display: none;
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255,215,0,0.2);
+  border-radius: 8px;
+  margin: 1rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    right: -100%;
+  }
+  
+  .container {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .header-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .mobile-warning {
+    display: block;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><i class="fab fa-bitcoin"></i> BTC Dashboard</h1>
+  <div class="header-info">
+    <div class="last-updated" id="last-updated">Last updated: --:--:--</div>
+    <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+  </div>
+</div>
+
+<div class="mobile-warning">
+  <i class="fas fa-info-circle"></i> Swipe left to right to open sidebar
+</div>
+
+<div class="hamburger" id="hamburger">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
+<div class="sidebar" id="sidebar">
+  <div class="tab-buttons">
+    <button id="tab-table" class="active"><i class="fas fa-table"></i> Exchange Rates</button>
+    <button id="tab-notifications"><i class="fas fa-bell"></i> Notifications</button>
+  </div>
+
+  <input type="text" class="search-box" id="search-currency" placeholder="Search currencies...">
+
+  <div id="tab-content-table">
+    <table id="sidebar-table">
+      <thead><tr><th>Currency</th><th>Value</th><th>Change</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="tab-content-notifications" style="display:none;">
+    <div class="notifications-list" id="sidebar-notifications"></div>
+  </div>
+</div>
+
+<div class="container" id="rates">
+  <div id="loader" class="loader"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const apiURL='https://api.coinbase.com/v2/exchange-rates?currency=BTC';
+const ratesContainer=document.getElementById('rates');
+const loader=document.getElementById('loader');
+const sidebar=document.getElementById('sidebar');
+const sidebarTableBody=document.querySelector('#sidebar-table tbody');
+const sidebarNotifications=document.getElementById('sidebar-notifications');
+const lastUpdatedEl = document.getElementById('last-updated');
+const themeToggle = document.getElementById('theme-toggle');
+const searchInput = document.getElementById('search-currency');
+
+let previousRates={};
+let charts={};
+let chartData={};
+let allCurrencies = [];
+let darkMode = true;
+
+// Theme toggle functionality
+themeToggle.addEventListener('click', () => {
+  darkMode = !darkMode;
+  if (darkMode) {
+    document.body.classList.remove('light-mode');
+    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+  } else {
+    document.body.classList.add('light-mode');
+    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+  }
+});
+
+// Search functionality
+searchInput.addEventListener('input', (e) => {
+  const searchTerm = e.target.value.toLowerCase();
+  const cards = document.querySelectorAll('.rate-card');
+  
+  cards.forEach(card => {
+    const currency = card.id;
+    if (currency.toLowerCase().includes(searchTerm)) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+});
+
+document.getElementById('hamburger').addEventListener('click',()=>{sidebar.classList.toggle('open');});
+
+document.getElementById('tab-table').addEventListener('click',()=>{
+  document.getElementById('tab-content-table').style.display='block';
+  document.getElementById('tab-content-notifications').style.display='none';
+  document.getElementById('tab-table').classList.add('active');
+  document.getElementById('tab-notifications').classList.remove('active');
+});
+document.getElementById('tab-notifications').addEventListener('click',()=>{
+  document.getElementById('tab-content-table').style.display='none';
+  document.getElementById('tab-content-notifications').style.display='block';
+  document.getElementById('tab-table').classList.remove('active');
+  document.getElementById('tab-notifications').classList.add('active');
+});
+
+function notifySidebar(currency, value, type, changePercent){
+  const n=document.createElement('div');
+  n.className=`notification ${type}`;
+  n.innerHTML = `<div><i class="fas fa-${type === 'up' ? 'arrow-up' : 'arrow-down'}"></i>${currency}: ${parseFloat(value).toLocaleString()}</div>
+                 <div>${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%</div>`;
+  sidebarNotifications.prepend(n);
+  setTimeout(()=>{n.remove();},5000);
+}
+
+function updateLastUpdated() {
+  const now = new Date();
+  lastUpdatedEl.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+}
+
+async function fetchRates(){
+  try{
+    const res=await fetch(apiURL);
+    const data=await res.json();
+    const rates=data.data.rates;
+    
+    if(loader.style.display!=='none'){loader.style.display='none';}
+
+    sidebarTableBody.innerHTML='';
+    allCurrencies = Object.keys(rates);
+    
+    // Store previous values for percentage calculation
+    const currentPreviousRates = {...previousRates};
+    
+    for(let currency in rates){
+      const value=parseFloat(rates[currency]);
+      const valueFixed = value.toFixed(6);
+
+      let card=document.getElementById(currency);
+      let changePercent = 0;
+      
+      // Calculate percentage change
+      if (currentPreviousRates[currency] !== undefined) {
+        changePercent = ((value - currentPreviousRates[currency]) / currentPreviousRates[currency]) * 100;
+      }
+
+      if(!card){
+        card=document.createElement('div');
+        card.className='rate-card';
+        card.id=currency;
+        card.innerHTML=`<div class="currency">${currency}</div>
+                        <div class="value">${value.toLocaleString()}</div>
+                        <div class="percent-change">${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%</div>
+                        <canvas id="chart-${currency}" height="100"></canvas>`;
+        ratesContainer.appendChild(card);
+
+        // Initialize chart for this currency
+        chartData[currency]={
+          labels:[new Date().toLocaleTimeString()],
+          datasets:[{
+            label:`${currency} BTC`,
+            data:[value],
+            borderColor: darkMode ? '#00ffea' : '#6c5ce7',
+            backgroundColor: darkMode ? 'rgba(0,255,234,0.2)' : 'rgba(108, 92, 231, 0.2)',
+            tension:0.3,
+            fill: true
+          }]
+        };
+        const ctx=document.getElementById(`chart-${currency}`).getContext('2d');
+        charts[currency]=new Chart(ctx,{
+          type:'line',
+          data:chartData[currency],
+          options:{
+            responsive:true,
+            animation:{duration:400},
+            plugins:{legend:{display:false}},
+            scales:{
+              x:{display:false},
+              y:{display:false}
+            }
+          }
+        });
+      } else {
+        const valueEl=card.querySelector('.value');
+        const percentEl = card.querySelector('.percent-change');
+        let type='';
+        
+        if(currentPreviousRates[currency] !== undefined){
+          if(value > currentPreviousRates[currency]){
+            valueEl.classList.add('up'); valueEl.classList.remove('down'); 
+            percentEl.classList.add('up'); percentEl.classList.remove('down');
+            type='up';
+          } else if(value < currentPreviousRates[currency]){
+            valueEl.classList.add('down'); valueEl.classList.remove('up'); 
+            percentEl.classList.add('down'); percentEl.classList.remove('up');
+            type='down';
+          } else {
+            valueEl.classList.remove('up','down');
+            percentEl.classList.remove('up','down');
+            type='';
+          }
+        }
+        
+        valueEl.textContent = value.toLocaleString();
+        percentEl.textContent = `${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
+        
+        if(type && Math.abs(changePercent) > 0.1) {
+          notifySidebar(currency, value, type, changePercent);
+        }
+
+        // Update chart for this currency
+        const chart=charts[currency];
+        const now=new Date().toLocaleTimeString();
+        chart.data.labels.push(now);
+        chart.data.datasets[0].data.push(value);
+        if(chart.data.labels.length > 15){
+          chart.data.labels.shift();
+          chart.data.datasets[0].data.shift();
+        }
+        chart.update('active');
+      }
+
+      previousRates[currency]=value;
+
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${currency}</td>
+                   <td>${value.toLocaleString()}</td>
+                   <td class="${changePercent > 0 ? 'up' : changePercent < 0 ? 'down' : ''}">
+                     ${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%
+                   </td>`;
+      sidebarTableBody.appendChild(tr);
+    }
+
+    updateLastUpdated();
+  } catch(err){
+    console.error('Error fetching rates:', err);
+    // In case of error, try again after 2 seconds
+    setTimeout(fetchRates, 2000);
+  }
+}
+
+// Initial fetch
+fetchRates();
+setInterval(fetchRates, 10000);
+
+// Swipe detection for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+}, false);
+
+document.addEventListener('touchend', e => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+}, false);
+
+function handleSwipe() {
+  // Minimum swipe distance
+  if (Math.abs(touchEndX - touchStartX) < 50) return;
+  
+  if (touchEndX > touchStartX && touchStartX < 50) {
+    // Swipe right to open sidebar
+    sidebar.classList.add('open');
+  } else if (touchEndX < touchStartX) {
+    // Swipe left to close sidebar
+    sidebar.classList.remove('open');
+  }
+}
+</script>
+</body>
+</html>
