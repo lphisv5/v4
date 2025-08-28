@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>Roblox Versions</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet" />
 <style>
   :root {
     --base-font: clamp(1rem, 2vw + 0.5rem, 1.25rem);
@@ -17,10 +16,7 @@
     --card-bg: rgba(255,255,255,0.08);
     --card-shadow: rgba(0,0,0,0.6);
     --error-bg: rgba(255,0,0,0.3);
-    --bg-gradient-light: linear-gradient(to bottom, #f0f0f0, #cccccc);
     --bg-gradient-dark: linear-gradient(to bottom, #0f0f0f, #2b2b2b);
-
-    --sz: 4vmin;
   }
 
   *, *::before, *::after {
@@ -44,23 +40,6 @@
     color: #fff;
     padding: var(--gap);
     overflow: hidden;
-    transition: background 0.5s ease, color 0.5s ease;
-  }
-  body.light {
-    background: var(--bg-gradient-light);
-    color: #222;
-  }
-  body.light .card {
-    background: rgba(0,0,0,0.05);
-    color: #111;
-    box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.1);
-  }
-  body.light .platform {
-    color: #cc9900;
-  }
-  body.light .cards {
-    background: rgba(255,255,255,0.6);
-    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.15);
   }
 
   .cards {
@@ -74,7 +53,8 @@
     border-radius: var(--radius);
     padding: var(--gap);
     box-shadow: 0 0.5rem 1.5rem var(--card-shadow);
-    transition: background 0.5s ease;
+    min-height: 300px;
+    position: relative;
   }
 
   .card {
@@ -82,7 +62,7 @@
     padding: var(--padding);
     border-radius: var(--radius);
     box-shadow: 0 0.5rem 1.25rem var(--card-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease, color 0.5s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   .card:hover {
     transform: translateY(-0.5rem);
@@ -124,343 +104,194 @@
     padding: 3rem;
     border-radius: var(--radius);
     box-shadow: 0 0 20px rgba(255,0,0,0.3);
+    max-width: 90%;
+    margin: 0 auto;
   }
 
-  #toggleBtn {
-    position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
-    width: calc(var(--sz) * 4);
-    height: calc(var(--sz) * 2);
-    z-index: 9999;
-    cursor: pointer;
-    user-select: none;
+  .no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #aaa;
+    font-style: italic;
+    grid-column: 1 / -1;
   }
-  #toggleBtn input {
-    display: none;
-  }
-  #toggleBtn label {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(0deg, #12172080, #0d121780);
-    border-radius: var(--sz);
-    overflow: hidden;
-    box-shadow:
-      0 0 calc(var(--sz) / 50) calc(var(--sz) / 50) #000000e0,
-      0 0 calc(var(--sz) / 10) calc(var(--sz) / 100) #0b0b10 inset;
-    transition: background-color 0.3s ease;
-  }
-  #toggleBtn .thumb {
+
+  .update-indicator {
     position: absolute;
-    width: calc(calc(var(--sz) * 2) - calc(var(--sz) / 4));
-    height: calc(calc(var(--sz) * 2) - calc(var(--sz) / 4));
-    top: calc(calc(var(--sz) / 10) + calc(var(--sz) / 50));
-    left: calc(calc(var(--sz) / 10) + calc(var(--sz) / 50));
-    background:
-      linear-gradient(0deg, #a1a1a1, #ffffff),
-      linear-gradient(0deg, #212121, #474747);
-    border-radius: var(--sz);
+    top: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+    color: var(--primary-color);
     display: flex;
     align-items: center;
-    justify-content: center;
-    z-index: 1;
-    overflow: hidden;
-    box-shadow:
-      calc(var(--sz) / -50) calc(var(--sz) / 50) calc(var(--sz) / 30) 0 #fff2 inset,
-      0 0 calc(var(--sz) / 10) calc(var(--sz) / 50) #000c;
-    transition: left 0.5s ease-in-out 0.5s;
+    gap: 5px;
   }
-  #toggleBtn input:checked + label .thumb {
-    left: calc(100% - calc(calc(var(--sz) * 2) - calc(var(--sz) / 3)) - calc(calc(var(--sz) / 10) + calc(var(--sz) / 10)));
-    box-shadow:
-      calc(var(--sz) / -50) calc(var(--sz) / 50) calc(var(--sz) / 30) 0 #fff inset,
-      0 0 calc(var(--sz) / 10) calc(var(--sz) / 50) #000c;
-  }
-  #toggleBtn label .arms {
-    position: absolute;
-    width: 200%;
-    height: 100%;
-    border-radius: 10vmin;
-    overflow: hidden;
-    right: -50%;
-    top: 0;
-    pointer-events: none;
-  }
-  #toggleBtn label .arm-human {
-    position: absolute;
-    bottom: 0;
-    left: 10%;
-    width: 40%;
-    height: 100%;
-    background: #f2b6b6;
-    border-radius: 4vmin;
-    box-shadow: inset 0 0 5px #d19a9a;
-    transform-origin: bottom center;
-    animation: armMove 3s ease-in-out infinite;
-  }
-  #toggleBtn label .hand-human {
-    position: absolute;
-    bottom: 5%;
-    left: 50%;
-    width: 80%;
-    height: 35%;
-    background: #f2b6b6;
-    border-radius: 50% / 100%;
-    transform: translateX(-50%);
-    box-shadow: inset 0 0 5px #d19a9a;
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-  }
-  #toggleBtn label .finger {
-    width: 10%;
-    height: 60%;
-    background: #f2b6b6;
-    border-radius: 1vmin;
-    box-shadow: inset 0 0 2px #d19a9a;
-    animation: fingerMove 4s ease-in-out infinite;
-  }
-  #toggleBtn label .finger:nth-child(1) { animation-delay: 0s; }
-  #toggleBtn label .finger:nth-child(2) { animation-delay: 0.2s; }
-  #toggleBtn label .finger:nth-child(3) { animation-delay: 0.4s; }
-  #toggleBtn label .finger:nth-child(4) { animation-delay: 0.6s; }
-  #toggleBtn label .arm-bones {
-    position: absolute;
-    bottom: 0;
-    right: 10%;
-    width: 40%;
-    height: 100%;
-    background: linear-gradient(90deg, #eee 20%, #ccc 60%, #eee 80%);
-    border-radius: 4vmin;
-    box-shadow: inset 0 0 8px #bbb;
-    transform-origin: bottom center;
-    animation: armMoveReverse 3s ease-in-out infinite;
-  }
-  #toggleBtn label .hand-bones {
-    position: absolute;
-    bottom: 5%;
-    right: 50%;
-    width: 80%;
-    height: 35%;
-    background: linear-gradient(90deg, #eee 20%, #ccc 60%, #eee 80%);
-    border-radius: 50% / 100%;
-    transform: translateX(50%);
-    box-shadow: inset 0 0 8px #bbb;
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-  }
-  #toggleBtn label .bone {
-    width: 10%;
-    height: 60%;
-    background: #eee;
-    border-radius: 1vmin;
-    box-shadow: inset 0 0 4px #bbb;
-    animation: fingerMoveReverse 4s ease-in-out infinite;
-  }
-  #toggleBtn label .bone:nth-child(1) { animation-delay: 0s; }
-  #toggleBtn label .bone:nth-child(2) { animation-delay: 0.2s; }
-  #toggleBtn label .bone:nth-child(3) { animation-delay: 0.4s; }
-  #toggleBtn label .bone:nth-child(4) { animation-delay: 0.6s; }
-  @keyframes armMove {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(8deg); }
-  }
-  @keyframes armMoveReverse {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-8deg); }
-  }
-  @keyframes fingerMove {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5%); }
-  }
-  @keyframes fingerMoveReverse {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-7%); }
-  }
-  #toggleBtn .trick {
-    position: relative;
-    width: 50%;
-    height: 50%;
-    background: #2c2c2c;
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary-color);
     border-radius: 50%;
-    box-shadow: inset 0 0 8px #444;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    animation: pulse 1.5s infinite;
   }
-  #toggleBtn .eyes {
-    width: 70%;
-    height: 20%;
-    background: radial-gradient(circle at center, #fff 50%, transparent 51%);
-    border-radius: 50% / 100%;
-    margin-bottom: 0.3rem;
-    box-shadow:
-      10px 0 0 #fff,
-      -10px 0 0 #fff;
-    position: relative;
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
   }
-  #toggleBtn .nose {
-    width: 15%;
-    height: 15%;
-    background: #b84e4e;
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-    margin-bottom: 0.3rem;
-  }
-  #toggleBtn .mouth {
-    width: 50%;
-    height: 10%;
-    border: 3px solid #9a2a2a;
-    border-top: none;
-    border-radius: 0 0 50% 50% / 0 0 100% 100%;
-  }
-  #toggleBtn .treat {
-    position: absolute;
-    bottom: 5%;
-    left: 10%;
-    width: 20%;
-    height: 30%;
-    background: linear-gradient(45deg, #ffb347, #ffcc33);
-    border-radius: 0.5vmin;
-    box-shadow: 0 0 10px #ffcc33;
-    animation: treatGlow 3s ease-in-out infinite;
-  }
-  @keyframes treatGlow {
-    0%, 100% { box-shadow: 0 0 10px #ffcc33; }
-    50% { box-shadow: 0 0 20px #ffb347; }
-  }
-  #toggleBtn label::before,
-  #toggleBtn label::after {
-    --on: #121212;
-    font-family: 'Nanum Pen Script', cursive;
-    font-size: 7vmin;
-    content: "black";
-    color: #e6e6e6;
-    position: absolute;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 0;
-    text-shadow:
-      1px 1px 1px var(--on),
-      -1px 1px 1px var(--on),
-      1px -1px 1px var(--on),
-      -1px -1px 1px var(--on),
-      0px 3px 3px #000c;
-  }
-  #toggleBtn label::after {
-    content: "white";
-    left: 50%;
-    color: #ff5907;
-    z-index: -1;
-    filter: brightness(2) contrast(1.5);
-  }
-  
+
   @media screen and (max-width: 480px) {
-  .cards {
-    grid-template-columns: 1fr;
-    padding: 1rem;
+    .cards {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+    .card {
+      padding: 1rem;
+      font-size: 0.95rem;
+    }
   }
-  .card {
-    padding: 1rem;
-    font-size: 0.95rem;
-  }
-}
 </style>
-<script defer>
-  async function fetchData() {
-    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://rbupd.stickx.top/');
-    const response = await fetch(proxyUrl, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`Network error: ${response.status}`);
-    return response.json();
-  }
-  function showErrorPage(message) {
-    document.body.innerHTML = `<div class="error-page">⚠️ Website is down<br>${message}</div>`;
-  }
-  function createCard(item) {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="platform">${item.platform}</div>
-      <div class="version"><span class="label">Version:</span> ${item.version}</div>
-      <div class="updated"><span class="label">Updated at:</span> ${item.update_at}</div>
-    `;
-    return card;
-  }
-  document.addEventListener('DOMContentLoaded', async () => {
-    const container = document.getElementById('versionCards');
-    container.innerHTML = '<div class="spinner"></div>';
-    try {
-      const data = await fetchData();
-      container.innerHTML = '';
-      if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
-        throw new Error('Invalid or empty data received');
+</head>
+<body>
+  <main class="cards" id="versionCards" role="main" aria-live="polite">
+    <div class="spinner"></div>
+    <div class="update-indicator" id="updateIndicator" style="display: none;">
+      <div class="pulse-dot"></div>
+      <span>Live</span>
+    </div>
+  </main>
+
+  <script>
+    let currentData = null;
+    let checkInterval = null;
+    
+    async function fetchData() {
+      const proxyUrls = [
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?',
+        'https://api.codetabs.com/v1/proxy?quest='
+      ];
+      
+      const targetUrl = 'https://rbupd.stickx.top/';
+      let lastError;
+      
+      for (const proxyUrl of proxyUrls) {
+        try {
+          const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
+            cache: 'no-store',
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          lastError = error;
+          console.warn(`Proxy failed: ${proxyUrl}, trying next...`);
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
+      
+      throw lastError || new Error('All proxies failed');
+    }
+
+    function showErrorPage(message) {
+      const container = document.getElementById('versionCards');
+      container.innerHTML = `
+        <div class="error-page">
+          <div>⚠️ Unable to Load Data</div>
+          <div style="font-size: 1rem; margin-top: 1rem;">${message}</div>
+          <button onclick="window.location.reload()" style="
+            margin-top: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+          ">Try Again</button>
+        </div>
+      `;
+    }
+
+    function showNoData() {
+      const container = document.getElementById('versionCards');
+      container.innerHTML = '<div class="no-data">No version data available at the moment.</div>';
+    }
+
+    function createCard(item) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="platform">${item.platform}</div>
+        <div class="version"><span class="label">Version:</span> ${item.version}</div>
+        <div class="updated"><span class="label">Updated at:</span> ${item.update_at}</div>
+      `;
+      return card;
+    }
+
+    function updateDisplay(data) {
+      const container = document.getElementById('versionCards');
+      
+      if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+        showNoData();
+        return;
+      }
+      
+      const indicator = document.getElementById('updateIndicator');
+      container.innerHTML = '';
+      if (indicator) container.appendChild(indicator);
+      
       const fragment = document.createDocumentFragment();
       data.data.forEach(item => fragment.appendChild(createCard(item)));
       container.appendChild(fragment);
-    } catch (error) {
-      showErrorPage(error.message);
-    }
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const toggleCheckbox = document.getElementById('toggleCheckbox');
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    if (savedTheme === 'light') {
-      document.body.classList.add('light');
-      toggleCheckbox.checked = true;
-    }
-    toggleCheckbox.addEventListener('change', () => {
-      if (toggleCheckbox.checked) {
-        document.body.classList.add('light');
-        localStorage.setItem('theme', 'light');
-      } else {
-        document.body.classList.remove('light');
-        localStorage.setItem('theme', 'dark');
+      
+      if (indicator) {
+        indicator.style.display = 'flex';
+        setTimeout(() => {
+          indicator.style.display = 'none';
+        }, 3000);
       }
-    });
-  });
-</script>
-</head>
-<body>
-  <main class="cards" id="versionCards" role="main" aria-live="polite"></main>
+    }
 
-  <div id="toggleBtn">
-    <input type="checkbox" id="toggleCheckbox" />
-    <label for="toggleCheckbox" aria-label="Toggle light and dark mode">
-      <div class="thumb">
-        <div class="arms">
-          <div class="arm-human">
-            <div class="hand-human">
-              <div class="finger"></div>
-              <div class="finger"></div>
-              <div class="finger"></div>
-              <div class="finger"></div>
-            </div>
-          </div>
-          <div class="arm-bones">
-            <div class="hand-bones">
-              <div class="bone"></div>
-              <div class="bone"></div>
-              <div class="bone"></div>
-              <div class="bone"></div>
-            </div>
-          </div>
-        </div>
-        <div class="trick">
-          <div class="eyes"></div>
-          <div class="nose"></div>
-          <div class="mouth"></div>
-          <div class="treat"></div>
-        </div>
-      </div>
-    </label>
-  </div>
+    async function checkForUpdates() {
+      try {
+        const newData = await fetchData();
+        
+        if (!currentData || JSON.stringify(currentData) !== JSON.stringify(newData)) {
+          console.log('Data updated:', newData);
+          currentData = newData;
+          updateDisplay(newData);
+        }
+      } catch (error) {
+        console.error('Error checking for updates:', error);
+      }
+    }
+
+    async function init() {
+      try {
+        const data = await fetchData();
+        currentData = data;
+        updateDisplay(data);
+        
+        if (checkInterval) clearInterval(checkInterval);
+        checkInterval = setInterval(checkForUpdates, 30000);
+        
+      } catch (error) {
+        console.error('Error:', error);
+        showErrorPage(error.message || 'Please check your connection and try again.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+    });
+  </script>
 </body>
 </html>
