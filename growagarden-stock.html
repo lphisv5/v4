@@ -258,7 +258,6 @@
       to { transform: translateX(100%); opacity: 0; }
     }
 
-    /* High DPI adjustments */
     @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
       :root {
         --font-size-base: clamp(15px, 3.5vw, 17px);
@@ -278,7 +277,6 @@
       }
     }
 
-    /* Responsive for smaller screens */
     @media (max-width: 600px) {
       body { padding: clamp(0.8rem, 2vw, 1rem); }
       .tab {
@@ -293,7 +291,6 @@
       .notification { font-size: clamp(0.7rem, 1.8vw, 0.8rem); }
     }
 
-    /* Ultra-small screens */
     @media (max-width: 400px) {
       .tab {
         padding: clamp(0.3rem, 1vw, 0.4rem) clamp(0.5rem, 1.8vw, 0.7rem);
@@ -302,7 +299,6 @@
       }
     }
 
-    /* Ultra-wide or large screens */
     @media (min-width: 1200px) {
       main { max-width: clamp(900px, 80vw, 1100px); }
       .tab { font-size: clamp(0.95rem, 2vw, 1.05rem); min-width: clamp(100px, 15vw, 140px); }
@@ -315,7 +311,7 @@
   <header class="top-tab-header">
     <div class="tab-logo-name">
       <img src="https://i.postimg.cc/VLZkfgGL/images.jpg" alt="Grow a Garden Logo" class="tab-logo" />
-      <span class="tab-name">Grow A Garden</span>
+      <span class="tab-name">Grow A Garden Stock</span>
     </div>
   </header>
   <main>
@@ -325,7 +321,7 @@
     <div id="notification-container"></div>
   </main>
   <div id="next-page-container">
-    <a href="https://lphisv5.github.io/webv4/weather" class="next-button">WEATHER</a>
+    <a href="https://lphisv5.github.io/v4/weather" class="next-button">WEATHER</a>
   </div>
   <script>
     const API = 'https://api.joshlei.com/v2/growagarden/stock';
@@ -646,7 +642,6 @@
       tabsDiv.appendChild(fragment);
       updateTabsVisibility();
 
-      // Adjust tab sizes dynamically based on screen width
       adjustTabSizes();
 
       function selectTab(cat) {
