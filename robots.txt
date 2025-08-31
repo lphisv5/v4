@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://lphisv5.github.io/v4/sitemap.xml
