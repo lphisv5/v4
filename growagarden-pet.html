@@ -17,6 +17,8 @@
       --shadow: rgba(0, 0, 0, 0.1);
       --radius: clamp(8px, 1vw, 10px);
       --transition: all 0.3s ease;
+      --animation-duration: 0.4s;
+      --animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
       --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-size-base: clamp(14px, 3.5vw, 16px);
       --rarity-common: #a0aec0;
@@ -53,10 +55,9 @@
       flex-direction: column;
       align-items: center;
       gap: clamp(0.8rem, 2vw, 1rem);
-      border-bottom: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: 0 2px 4px var(--shadow);
-      animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideIn var(--animation-duration) var(--animation-easing);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -79,8 +80,10 @@
       display: flex;
       gap: clamp(0.5rem, 1.5vw, 0.75rem);
       width: 100%;
-      max-width: clamp(300px, 80vw, 500px);
+      max-width: clamp(300px, 80vw, 600px);
       flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
     }
 
     header input,
@@ -106,7 +109,7 @@
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px var(--primary-light);
-      transform: scale(1.02);
+      transform: scale(1.02) translateY(-2px);
     }
 
     #grid {
@@ -124,10 +127,15 @@
       box-shadow: 0 4px 12px var(--shadow);
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+      transition: transform var(--animation-duration) var(--animation-easing), box-shadow var(--animation-duration) ease;
       position: relative;
-      animation: cardEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation: cardEnter var(--animation-duration) var(--animation-easing) forwards;
       animation-delay: calc(var(--index) * 0.1s);
+    }
+
+    .card[tabindex="0"]:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
     }
 
     @keyframes cardEnter {
@@ -135,7 +143,7 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .card:hover {
+    .card:hover, .card:focus {
       transform: translateY(-5px) scale(1.05);
       box-shadow: 0 8px 20px var(--shadow);
     }
@@ -148,7 +156,7 @@
       transition: transform 0.5s ease;
     }
 
-    .card:hover img {
+    .card:hover img, .card:focus img {
       transform: scale(1.1);
     }
 
@@ -182,7 +190,7 @@
       transition: color 0.3s ease;
     }
 
-    .card:hover .card-body h3 {
+    .card:hover .card-body h3, .card:focus .card-body h3 {
       color: var(--primary-dark);
     }
 
@@ -204,7 +212,7 @@
       z-index: 1000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity var(--animation-duration) var(--animation-easing);
     }
 
     #modal:not(.hidden) {
@@ -222,7 +230,7 @@
       position: relative;
       text-align: center;
       box-shadow: 0 8px 24px var(--shadow);
-      animation: modalPop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: modalPop var(--animation-duration) var(--animation-easing);
       transform-origin: center;
     }
 
@@ -244,7 +252,7 @@
       transform: rotate(0);
     }
 
-    #modalClose:hover {
+    #modalClose:hover, #modalClose:focus {
       color: var(--primary);
       transform: rotate(90deg);
     }
@@ -280,22 +288,63 @@
       color: var(--text);
     }
 
+    .google-search-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: clamp(0.5rem, 1.5vw, 0.6rem);
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      border: none;
+      background: #4285f4;
+      color: white;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: clamp(0.5rem, 1.2vw, 0.6rem);
+      position: relative;
+    }
+
+    .google-search-btn:hover, .google-search-btn:focus {
+      background: #3267d6;
+      transform: translateY(-2px);
+      animation: pulseGoogle 1.5s infinite;
+    }
+
+    .google-search-btn:disabled {
+      background: var(--muted);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    @keyframes pulseGoogle {
+      0%, 100% { transform: translateY(-2px); }
+      50% { transform: translateY(0); }
+    }
+
     #loading {
       text-align: center;
-      font-size: clamp(1.1rem, 2.5vw, 1.3rem);
-      color: var(--text);
       padding: clamp(1.5rem, 3vw, 2rem);
-      animation: pulse 1.5s infinite;
       display: none;
+      aria-live: "polite";
     }
 
     #loading:not(.hidden) {
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.05); }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--primary-light);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     #error {
@@ -307,6 +356,7 @@
       display: none;
       background: rgba(229, 62, 62, 0.1);
       border-radius: var(--radius);
+      aria-live: "assertive";
     }
 
     #error:not(.hidden) {
@@ -347,7 +397,7 @@
       transition: width 0.3s ease, height 0.3s ease;
     }
 
-    .page-btn:hover::after {
+    .page-btn:hover::after, .page-btn:focus::after {
       width: 200%;
       height: 200%;
     }
@@ -357,9 +407,41 @@
       cursor: not-allowed;
     }
 
-    .page-btn:hover:not(:disabled) {
+    .page-btn:hover:not(:disabled), .page-btn:focus:not(:disabled) {
       background: var(--primary-dark);
       transform: translateY(-2px);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--primary-light) 25%, var(--hover) 50%, var(--primary-light) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s ease-in-out infinite;
+      border-radius: var(--radius);
+      height: clamp(150px, 25vw, 170px);
+    }
+
+    .skeleton-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .skeleton-card .card-body {
+      padding: clamp(0.75rem, 1.8vw, 0.9rem);
+    }
+
+    .skeleton-text {
+      border-radius: var(--radius);
+      background: linear-gradient(90deg, var(--primary-light) 25%, var(--hover) 50%, var(--primary-light) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s ease-in-out infinite;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
     .rarity-common { background: var(--rarity-common); }
@@ -385,7 +467,7 @@
         --font-size-base: clamp(15px, 3.5vw, 17px);
         --radius: clamp(9px, 1vw, 11px);
       }
-      .card img {
+      .card img, .skeleton {
         height: clamp(160px, 25vw, 180px);
       }
       #modalIcon {
@@ -400,7 +482,7 @@
       .input-group { flex-direction: column; }
       header input, header select { font-size: clamp(0.85rem, 2vw, 0.95rem); min-width: 100%; }
       #grid { grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 45vw, 200px), 1fr)); }
-      .card img { height: clamp(130px, 30vw, 150px); }
+      .card img, .skeleton { height: clamp(130px, 30vw, 150px); }
       .card-body h3 { font-size: clamp(0.95rem, 2vw, 1.05rem); }
       .card-body p { font-size: clamp(0.75rem, 1.8vw, 0.85rem); }
       .modal-content { padding: clamp(1rem, 2.5vw, 1.25rem); max-width: clamp(300px, 95vw, 380px); }
@@ -410,14 +492,14 @@
 
     @media (max-width: 400px) {
       #grid { grid-template-columns: 1fr; }
-      .card img { height: clamp(110px, 35vw, 130px); }
+      .card img, .skeleton { height: clamp(110px, 35vw, 130px); }
       .modal-content { max-width: 95vw; }
     }
 
     @media (min-width: 1200px) {
-      .input-group { max-width: clamp(400px, 40vw, 550px); }
+      .input-group { max-width: clamp(400px, 40vw, 650px); }
       #grid { grid-template-columns: repeat(auto-fill, minmax(clamp(240px, 25vw, 280px), 1fr)); }
-      .card img { height: clamp(170px, 20vw, 190px); }
+      .card img, .skeleton { height: clamp(170px, 20vw, 190px); }
       .card-body h3 { font-size: clamp(1.2rem, 2vw, 1.4rem); }
       .modal-content { max-width: clamp(380px, 35vw, 480px); }
       #modalIcon { max-width: clamp(160px, 25vw, 200px); }
@@ -443,22 +525,26 @@
   </header>
 
   <main id="grid"></main>
-  <div id="loading" class="hidden">Loading...</div>
+  <div id="loading" class="hidden"><div class="spinner"></div></div>
   <div id="error" class="hidden"></div>
   <div id="pagination"></div>
 
   <div id="modal" class="hidden" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="modalName">
     <div class="modal-content">
       <button id="modalClose" aria-label="Close modal">&times;</button>
-      <img id="modalIcon" src="" alt="" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2216%22>🐾</text></svg>';this.onerror=null;" />
+      <img id="modalIcon" src="" alt="" onerror="this.src=FALLBACK_IMAGE; this.onerror=null;" />
       <h2 id="modalName"></h2>
       <div class="modal-detail">
         <p><strong>Rarity:</strong> <span id="modalRarity"></span></p>
         <p><strong>Price:</strong> <span id="modalPrice"></span> <span id="modalCurrency"></span></p>
         <p><strong>Description:</strong> <span id="modalDesc"></span></p>
         <p><strong>Type:</strong> <span id="modalType"></span></p>
-        <p><strong>Last Seen:</strong> <span id="modalLastSeen"></span></p>
-        <p><strong>Duration:</strong> <span id="modalDuration"></span></p>
+        <button id="googleSearch" class="google-search-btn" aria-label="Search pet on Google">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+          Search on Google
+        </button>
       </div>
     </div>
   </div>
@@ -467,115 +553,187 @@
     const API_URL = 'https://api.joshlei.com/v2/growagarden/info?type=pet';
     const JSTUDIO_KEY = 'js_bfbf185548d8ea2b648c6d971833bbecdcc70a896575b193444af969ecfbaf69';
     const ITEMS_PER_PAGE = 12;
+    const FALLBACK_IMAGE = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="16">🐾</text></svg>';
+    const GOOGLE_SEARCH_URL = 'https://www.google.com/search?q=';
 
-    const grid = document.getElementById('grid');
-    const searchInput = document.getElementById('search');
-    const filterRarity = document.getElementById('filterRarity');
-    const modal = document.getElementById('modal');
-    const modalClose = document.getElementById('modalClose');
-    const modalIcon = document.getElementById('modalIcon');
-    const modalName = document.getElementById('modalName');
-    const modalRarity = document.getElementById('modalRarity');
-    const modalPrice = document.getElementById('modalPrice');
-    const modalCurrency = document.getElementById('modalCurrency');
-    const modalDesc = document.getElementById('modalDesc');
-    const modalType = document.getElementById('modalType');
-    const modalLastSeen = document.getElementById('modalLastSeen');
-    const modalDuration = document.getElementById('modalDuration');
-    const loadingEl = document.getElementById('loading');
-    const errorEl = document.getElementById('error');
-    const paginationEl = document.getElementById('pagination');
+    const elements = {
+      grid: document.getElementById('grid'),
+      searchInput: document.getElementById('search'),
+      filterRarity: document.getElementById('filterRarity'),
+      modal: document.getElementById('modal'),
+      modalClose: document.getElementById('modalClose'),
+      modalIcon: document.getElementById('modalIcon'),
+      modalName: document.getElementById('modalName'),
+      modalRarity: document.getElementById('modalRarity'),
+      modalPrice: document.getElementById('modalPrice'),
+      modalCurrency: document.getElementById('modalCurrency'),
+      modalDesc: document.getElementById('modalDesc'),
+      modalType: document.getElementById('modalType'),
+      googleSearch: document.getElementById('googleSearch'),
+      loading: document.getElementById('loading'),
+      error: document.getElementById('error'),
+      pagination: document.getElementById('pagination')
+    };
 
     let animals = [];
     let filteredAnimals = [];
     let currentPage = 1;
     let isFetching = false;
+    let scrollPosition = 0;
 
-    function formatUnixTimestamp(ts) {
-      if (!ts || ts === "0") return "N/A";
-      const d = new Date(Number(ts) * 1000);
-      return d.toLocaleString('en-US', { 
-        dateStyle: 'medium', 
-        timeStyle: 'short',
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone 
-      });
-    }
-
-    function formatPrice(price, currency) {
+    const formatPrice = (price, currency) => {
       if (!price || isNaN(Number(price))) return "N/A";
-      return Number(price).toLocaleString('en-US', { 
-        style: currency === "Chi" ? 'decimal' : 'currency', 
+      return Number(price).toLocaleString('en-US', {
+        style: currency === "Chi" ? 'decimal' : 'currency',
         currency: currency === "Chi" ? undefined : 'USD',
-        maximumFractionDigits: currency === "Chi" ? 0 : 2 
+        maximumFractionDigits: currency === "Chi" ? 0 : 2
       });
-    }
+    };
 
-    function getRarityClass(rarity) {
-      return `rarity-${rarity.toLowerCase().replace(' ', '-')}`;
-    }
+    const getRarityClass = (rarity) => `rarity-${(rarity || 'Common').toLowerCase().replace(' ', '-')}`;
 
-    function showLoading(show) {
-      loadingEl.classList.toggle('hidden', !show);
-    }
+    const showLoading = (show) => {
+      elements.loading.classList.toggle('hidden', !show);
+    };
 
-    function showError(msg) {
-      errorEl.textContent = msg || 'An unexpected error occurred';
-      errorEl.classList.toggle('hidden', !msg);
-    }
+    const showError = (msg) => {
+      elements.error.textContent = msg || 'An unexpected error occurred';
+      elements.error.classList.toggle('hidden', !msg);
+    };
 
-    function debounce(func, delay = 300) {
+    const debounce = (func, delay = 300) => {
       let timeout;
       return (...args) => {
         clearTimeout(timeout);
         timeout = setTimeout(() => func(...args), delay);
       };
-    }
+    };
 
-    async function fetchAnimals() {
+    const throttle = (func, limit = 100) => {
+      let inThrottle;
+      return (...args) => {
+        if (!inThrottle) {
+          func(...args);
+          inThrottle = true;
+          setTimeout(() => (inThrottle = false), limit);
+        }
+      };
+    };
+
+    const sanitizeInput = (input) => {
+      if (!input) return '';
+      return input.replace(/[<>'"&]/g, '').replace(/[\n\r\t]/g, ' ').trim();
+    };
+
+    const generateGoogleSearchUrl = (query) => {
+      if (!query) return null;
+      const sanitizedQuery = encodeURIComponent(sanitizeInput(query));
+      return `${GOOGLE_SEARCH_URL}${sanitizedQuery}+pet`;
+    };
+
+    const fetchAnimals = async (retryCount = 0) => {
       if (isFetching) return;
       isFetching = true;
-      showLoading(true);
-      showError('');
       try {
         const res = await fetch(API_URL, {
           headers: { 'JStudio-key': JSTUDIO_KEY },
           cache: 'default'
         });
-        if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
+        if (!res.ok) {
+          if (res.status === 429 && retryCount < 3) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+            return fetchAnimals(retryCount + 1);
+          }
+          throw new Error(`API error: ${res.status} ${res.statusText}`);
+        }
         animals = await res.json();
         if (!Array.isArray(animals)) throw new Error('Invalid data format');
         filteredAnimals = animals;
         currentPage = 1;
         applyFilters();
+        preloadImages(animals);
       } catch (e) {
         showError(`Failed to load data: ${e.message}`);
-        grid.innerHTML = '';
-        paginationEl.innerHTML = '';
+        elements.grid.innerHTML = '';
+        elements.pagination.innerHTML = '';
       } finally {
-        showLoading(false);
         isFetching = false;
       }
-    }
+    };
 
-    function applyFilters() {
-      const q = searchInput.value.trim().toLowerCase();
-      const rarityFilter = filterRarity.value;
+    const loadAnimals = async () => {
+      showLoading(true);
+      renderSkeleton();
+      await fetchAnimals();
+      showLoading(false);
+    };
+
+    const applyFilters = () => {
+      const q = sanitizeInput(elements.searchInput.value.trim().toLowerCase());
+      const rarityFilter = elements.filterRarity.value;
+
       filteredAnimals = animals.filter(a => {
         if (!a) return false;
-        const matchesText = (a.display_name?.toLowerCase() || '').includes(q) || 
-                          (a.rarity?.toLowerCase() || '').includes(q);
+        const matchesText = (a.display_name?.toLowerCase() || '').includes(q) ||
+                           (a.rarity?.toLowerCase() || '').includes(q);
         const matchesRarity = !rarityFilter || a.rarity === rarityFilter;
         return matchesText && matchesRarity;
       });
+
       currentPage = 1;
       renderPage();
       renderPagination();
-    }
+    };
 
-    function renderPage() {
-      grid.innerHTML = '';
+    const renderSkeleton = () => {
+      elements.grid.innerHTML = '';
+      for (let i = 0; i < ITEMS_PER_PAGE; i++) {
+        const card = document.createElement('div');
+        card.className = 'skeleton-card';
+        card.innerHTML = `
+          <div class="skeleton"></div>
+          <div class="card-body">
+            <h3><div class="skeleton-text" style="height: 1.3rem; width: 70%; margin-bottom: 0.5rem;"></div></h3>
+            <p><div class="skeleton-text" style="height: 0.9rem; width: 50%;"></div></p>
+            <p><div class="skeleton-text" style="height: 0.9rem; width: 60%;"></div></p>
+          </div>`;
+        elements.grid.appendChild(card);
+      }
+    };
+
+    const createCard = (animal, index) => {
+      if (!animal) return null;
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.tabIndex = 0;
+      card.style.setProperty('--index', index);
+      card.innerHTML = `
+        <img data-src="${sanitizeInput(animal.icon || '')}" alt="${sanitizeInput(animal.display_name || 'Pet')}" 
+             onerror="this.src=FALLBACK_IMAGE; this.onerror=null;">
+        <div class="rarity ${getRarityClass(animal.rarity)}">${sanitizeInput(animal.rarity || 'Common')}</div>
+        <div class="card-body">
+          <h3>${sanitizeInput(animal.display_name || 'Unknown Pet')}</h3>
+          <p><strong>Rarity:</strong> ${sanitizeInput(animal.rarity || 'N/A')}</p>
+          <p><strong>Price:</strong> ${formatPrice(animal.price, animal.currency)} ${sanitizeInput(animal.currency || '')}</p>
+        </div>`;
+      const openModalWithAnimation = () => {
+        card.style.animation = 'cardFlip 0.3s ease forwards';
+        setTimeout(() => openModal(animal), 150);
+      };
+      card.addEventListener('click', openModalWithAnimation);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModalWithAnimation();
+        }
+      });
+      return card;
+    };
+
+    const renderPage = () => {
+      elements.grid.innerHTML = '';
       if (filteredAnimals.length === 0) {
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:clamp(1rem, 2.5vw, 1.2rem);">No pets found. Try adjusting your filters.</p>';
+        elements.grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:clamp(1rem, 2.5vw, 1.2rem);">No pets found. Try adjusting your filters.</p>';
         return;
       }
       const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -583,45 +741,42 @@
       const pageItems = filteredAnimals.slice(start, end);
 
       pageItems.forEach((animal, index) => {
-        if (!animal) return;
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.style.setProperty('--index', index);
-        card.innerHTML = `
-          <img src="${animal.icon || ''}" alt="${animal.display_name || 'Pet'}" 
-               onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2216%22>🐾</text></svg>';this.onerror=null;">
-          <div class="rarity ${getRarityClass(animal.rarity || 'Common')}">${animal.rarity || 'Common'}</div>
-          <div class="card-body">
-            <h3>${animal.display_name || 'Unknown Pet'}</h3>
-            <p><strong>Rarity:</strong> ${animal.rarity || 'N/A'}</p>
-            <p><strong>Price:</strong> ${formatPrice(animal.price, animal.currency)} ${animal.currency || ''}</p>
-          </div>`;
-        card.addEventListener('click', () => openModal(animal));
-        grid.appendChild(card);
+        const card = createCard(animal, index);
+        if (card) elements.grid.appendChild(card);
       });
-    }
+      observeCards();
+    };
 
-    function renderPagination() {
-      paginationEl.innerHTML = '';
+    const createPaginationButton = (text, disabled, onClick, isCurrent = false) => {
+      const btn = document.createElement('button');
+      btn.textContent = text;
+      btn.className = 'page-btn';
+      btn.disabled = disabled;
+      btn.setAttribute('aria-label', `${text} page`);
+      btn.setAttribute('aria-current', isCurrent ? 'page' : 'false');
+      const handleAction = () => {
+        if (!disabled) {
+          scrollPosition = window.scrollY;
+          onClick();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      };
+      btn.addEventListener('click', handleAction);
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleAction();
+        }
+      });
+      return btn;
+    };
+
+    const renderPagination = () => {
+      elements.pagination.innerHTML = '';
       const totalPages = Math.ceil(filteredAnimals.length / ITEMS_PER_PAGE);
       if (totalPages <= 1) return;
 
-      const createBtn = (text, disabled, onClick) => {
-        const btn = document.createElement('button');
-        btn.textContent = text;
-        btn.className = 'page-btn';
-        btn.disabled = disabled;
-        btn.setAttribute('aria-label', text);
-        btn.addEventListener('click', () => {
-          if (!disabled) {
-            onClick();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        });
-        return btn;
-      };
-
-      paginationEl.appendChild(createBtn('Prev', currentPage === 1, () => {
+      elements.pagination.appendChild(createPaginationButton('Prev', currentPage === 1, () => {
         if (currentPage > 1) {
           currentPage--;
           renderPage();
@@ -634,7 +789,7 @@
       if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
 
       if (startPage > 1) {
-        paginationEl.appendChild(createBtn('1', false, () => {
+        elements.pagination.appendChild(createPaginationButton('1', false, () => {
           currentPage = 1;
           renderPage();
           renderPagination();
@@ -644,16 +799,16 @@
           dots.textContent = '...';
           dots.className = 'page-btn';
           dots.style.pointerEvents = 'none';
-          paginationEl.appendChild(dots);
+          elements.pagination.appendChild(dots);
         }
       }
 
       for (let i = startPage; i <= endPage; i++) {
-        paginationEl.appendChild(createBtn(i, i === currentPage, () => {
+        elements.pagination.appendChild(createPaginationButton(i, i === currentPage, () => {
           currentPage = i;
           renderPage();
           renderPagination();
-        }));
+        }, i === currentPage));
       }
 
       if (endPage < totalPages) {
@@ -662,74 +817,123 @@
           dots.textContent = '...';
           dots.className = 'page-btn';
           dots.style.pointerEvents = 'none';
-          paginationEl.appendChild(dots);
+          elements.pagination.appendChild(dots);
         }
-        paginationEl.appendChild(createBtn(totalPages, false, () => {
+        elements.pagination.appendChild(createPaginationButton(totalPages, false, () => {
           currentPage = totalPages;
           renderPage();
           renderPagination();
         }));
       }
 
-      paginationEl.appendChild(createBtn('Next', currentPage === totalPages, () => {
+      elements.pagination.appendChild(createPaginationButton('Next', currentPage === totalPages, () => {
         if (currentPage < totalPages) {
           currentPage++;
           renderPage();
           renderPagination();
         }
       }));
-    }
+    };
 
-    function openModal(animal) {
+    const openModal = (animal) => {
       if (!animal) return;
-      modalIcon.src = animal.icon || '';
-      modalIcon.alt = animal.display_name || 'Pet';
-      modalName.textContent = animal.display_name || 'Unknown Pet';
-      modalRarity.textContent = animal.rarity || 'N/A';
-      modalPrice.textContent = formatPrice(animal.price, animal.currency);
-      modalCurrency.textContent = animal.currency || '';
-      modalDesc.textContent = animal.description || 'No description available';
-      modalType.textContent = animal.type || 'N/A';
-      modalLastSeen.textContent = formatUnixTimestamp(animal.last_seen);
-      modalDuration.textContent = animal.duration === "0" || !animal.duration ? "N/A" : `${animal.duration} seconds`;
-      modal.classList.remove('hidden');
-      modal.focus();
+      elements.modalIcon.src = sanitizeInput(animal.icon || '');
+      elements.modalIcon.alt = sanitizeInput(animal.display_name || 'Pet');
+      elements.modalName.textContent = sanitizeInput(animal.display_name || 'Unknown Pet');
+      elements.modalRarity.textContent = sanitizeInput(animal.rarity || 'N/A');
+      elements.modalPrice.textContent = formatPrice(animal.price, animal.currency);
+      elements.modalCurrency.textContent = sanitizeInput(animal.currency || '');
+      elements.modalDesc.textContent = sanitizeInput(animal.description || 'No description available');
+      elements.modalType.textContent = sanitizeInput(animal.type || 'N/A');
+      
+      const searchUrl = generateGoogleSearchUrl(animal.display_name);
+      elements.googleSearch.disabled = !searchUrl;
+      elements.googleSearch.setAttribute('aria-label', `Search ${sanitizeInput(animal.display_name || 'pet')} on Google`);
+      const handleGoogleSearch = () => {
+        if (searchUrl) {
+          elements.googleSearch.disabled = true;
+          window.open(searchUrl, '_blank');
+          setTimeout(() => { elements.googleSearch.disabled = false; }, 1000);
+        }
+      };
+      elements.googleSearch.onclick = handleGoogleSearch;
+      elements.googleSearch.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleGoogleSearch();
+        }
+      };
+
+      elements.modal.classList.remove('hidden');
+      elements.modal.focus();
       document.body.style.overflow = 'hidden';
-    }
+      trapFocus(elements.modal);
+    };
 
-    function closeModal() {
-      modal.classList.add('hidden');
-      modalIcon.src = '';
-      modalIcon.alt = '';
-      modalName.textContent = '';
-      modalRarity.textContent = '';
-      modalPrice.textContent = '';
-      modalCurrency.textContent = '';
-      modalDesc.textContent = '';
-      modalType.textContent = '';
-      modalLastSeen.textContent = '';
-      modalDuration.textContent = '';
+    const closeModal = () => {
+      elements.modal.classList.add('hidden');
+      elements.modalIcon.src = '';
+      elements.modalIcon.alt = '';
+      elements.modalName.textContent = '';
+      elements.modalRarity.textContent = '';
+      elements.modalPrice.textContent = '';
+      elements.modalCurrency.textContent = '';
+      elements.modalDesc.textContent = '';
+      elements.modalType.textContent = '';
+      elements.googleSearch.disabled = false;
       document.body.style.overflow = '';
-    }
+      window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+      releaseFocus();
+    };
 
-    modalClose.addEventListener('click', closeModal);
-    modal.addEventListener('click', e => {
-      if (e.target === modal) closeModal();
+    const trapFocus = (modal) => {
+      const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusableElements.length === 0) return;
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements[focusableElements.length - 1];
+
+      const handleKeydown = (e) => {
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      };
+
+      modal.addEventListener('keydown', handleKeydown);
+      modal._trapKeydown = handleKeydown;
+      firstFocusable.focus();
+    };
+
+    const releaseFocus = () => {
+      if (elements.modal._trapKeydown) {
+        elements.modal.removeEventListener('keydown', elements.modal._trapKeydown);
+        elements.modal._trapKeydown = null;
+      }
+    };
+
+    elements.modalClose.addEventListener('click', closeModal);
+    elements.modal.addEventListener('click', e => {
+      if (e.target === elements.modal) closeModal();
     });
     window.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+      if (e.key === 'Escape' && !elements.modal.classList.contains('hidden')) closeModal();
     });
 
     const debouncedFilter = debounce(applyFilters, 300);
-    searchInput.addEventListener('input', debouncedFilter);
-    filterRarity.addEventListener('change', applyFilters);
+    elements.searchInput.addEventListener('input', debouncedFilter);
+    elements.filterRarity.addEventListener('change', applyFilters);
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const img = entry.target.querySelector('img');
-          if (img && !img.src) {
-            img.src = img.dataset.src || '';
+          if (img && !img.src && img.dataset.src) {
+            img.src = img.dataset.src;
           }
         }
       });
@@ -739,19 +943,35 @@
       document.querySelectorAll('.card').forEach(card => observer.observe(card));
     };
 
-    const originalRenderPage = renderPage;
-    renderPage = () => {
-      originalRenderPage();
-      observeCards();
-    };
-
-    fetchAnimals();
+    const preloadImages = throttle((animals) => {
+      const firstPage = animals.slice(0, ITEMS_PER_PAGE);
+      firstPage.forEach(animal => {
+        if (animal.icon) {
+          const img = new Image();
+          img.src = animal.icon;
+        }
+      });
+    }, 1000);
 
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        isFetching = false;
-      }
+      if (document.hidden) isFetching = false;
     });
+
+    window.addEventListener('resize', throttle(() => {
+      applyFilters();
+    }, 100));
+
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes cardFlip {
+        0% { transform: perspective(600px) rotateY(0deg); }
+        50% { transform: perspective(600px) rotateY(90deg); }
+        100% { transform: perspective(600px) rotateY(0deg); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    loadAnimals();
   </script>
 </body>
 </html>
