@@ -9,38 +9,16 @@
     <title>UUID Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .uuid-text {
-            font-family: 'Courier New', Courier, monospace;
-        }
-        .animate-pulse {
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        /* Hide API key in console */
-        .api-key-message {
-            color: #ff0000;
-            background-color: #ffecec;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            border: 1px solid #ffb3b3;
-            font-family: monospace;
-        }
+        .uuid-text { font-family: 'Courier New', Courier, monospace; }
+        .animate-pulse { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 p-4">
     <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full" role="main">
         <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">UUID Generator</h1>
-        <button 
-            class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50" 
-            onclick="generateUUID()"
-            id="generateBtn"
-            aria-label="Generate a new UUID"
-        >
+        <button class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50" 
+                id="generateBtn" aria-label="Generate a new UUID">
             Generate UUID
         </button>
         <div class="hidden text-center text-gray-600 mt-4 animate-pulse" id="loading" role="status">
@@ -48,114 +26,35 @@
         </div>
         <div class="hidden bg-gray-100 p-4 rounded-lg mt-4 flex items-center justify-between" id="uuidContainer">
             <span class="uuid-text text-gray-800 text-sm" id="uuidText" aria-live="polite"></span>
-            <button 
-                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors" 
-                onclick="copyUUID()"
-                aria-label="Copy UUID to clipboard"
-            >
+            <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors" 
+                    id="copyBtn" aria-label="Copy UUID to clipboard">
                 Copy
             </button>
         </div>
         <div class="hidden text-red-600 text-center mt-4" id="errorMessage" role="alert"></div>
         <div class="text-center text-gray-500 text-sm mt-4" id="lastUUID" aria-live="polite"></div>
-        <a 
-            href="https://discord.com/invite/mNGeUVcjKB" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="flex items-center justify-center mt-6 bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition-colors"
-            aria-label="Join our Discord community"
-        >
-            <img 
-                src="https://cdn-icons-png.flaticon.com/512/2626/2626288.png" 
-                alt="Discord logo"
-                class="w-6 h-6 mr-2"
-                loading="lazy"
-            >
+        <a href="https://discord.com/invite/mNGeUVcjKB" target="_blank" rel="noopener noreferrer"
+           class="flex items-center justify-center mt-6 bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition-colors"
+           aria-label="Join our Discord community">
+            <img src="https://cdn-icons-png.flaticon.com/512/2626/2626288.png" alt="Discord logo" class="w-6 h-6 mr-2" loading="lazy">
             Join Discord
         </a>
     </div>
 
     <script>
-        // API Configuration with enhanced security
-        const API_CONFIG = {
-            URL: 'https://api.loopy5418.dev/uuid-generator',
-            // API key is obfuscated and split into parts
-            KEY_PARTS: [
-                '1b692718', '1beb', '4673', 
-                '9965', '7b6164df5fe9'
-            ],
-            TIMEOUT: 10000,
-            MAX_RETRIES: 2
-        };
-
         let isGenerating = false;
-        let retryCount = 0;
 
-        // Secure API key assembly
-        function getApiKey() {
-            // This makes it harder to extract the full key from memory
-            return API_CONFIG.KEY_PARTS.join('-');
-        }
-
-        // Display warning in console
-        console.log('%cSECURITY WARNING', 'color: red; font-weight: bold; font-size: 16px;');
-        console.log('%cThis is a browser feature intended for developers. Do not paste or enter any code here that you don\'t understand.', 'color: orange;');
-        console.log('%cAPI key access is restricted to this domain only.', 'color: red;');
-        console.log('%cStop!', 'font-size: 24px; color: red; font-weight: bold;');
-        console.log('%cIf someone told you to copy/paste something here, it is likely a scam.', 'color: red;');
-
-        // Debounce function to prevent multiple clicks
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // Sanitize API response with enhanced validation
-        function sanitizeResponse(data) {
-            if (!data || typeof data !== 'object') {
-                throw new Error('Invalid response format');
-            }
-            if (!data.success || !data.uuid || typeof data.uuid !== 'string') {
-                throw new Error('Invalid UUID data');
-            }
-            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-            if (!uuidRegex.test(data.uuid)) {
-                throw new Error('Invalid UUID format');
-            }
-            
-            // Additional security check for response size
-            if (JSON.stringify(data).length > 500) {
-                throw new Error('Response too large');
-            }
-            
-            return data.uuid;
-        }
-
-        // Load last UUID from localStorage with validation
         function loadLastUUID() {
             try {
                 const lastUUID = localStorage.getItem('lastUUID');
-                if (lastUUID) {
-                    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-                    if (uuidRegex.test(lastUUID)) {
-                        document.getElementById('lastUUID').textContent = `Last UUID: ${lastUUID}`;
-                    } else {
-                        localStorage.removeItem('lastUUID');
-                    }
+                const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+                if (lastUUID && uuidRegex.test(lastUUID)) {
+                    document.getElementById('lastUUID').textContent = `Last UUID: ${lastUUID}`;
                 }
-            } catch (e) {
-                console.error('Error loading last UUID:', e);
-            }
+            } catch(e){ console.error(e); }
         }
 
-        async function generateUUID() {
+        function generateUUID() {
             if (isGenerating) return;
             isGenerating = true;
 
@@ -165,65 +64,23 @@
             const uuidText = document.getElementById('uuidText');
             const errorMessage = document.getElementById('errorMessage');
 
-            // Reset states
             generateBtn.disabled = true;
             loading.classList.remove('hidden');
             uuidContainer.classList.add('hidden');
             errorMessage.classList.add('hidden');
-            errorMessage.textContent = '';
 
             try {
-                // Verify the page is loaded from the correct domain
-                if (!document.referrer.includes(window.location.hostname) && 
-                    document.referrer !== '') {
-                    throw new Error('Unauthorized request origin');
-                }
-
-                const response = await fetch(API_CONFIG.URL, {
-                    headers: {
-                        'Authorization': `Bearer ${getApiKey()}`,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    signal: AbortSignal.timeout(API_CONFIG.TIMEOUT)
-                });
-
-                if (!response.ok) {
-                    if (response.status === 429 && retryCount < API_CONFIG.MAX_RETRIES) {
-                        retryCount++;
-                        await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
-                        return generateUUID();
-                    }
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                const uuid = sanitizeResponse(data);
+                const uuid = crypto.randomUUID();
 
                 uuidText.textContent = uuid;
                 uuidContainer.classList.remove('hidden');
-                
-                // Store UUID with validation
-                try {
-                    localStorage.setItem('lastUUID', uuid);
-                } catch (e) {
-                    console.error('Error saving UUID:', e);
-                }
-                
-                loadLastUUID();
-                retryCount = 0;
-            } catch (error) {
-                console.error('Generation error:', error);
-                errorMessage.textContent = `Error: ${error.message || 'Could not generate UUID. Please try again.'}`;
+
+                localStorage.setItem('lastUUID', uuid);
+                document.getElementById('lastUUID').textContent = `Last UUID: ${uuid}`;
+            } catch (err) {
+                console.error(err);
+                errorMessage.textContent = 'Error: Could not generate UUID';
                 errorMessage.classList.remove('hidden');
-                
-                // Show more detailed error in console only
-                console.error('UUID Generation Error Details:', {
-                    error: error.message,
-                    stack: error.stack,
-                    timestamp: new Date().toISOString()
-                });
             } finally {
                 loading.classList.add('hidden');
                 generateBtn.disabled = false;
@@ -232,65 +89,20 @@
         }
 
         function copyUUID() {
-            const uuidText = document.getElementById('uuidText').textContent;
-            if (!uuidText) return;
-            
-            navigator.clipboard.writeText(uuidText).then(() => {
-                const copyBtn = document.querySelector('.bg-green-600');
-                copyBtn.textContent = 'Copied!';
-                setTimeout(() => {
-                    copyBtn.textContent = 'Copy';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                document.getElementById('errorMessage').textContent = 'Error: Failed to copy UUID';
-                document.getElementById('errorMessage').classList.remove('hidden');
-            });
+            const uuid = document.getElementById('uuidText').textContent;
+            if (!uuid) return;
+            navigator.clipboard.writeText(uuid).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            }).catch(err => console.error('Copy failed:', err));
         }
 
-        // Secure the API key further by making it non-enumerable
-        Object.defineProperty(window, 'API_CONFIG', {
-            value: API_CONFIG,
-            writable: false,
-            enumerable: false,
-            configurable: false
-        });
-
-        // Debounced generateUUID
-        const debouncedGenerateUUID = debounce(generateUUID, 300);
-
-        // Initial load with security checks
         document.addEventListener('DOMContentLoaded', () => {
-            // Verify we're in a browser environment
-            if (typeof window === 'undefined') {
-                document.getElementById('errorMessage').textContent = 
-                    'This application must run in a browser environment';
-                document.getElementById('errorMessage').classList.remove('hidden');
-                return;
-            }
-
             loadLastUUID();
-            document.getElementById('generateBtn').addEventListener('click', debouncedGenerateUUID);
-            
-            // Add CSP meta tag dynamically for additional protection
-            const cspMeta = document.createElement('meta');
-            cspMeta.httpEquiv = "Content-Security-Policy";
-            cspMeta.content = "default-src 'self'; connect-src 'self' https://api.loopy5418.dev;";
-            document.head.appendChild(cspMeta);
+            document.getElementById('generateBtn').addEventListener('click', generateUUID);
+            document.getElementById('copyBtn').addEventListener('click', copyUUID);
         });
-
-        // Prevent right-click inspection on production (optional)
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            document.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                document.getElementById('errorMessage').textContent = 
-                    'Context menu is disabled for security reasons';
-                document.getElementById('errorMessage').classList.remove('hidden');
-                setTimeout(() => {
-                    document.getElementById('errorMessage').classList.add('hidden');
-                }, 2000);
-            });
-        }
     </script>
 </body>
 </html>
