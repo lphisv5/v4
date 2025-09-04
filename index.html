@@ -6,75 +6,97 @@
   <meta name="keywords" content="YANZ, lphisv5, tools, scripts, systems, web hub">
   <meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0" />
   <meta name="google-site-verification" content="ctalwY44kcnXVpIVYysi59z66XwVqQqhN-LME8GssAQ" />
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="YANZ Hub">
 
   <link rel="canonical" href="https://lphisv5.github.io/v4/">
-  <link
-    rel="icon"
-    href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg"
-    type="image/png"
-    alt="YANZ favicon"
-  />
+  <link rel="icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" type="image/png" alt="YANZ favicon" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg">
+  <link rel="manifest" href="manifest.json">
   <meta name="author" content="YANZ" />
   <title>YANZ - The main website that collects other websites</title>
-  <meta
-    name="description"
-    content="YANZ is the ultimate gateway combining essential tools, scripts, and systems in a fast, sleek platform."
-  />
+  <meta name="description" content="YANZ is the ultimate gateway combining essential tools, scripts, and systems in a fast, sleek platform." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" />
   <meta property="og:url" content="https://lphisv5.github.io/v4" />
   <meta property="og:title" content="YANZ - The main website that collects other websites" />
-  <meta
-    property="og:description"
-    content="YANZ is the ultimate gateway combining essential tools, scripts, and systems in a fast, sleek platform."
-  />
-  <meta
-    property="og:image"
-    content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif"
-    alt="YANZ preview image"
-  />
+  <meta property="og:description" content="YANZ is the ultimate gateway combining essential tools, scripts, and systems in a fast, sleek platform." />
+  <meta property="og:image" content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif" alt="YANZ preview image" />
   <meta name="twitter:card" content="summary_large_image" />
-  <link
-    rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap"
-    as="style"
-  />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
-  <link
-    rel="preload"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    as="style"
-    crossorigin="anonymous"
-  />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    crossorigin="anonymous"
-  />
-  <link
-    rel="preload"
-    href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
-    as="script"
-  />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" as="style" />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
+    /* Existing CSS remains with additions */
+    :root {
+      --primary-bg: #0f172a;
+      --secondary-bg: #1e293b;
+      --accent-color: #00d0ff;
+      --accent-secondary: #9d4edd;
+      --text-primary: #e0f7ff;
+      --text-secondary: #d1eaff;
+      --success-color: #2ecc71;
+      --error-color: #d32f2f;
+      --warning-color: #f39c12;
+      --card-bg: linear-gradient(135deg, #1e3a8a, #4c1d95);
+      --card-hover-bg: linear-gradient(135deg, #00b4d8, #7209b7);
+      --card-shadow: 0 0 12px rgba(0, 170, 255, 0.5), 0 0 20px rgba(147, 51, 234, 0.3);
+      --card-hover-shadow: 0 0 25px rgba(0, 180, 216, 0.8), 0 0 35px rgba(114, 9, 183, 0.6);
+      --transition: all 0.3s ease;
+    }
+
+    .theme-dark {
+      --primary-bg: #0f172a;
+      --secondary-bg: #1e293b;
+      --text-primary: #e0f7ff;
+      --text-secondary: #d1eaff;
+      --card-bg: linear-gradient(135deg, #1e3a8a, #4c1d95);
+    }
+
+    .theme-light {
+      --primary-bg: #f0f7ff;
+      --secondary-bg: #e0e7ff;
+      --text-primary: #1e293b;
+      --text-secondary: #334155;
+      --card-bg: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+      --card-hover-bg: linear-gradient(135deg, #818cf8, #6366f1);
+      --card-shadow: 0 0 12px rgba(99, 102, 241, 0.3), 0 0 20px rgba(165, 180, 252, 0.2);
+      --card-hover-shadow: 0 0 25px rgba(129, 140, 248, 0.5), 0 0 35px rgba(99, 102, 241, 0.4);
+    }
+
+    .theme-blue {
+      --primary-bg: #000e2a;
+      --secondary-bg: #001f4d;
+      --text-primary: #e6f7ff;
+      --text-secondary: #cce6ff;
+      --card-bg: linear-gradient(135deg, #003366, #004080);
+      --card-hover-bg: linear-gradient(135deg, #0059b3, #0073e6);
+      --card-shadow: 0 0 12px rgba(0, 115, 230, 0.4), 0 0 20px rgba(0, 89, 179, 0.3);
+      --card-hover-shadow: 0 0 25px rgba(0, 140, 255, 0.6), 0 0 35px rgba(0, 105, 210, 0.5);
+    }
+
     *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     html {
       cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32"><circle cx="16" cy="16" r="8" fill="white" stroke="cyan" stroke-width="2"/></svg>') 16 16, auto;
       touch-action: manipulation;
+      scroll-behavior: smooth;
     }
+
     body {
       font-family: 'Kanit', sans-serif;
-      color: #fff;
-      background: #0f172a;
+      color: var(--text-primary);
+      background: var(--primary-bg);
       overflow-y: auto;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
@@ -99,6 +121,245 @@
       will-change: background;
     }
 
+    /* Header Styles */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-container {
+      position: relative;
+    }
+
+    #search-input {
+      padding: 0.5rem 1rem 0.5rem 2.5rem;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 2rem;
+      color: var(--text-primary);
+      font-family: 'Kanit', sans-serif;
+      width: 250px;
+      transition: var(--transition);
+    }
+
+    #search-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(0, 208, 255, 0.3);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    .sort-filter {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .sort-btn, .filter-btn, .theme-btn {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.5rem;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .sort-btn:hover, .filter-btn:hover, .theme-btn:hover {
+      background: rgba(0, 208, 255, 0.2);
+      color: var(--text-primary);
+    }
+
+    .theme-selector {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--secondary-bg);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 101;
+    }
+
+    .theme-selector.show {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+
+    .theme-option {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .theme-option.active {
+      border-color: var(--accent-color);
+    }
+
+    .theme-dark-btn { background: linear-gradient(135deg, #0f172a, #1e293b); }
+    .theme-light-btn { background: linear-gradient(135deg, #f0f7ff, #e0e7ff); }
+    .theme-blue-btn { background: linear-gradient(135deg, #000e2a, #001f4d); }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--secondary-bg);
+      color: var(--text-primary);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .notification.success {
+      border-left: 4px solid var(--success-color);
+    }
+
+    .notification.error {
+      border-left: 4px solid var(--error-color);
+    }
+
+    .notification.warning {
+      border-left: 4px solid var(--warning-color);
+    }
+
+    /* Back to top button */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: var(--transition);
+      z-index: 99;
+      box-shadow: 0 4px 12px rgba(0, 208, 255, 0.3);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+      background: var(--accent-secondary);
+      transform: translateY(-5px);
+    }
+
+    /* About section */
+    #about-section {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+    }
+
+    #about-section h2 {
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    #about-section p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .about-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .feature-card {
+      background: rgba(15, 23, 42, 0.5);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      text-align: center;
+    }
+
+    .feature-card i {
+      font-size: 2rem;
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+    }
+
+    /* Existing styles remain with some adjustments for theme compatibility */
     #auth-overlay, #auth-overlay-register {
       position: fixed;
       top: 0;
@@ -122,7 +383,7 @@
     }
 
     .auth-container {
-      background: linear-gradient(145deg, #1e293b, #0f172a);
+      background: linear-gradient(145deg, var(--secondary-bg), var(--primary-bg));
       border-radius: 1.5rem;
       padding: 2.5rem;
       width: 100%;
@@ -150,14 +411,15 @@
     .auth-header h2 {
       font-size: 1.8rem;
       margin-bottom: 0.5rem;
-      background: linear-gradient(to right, #00d0ff, #f0c6ff);
+      background: linear-gradient(to right, var(--accent-color), var(--accent-secondary));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
 
     .auth-header p {
-      color: #88cfffcc;
+      color: var(--text-secondary);
+      opacity: 0.8;
       font-size: 0.9rem;
     }
 
@@ -174,7 +436,8 @@
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
-      color: #a0d9ffcc;
+      color: var(--text-secondary);
+      opacity: 0.8;
       font-size: 0.9rem;
     }
 
@@ -184,15 +447,15 @@
       background: rgba(15, 23, 42, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 0.8rem;
-      color: white;
+      color: var(--text-primary);
       font-family: 'Kanit', sans-serif;
       font-size: 1rem;
-      transition: all 0.3s ease;
+      transition: var(--transition);
     }
 
     .form-control:focus {
       outline: none;
-      border-color: #00d0ff;
+      border-color: var(--accent-color);
       box-shadow: 0 0 0 3px rgba(0, 208, 255, 0.3);
     }
 
@@ -204,13 +467,13 @@
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: var(--transition);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #00b4d8, #7209b7);
+      background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
       color: white;
       box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
     }
@@ -223,34 +486,34 @@
 
     .btn-secondary {
       background: transparent;
-      color: #d1eaff;
+      color: var(--text-secondary);
       border: 1px solid rgba(160, 217, 255, 0.3);
     }
 
     .btn-secondary:hover {
       background: rgba(160, 217, 255, 0.1);
-      color: white;
+      color: var(--text-primary);
     }
 
     .auth-footer {
       text-align: center;
       margin-top: 1.5rem;
       font-size: 0.85rem;
-      color: #d1eaff;
+      color: var(--text-secondary);
     }
 
     .auth-footer a {
-      color: #00d0ff;
+      color: var(--accent-color);
       text-decoration: none;
       transition: color 0.3s ease;
     }
 
     .auth-footer a:hover {
-      color: #f0c6ff;
+      color: var(--accent-secondary);
     }
 
     .error-message {
-      color: #ff6b6b;
+      color: var(--error-color);
       font-size: 0.85rem;
       margin-top: 0.5rem;
       display: none;
@@ -292,7 +555,7 @@
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #00b4d8, #7209b7);
+      background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -309,10 +572,12 @@
     .lock-info h3 {
       font-size: 1.3rem;
       margin-bottom: 0.5rem;
+      color: var(--text-primary);
     }
 
     .lock-info p {
-      color: #88cfffcc;
+      color: var(--text-secondary);
+      opacity: 0.8;
       font-size: 0.9rem;
     }
 
@@ -428,7 +693,7 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      background: #0f172a;
+      background: var(--primary-bg);
       display: block;
     }
 
@@ -455,15 +720,13 @@
       font-size: clamp(0.9rem, 2vw, 1.1rem);
       font-weight: 700;
       text-transform: uppercase;
-      color: #e0f7ff;
-      background: linear-gradient(135deg, #1e3a8a, #4c1d95);
+      color: var(--text-primary);
+      background: var(--card-bg);
       border: 2px solid transparent;
       border-radius: 1.2rem;
-      box-shadow:
-        0 0 12px rgba(0, 170, 255, 0.5),
-        0 0 20px rgba(147, 51, 234, 0.3);
+      box-shadow: var(--card-shadow);
       overflow: hidden;
-      transition: all 0.3s ease;
+      transition: var(--transition);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -480,16 +743,14 @@
 
     .link-item:hover {
       transform: translateY(-8px) scale(1.06);
-      background: linear-gradient(135deg, #00b4d8, #7209b7);
-      box-shadow:
-        0 0 25px rgba(0, 180, 216, 0.8),
-        0 0 35px rgba(114, 9, 183, 0.6);
-      border-color: #00d0ff;
+      background: var(--card-hover-bg);
+      box-shadow: var(--card-hover-shadow);
+      border-color: var(--accent-color);
       animation: none;
     }
 
     .link-item:focus {
-      outline: 2px solid #00d0ff;
+      outline: 2px solid var(--accent-color);
       outline-offset: 2px;
     }
 
@@ -547,18 +808,18 @@
     }
     .link-text i {
       font-size: clamp(1.2em, 2vw, 1.4em);
-      color: #00d0ff;
+      color: var(--accent-color);
       transition: color 0.3s ease;
       flex-shrink: 0;
     }
     .link-item:hover .link-text i {
-      color: #f0c6ff;
+      color: var(--accent-secondary);
     }
 
     .click-count {
       margin-top: 0.6rem;
       font-size: clamp(0.8rem, 1.8vw, 0.9rem);
-      color: #d1eaff;
+      color: var(--text-secondary);
       font-weight: 500;
       user-select: none;
       position: relative;
@@ -567,7 +828,7 @@
 
     .description {
       font-size: clamp(0.7rem, 1.6vw, 0.8rem);
-      color: #d1eaff;
+      color: var(--text-secondary);
       margin-top: 0.4rem;
       font-weight: 400;
       position: relative;
@@ -576,11 +837,12 @@
       width: 100%;
     }
     .link-item:hover .description {
-      color: #f0c6ff;
+      color: var(--accent-secondary);
     }
 
     .status-green,
-    .status-red {
+    .status-red,
+    .status-checking {
       position: absolute;
       bottom: 8px;
       right: 8px;
@@ -595,25 +857,31 @@
       white-space: nowrap;
     }
     .status-green {
-      background-color: #2ecc71;
+      background-color: var(--success-color);
       color: white;
-      box-shadow: 0 0 8px #2ecc71cc;
+      box-shadow: 0 0 8px rgba(46, 204, 113, 0.8);
     }
     .status-red {
-      background-color: #d32f2f;
+      background-color: var(--error-color);
       color: white;
-      box-shadow: 0 0 8px #d32f2fcc;
+      box-shadow: 0 0 8px rgba(211, 47, 47, 0.8);
+    }
+    .status-checking {
+      background-color: var(--warning-color);
+      color: white;
+      box-shadow: 0 0 8px rgba(243, 156, 18, 0.8);
     }
 
     footer {
       text-align: center;
-      margin: 0 0 1.5rem;
+      margin: 2rem 0 1.5rem;
       font-size: clamp(0.75rem, 1.5vw, 0.85rem);
-      color: #d1eaff;
+      color: var(--text-secondary);
       user-select: none;
       position: relative;
       padding: 0 1rem;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       gap: 1rem;
@@ -641,7 +909,7 @@
     }
 
     .modal-content {
-      background: linear-gradient(145deg, #1e293b, #0f172a);
+      background: linear-gradient(145deg, var(--secondary-bg), var(--primary-bg));
       border-radius: 1.5rem;
       padding: 2rem;
       width: 100%;
@@ -657,7 +925,7 @@
     .modal-content h3 {
       font-size: 1.5rem;
       margin-bottom: 1rem;
-      color: #e0f7ff;
+      color: var(--text-primary);
     }
 
     .modal-buttons {
@@ -680,9 +948,9 @@
       --transform-leg2: none;
       --transform-calf2: none;
 
-      background: linear-gradient(135deg, #00b4d8, #7209b7);
+      background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
       border: none;
-      color: #e0f7ff;
+      color: var(--text-primary);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -698,7 +966,7 @@
       width: 160px;
       border-radius: 0.8rem;
       box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
-      transition: all 0.3s ease;
+      transition: var(--transition);
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -768,7 +1036,7 @@
     }
 
     .button-text {
-      color: #e0f7ff;
+      color: var(--text-primary);
       font-weight: 700;
       position: relative;
       z-index: 10;
@@ -782,7 +1050,7 @@
 
     .figure {
       bottom: 5px;
-      fill: #00d0ff;
+      fill: var(--accent-color);
       right: 18px;
       transform: var(--transform-figure);
       transition: transform calc(var(--figure-duration) * 1ms) cubic-bezier(0.2, 0.1, 0.80, 0.9);
@@ -792,7 +1060,7 @@
 
     .door, .doorway {
       bottom: 4px;
-      fill: #e0f7ff;
+      fill: var(--text-primary);
       right: 12px;
       width: 32px;
     }
@@ -806,8 +1074,8 @@
     }
 
     .door path {
-      fill: #7209b7;
-      stroke: #7209b7;
+      fill: var(--accent-secondary);
+      stroke: var(--accent-secondary);
       stroke-width: 4;
     }
 
@@ -880,38 +1148,63 @@
     }
 
     @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .nav-controls {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      #search-input {
+        width: 100%;
+      }
+
+      .sort-filter {
+        width: 100%;
+        justify-content: center;
+      }
+
       .link-grid {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 1.2rem;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
         padding: 0 0.5rem;
       }
       .link-item {
-        padding: 1rem;
-        font-size: 1rem;
-        min-height: 120px;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+        min-height: 110px;
         animation: none;
       }
       .link-item::after {
         animation: none;
       }
       .link-text i {
-        font-size: clamp(1.1em, 1.8vw, 1.2em);
+        font-size: clamp(1em, 1.8vw, 1.1em);
       }
       .description {
         font-size: clamp(0.6rem, 1.4vw, 0.7rem);
         margin-top: 0.3rem;
       }
-      .status-green, .status-red {
+      .status-green, .status-red, .status-checking {
         font-size: clamp(0.6rem, 1.3vw, 0.65rem);
         padding: 3px 6px;
       }
       .auth-container, .modal-content {
         padding: 1.5rem;
+        margin: 0.5rem;
       }
       .logoutButton {
         width: 140px;
         height: 40px;
         font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+      }
+
+      .about-features {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -943,13 +1236,11 @@
 
     @keyframes glowPulse {
       0%, 100% {
-        box-shadow:
-          0 0 12px rgba(0, 170, 255, 0.5),
-          0 0 20px rgba(147, 51, 234, 0.3);
+        box-shadow: var(--card-shadow);
         border-color: transparent;
       }
       50% {
-        box-shadow:
+        box-shadow: 
           0 0 18px rgba(0, 170, 255, 0.7),
           0 0 30px rgba(147, 51, 234, 0.5);
         border-color: rgba(0, 208, 255, 0.5);
@@ -1013,6 +1304,39 @@
       </svg>
     </div>
   </div>
+
+  <header>
+    <div class="logo">
+      <img src="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="YANZ Logo">
+      <span>YANZ V4</span>
+    </div>
+    
+    <div class="nav-controls">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="search-input" placeholder="Search links...">
+      </div>
+      
+      <div class="sort-filter">
+        <button class="sort-btn" id="sort-name">
+          <i class="fas fa-sort-alpha-down"></i> Name
+        </button>
+        <button class="sort-btn" id="sort-clicks">
+          <i class="fas fa-sort-numeric-down"></i> Clicks
+        </button>
+        <div class="theme-selector-container" style="position: relative;">
+          <button class="theme-btn" id="theme-toggle">
+            <i class="fas fa-palette"></i> Theme
+          </button>
+          <div class="theme-selector" id="theme-selector">
+            <div class="theme-option theme-dark-btn active" data-theme="dark"></div>
+            <div class="theme-option theme-light-btn" data-theme="light"></div>
+            <div class="theme-option theme-blue-btn" data-theme="blue"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <div id="auth-overlay" class="hidden">
     <div class="auth-container">
@@ -1111,453 +1435,52 @@
     </div>
   </div>
 
+  <div class="notification" id="notification">
+    <i class="fas fa-info-circle"></i>
+    <span id="notification-message"></span>
+  </div>
+
+  <div class="back-to-top" id="back-to-top">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+
   <canvas id="bg"></canvas>
 
-  <div class="link-grid">
-    <a
-      class="link-item"
-      href="https://lphisv5.github.io/v4/genkey"
-      target="_blank"
-      data-id="genkey"
-      aria-label="Generate Key"
-      aria-describedby="genkey-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-key" aria-hidden="true"></i>
-        <span>GEN KEY</span>
-      </div>
-      <div class="description" id="genkey-desc">Generate secure keys for your projects</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="genkey">0</span>
-      </div>
-    </a>
-
-    <a
-      class="link-item"
-      href="https://lphisv5.github.io/v4/addapi"
-      target="_blank"
-      data-id="addapi"
-      aria-label="Add API"
-      aria-describedby="addapi-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-plus" aria-hidden="true"></i>
-        <span>ADD API</span>
-      </div>
-      <div class="description" id="addapi-desc">Integrate APIs into your applications</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="addapi">0</span>
-      </div>
-    </a>
-
-    <a
-      class="link-item"
-      href="https://lphisv5.github.io/v4/botinvite"
-      target="_blank"
-      data-id="invite"
-      aria-label="Invite Bot"
-      aria-describedby="invite-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-robot" aria-hidden="true"></i>
-        <span>INVITE BOT</span>
-      </div>
-      <div class="description" id="invite-desc">Invite bots to your server</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="invite">0</span>
-      </div>
-    </a>
-
-    <a
-      class="link-item"
-      href="https://lphisv5.github.io/v4/roblox-version"
-      target="_blank"
-      data-id="robloxver"
-      aria-label="Roblox Version"
-      aria-describedby="robloxver-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-cube" aria-hidden="true"></i>
-        <span>ROBLOX VERSION</span>
-      </div>
-      <div class="description" id="robloxver-desc">Check the latest Roblox version</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="robloxver">0</span>
-      </div>
-    </a>
-
-    <a
-      class="link-item"
-      href="https://lphisv5.github.io/v4/growagarden-pet"
-      target="_blank"
-      data-id="gardenpet"
-      aria-label="Grow A Garden Pet"
-      aria-describedby="gardenpet-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-dog" aria-hidden="true"></i>
-        <span>GROW A GARDEN PET</span>
-      </div>
-      <div class="description" id="gardenpet-desc">Raise virtual pets in your garden</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="gardenpet">0</span>
-      </div>
-    </a>
-
-    <a
-      class="link-item"
-      href="https://lphisv5.github.io/v4/growagarden-stock"
-      target="_blank"
-      data-id="gardenstock"
-      aria-label="Grow A Garden Stock"
-      aria-describedby="gardenstock-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-seedling" aria-hidden="true"></i>
-        <span>GROW A GARDEN STOCK</span>
-      </div>
-      <div class="description" id="gardenstock-desc">Manage your garden stock inventory</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="gardenstock">0</span>
-      </div>
-    </a>
-
-    <a
-      class="link-item"
-      href="https://lphisv5.github.io/v4/weather"
-      target="_blank"
-      data-id="gardenweather"
-      aria-label="Grow A Garden Weather"
-      aria-describedby="gardenweather-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-cloud-sun" aria-hidden="true"></i>
-        <span>GROW A GARDEN WEATHER</span>
-      </div>
-      <div class="description" id="gardenweather-desc">Check weather for your garden</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="gardenweather">0</span>
-      </div>
-    </a>
-
-    <a
-      class="link-item"
-      href="https://executors.samrat.lol/"
-      target="_blank"
-      data-id="executors"
-      aria-label="Executors"
-      aria-describedby="executors-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-bolt" aria-hidden="true"></i>
-        <span>EXECUTORS</span>
-      </div>
-      <div class="description" id="executors-desc">Run and manage executors</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="executors">0</span>
-      </div>
-    </a>
-
-    <a
-      class="link-item"
-      href="https://lphisv5.github.io/v4/meme"
-      target="_blank"
-      data-id="meme"
-      aria-label="Meme"
-      aria-describedby="meme-desc"
-      role="link"
-      tabindex="0"
-    >
-      <div class="status-green">Online</div>
-      <div class="link-text">
-        <i class="fas fa-image" aria-hidden="true"></i>
-        <span>MEME</span>
-      </div>
-      <div class="description" id="meme-desc">Explore and share memes</div>
-      <div class="click-count">
-        Clicks: <span class="count" data-id="meme">0</span>
-      </div>
-    </a>
-  
-  <a
-    class="link-item"
-    href="https://lphisv5.github.io/v4/uuid"
-    target="_blank"
-    data-id="uuid"
-    aria-label="UUID"
-    aria-describedby="uuid-desc"
-    role="link"
-    tabindex="0"
-  >
-    <div class="status-green">Online</div>
-    <div class="link-text">
-      <i class="fas fa-id-card" aria-hidden="true"></i>
-    <span>UUID</span>
+  <div class="link-grid" id="link-grid">
+    <!-- Link items will be generated dynamically -->
   </div>
-  <div class="description" id="uuid-desc">Generate and explore UUIDs</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="uuid">0</span>
+
+  <section id="about-section">
+    <h2>About YANZ Hub</h2>
+    <p>YANZ Hub is the ultimate gateway combining essential tools, scripts, and systems in a fast, sleek platform. Our mission is to provide a centralized location for all your web tool needs.</p>
+    <p>With an intuitive interface and powerful features, YANZ Hub helps you streamline your workflow and access your favorite tools with just one click.</p>
+    
+    <div class="about-features">
+      <div class="feature-card">
+        <i class="fas fa-bolt"></i>
+        <h3>Fast & Reliable</h3>
+        <p>Quick access to all your tools with minimal loading times</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-lock"></i>
+        <h3>Secure</h3>
+        <p>Your data is protected with advanced security measures</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-palette"></i>
+        <h3>Customizable</h3>
+        <p>Choose from multiple themes to personalize your experience</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-mobile-alt"></i>
+        <h3>Responsive</h3>
+        <p>Works seamlessly on all devices from desktop to mobile</p>
+      </div>
     </div>
-   </a>
-
- <a
-   class="link-item"
-   href="https://lphisv5.github.io/v4/youtube"
-   target="_blank"
-   data-id="youtube"
-   aria-label="YouTube"
-   aria-describedby="youtube-desc"
-   role="link"
-   tabindex="0"
- >
-   <div class="status-green">Online</div>
-   <div class="link-text">
-     <i class="fas fa-video" aria-hidden="true"></i>
-     <span>YOUTUBE</span>
-   </div>
-  <div class="description" id="youtube-desc">Explore and share YouTube content</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="youtube">0</span>
-   </div>
-  </a>
-
-<a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/apitester"
-  target="_blank"
-  data-id="apitester"
-  aria-label="API Tester"
-  aria-describedby="apitester-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-terminal" aria-hidden="true"></i>
-    <span>API TESTER</span>
-  </div>
-  <div class="description" id="apitester-desc">Test and debug your APIs easily</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="apitester">0</span>
-  </div>
-</a>
-    
-<a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/anime"
-  target="_blank"
-  data-id="anime"
-  aria-label="Anime"
-  aria-describedby="anime-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-hippo" aria-hidden="true"></i>
-    <span>ANIME</span>
-  </div>
-  <div class="description" id="anime-desc">Vote for a random anime</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="anime">0</span>
-  </div>
-</a>
-
-<a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/script"
-  target="_blank"
-  data-id="script"
-  aria-label="Script"
-  aria-describedby="script-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-code" aria-hidden="true"></i>
-    <span>SEARCH SCRIPT</span>
-  </div>
-  <div class="description" id="script-desc">Find the scripts that are trending right now.</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="script">0</span>
-  </div>
-</a>
-
-<a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/coin"
-  target="_blank"
-  data-id="coin"
-  aria-label="Coin"
-  aria-describedby="coin-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-coins" aria-hidden="true"></i>
-    <span>COIN</span>
-  </div>
-  <div class="description" id="coin-desc">For viewing Coins in real time.</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="coin">0</span>
-  </div>
-</a>
-
-<a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/binance"
-  target="_blank"
-  data-id="binance"
-  aria-label="Binance"
-  aria-describedby="binance-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-dollar-sign" aria-hidden="true"></i>
-    <span>BINANCE</span>
-  </div>
-  <div class="description" id="binance-desc">For viewing the Binance Dashboard in real time.</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="binance">0</span>
-  </div>
-</a>
-
-<a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/deck"
-  target="_blank"
-  data-id="deck"
-  aria-label="Deck"
-  aria-describedby="deck-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-heart" aria-hidden="true"></i>
-    <span>DECK</span>
-  </div>
-  <div class="description" id="deck-desc">Classic card shuffle</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="deck">0</span>
-  </div>
-</a>
-
-<a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/ip"
-  target="_blank"
-  data-id="ip"
-  aria-label="Ip"
-  aria-describedby="ip-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-network-wired" aria-hidden="true"></i>
-    <span>IP</span>
-  </div>
-  <div class="description" id="ip-desc">View your current IP address</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="ip">0</span>
-  </div>
-</a>
-    
-    <a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/BTC"
-  target="_blank"
-  data-id="btc"
-  aria-label="BTC"
-  aria-describedby="btc-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fab fa-bitcoin" aria-hidden="true"></i>
-    <span>BTC</span>
-  </div>
-  <div class="description" id="btc-desc">View Bitcoin price and stats</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="btc">0</span>
-  </div>
-</a>
-
-    <a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/neko"
-  target="_blank"
-  data-id="neko"
-  aria-label="Neko"
-  aria-describedby="neko-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-cat" aria-hidden="true"></i>
-    <span>Neko</span>
-  </div>
-  <div class="description" id="neko-desc">View cute Neko images</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="neko">0</span>
-  </div>
-</a>
-
-    <a
-  class="link-item"
-  href="https://lphisv5.github.io/v4/fortniteshop"
-  target="_blank"
-  data-id="fortnite"
-  aria-label="Fortnite Shop"
-  aria-describedby="fortnite-desc"
-  role="link"
-  tabindex="0"
->
-  <div class="status-green">Online</div>
-  <div class="link-text">
-    <i class="fas fa-shopping-basket" aria-hidden="true"></i>
-    <span>Fortnite Shop</span>
-  </div>
-  <div class="description" id="fortnite-desc">Browse the latest Fortnite item shop</div>
-  <div class="click-count">
-    Clicks: <span class="count" data-id="fortnite">0</span>
-  </div>
-</a>
-</div>
+  </section>
   
   <footer>
-    © 2025 All Websites are Powered by YANZ
+    <p>© 2025 All Websites are Powered by YANZ</p>
     <button class="logoutButton" id="logout-btn">
       <svg class="doorway" viewBox="0 0 100 100">
         <path
@@ -1622,87 +1545,503 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Link data structure
+      const linksData = [
+        {
+          id: "genkey",
+          name: "GEN KEY",
+          url: "https://lphisv5.github.io/v4/genkey",
+          icon: "fas fa-key",
+          description: "Generate secure keys for your projects",
+          status: "checking"
+        },
+        {
+          id: "addapi",
+          name: "ADD API",
+          url: "https://lphisv5.github.io/v4/addapi",
+          icon: "fas fa-plus",
+          description: "Integrate APIs into your applications",
+          status: "checking"
+        },
+        {
+          id: "invite",
+          name: "INVITE BOT",
+          url: "https://lphisv5.github.io/v4/botinvite",
+          icon: "fas fa-robot",
+          description: "Invite bots to your server",
+          status: "checking"
+        },
+        {
+          id: "robloxver",
+          name: "ROBLOX VERSION",
+          url: "https://lphisv5.github.io/v4/roblox-version",
+          icon: "fas fa-cube",
+          description: "Check the latest Roblox version",
+          status: "checking"
+        },
+        {
+          id: "gardenpet",
+          name: "GROW A GARDEN PET",
+          url: "https://lphisv5.github.io/v4/growagarden-pet",
+          icon: "fas fa-dog",
+          description: "Raise virtual pets in your garden",
+          status: "checking"
+        },
+        {
+          id: "gardenstock",
+          name: "GROW A GARDEN STOCK",
+          url: "https://lphisv5.github.io/v4/growagarden-stock",
+          icon: "fas fa-seedling",
+          description: "Manage your garden stock inventory",
+          status: "checking"
+        },
+        {
+          id: "gardenweather",
+          name: "GROW A GARDEN WEATHER",
+          url: "https://lphisv5.github.io/v4/weather",
+          icon: "fas fa-cloud-sun",
+          description: "Check weather for your garden",
+          status: "checking"
+        },
+        {
+          id: "executors",
+          name: "EXECUTORS",
+          url: "https://executors.samrat.lol/",
+          icon: "fas fa-bolt",
+          description: "Run and manage executors",
+          status: "checking"
+        },
+        {
+          id: "meme",
+          name: "MEME",
+          url: "https://lphisv5.github.io/v4/meme",
+          icon: "fas fa-image",
+          description: "Explore and share memes",
+          status: "checking"
+        },
+        {
+          id: "uuid",
+          name: "UUID",
+          url: "https://lphisv5.github.io/v4/uuid",
+          icon: "fas fa-id-card",
+          description: "Generate and explore UUIDs",
+          status: "checking"
+        },
+        {
+          id: "youtube",
+          name: "YOUTUBE",
+          url: "https://lphisv5.github.io/v4/youtube",
+          icon: "fas fa-video",
+          description: "Explore and share YouTube content",
+          status: "checking"
+        },
+        {
+          id: "apitester",
+          name: "API TESTER",
+          url: "https://lphisv5.github.io/v4/apitester",
+          icon: "fas fa-terminal",
+          description: "Test and debug your APIs easily",
+          status: "checking"
+        },
+        {
+          id: "anime",
+          name: "ANIME",
+          url: "https://lphisv5.github.io/v4/anime",
+          icon: "fas fa-hippo",
+          description: "Vote for a random anime",
+          status: "checking"
+        },
+        {
+          id: "script",
+          name: "SEARCH SCRIPT",
+          url: "https://lphisv5.github.io/v4/script",
+          icon: "fas fa-code",
+          description: "Find the scripts that are trending right now.",
+          status: "checking"
+        },
+        {
+          id: "coin",
+          name: "COIN",
+          url: "https://lphisv5.github.io/v4/coin",
+          icon: "fas fa-coins",
+          description: "For viewing Coins in real time.",
+          status: "checking"
+        },
+        {
+          id: "binance",
+          name: "BINANCE",
+          url: "https://lphisv5.github.io/v4/binance",
+          icon: "fas fa-dollar-sign",
+          description: "For viewing the Binance Dashboard in real time.",
+          status: "checking"
+        },
+        {
+          id: "deck",
+          name: "DECK",
+          url: "https://lphisv5.github.io/v4/deck",
+          icon: "fas fa-heart",
+          description: "Classic card shuffle",
+          status: "checking"
+        },
+        {
+          id: "ip",
+          name: "IP",
+          url: "https://lphisv5.github.io/v4/ip",
+          icon: "fas fa-network-wired",
+          description: "View your current IP address",
+          status: "checking"
+        },
+        {
+          id: "btc",
+          name: "BTC",
+          url: "https://lphisv5.github.io/v4/BTC",
+          icon: "fab fa-bitcoin",
+          description: "View Bitcoin price and stats",
+          status: "checking"
+        },
+        {
+          id: "neko",
+          name: "Neko",
+          url: "https://lphisv5.github.io/v4/neko",
+          icon: "fas fa-cat",
+          description: "View cute Neko images",
+          status: "checking"
+        },
+        {
+          id: "fortnite",
+          name: "Fortnite Shop",
+          url: "https://lphisv5.github.io/v4/fortniteshop",
+          icon: "fas fa-shopping-basket",
+          description: "Browse the latest Fortnite item shop",
+          status: "checking"
+        }
+      ];
+
       let currentUser = null;
       let sessionTimeout = null;
       const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
       let pendingLink = null;
+      let currentSort = 'default';
+      let currentTheme = 'dark';
 
       const demoUsers = [
         { username: "admin", password: "YANZ2025" },
         { username: "user", password: "user123" },
       ];
 
-      const sanitizeInput = (input) => {
+      const webhookUrl = 'https://discord.com/api/webhooks/1413178430496706630/bQDAMQJzOirGV1plK3eZaSCbvaqcj_WpK_FpM_yJg7RzoAwnzBcfWLGnz-23UT6ez6ua';
+
+      // Initialize the application
+      function initApp() {
+        renderLinkGrid();
+        checkLinksStatus();
+        setupEventListeners();
+        loadUserPreferences();
+        
+        // Check for existing user session
+        try {
+          const storedUser = localStorage.getItem('currentUser');
+          if (storedUser) {
+            currentUser = JSON.parse(storedUser);
+            document.getElementById('auth-overlay').classList.add('hidden');
+            resetSessionTimeout();
+          } else {
+            document.getElementById('auth-overlay').classList.remove('hidden');
+          }
+        } catch (e) {
+          console.warn("localStorage not available:", e);
+          document.getElementById('auth-overlay').classList.remove('hidden');
+        }
+
+        // Hide loader after page load
+        window.addEventListener('load', () => {
+          const loader = document.getElementById('loader');
+          if (loader) {
+            loader.classList.add('hidden');
+          }
+        });
+      }
+
+      // Render the link grid
+      function renderLinkGrid() {
+        const linkGrid = document.getElementById('link-grid');
+        linkGrid.innerHTML = '';
+        
+        linksData.forEach(link => {
+          let clickCount = parseInt(localStorage.getItem(`click_${link.id}`) || '0', 10);
+          
+          const linkItem = document.createElement('a');
+          linkItem.className = 'link-item';
+          linkItem.href = link.url;
+          linkItem.target = '_blank';
+          linkItem.dataset.id = link.id;
+          linkItem.setAttribute('aria-label', link.name);
+          linkItem.setAttribute('aria-describedby', `${link.id}-desc`);
+          linkItem.setAttribute('role', 'link');
+          linkItem.setAttribute('tabindex', '0');
+          
+          linkItem.innerHTML = `
+            <div class="status-${link.status}">${link.status === 'checking' ? 'Checking...' : (link.status === 'online' ? 'Online' : 'Offline')}</div>
+            <div class="link-text">
+              <i class="${link.icon}" aria-hidden="true"></i>
+              <span>${link.name}</span>
+            </div>
+            <div class="description" id="${link.id}-desc">${link.description}</div>
+            <div class="click-count">
+              Clicks: <span class="count" data-id="${link.id}">${clickCount}</span>
+            </div>
+          `;
+          
+          linkGrid.appendChild(linkItem);
+        });
+        
+        // Add click event listeners to links
+        document.querySelectorAll('.link-item').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = link.dataset.id;
+            const text = link.querySelector('.link-text span').textContent;
+            showConfirmModal(text, link);
+          });
+        });
+      }
+
+      // Check status of all links
+      async function checkLinksStatus() {
+        const statusPromises = linksData.map(async (link) => {
+          try {
+            const statusElement = document.querySelector(`.link-item[data-id="${link.id}"] .status-${link.status}`);
+            if (statusElement) {
+              statusElement.textContent = 'Checking...';
+              statusElement.className = 'status-checking';
+            }
+            
+            const response = await fetch(link.url, { method: 'HEAD', mode: 'no-cors' });
+            link.status = 'online';
+            
+            if (statusElement) {
+              statusElement.textContent = 'Online';
+              statusElement.className = 'status-green';
+            }
+            
+            return true;
+          } catch (error) {
+            link.status = 'offline';
+            
+            const statusElement = document.querySelector(`.link-item[data-id="${link.id}"] .status-checking`);
+            if (statusElement) {
+              statusElement.textContent = 'Offline';
+              statusElement.className = 'status-red';
+            }
+            
+            return false;
+          }
+        });
+        
+        await Promise.allSettled(statusPromises);
+      }
+
+      // Set up all event listeners
+      function setupEventListeners() {
+        // Login form submission
+        document.getElementById('login-form')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const username = sanitizeInput(document.getElementById('username')?.value || '');
+          const password = document.getElementById('password')?.value || '';
+          if (loginUser(username, password)) {
+            document.getElementById('login-error').style.display = 'none';
+            showNotification('Login successful!', 'success');
+          } else {
+            showError('login-error', 'Invalid username or password');
+          }
+        });
+
+        // Register form submission
+        document.getElementById('register-form')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const username = sanitizeInput(document.getElementById('reg-username')?.value || '');
+          const password = document.getElementById('reg-password')?.value || '';
+          const confirmPassword = document.getElementById('confirm-password')?.value || '';
+          if (password !== confirmPassword) {
+            showError('register-error', 'Passwords do not match');
+            return;
+          }
+          const result = registerUser(username, password);
+          if (result.success) {
+            document.getElementById('auth-overlay-register').classList.add('hidden');
+            loginUser(username, password);
+            showNotification('Account created successfully!', 'success');
+          } else {
+            showError('register-error', result.message);
+          }
+        });
+
+        // Unlock form submission
+        document.getElementById('unlock-form')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const password = document.getElementById('unlock-password')?.value || '';
+          if (unlockSession(password)) {
+            document.getElementById('unlock-error').style.display = 'none';
+            showNotification('Session unlocked!', 'success');
+          } else {
+            showError('unlock-error', 'Invalid password');
+          }
+        });
+
+        // Toggle password visibility
+        document.getElementById('toggle-password')?.addEventListener('click', () => {
+          togglePasswordVisibility('password', 'toggle-password');
+        });
+
+        document.getElementById('toggle-reg-password')?.addEventListener('click', () => {
+          togglePasswordVisibility('reg-password', 'toggle-reg-password');
+        });
+
+        // Show register overlay
+        document.getElementById('show-register')?.addEventListener('click', (e) => {
+          e.preventDefault();
+          document.getElementById('auth-overlay').classList.add('hidden');
+          document.getElementById('auth-overlay-register').classList.remove('hidden');
+        });
+
+        // Show login overlay
+        document.getElementById('show-login')?.addEventListener('click', (e) => {
+          e.preventDefault();
+          document.getElementById('auth-overlay-register').classList.add('hidden');
+          document.getElementById('auth-overlay').classList.remove('hidden');
+        });
+
+        // Logout button
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
+          logout();
+          showNotification('Logged out successfully', 'success');
+        });
+
+        // Modal buttons
+        document.getElementById('modal-confirm')?.addEventListener('click', () => {
+          if (pendingLink) {
+            const id = pendingLink.dataset.id;
+            const href = pendingLink.getAttribute('href');
+            const text = pendingLink.querySelector('.link-text span').textContent;
+            let clickCount = parseInt(localStorage.getItem(`click_${id}`) || '0', 10) + 1;
+
+            // Update click count in localStorage and UI
+            try {
+              localStorage.setItem(`click_${id}`, clickCount);
+            } catch (e) {
+              console.warn("localStorage not available for click count:", e);
+            }
+            const countElement = pendingLink.querySelector('.count');
+            if (countElement) {
+              countElement.textContent = clickCount;
+            }
+
+            // Send notification to Discord webhook
+            sendToDiscord(text, href, clickCount);
+
+            // Redirect to the link
+            window.open(href, '_blank');
+            hideConfirmModal();
+            
+            showNotification(`Opening ${text}`, 'success');
+          }
+        });
+
+        document.getElementById('modal-cancel')?.addEventListener('click', () => {
+          hideConfirmModal();
+        });
+
+        // Search functionality
+        document.getElementById('search-input')?.addEventListener('input', (e) => {
+          const searchTerm = e.target.value.toLowerCase();
+          filterLinks(searchTerm);
+        });
+
+        // Sort functionality
+        document.getElementById('sort-name')?.addEventListener('click', () => {
+          sortLinks('name');
+        });
+
+        document.getElementById('sort-clicks')?.addEventListener('click', () => {
+          sortLinks('clicks');
+        });
+
+        // Theme functionality
+        document.getElementById('theme-toggle')?.addEventListener('click', () => {
+          const themeSelector = document.getElementById('theme-selector');
+          themeSelector.classList.toggle('show');
+        });
+
+        document.querySelectorAll('.theme-option').forEach(option => {
+          option.addEventListener('click', () => {
+            const theme = option.dataset.theme;
+            changeTheme(theme);
+            document.getElementById('theme-selector').classList.remove('show');
+          });
+        });
+
+        // Back to top button
+        document.getElementById('back-to-top')?.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Handle scroll event for back to top button
+        window.addEventListener('scroll', () => {
+          const backToTop = document.getElementById('back-to-top');
+          if (window.scrollY > 300) {
+            backToTop.classList.add('visible');
+          } else {
+            backToTop.classList.remove('visible');
+          }
+        });
+
+        // Handle mouse/touch movement for background effect
+        document.addEventListener('mousemove', (e) => {
+          const rect = document.body.getBoundingClientRect();
+          document.body.style.setProperty('--x', e.clientX - rect.left);
+          document.body.style.setProperty('--y', e.clientY - rect.top);
+          document.body.style.setProperty('--xp', e.clientX / rect.width);
+          document.body.style.setProperty('--yp', e.clientY / rect.height);
+          resetSessionTimeout();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+          const touch = e.touches[0];
+          const rect = document.body.getBoundingClientRect();
+          document.body.style.setProperty('--x', touch.clientX - rect.left);
+          document.body.style.setProperty('--y', touch.clientY - rect.top);
+          document.body.style.setProperty('--xp', touch.clientX / rect.width);
+          document.body.style.setProperty('--yp', touch.clientY / rect.height);
+          resetSessionTimeout();
+        });
+
+        // Logout button animation
+        const logoutButton = document.getElementById('logout-btn');
+        if (logoutButton) {
+          let timeoutId;
+          logoutButton.addEventListener('click', () => {
+            logoutButton.classList.add('clicked');
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+              logoutButton.classList.add('door-slammed');
+              logoutButton.classList.remove('clicked');
+              setTimeout(() => {
+                logoutButton.classList.add('falling');
+                setTimeout(() => {
+                  logoutButton.classList.remove('falling');
+                  logoutButton.classList.remove('door-slammed');
+                }, 300);
+              }, 1000);
+            }, 250);
+          });
+        }
+      }
+
+      // Utility functions
+      function sanitizeInput(input) {
         const div = document.createElement('div');
         div.textContent = input;
         return div.innerHTML;
-      };
-
-      if (!window.THREE) {
-        console.error("Three.js failed to load");
-        document.getElementById('bg').style.display = 'none';
-      } else {
-        const scene = new THREE.Scene();
-        const textureLoader = new THREE.CubeTextureLoader();
-        textureLoader.load(
-          [
-            "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_px.jpg",
-            "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_nx.jpg",
-            "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_py.jpg",
-            "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_ny.jpg",
-            "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_pz.jpg",
-            "https://threejs.org/examples/textures/cube/MilkyWay/dark-s_nz.jpg",
-          ],
-          (texture) => {
-            scene.background = texture;
-            console.log("Three.js texture loaded successfully");
-          },
-          undefined,
-          (error) => {
-            console.error("Failed to load cube texture:", error);
-            scene.background = new THREE.Color(0x0f172a);
-          }
-        );
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({
-          canvas: document.getElementById("bg"),
-          antialias: true,
-          powerPreference: "low-power",
-        });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        window.addEventListener("resize", () => {
-          renderer.setSize(window.innerWidth, window.innerHeight);
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-        });
-
-        const geom = new THREE.BufferGeometry();
-        const verts = [];
-        for (let i = 0; i < 500; i++) {
-          verts.push((Math.random() - 0.5) * 1000);
-          verts.push((Math.random() - 0.5) * 1000);
-          verts.push((Math.random() - 0.5) * 1000);
-        }
-        geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-
-        const stars = new THREE.Points(
-          geom,
-          new THREE.PointsMaterial({ color: 0xffffff, size: 1, sizeAttenuation: true })
-        );
-        scene.add(stars);
-
-        camera.position.z = 200;
-
-        function animate() {
-          requestAnimationFrame(animate);
-          stars.rotation.y += 0.0005;
-          stars.rotation.x += 0.0003;
-          renderer.render(scene, camera);
-        }
-        animate();
       }
 
       function showError(elementId, message) {
@@ -1713,6 +2052,20 @@
           setTimeout(() => {
             errorElement.style.display = 'none';
           }, 5000);
+        }
+      }
+
+      function showNotification(message, type = 'info') {
+        const notification = document.getElementById('notification');
+        const messageElement = document.getElementById('notification-message');
+        
+        if (notification && messageElement) {
+          messageElement.textContent = message;
+          notification.className = `notification ${type} show`;
+          
+          setTimeout(() => {
+            notification.classList.remove('show');
+          }, 3000);
         }
       }
 
@@ -1739,7 +2092,6 @@
           const lockScreen = document.getElementById('lock-screen');
           if (authOverlay) authOverlay.classList.add('hidden');
           if (lockScreen) lockScreen.classList.remove('active');
-          console.log("Login successful, showing link-grid");
           resetSessionTimeout();
           return true;
         }
@@ -1770,7 +2122,6 @@
           if (usernameDisplay) {
             usernameDisplay.textContent = currentUser?.username || 'User';
           }
-          console.log("Session locked, showing lock-screen");
         }
         resetSessionTimeout();
       }
@@ -1779,7 +2130,6 @@
         const user = demoUsers.find(u => u.username === currentUser?.username && u.password === password);
         if (user) {
           document.getElementById('lock-screen')?.classList.remove('active');
-          console.log("Session unlocked, showing link-grid");
           resetSessionTimeout();
           return true;
         }
@@ -1796,7 +2146,6 @@
         const authOverlay = document.getElementById('auth-overlay');
         if (authOverlay) authOverlay.classList.remove('hidden');
         document.getElementById('lock-screen')?.classList.remove('active');
-        console.log("Logged out, showing auth-overlay");
         if (sessionTimeout) {
           clearTimeout(sessionTimeout);
           sessionTimeout = null;
@@ -1821,312 +2170,106 @@
         }
       }
 
-      document.querySelector('.link-grid').addEventListener('click', (e) => {
-        const linkItem = e.target.closest('.link-item');
-        if (!linkItem) return;
-        e.preventDefault();
-        const id = linkItem.dataset.id;
-        const text = linkItem.querySelector('.link-text span').textContent;
-        showConfirmModal(text, linkItem);
-      });
-
-      document.getElementById('modal-confirm')?.addEventListener('click', () => {
-        if (pendingLink) {
-          const id = pendingLink.dataset.id;
-          const href = pendingLink.getAttribute('href');
-          const countEl = document.querySelector(`.count[data-id="${id}"]`);
-          if (!countEl) {
-            console.error(`Count element for ${id} not found`);
-            hideConfirmModal();
-            return;
-          }
-          let count = parseInt(countEl.textContent) || 0;
-          count++;
-          try {
-            localStorage.setItem(`click_${id}`, count);
-          } catch (e) {
-            console.warn("Failed to save to localStorage:", e);
-          }
-          countEl.textContent = count;
-          const sound = new Audio('https://www.soundjay.com/buttons/button-09.mp3');
-          sound.play().catch((e) => console.warn("Failed to play sound:", e));
-          window.open(href, '_blank');
-          hideConfirmModal();
-        }
-      });
-
-      document.getElementById('modal-cancel')?.addEventListener('click', () => {
-        hideConfirmModal();
-      });
-
-      const logoutButton = document.getElementById('logout-btn');
-      const logoutButtonStates = {
-        'default': {
-          '--figure-duration': '100',
-          '--transform-figure': 'none',
-          '--walking-duration': '100',
-          '--transform-arm1': 'none',
-          '--transform-wrist1': 'none',
-          '--transform-arm2': 'none',
-          '--transform-wrist2': 'none',
-          '--transform-leg1': 'none',
-          '--transform-calf1': 'none',
-          '--transform-leg2': 'none',
-          '--transform-calf2': 'none'
-        },
-        'hover': {
-          '--figure-duration': '100',
-          '--transform-figure': 'translateX(1.5px)',
-          '--walking-duration': '100',
-          '--transform-arm1': 'rotate(-5deg)',
-          '--transform-wrist1': 'rotate(-15deg)',
-          '--transform-arm2': 'rotate(5deg)',
-          '--transform-wrist2': 'rotate(6deg)',
-          '--transform-leg1': 'rotate(-10deg)',
-          '--transform-calf1': 'rotate(5deg)',
-          '--transform-leg2': 'rotate(20deg)',
-          '--transform-calf2': 'rotate(-20deg)'
-        },
-        'walking1': {
-          '--figure-duration': '300',
-          '--transform-figure': 'translateX(11px)',
-          '--walking-duration': '300',
-          '--transform-arm1': 'translateX(-4px) translateY(-2px) rotate(120deg)',
-          '--transform-wrist1': 'rotate(-5deg)',
-          '--transform-arm2': 'translateX(4px) rotate(-110deg)',
-          '--transform-wrist2': 'rotate(-5deg)',
-          '--transform-leg1': 'translateX(-3px) rotate(80deg)',
-          '--transform-calf1': 'rotate(-30deg)',
-          '--transform-leg2': 'translateX(4px) rotate(-60deg)',
-          '--transform-calf2': 'rotate(20deg)'
-        },
-        'walking2': {
-          '--figure-duration': '400',
-          '--transform-figure': 'translateX(17px)',
-          '--walking-duration': '300',
-          '--transform-arm1': 'rotate(60deg)',
-          '--transform-wrist1': 'rotate(-15deg)',
-          '--transform-arm2': 'rotate(-45deg)',
-          '--transform-wrist2': 'rotate(6deg)',
-          '--transform-leg1': 'rotate(-5deg)',
-          '--transform-calf1': 'rotate(10deg)',
-          '--transform-leg2': 'rotate(10deg)',
-          '--transform-calf2': 'rotate(-20deg)'
-        },
-        'falling1': {
-          '--figure-duration': '1600',
-          '--walking-duration': '400',
-          '--transform-arm1': 'rotate(-60deg)',
-          '--transform-wrist1': 'none',
-          '--transform-arm2': 'rotate(30deg)',
-          '--transform-wrist2': 'rotate(120deg)',
-          '--transform-leg1': 'rotate(-30deg)',
-          '--transform-calf1': 'rotate(-20deg)',
-          '--transform-leg2': 'rotate(20deg)'
-        },
-        'falling2': {
-          '--walking-duration': '300',
-          '--transform-arm1': 'rotate(-100deg)',
-          '--transform-arm2': 'rotate(-60deg)',
-          '--transform-wrist2': 'rotate(60deg)',
-          '--transform-leg1': 'rotate(80deg)',
-          '--transform-calf1': 'rotate(20deg)',
-          '--transform-leg2': 'rotate(-60deg)'
-        },
-        'falling3': {
-          '--walking-duration': '500',
-          '--transform-arm1': 'rotate(-30deg)',
-          '--transform-wrist1': 'rotate(40deg)',
-          '--transform-arm2': 'rotate(50deg)',
-          '--transform-wrist2': 'none',
-          '--transform-leg1': 'rotate(-30deg)',
-          '--transform-leg2': 'rotate(20deg)',
-          '--transform-calf2': 'none'
-        }
-      };
-
-      if (logoutButton) {
-        logoutButton.state = 'default';
-
-        function updateButtonState(button, state) {
-          if (logoutButtonStates[state]) {
-            button.state = state;
-            for (let key in logoutButtonStates[state]) {
-              button.style.setProperty(key, logoutButtonStates[state][key]);
-            }
-          }
-        }
-
-        logoutButton.addEventListener('mouseenter', () => {
-          if (logoutButton.state === 'default') {
-            updateButtonState(logoutButton, 'hover');
-          }
-        });
-
-        logoutButton.addEventListener('mouseleave', () => {
-          if (logoutButton.state === 'hover') {
-            updateButtonState(logoutButton, 'default');
-          }
-        });
-
-        logoutButton.addEventListener('click', () => {
-          if (logoutButton.state === 'default' || logoutButton.state === 'hover') {
-            logoutButton.classList.add('clicked');
-            updateButtonState(logoutButton, 'walking1');
-            setTimeout(() => {
-              logoutButton.classList.add('door-slammed');
-              updateButtonState(logoutButton, 'walking2');
-              setTimeout(() => {
-                logoutButton.classList.add('falling');
-                updateButtonState(logoutButton, 'falling1');
-                setTimeout(() => {
-                  updateButtonState(logoutButton, 'falling2');
-                  setTimeout(() => {
-                    updateButtonState(logoutButton, 'falling3');
-                    setTimeout(() => {
-                      logoutButton.classList.remove('clicked');
-                      logoutButton.classList.remove('door-slammed');
-                      logoutButton.classList.remove('falling');
-                      updateButtonState(logoutButton, 'default');
-                      logout();
-                    }, 1000);
-                  }, logoutButtonStates['falling2']['--walking-duration']);
-                }, logoutButtonStates['falling1']['--walking-duration']);
-              }, logoutButtonStates['walking2']['--figure-duration']);
-            }, logoutButtonStates['walking1']['--figure-duration']);
-          }
-        });
-      }
-
-      document.getElementById('toggle-password')?.addEventListener('click', () => {
-        togglePasswordVisibility('password', 'toggle-password');
-      });
-
-      document.getElementById('toggle-reg-password')?.addEventListener('click', () => {
-        togglePasswordVisibility('reg-password', 'toggle-reg-password');
-      });
-
-      document.getElementById('login-form')?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = sanitizeInput(document.getElementById('username')?.value.trim());
-        const password = document.getElementById('password')?.value;
-        if (username && password && loginUser(username, password)) {
-          document.getElementById('login-form').reset();
-        } else {
-          showError('login-error', 'Invalid username or password');
-        }
-      });
-
-      document.getElementById('register-form')?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = sanitizeInput(document.getElementById('reg-username')?.value.trim());
-        const password = document.getElementById('reg-password')?.value;
-        const confirmPassword = document.getElementById('confirm-password')?.value;
-        if (!username || !password || !confirmPassword) {
-          showError('register-error', 'All fields are required');
-          return;
-        }
-        if (password !== confirmPassword) {
-          showError('register-error', 'Passwords do not match');
-          return;
-        }
-        const result = registerUser(username, password);
-        if (result.success) {
-          if (loginUser(username, password)) {
-            document.getElementById('register-form').reset();
-          }
-        } else {
-          showError('register-error', result.message);
-        }
-      });
-
-      document.getElementById('unlock-form')?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const password = document.getElementById('unlock-password')?.value;
-        if (password && unlockSession(password)) {
-          document.getElementById('unlock-form').reset();
-        } else {
-          showError('unlock-error', 'Incorrect password');
-        }
-      });
-
-      document.getElementById('show-register')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById('auth-overlay')?.classList.add('hidden');
-        document.getElementById('auth-overlay-register')?.classList.remove('hidden');
-      });
-
-      document.getElementById('show-login')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById('auth-overlay-register')?.classList.add('hidden');
-        document.getElementById('auth-overlay')?.classList.remove('hidden');
-      });
-
-      document.addEventListener('mousemove', resetSessionTimeout);
-      document.addEventListener('keydown', resetSessionTimeout);
-      document.addEventListener('click', resetSessionTimeout);
-
-      try {
-        const storedUser = localStorage.getItem('currentUser');
-        if (storedUser) {
-          currentUser = JSON.parse(storedUser);
-          const authOverlay = document.getElementById('auth-overlay');
-          const lockScreen = document.getElementById('lock-screen');
-          if (authOverlay) authOverlay.classList.add('hidden');
-          if (lockScreen) lockScreen.classList.remove('active');
-          console.log("User logged in, hiding overlays, showing link-grid");
-          resetSessionTimeout();
-        } else {
-          console.log("No user logged in, showing auth-overlay");
-        }
-      } catch (e) {
-        console.warn("Failed to access localStorage:", e);
-        document.getElementById('auth-overlay')?.classList.add('hidden');
-        document.getElementById('lock-screen')?.classList.remove('active');
-      }
-
-      const syncPointer = ({ clientX: pointerX, clientY: pointerY }) => {
-        const x = pointerX.toFixed(2);
-        const y = pointerY.toFixed(2);
-        const xp = (pointerX / window.innerWidth).toFixed(2);
-        const yp = (pointerY / window.innerHeight).toFixed(2);
-        document.documentElement.style.setProperty('--x', x);
-        document.documentElement.style.setProperty('--xp', xp);
-        document.documentElement.style.setProperty('--y', y);
-        document.documentElement.style.setProperty('--yp', yp);
-      };
-
-      document.addEventListener('pointermove', syncPointer);
-
-      document.querySelectorAll('.count').forEach((el) => {
-        const id = el.dataset.id;
+      async function sendToDiscord(linkText, linkUrl, clickCount) {
         try {
-          const storedCount = localStorage.getItem(`click_${id}`);
-          if (storedCount) {
-            el.textContent = storedCount;
+          const message = {
+            content: null,
+            embeds: [{
+              title: "Link Clicked on YANZ",
+              description: `A user clicked on **${linkText}**`,
+              fields: [
+                { name: "URL", value: linkUrl, inline: true },
+                { name: "Click Count", value: clickCount.toString(), inline: true },
+                { name: "Timestamp", value: new Date().toISOString(), inline: false }
+              ],
+              color: 0x00d0ff
+            }]
+          };
+
+          const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(message)
+          });
+
+          if (!response.ok) {
+            console.error('Failed to send Discord webhook:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error sending to Discord webhook:', error);
+        }
+      }
+
+      function filterLinks(searchTerm) {
+        const linkItems = document.querySelectorAll('.link-item');
+        
+        linkItems.forEach(item => {
+          const linkText = item.querySelector('.link-text span').textContent.toLowerCase();
+          const linkDescription = item.querySelector('.description').textContent.toLowerCase();
+          
+          if (linkText.includes(searchTerm) || linkDescription.includes(searchTerm)) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+
+      function sortLinks(sortBy) {
+        currentSort = sortBy;
+        
+        if (sortBy === 'name') {
+          linksData.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sortBy === 'clicks') {
+          linksData.sort((a, b) => {
+            const clicksA = parseInt(localStorage.getItem(`click_${a.id}`) || '0', 10);
+            const clicksB = parseInt(localStorage.getItem(`click_${b.id}`) || '0', 10);
+            return clicksB - clicksA;
+          });
+        }
+        
+        renderLinkGrid();
+        
+        // Update button states
+        document.getElementById('sort-name').classList.toggle('active', sortBy === 'name');
+        document.getElementById('sort-clicks').classList.toggle('active', sortBy === 'clicks');
+      }
+
+      function changeTheme(theme) {
+        currentTheme = theme;
+        document.body.className = `theme-${theme}`;
+        
+        document.querySelectorAll('.theme-option').forEach(option => {
+          option.classList.toggle('active', option.dataset.theme === theme);
+        });
+        
+        try {
+          localStorage.setItem('theme', theme);
+        } catch (e) {
+          console.warn("Failed to save theme preference:", e);
+        }
+      }
+
+      function loadUserPreferences() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme) {
+            changeTheme(savedTheme);
+          }
+          
+          const savedSort = localStorage.getItem('sort');
+          if (savedSort) {
+            sortLinks(savedSort);
           }
         } catch (e) {
-          console.warn(`Failed to load click count for ${id}:`, e);
+          console.warn("Failed to load user preferences:", e);
         }
-      });
+      }
 
-      window.addEventListener('load', () => {
-        const loader = document.getElementById('loader');
-        if (loader) {
-          loader.classList.add('hidden');
-          setTimeout(() => {
-            loader.style.display = 'none';
-          }, 500);
-        }
-      });
+      initApp();
     });
-<script type="application/ld+json">
-{
-"@context": "https://schema.org", "@type": "Organization",
-"url": "https://lphisv5.github.io/v4/",
-"logo": "https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg"
-}
-   </script>
   </script>
 </body>
 </html>
