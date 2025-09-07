@@ -20,7 +20,7 @@
   }
   .wrapper {
     width: 100%;
-    max-width: 520px;
+    max-width: 600px;
     background: #fff;
     padding: 2.5rem 2.8rem 3.2rem 2.8rem;
     border-radius: 16px;
@@ -29,6 +29,8 @@
     flex-direction: column;
     gap: 1.5rem;
     transition: transform 0.3s ease, opacity 0.3s ease;
+    position: relative;
+    z-index: 10;
   }
   .wrapper.hidden {
     transform: translateY(-20px);
@@ -68,9 +70,33 @@
     border-color: #004a9f;
     box-shadow: 0 0 8px #004a9f66;
   }
+  .method-selector {
+    display: flex;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #0078d4;
+  }
+  .method-option {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    background: #f0f7ff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+  }
+  .method-option:hover {
+    background: #d9ecff;
+  }
+  .method-option.active {
+    background: #0078d4;
+    color: white;
+  }
   .button-group {
     display: flex;
     gap: 12px;
+    position: relative;
   }
   button {
     padding: 14px 26px;
@@ -514,6 +540,13 @@
     .response-content {
       max-height: 40vh;
     }
+    .stats-bar {
+      flex-direction: column;
+      gap: 10px;
+    }
+    .stats-section {
+      justify-content: space-between;
+    }
   }
 </style>
 </head>
@@ -522,6 +555,14 @@
 <div class="wrapper" id="main-wrapper">
   <h1 class="app-title">YANZ API Tester (Beta)</h1>
   <p class="app-description">Test your APIs with ease and precision</p>
+  
+  <div class="method-selector" id="method-selector">
+    <div class="method-option active" data-method="GET">GET</div>
+    <div class="method-option" data-method="POST">POST</div>
+    <div class="method-option" data-method="PUT">PUT</div>
+    <div class="method-option" data-method="DELETE">DELETE</div>
+    <div class="method-option" data-method="PATCH">PATCH</div>
+  </div>
   
   <div class="input-group">
     <input id="api-url" type="text" placeholder="Enter API URL here..." autocomplete="off" spellcheck="false" aria-label="API URL input" />
@@ -642,13 +683,17 @@
   const historyPage = document.getElementById('history-page');
   const backButton = document.getElementById('back-button');
   const historyList = document.getElementById('history-list');
+  const methodOptions = document.querySelectorAll('.method-option');
+  const methodSelector = document.getElementById('method-selector');
 
   let apiHistory = JSON.parse(localStorage.getItem('apiHistory')) || [];
   let currentResponse = null;
+  let selectedMethod = 'GET';
 
   updateHistoryCount();
   renderHistory();
   renderHistoryPage();
+  setupMethodSelector();
 
   btn.addEventListener('click', testApi);
   closeBtn.addEventListener('click', closeOverlay);
@@ -656,6 +701,27 @@
   backButton.addEventListener('click', closeHistoryPage);
   window.addEventListener('keydown', handleKeydown);
   tabs.forEach(tab => tab.addEventListener('click', switchTab));
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') testApi();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (historyPanel.classList.contains('active') && 
+        !historyBtn.contains(e.target) && 
+        !historyPanel.contains(e.target)) {
+      historyPanel.classList.remove('active');
+    }
+  });
+
+  function setupMethodSelector() {
+    methodOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        methodOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        selectedMethod = option.dataset.method;
+      });
+    });
+  }
 
   function fetchWithTimeout(resource, options = {}) {
     const { timeout = 15000 } = options;
@@ -718,7 +784,14 @@
       return;
     }
     
-    const method = await autoDetectMethod(url);
+    try {
+      new URL(url);
+    } catch (e) {
+      alert('⚠️ Please enter a valid URL format (e.g., https://api.example.com/data).');
+      return;
+    }
+    
+    const method = selectedMethod;
     
     addToHistory(url, method);
     
@@ -740,7 +813,19 @@
       const end = performance.now();
       const ping = Math.round(end - start);
 
-      statusCodeEl.textContent = `Status: ${res.status}`;
+      let statusColor = '#0078d4'; // Default blue
+      if (res.status >= 200 && res.status < 300) {
+        statusColor = '#10b981'; // Green for success
+      } else if (res.status >= 400 && res.status < 500) {
+        statusColor = '#ef4444'; // Red for client errors
+      } else if (res.status >= 500) {
+        statusColor = '#f59e0b'; // Orange for server errors
+      }
+      statusCodeEl.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 17L15 12L10 7" stroke="${statusColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Status: <span style="color: ${statusColor}">${res.status}</span>`;
+      
       pingTimeEl.textContent = `Ping: ${ping} ms`;
 
       const headers = [];
@@ -785,7 +870,10 @@
       loader.style.display = 'none';
       responseFull.textContent = '❌ Error: ' + (err.name === 'AbortError' ? 'Request timed out after 15 seconds.' : err.message);
       responseFull.style.display = 'block';
-      statusCodeEl.textContent = 'Status: ERROR';
+      statusCodeEl.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 17L15 12L10 7" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Status: <span style="color: #ef4444">ERROR</span>`;
       pingTimeEl.textContent = 'Ping: -- ms';
       statusCodeEl.parentElement.style.display = 'flex';
       updateStats('', 0, 0);
@@ -796,28 +884,6 @@
         details: JSON.stringify({ error: err.message }, null, 2) 
       };
     }
-  }
-
-  async function autoDetectMethod(url) {
-    try {
-      const response = await fetchWithTimeout(url, { 
-        method: 'HEAD',
-        timeout: 3000 
-      });
-      if (response.ok) return 'GET';
-    } catch (e) {
-    }
-    
-    try {
-      const response = await fetchWithTimeout(url, { 
-        method: 'GET',
-        timeout: 3000 
-      });
-      if (response.ok) return 'GET';
-    } catch (e) {
-    }
-    
-    return 'GET';
   }
 
   function closeOverlay() {
@@ -864,7 +930,7 @@
     
     historyPanel.innerHTML = '';
     
-    apiHistory.forEach((item, index) => {
+    apiHistory.forEach((item) => {
       const historyItem = document.createElement('div');
       historyItem.className = 'history-item';
       historyItem.innerHTML = `
@@ -874,6 +940,13 @@
       
       historyItem.addEventListener('click', () => {
         input.value = item.url;
+        methodOptions.forEach(opt => {
+          opt.classList.remove('active');
+          if (opt.dataset.method === item.method) {
+            opt.classList.add('active');
+            selectedMethod = item.method;
+          }
+        });
         historyPanel.classList.remove('active');
       });
       
@@ -930,6 +1003,13 @@
       
       historyCard.addEventListener('click', () => {
         input.value = item.url;
+        methodOptions.forEach(opt => {
+          opt.classList.remove('active');
+          if (opt.dataset.method === item.method) {
+            opt.classList.add('active');
+            selectedMethod = item.method;
+          }
+        });
         closeHistoryPage();
       });
       
@@ -949,7 +1029,13 @@
   }
 
   function toggleHistoryPanel() {
-    historyPanel.classList.toggle('active');
+    if (historyPanel.classList.contains('active')) {
+      historyPanel.classList.remove('active');
+      return;
+    }
+    
+    renderHistory();
+    historyPanel.classList.add('active');
   }
 
   function openHistoryPage() {
@@ -988,14 +1074,6 @@
       }
     }
   }
-
-  document.addEventListener('click', (e) => {
-    if (historyPanel.classList.contains('active') && 
-        !historyBtn.contains(e.target) && 
-        !historyPanel.contains(e.target)) {
-      historyPanel.classList.remove('active');
-    }
-  });
 </script>
 </body>
 </html>
