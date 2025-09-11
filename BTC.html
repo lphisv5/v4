@@ -87,7 +87,9 @@ body{
   font-size: 1.2rem;
   cursor: pointer;
   transition: transform 0.3s;
-  position: relative;
+  position: fixed;
+  top: 20px;
+  right: 70px;
   z-index: 10001;
 }
 
@@ -303,29 +305,33 @@ canvas{margin-top:0.8rem;background: rgba(0,0,0,0.15);border-radius:10px;padding
     top: 15px;
     right: 15px;
   }
+  
+  .theme-toggle {
+    top: 15px;
+    right: 65px;
+  }
 }
 
-.real-time-indicator {
-  font-size: 0.8rem;
-  color: var(--accent-color);
-  animation: pulse 1s infinite;
-  margin-left: 0.5rem;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+@media (min-width: 769px) {
+  .theme-toggle {
+    position: fixed;
+    top: 25px;
+    right: 70px;
+  }
+  
+  .hamburger {
+    top: 25px;
+    right: 25px;
+  }
 }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1 id="refresh-title"><i class="fab fa-bitcoin"></i> BTC Dashboard <span class="real-time-indicator">LIVE</span></h1>
+  <h1 id="refresh-title"><i class="fab fa-bitcoin"></i> BTC Dashboard</h1>
   <div class="header-info">
     <div class="last-updated" id="last-updated">Last updated: --:--:--</div>
-    <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
   </div>
 </div>
 
@@ -342,6 +348,8 @@ canvas{margin-top:0.8rem;background: rgba(0,0,0,0.15);border-radius:10px;padding
   <div></div>
   <div></div>
 </div>
+
+<button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
 
 <div class="sidebar" id="sidebar">
   <div class="tab-buttons">
@@ -379,8 +387,8 @@ const lastUpdatedEl = document.getElementById('last-updated');
 const themeToggle = document.getElementById('theme-toggle');
 const searchInput = document.getElementById('search-currency');
 const hamburger = document.getElementById('hamburger');
-const refreshTitle = document.getElementById('refresh-title');
 const errorMessage = document.getElementById('error-message');
+const refreshTitle = document.getElementById('refresh-title');
 
 let previousRates={};
 let charts={};
@@ -389,6 +397,7 @@ let allCurrencies = [];
 let darkMode = true;
 let updateInterval;
 
+// Theme toggle functionality
 themeToggle.addEventListener('click', () => {
   darkMode = !darkMode;
   if (darkMode) {
@@ -402,14 +411,12 @@ themeToggle.addEventListener('click', () => {
   }
 });
 
+// Refresh when clicking on title
 refreshTitle.addEventListener('click', () => {
   fetchRates();
-  refreshTitle.style.transform = 'scale(0.95)';
-  setTimeout(() => {
-    refreshTitle.style.transform = 'scale(1)';
-  }, 300);
 });
 
+// Update chart colors based on theme
 function updateChartColors(theme) {
   for (let currency in charts) {
     if (charts[currency]) {
@@ -420,6 +427,7 @@ function updateChartColors(theme) {
   }
 }
 
+// Search functionality
 searchInput.addEventListener('input', (e) => {
   const searchTerm = e.target.value.toLowerCase();
   const cards = document.querySelectorAll('.rate-card');
@@ -459,6 +467,7 @@ function notifySidebar(currency, value, type, changePercent){
                  <div>${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%</div>`;
   sidebarNotifications.prepend(n);
   
+  // Limit notifications to 50 items
   if(sidebarNotifications.children.length > 50) {
     sidebarNotifications.removeChild(sidebarNotifications.lastChild);
   }
@@ -488,7 +497,7 @@ function hideError() {
 
 async function fetchRates(){
   try{
-    const res=await fetch(apiURL + '&t=' + new Date().getTime());
+    const res=await fetch(apiURL);
     if(!res.ok) throw new Error('API response not OK');
     
     const data=await res.json();
@@ -500,6 +509,7 @@ async function fetchRates(){
     sidebarTableBody.innerHTML='';
     allCurrencies = Object.keys(rates);
     
+    // Store previous values for percentage calculation
     const currentPreviousRates = {...previousRates};
     
     for(let currency in rates){
@@ -509,6 +519,7 @@ async function fetchRates(){
       let card=document.getElementById(currency);
       let changePercent = 0;
       
+      // Calculate percentage change
       if (currentPreviousRates[currency] !== undefined) {
         changePercent = ((value - currentPreviousRates[currency]) / currentPreviousRates[currency]) * 100;
       }
@@ -523,6 +534,7 @@ async function fetchRates(){
                         <canvas id="chart-${currency}" height="100"></canvas>`;
         ratesContainer.appendChild(card);
 
+        // Initialize chart for this currency
         chartData[currency]={
           labels:[new Date().toLocaleTimeString()],
           datasets:[{
@@ -576,6 +588,7 @@ async function fetchRates(){
           notifySidebar(currency, value, type, changePercent);
         }
 
+        // Update chart for this currency
         const chart=charts[currency];
         const now=new Date().toLocaleTimeString();
         chart.data.labels.push(now);
@@ -622,7 +635,7 @@ document.addEventListener('touchend', e => {
 }, false);
 
 function handleSwipe() {
-  if (Math.abs(touchEndX - touchStartX) < 50) return;
+if (Math.abs(touchEndX - touchStartX) < 50) return;
   
   if (touchEndX > touchStartX && touchStartX < 50) {
     sidebar.classList.add('open');
@@ -637,7 +650,8 @@ document.addEventListener('click', (e) => {
   if (sidebar.classList.contains('open') && 
       !sidebar.contains(e.target) && 
       e.target !== hamburger && 
-      !hamburger.contains(e.target)) {
+      !hamburger.contains(e.target) &&
+      e.target !== themeToggle) {
     sidebar.classList.remove('open');
     hamburger.classList.remove('open');
   }
