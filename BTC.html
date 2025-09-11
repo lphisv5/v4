@@ -61,6 +61,12 @@ body{
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.header h1:hover {
+  transform: scale(1.05);
 }
 
 .header-info {
@@ -81,6 +87,8 @@ body{
   font-size: 1.2rem;
   cursor: pointer;
   transition: transform 0.3s;
+  position: relative;
+  z-index: 10001;
 }
 
 .theme-toggle:hover {
@@ -265,22 +273,6 @@ canvas{margin-top:0.8rem;background: rgba(0,0,0,0.15);border-radius:10px;padding
   color: var(--down-color);
 }
 
-.refresh-btn {
-  background: var(--accent-color);
-  color: #000;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
-  margin-left: 1rem;
-}
-
-.refresh-btn:hover {
-  background: #ffed4e;
-}
-
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
@@ -312,15 +304,27 @@ canvas{margin-top:0.8rem;background: rgba(0,0,0,0.15);border-radius:10px;padding
     right: 15px;
   }
 }
+
+.real-time-indicator {
+  font-size: 0.8rem;
+  color: var(--accent-color);
+  animation: pulse 1s infinite;
+  margin-left: 0.5rem;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1><i class="fab fa-bitcoin"></i> BTC Dashboard</h1>
+  <h1 id="refresh-title"><i class="fab fa-bitcoin"></i> BTC Dashboard <span class="real-time-indicator">LIVE</span></h1>
   <div class="header-info">
     <div class="last-updated" id="last-updated">Last updated: --:--:--</div>
-    <button class="refresh-btn" id="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh</button>
     <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
   </div>
 </div>
@@ -375,7 +379,7 @@ const lastUpdatedEl = document.getElementById('last-updated');
 const themeToggle = document.getElementById('theme-toggle');
 const searchInput = document.getElementById('search-currency');
 const hamburger = document.getElementById('hamburger');
-const refreshBtn = document.getElementById('refresh-btn');
+const refreshTitle = document.getElementById('refresh-title');
 const errorMessage = document.getElementById('error-message');
 
 let previousRates={};
@@ -385,7 +389,6 @@ let allCurrencies = [];
 let darkMode = true;
 let updateInterval;
 
-// Theme toggle functionality
 themeToggle.addEventListener('click', () => {
   darkMode = !darkMode;
   if (darkMode) {
@@ -399,7 +402,14 @@ themeToggle.addEventListener('click', () => {
   }
 });
 
-// Update chart colors based on theme
+refreshTitle.addEventListener('click', () => {
+  fetchRates();
+  refreshTitle.style.transform = 'scale(0.95)';
+  setTimeout(() => {
+    refreshTitle.style.transform = 'scale(1)';
+  }, 300);
+});
+
 function updateChartColors(theme) {
   for (let currency in charts) {
     if (charts[currency]) {
@@ -410,7 +420,6 @@ function updateChartColors(theme) {
   }
 }
 
-// Search functionality
 searchInput.addEventListener('input', (e) => {
   const searchTerm = e.target.value.toLowerCase();
   const cards = document.querySelectorAll('.rate-card');
@@ -428,10 +437,6 @@ searchInput.addEventListener('input', (e) => {
 hamburger.addEventListener('click',()=>{
   sidebar.classList.toggle('open');
   hamburger.classList.toggle('open');
-});
-
-refreshBtn.addEventListener('click', () => {
-  fetchRates();
 });
 
 document.getElementById('tab-table').addEventListener('click',()=>{
@@ -454,7 +459,6 @@ function notifySidebar(currency, value, type, changePercent){
                  <div>${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%</div>`;
   sidebarNotifications.prepend(n);
   
-  // Limit notifications to 50 items
   if(sidebarNotifications.children.length > 50) {
     sidebarNotifications.removeChild(sidebarNotifications.lastChild);
   }
@@ -484,7 +488,7 @@ function hideError() {
 
 async function fetchRates(){
   try{
-    const res=await fetch(apiURL);
+    const res=await fetch(apiURL + '&t=' + new Date().getTime());
     if(!res.ok) throw new Error('API response not OK');
     
     const data=await res.json();
@@ -496,7 +500,6 @@ async function fetchRates(){
     sidebarTableBody.innerHTML='';
     allCurrencies = Object.keys(rates);
     
-    // Store previous values for percentage calculation
     const currentPreviousRates = {...previousRates};
     
     for(let currency in rates){
@@ -506,7 +509,6 @@ async function fetchRates(){
       let card=document.getElementById(currency);
       let changePercent = 0;
       
-      // Calculate percentage change
       if (currentPreviousRates[currency] !== undefined) {
         changePercent = ((value - currentPreviousRates[currency]) / currentPreviousRates[currency]) * 100;
       }
@@ -521,7 +523,6 @@ async function fetchRates(){
                         <canvas id="chart-${currency}" height="100"></canvas>`;
         ratesContainer.appendChild(card);
 
-        // Initialize chart for this currency
         chartData[currency]={
           labels:[new Date().toLocaleTimeString()],
           datasets:[{
@@ -575,7 +576,6 @@ async function fetchRates(){
           notifySidebar(currency, value, type, changePercent);
         }
 
-        // Update chart for this currency
         const chart=charts[currency];
         const now=new Date().toLocaleTimeString();
         chart.data.labels.push(now);
@@ -602,16 +602,13 @@ async function fetchRates(){
   } catch(err){
     console.error('Error fetching rates:', err);
     showError();
-    // In case of error, try again after 5 seconds
-    setTimeout(fetchRates, 5000);
+    setTimeout(fetchRates, 1000);
   }
 }
 
-// Initial fetch
 fetchRates();
-updateInterval = setInterval(fetchRates, 10000);
+updateInterval = setInterval(fetchRates, 1000);
 
-// Swipe detection for mobile
 let touchStartX = 0;
 let touchEndX = 0;
 
@@ -625,21 +622,17 @@ document.addEventListener('touchend', e => {
 }, false);
 
 function handleSwipe() {
-  // Minimum swipe distance
   if (Math.abs(touchEndX - touchStartX) < 50) return;
   
   if (touchEndX > touchStartX && touchStartX < 50) {
-    // Swipe right to open sidebar
     sidebar.classList.add('open');
     hamburger.classList.add('open');
   } else if (touchEndX < touchStartX) {
-    // Swipe left to close sidebar
     sidebar.classList.remove('open');
     hamburger.classList.remove('open');
   }
 }
 
-// Close sidebar when clicking outside
 document.addEventListener('click', (e) => {
   if (sidebar.classList.contains('open') && 
       !sidebar.contains(e.target) && 
@@ -650,14 +643,13 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Handle visibility change - pause updates when tab is not visible
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     clearInterval(updateInterval);
   } else {
     clearInterval(updateInterval);
-    updateInterval = setInterval(fetchRates, 10000);
-    fetchRates(); // Update immediately when returning to tab
+    updateInterval = setInterval(fetchRates, 1000);
+    fetchRates();
   }
 });
 </script>
