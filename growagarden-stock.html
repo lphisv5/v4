@@ -305,6 +305,23 @@
       .category-header { font-size: clamp(1.2rem, 2vw, 1.3rem); }
       .item img, .item .emoji { width: clamp(44px, 5vw, 52px); height: clamp(44px, 5vw, 52px); }
     }
+
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: var(--radius);
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
   </style>
 </head>
 <body>
@@ -330,6 +347,9 @@
 
     let data = {}, current = '__all__';
     let countdowns = {};
+    let imageCache = new Map();
+    let lastUpdated = 0;
+    const CACHE_DURATION = 10000;
 
     function cap(s) {
       return s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ');
@@ -358,6 +378,10 @@
     }
 
     function loadImage(url, altText) {
+      if (imageCache.has(url)) {
+        return Promise.resolve(imageCache.get(url).cloneNode(true));
+      }
+
       return new Promise(resolve => {
         const img = new Image();
         img.src = url || PLACEHOLDER_IMG;
@@ -365,7 +389,10 @@
         img.width = clamp(40, 6, 48);
         img.height = clamp(40, 6, 48);
         img.style.objectFit = 'contain';
-        img.onload = () => resolve(img);
+        img.onload = () => {
+          imageCache.set(url, img);
+          resolve(img.cloneNode(true));
+        };
         img.onerror = () => {
           const placeholder = new Image();
           placeholder.src = PLACEHOLDER_IMG;
@@ -373,7 +400,8 @@
           placeholder.width = clamp(40, 6, 48);
           placeholder.height = clamp(40, 6, 48);
           placeholder.style.objectFit = 'contain';
-          resolve(placeholder);
+          imageCache.set(url, placeholder);
+          resolve(placeholder.cloneNode(true));
         };
       });
     }
@@ -445,6 +473,21 @@
       });
     }
 
+    function createSkeletonItems(count) {
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < count; i++) {
+        const item = document.createElement('div');
+        item.className = 'item skeleton';
+        item.innerHTML = `
+          <div class="emoji skeleton"></div>
+          <span class="name skeleton" style="height: 20px; width: 70%;"></span>
+          <span class="quantity skeleton" style="height: 20px; width: 20%;"></span>
+        `;
+        fragment.appendChild(item);
+      }
+      return fragment;
+    }
+
     async function renderCategory(cat) {
       const cont = document.getElementById('content');
       let div = cont.querySelector(`.category[data-cat="${cat}"]`);
@@ -461,8 +504,8 @@
         div.dataset.cat = cat;
         cont.appendChild(div);
       }
+      
       div.innerHTML = '';
-
       const hdr = document.createElement('div');
       hdr.className = 'category-header';
       hdr.innerHTML = `<span>${cat === '__all__' ? 'All' : cap(cat)} (Total: ${total})</span>
@@ -470,34 +513,7 @@
 
       const itmDiv = document.createElement('div');
       itmDiv.className = 'items';
-
-      const images = await Promise.all(items.map(i => loadImage(i.image_url, i.name)));
-
-      items.forEach((i, idx) => {
-        const it = document.createElement('div');
-        it.className = 'item';
-
-        const img = images[idx];
-        if (img.src === PLACEHOLDER_IMG) {
-          const emojiDiv = document.createElement('div');
-          emojiDiv.className = 'emoji';
-          emojiDiv.textContent = getEmojiByName(i.name);
-          it.appendChild(emojiDiv);
-        } else {
-          it.appendChild(img);
-        }
-
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'name';
-        nameSpan.textContent = i.name;
-
-        const qtySpan = document.createElement('span');
-        qtySpan.className = 'quantity';
-        qtySpan.textContent = i.quantity;
-
-        it.append(nameSpan, qtySpan);
-        itmDiv.appendChild(it);
-      });
+      itmDiv.appendChild(createSkeletonItems(items.length || 5));
 
       hdr.onclick = () => {
         itmDiv.style.display = itmDiv.style.display === 'none' ? 'grid' : 'none';
@@ -505,6 +521,37 @@
 
       div.appendChild(hdr);
       div.appendChild(itmDiv);
+
+      setTimeout(async () => {
+        const images = await Promise.all(items.map(i => loadImage(i.image_url, i.name)));
+        
+        itmDiv.innerHTML = '';
+        items.forEach((i, idx) => {
+          const it = document.createElement('div');
+          it.className = 'item';
+
+          const img = images[idx];
+          if (img.src === PLACEHOLDER_IMG) {
+            const emojiDiv = document.createElement('div');
+            emojiDiv.className = 'emoji';
+            emojiDiv.textContent = getEmojiByName(i.name);
+            it.appendChild(emojiDiv);
+          } else {
+            it.appendChild(img);
+          }
+
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'name';
+          nameSpan.textContent = i.name;
+
+          const qtySpan = document.createElement('span');
+          qtySpan.className = 'quantity';
+          qtySpan.textContent = i.quantity;
+
+          it.append(nameSpan, qtySpan);
+          itmDiv.appendChild(it);
+        });
+      }, 0);
     }
 
     async function render() {
@@ -524,8 +571,8 @@
         showNotification('Failed to load data', 'error');
       }
 
-      const lastUpdated = new Date().toLocaleString();
-      document.getElementById('status').textContent = `Last updated: ${lastUpdated}`;
+      const lastUpdatedTime = new Date().toLocaleString();
+      document.getElementById('status').textContent = `Last updated: ${lastUpdatedTime}`;
     }
 
     function updateRestockDisplays() {
@@ -553,33 +600,36 @@
           if (countdowns[cat] <= 0 && !refreshed[cat]) {
             refreshed[cat] = true;
             try {
-              const res = await fetch(API, {
-                headers: { 'JStudio-key': JSTUDIO_KEY }
-              });
-              if (!res.ok) throw new Error(`API request failed with status ${res.status}`);
+              if (Date.now() - lastUpdated > CACHE_DURATION) {
+                const res = await fetch(API, {
+                  headers: { 'JStudio-key': JSTUDIO_KEY }
+                });
+                if (!res.ok) throw new Error(`API request failed with status ${res.status}`);
 
-              const json = await res.json();
+                const json = await res.json();
 
-              const mapStockArray = arr => arr.map(i => ({
-                name: i.display_name || i.item_id,
-                quantity: i.quantity ?? 'N/A',
-                image_url: i.icon || null,
-                end_unix: i.end_date_unix || null,
-                start_unix: i.start_date_unix || null,
-              }));
+                const mapStockArray = arr => arr.map(i => ({
+                  name: i.display_name || i.item_id,
+                  quantity: i.quantity ?? 'N/A',
+                  image_url: i.icon || null,
+                  end_unix: i.end_date_unix || null,
+                  start_unix: i.start_date_unix || null,
+                }));
 
-              const newItems = mapStockArray(json[`${cat}_stock`] || (cat === 'travelingmerchant' ? json[`${cat}_stock`]?.stock : []));
-              const oldJson = JSON.stringify(data[cat]?.items || []);
-              const newJson = JSON.stringify(newItems);
+                const newItems = mapStockArray(json[`${cat}_stock`] || (cat === 'travelingmerchant' ? json[`${cat}_stock`]?.stock : []));
+                const oldJson = JSON.stringify(data[cat]?.items || []);
+                const newJson = JSON.stringify(newItems);
 
-              if (newJson !== oldJson) {
-                data[cat] = { items: newItems };
-                const validEnds = newItems.map(i => i.end_unix).filter(e => e);
-                const nextEnd = validEnds.length ? Math.min(...validEnds) : null;
-                countdowns[cat] = nextEnd ? nextEnd - Math.floor(Date.now() / 1000) : 0;
-                await renderCategory(cat);
-                updateTabsVisibility();
-                showNotification(`${cap(cat)} stock updated!`, 'success');
+                if (newJson !== oldJson) {
+                  data[cat] = { items: newItems };
+                  const validEnds = newItems.map(i => i.end_unix).filter(e => e);
+                  const nextEnd = validEnds.length ? Math.min(...validEnds) : null;
+                  countdowns[cat] = nextEnd ? nextEnd - Math.floor(Date.now() / 1000) : 0;
+                  await renderCategory(cat);
+                  updateTabsVisibility();
+                  showNotification(`${cap(cat)} stock updated!`, 'success');
+                  lastUpdated = Date.now();
+                }
               }
             } catch (e) {
               console.error(`Failed to auto-refresh "${cat}":`, e);
@@ -702,6 +752,14 @@
         const statusEl = document.getElementById('status');
         statusEl.textContent = 'Loading data...';
 
+        const categories = ['seed', 'gear', 'egg', 'cosmetic', 'eventshop', 'travelingmerchant'];
+        data = Object.fromEntries(categories.map(cat => [cat, { items: [] }]));
+        buildTabs();
+        
+        const contentDiv = document.getElementById('content');
+        contentDiv.innerHTML = '<div class="category"><div class="category-header">Loading...</div><div class="items"></div></div>';
+        contentDiv.querySelector('.items').appendChild(createSkeletonItems(8));
+
         const res = await fetch(API, {
           headers: { 'JStudio-key': JSTUDIO_KEY }
         });
@@ -711,8 +769,7 @@
 
         data = {};
         countdowns = {};
-
-        const categories = ['seed', 'gear', 'egg', 'cosmetic', 'eventshop', 'travelingmerchant'];
+        lastUpdated = Date.now();
 
         categories.forEach(cat => {
           const rawItems = json[`${cat}_stock`]?.stock || json[`${cat}_stock`] || [];
