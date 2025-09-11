@@ -80,6 +80,11 @@ body{
   color: var(--text-color);
   font-size: 1.2rem;
   cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.theme-toggle:hover {
+  transform: rotate(30deg);
 }
 
 .hamburger{
@@ -95,6 +100,10 @@ body{
   z-index:10000;
 }
 .hamburger div{height:4px;background:var(--accent-color);border-radius:2px;transition:0.3s;}
+
+.hamburger.open div:nth-child(1){transform:rotate(45deg) translate(8px,8px);}
+.hamburger.open div:nth-child(2){opacity:0;}
+.hamburger.open div:nth-child(3){transform:rotate(-45deg) translate(8px,-8px);}
 
 .sidebar{
   position:fixed;
@@ -246,6 +255,32 @@ canvas{margin-top:0.8rem;background: rgba(0,0,0,0.15);border-radius:10px;padding
   margin: 1rem;
 }
 
+.error-message {
+  display: none;
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255,0,0,0.2);
+  border-radius: 8px;
+  margin: 1rem;
+  color: var(--down-color);
+}
+
+.refresh-btn {
+  background: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+  margin-left: 1rem;
+}
+
+.refresh-btn:hover {
+  background: #ffed4e;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
@@ -271,6 +306,11 @@ canvas{margin-top:0.8rem;background: rgba(0,0,0,0.15);border-radius:10px;padding
   .mobile-warning {
     display: block;
   }
+  
+  .hamburger {
+    top: 15px;
+    right: 15px;
+  }
 }
 </style>
 </head>
@@ -280,12 +320,17 @@ canvas{margin-top:0.8rem;background: rgba(0,0,0,0.15);border-radius:10px;padding
   <h1><i class="fab fa-bitcoin"></i> BTC Dashboard</h1>
   <div class="header-info">
     <div class="last-updated" id="last-updated">Last updated: --:--:--</div>
+    <button class="refresh-btn" id="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh</button>
     <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
   </div>
 </div>
 
 <div class="mobile-warning">
   <i class="fas fa-info-circle"></i> Swipe left to right to open sidebar
+</div>
+
+<div class="error-message" id="error-message">
+  <i class="fas fa-exclamation-triangle"></i> Connection error. Retrying...
 </div>
 
 <div class="hamburger" id="hamburger">
@@ -329,12 +374,16 @@ const sidebarNotifications=document.getElementById('sidebar-notifications');
 const lastUpdatedEl = document.getElementById('last-updated');
 const themeToggle = document.getElementById('theme-toggle');
 const searchInput = document.getElementById('search-currency');
+const hamburger = document.getElementById('hamburger');
+const refreshBtn = document.getElementById('refresh-btn');
+const errorMessage = document.getElementById('error-message');
 
 let previousRates={};
 let charts={};
 let chartData={};
 let allCurrencies = [];
 let darkMode = true;
+let updateInterval;
 
 // Theme toggle functionality
 themeToggle.addEventListener('click', () => {
@@ -342,11 +391,24 @@ themeToggle.addEventListener('click', () => {
   if (darkMode) {
     document.body.classList.remove('light-mode');
     themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    updateChartColors('dark');
   } else {
     document.body.classList.add('light-mode');
     themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    updateChartColors('light');
   }
 });
+
+// Update chart colors based on theme
+function updateChartColors(theme) {
+  for (let currency in charts) {
+    if (charts[currency]) {
+      charts[currency].data.datasets[0].borderColor = theme === 'dark' ? '#00ffea' : '#6c5ce7';
+      charts[currency].data.datasets[0].backgroundColor = theme === 'dark' ? 'rgba(0,255,234,0.2)' : 'rgba(108, 92, 231, 0.2)';
+      charts[currency].update();
+    }
+  }
+}
 
 // Search functionality
 searchInput.addEventListener('input', (e) => {
@@ -363,7 +425,14 @@ searchInput.addEventListener('input', (e) => {
   });
 });
 
-document.getElementById('hamburger').addEventListener('click',()=>{sidebar.classList.toggle('open');});
+hamburger.addEventListener('click',()=>{
+  sidebar.classList.toggle('open');
+  hamburger.classList.toggle('open');
+});
+
+refreshBtn.addEventListener('click', () => {
+  fetchRates();
+});
 
 document.getElementById('tab-table').addEventListener('click',()=>{
   document.getElementById('tab-content-table').style.display='block';
@@ -384,7 +453,17 @@ function notifySidebar(currency, value, type, changePercent){
   n.innerHTML = `<div><i class="fas fa-${type === 'up' ? 'arrow-up' : 'arrow-down'}"></i>${currency}: ${parseFloat(value).toLocaleString()}</div>
                  <div>${changePercent > 0 ? '+' : ''}${changePercent.toFixed(2)}%</div>`;
   sidebarNotifications.prepend(n);
-  setTimeout(()=>{n.remove();},5000);
+  
+  // Limit notifications to 50 items
+  if(sidebarNotifications.children.length > 50) {
+    sidebarNotifications.removeChild(sidebarNotifications.lastChild);
+  }
+  
+  setTimeout(()=>{
+    if(n.parentElement === sidebarNotifications) {
+      n.remove();
+    }
+  }, 10000);
 }
 
 function updateLastUpdated() {
@@ -392,13 +471,27 @@ function updateLastUpdated() {
   lastUpdatedEl.textContent = `Last updated: ${now.toLocaleTimeString()}`;
 }
 
+function showError() {
+  errorMessage.style.display = 'block';
+  setTimeout(() => {
+    errorMessage.style.display = 'none';
+  }, 5000);
+}
+
+function hideError() {
+  errorMessage.style.display = 'none';
+}
+
 async function fetchRates(){
   try{
     const res=await fetch(apiURL);
+    if(!res.ok) throw new Error('API response not OK');
+    
     const data=await res.json();
     const rates=data.data.rates;
     
     if(loader.style.display!=='none'){loader.style.display='none';}
+    hideError();
 
     sidebarTableBody.innerHTML='';
     allCurrencies = Object.keys(rates);
@@ -508,14 +601,15 @@ async function fetchRates(){
     updateLastUpdated();
   } catch(err){
     console.error('Error fetching rates:', err);
-    // In case of error, try again after 2 seconds
-    setTimeout(fetchRates, 2000);
+    showError();
+    // In case of error, try again after 5 seconds
+    setTimeout(fetchRates, 5000);
   }
 }
 
 // Initial fetch
 fetchRates();
-setInterval(fetchRates, 10000);
+updateInterval = setInterval(fetchRates, 10000);
 
 // Swipe detection for mobile
 let touchStartX = 0;
@@ -537,11 +631,35 @@ function handleSwipe() {
   if (touchEndX > touchStartX && touchStartX < 50) {
     // Swipe right to open sidebar
     sidebar.classList.add('open');
+    hamburger.classList.add('open');
   } else if (touchEndX < touchStartX) {
     // Swipe left to close sidebar
     sidebar.classList.remove('open');
+    hamburger.classList.remove('open');
   }
 }
+
+// Close sidebar when clicking outside
+document.addEventListener('click', (e) => {
+  if (sidebar.classList.contains('open') && 
+      !sidebar.contains(e.target) && 
+      e.target !== hamburger && 
+      !hamburger.contains(e.target)) {
+    sidebar.classList.remove('open');
+    hamburger.classList.remove('open');
+  }
+});
+
+// Handle visibility change - pause updates when tab is not visible
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    clearInterval(updateInterval);
+  } else {
+    clearInterval(updateInterval);
+    updateInterval = setInterval(fetchRates, 10000);
+    fetchRates(); // Update immediately when returning to tab
+  }
+});
 </script>
 </body>
 </html>
