@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YANZZ - GEN KEY</title>
+    <title>YANZZ KEY - ระบบจัดการคีย์และประกาศ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -90,14 +90,6 @@
             background: linear-gradient(90deg, var(--primary-color), var(--success-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-        nav#authNav button {
-            margin-left: 10px;
-            padding: 10px 18px;
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            font-size: 0.95rem;
-            border-radius: 8px;
         }
         #tabBar {
             display: flex;
@@ -186,9 +178,6 @@
             color: #fff;
             font-size: 1rem;
             font-weight: 500;
-        }
-        #keySection button#cmdSubmit {
-            background: linear-gradient(135deg, var(--success-color), #4895ef);
         }
         #generatedKey {
             font-size: 1.1rem;
@@ -411,12 +400,6 @@
             font-size: 1rem;
             margin-top: 10px;
         }
-        .lockout-message {
-            color: var(--danger-color);
-            text-align: center;
-            margin-top: 16px;
-            font-size: 0.95rem;
-        }
 
         /* Animations */
         @keyframes fadeIn {
@@ -470,29 +453,11 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--secondary-color);
         }
-
-        /* Loading Spinner */
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            display: inline-block;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
     <header>
         <h1><i class="fas fa-key"></i> YANZZ KEY</h1>
-        <nav id="authNav">
-            <button id="loginButton"><i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ</button>
-            <button id="logoutButton" style="display: none;"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</button>
-        </nav>
     </header>
 
     <div id="tabBar">
@@ -517,8 +482,6 @@
                     </select>
                     <input type="number" id="maxUsesInput" placeholder="จำนวนครั้งใช้งาน" min="1" value="1" />
                     <button id="generateKeyButton"><i class="fas fa-plus-circle"></i> สร้างคีย์</button>
-                    <input type="text" id="cmdInput" placeholder="คำสั่ง (โหมดเจ้าของ)" style="display: none;" />
-                    <button id="cmdSubmit" style="display: none;"><i class="fas fa-paper-plane"></i> ส่งคำสั่ง</button>
                 </div>
             </div>
 
@@ -565,7 +528,7 @@
             <div class="section-header">ประกาศอัปเดต</div>
             <div class="card">
                 <textarea id="announceInput" placeholder="พิมพ์ข้อความประกาศ..."></textarea>
-                <button id="announceButton" style="display: none;"><i class="fas fa-paper-plane"></i> เผยแพร่</button>
+                <button id="announceButton"><i class="fas fa-paper-plane"></i> เผยแพร่</button>
             </div>
             
             <div class="card">
@@ -581,18 +544,6 @@
         © 2025 YANZZ KEY
     </footer>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <h3><i class="fas fa-lock"></i> เข้าสู่ระบบ (เจ้าของ)</h3>
-            <input type="password" id="ownerPasswordInput" placeholder="รหัสผ่าน" />
-            <button id="confirmLoginButton" style="background: linear-gradient(135deg, var(--success-color), #4895ef);"><i class="fas fa-check"></i> ยืนยัน</button>
-            <button id="cancelLoginButton" style="background: linear-gradient(135deg, var(--danger-color), #e63946);"><i class="fas fa-times"></i> ยกเลิก</button>
-            <div id="lockoutMessage" class="lockout-message" style="display: none;"></div>
-        </div>
-    </div>
-
-    <!-- Edit Key Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h3><i class="fas fa-edit"></i> แก้ไขคีย์</h3>
@@ -610,31 +561,7 @@
     </div>
 
     <script>
-        let isOwner = false;
-        // ใช้ SHA-256 แทน MD5 เพื่อความปลอดภัยมากขึ้น
-        const OWNER_PASSWORD_HASH = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"; // SHA-256 of "password"
         let editingKeyValue = null;
-        let failedAttempts = parseInt(localStorage.getItem("failedAttempts") || 0);
-        let lockoutUntil = localStorage.getItem("lockoutUntil") || null;
-
-        // Utility functions
-        function checkLockout() {
-            const lockoutMessage = document.getElementById("lockoutMessage");
-            if (lockoutUntil && new Date() < new Date(lockoutUntil)) {
-                isOwner = false;
-                const remaining = Math.ceil((new Date(lockoutUntil) - new Date()) / 1000 / 60);
-                lockoutMessage.textContent = `ถูกล็อคชั่วคราว ลองอีกครั้งใน ${remaining} นาที`;
-                lockoutMessage.style.display = "block";
-                return true;
-            } else {
-                localStorage.removeItem("lockoutUntil");
-                localStorage.setItem("failedAttempts", "0");
-                failedAttempts = 0;
-                lockoutUntil = null;
-                lockoutMessage.style.display = "none";
-                return false;
-            }
-        }
 
         function generateRandomKey() {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -710,7 +637,6 @@
 
         // Key Management
         function createNewKey() {
-            if (!isOwner) return showNotification("ต้องเป็นโหมดเจ้าของ", "error");
             const allKeys = loadKeys();
             let newValue = generateRandomKey();
             while (allKeys.some(k => k.value === newValue)) {
@@ -758,17 +684,16 @@
                     <td>${item.remainingUses} / ${item.maxUses}</td>
                     <td>${new Date(item.created).toLocaleString("th-TH")}</td>
                     <td>${expiry.toLocaleDateString("th-TH")}</td>
-                    <td>${isOwner ? `
+                    <td>
                         <button class="action-btn" onclick="openEditModal('${item.value}')"><i class="fas fa-edit"></i> แก้ไข</button>
                         <button class="action-btn" onclick="deleteKey('${item.value}')" style="background-color: var(--danger-color);"><i class="fas fa-trash"></i> ลบ</button>
-                    ` : '-'}</td>
+                    </td>
                 `;
                 keyTableBody.appendChild(tr);
             });
         }
 
         window.openEditModal = function(keyValue) {
-            if (!isOwner) return;
             const allKeys = loadKeys();
             const item = allKeys.find(i => i.value === keyValue);
             if (!item) return;
@@ -780,7 +705,6 @@
         };
 
         window.deleteKey = function(keyValue) {
-            if (!isOwner) return;
             if (!confirm(`คุณแน่ใจว่าต้องการลบคีย์ ${keyValue} นี้ใช่หรือไม่?`)) return;
             
             const allKeys = loadKeys();
@@ -815,7 +739,6 @@
             editingKeyValue = null;
         }
 
-        // Verification
         function verifyKey() {
             const input = document.getElementById("verifyKeyInput").value.trim().toUpperCase();
             if (!input) return showNotification("กรุณาป้อนคีย์", "error");
@@ -846,7 +769,6 @@
             document.getElementById("verifyKeyInput").value = "";
         }
 
-        // Export CSV
         function exportToCSV() {
             const allKeys = loadKeys();
             if (!allKeys.length) {
@@ -870,58 +792,6 @@
             logActivity("ส่งออกคีย์เป็น CSV");
         }
 
-        // Command processor
-        function processCommand(cmd) {
-            if (!isOwner) return;
-            const parts = cmd.trim().toLowerCase().split(" ");
-            const action = parts[0];
-            const allKeys = loadKeys();
-            if (action === "create") {
-                createNewKey();
-            } else if (action === "delete" && parts[1]) {
-                deleteKey(parts[1].toUpperCase());
-            } else if ((action === "setexpiry" || action === "expire") && parts[1] && parts[2]) {
-                const keyVal = parts[1].toUpperCase();
-                const days = parseInt(parts[2]);
-                const item = allKeys.find(i => i.value === keyVal);
-                if (item && !isNaN(days) && days > 0) {
-                    const ext = new Date();
-                    ext.setDate(ext.getDate() + days);
-                    item.expiry = ext.toISOString();
-                    saveKeys(allKeys);
-                    logActivity(`เปลี่ยนวันหมดอายุ ${keyVal} → ${ext.toLocaleDateString("th-TH")}`);
-                    renderKeyTable();
-                } else {
-                    showNotification("คำสั่งไม่ถูกต้องหรือคีย์ไม่พบ", "error");
-                }
-            } else if ((action === "setuses" || action === "uses") && parts[1] && parts[2]) {
-                const keyVal = parts[1].toUpperCase();
-                const uses = parseInt(parts[2]);
-                const item = allKeys.find(i => i.value === keyVal);
-                if (item && !isNaN(uses) && uses > 0) {
-                    item.maxUses = uses;
-                    item.remainingUses = Math.min(item.remainingUses, uses);
-                    saveKeys(allKeys);
-                    logActivity(`เปลี่ยนจำนวนครั้ง ${keyVal} → ${uses}`);
-                    renderKeyTable();
-                } else {
-                    showNotification("คำสั่งไม่ถูกต้องหรือคีย์ไม่พบ", "error");
-                }
-            } else if (action === "export") {
-                exportToCSV();
-            } else if (action === "clear" && parts[1] === "logs") {
-                localStorage.setItem("activityLogs", "[]");
-                document.getElementById("notifySection").innerHTML = "<p><em>บันทึกกิจกรรมจะปรากฏที่นี่</em></p>";
-                logActivity("ล้างบันทึกกิจกรรม");
-            } else if (action === "help") {
-                showNotification("คำสั่งที่ใช้ได้: create, delete [key], setexpiry [key] [days], setuses [key] [uses], export, clear logs", "info");
-            } else {
-                showNotification("คำสั่งไม่ถูกต้อง พิมพ์ 'help' เพื่อดูคำสั่งทั้งหมด", "error");
-            }
-            document.getElementById("cmdInput").value = "";
-        }
-
-        // Announcements
         function renderAnnouncements() {
             const arr = loadAnnouncements();
             const announceList = document.getElementById("announceList");
@@ -934,7 +804,6 @@
         }
 
         function addAnnouncement() {
-            if (!isOwner) return;
             const text = document.getElementById("announceInput").value.trim();
             if (!text) return showNotification("กรุณากรอกข้อความประกาศ", "error");
             const time = new Date().toLocaleString("th-TH");
@@ -947,43 +816,7 @@
             document.getElementById("announceInput").value = "";
         }
 
-        // SHA-256 Function (แทนที่ MD5)
-        async function sha256(message) {
-            // encode as UTF-8
-            const msgBuffer = new TextEncoder().encode(message);                    
-            // hash the message
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            // convert ArrayBuffer to Array
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            // convert bytes to hex string
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
-        }
-
-        // UI Updates
-        function updateOwnerUI() {
-            document.getElementById("cmdInput").style.display = isOwner ? "block" : "none";
-            document.getElementById("cmdSubmit").style.display = isOwner ? "block" : "none";
-            document.getElementById("announceButton").style.display = isOwner ? "block" : "none";
-            document.getElementById("generateKeyButton").disabled = !isOwner;
-            renderKeyTable();
-        }
-
-        function toggleAuthButtons() {
-            document.getElementById("loginButton").style.display = isOwner ? "none" : "inline-block";
-            document.getElementById("logoutButton").style.display = isOwner ? "inline-block" : "none";
-            updateOwnerUI();
-        }
-
-        // Event Listeners
         document.addEventListener("DOMContentLoaded", () => {
-            // Element references
-            const loginButton = document.getElementById("loginButton");
-            const logoutButton = document.getElementById("logoutButton");
-            const loginModal = document.getElementById("loginModal");
-            const ownerPasswordInput = document.getElementById("ownerPasswordInput");
-            const confirmLoginButton = document.getElementById("confirmLoginButton");
-            const cancelLoginButton = document.getElementById("cancelLoginButton");
             const editModal = document.getElementById("editModal");
             const confirmEditButton = document.getElementById("confirmEditButton");
             const cancelEditButton = document.getElementById("cancelEditButton");
@@ -996,22 +829,14 @@
             const generatedKeyElement = document.getElementById("generatedKey");
             const copyKeyButton = generatedKeyElement.querySelector(".copy-btn");
             const generateKeyButton = document.getElementById("generateKeyButton");
-            const cmdSubmit = document.getElementById("cmdSubmit");
             const searchInput = document.getElementById("searchInput");
             const exportCsvButton = document.getElementById("exportCsvButton");
             const verifyButton = document.getElementById("verifyButton");
             const announceButton = document.getElementById("announceButton");
 
-            // Check owner status
-            if (localStorage.getItem("isOwnerLoggedIn") === "true") {
-                isOwner = true;
-            }
-            checkLockout();
-            toggleAuthButtons();
             renderKeyTable();
             renderAnnouncements();
             
-            // Load activity logs
             const logs = loadLogs();
             const notifySection = document.getElementById("notifySection");
             notifySection.innerHTML = logs.length ? "" : "<p><em>บันทึกกิจกรรมจะปรากฏที่นี่</em></p>";
@@ -1019,56 +844,6 @@
                 const p = document.createElement("p");
                 p.textContent = txt;
                 notifySection.appendChild(p);
-            });
-
-            // Event listeners
-            loginButton.addEventListener("click", () => {
-                if (checkLockout()) return;
-                loginModal.style.display = "flex";
-                ownerPasswordInput.value = "";
-                ownerPasswordInput.focus();
-            });
-
-            confirmLoginButton.addEventListener("click", async () => {
-                const pwd = ownerPasswordInput.value.trim();
-                if (!pwd) return showNotification("กรุณากรอกรหัสผ่าน", "error");
-                
-                // ใช้ SHA-256 แทน MD5
-                const hash = await sha256(pwd);
-                if (hash === OWNER_PASSWORD_HASH) {
-                    isOwner = true;
-                    localStorage.setItem("isOwnerLoggedIn", "true");
-                    failedAttempts = 0;
-                    localStorage.setItem("failedAttempts", "0");
-                    loginModal.style.display = "none";
-                    logActivity("เข้าสู่ระบบสำเร็จ");
-                    toggleAuthButtons();
-                } else {
-                    failedAttempts++;
-                    localStorage.setItem("failedAttempts", failedAttempts);
-                    if (failedAttempts >= 3) {
-                        const until = new Date();
-                        until.setMinutes(until.getMinutes() + 5);
-                        lockoutUntil = until.toISOString();
-                        localStorage.setItem("lockoutUntil", lockoutUntil);
-                        checkLockout();
-                    } else {
-                        showNotification(`รหัสผ่านไม่ถูกต้อง (พยายามครั้งที่ ${failedAttempts}/3)`, "error");
-                    }
-                    ownerPasswordInput.value = "";
-                    ownerPasswordInput.focus();
-                }
-            });
-
-            cancelLoginButton.addEventListener("click", () => {
-                loginModal.style.display = "none";
-            });
-
-            logoutButton.addEventListener("click", () => {
-                isOwner = false;
-                localStorage.setItem("isOwnerLoggedIn", "false");
-                logActivity("ออกจากระบบ");
-                toggleAuthButtons();
             });
 
             tabKey.addEventListener("click", () => {
@@ -1101,7 +876,6 @@
             generateKeyButton.addEventListener("click", createNewKey);
             searchInput.addEventListener("input", renderKeyTable);
             exportCsvButton.addEventListener("click", exportToCSV);
-            cmdSubmit.addEventListener("click", () => processCommand(document.getElementById("cmdInput").value));
             verifyButton.addEventListener("click", verifyKey);
             announceButton.addEventListener("click", addAnnouncement);
             confirmEditButton.addEventListener("click", confirmEdit);
@@ -1120,21 +894,11 @@
                 }
             });
 
-            // Enter key support
-            ownerPasswordInput.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") confirmLoginButton.click();
-            });
-            
-            document.getElementById("cmdInput").addEventListener("keypress", (e) => {
-                if (e.key === "Enter") cmdSubmit.click();
-            });
-            
             document.getElementById("verifyKeyInput").addEventListener("keypress", (e) => {
                 if (e.key === "Enter") verifyButton.click();
             });
 
             window.addEventListener("click", (e) => {
-                if (e.target === loginModal) loginModal.style.display = "none";
                 if (e.target === editModal) editModal.style.display = "none";
             });
         });
