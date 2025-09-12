@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bob's Burgers Characters</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: white;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Magenta Orb Grid Background - Full page implementation */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: 
+                linear-gradient(to right, rgba(71,85,105,0.15) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(71,85,105,0.15) 1px, transparent 1px),
+                radial-gradient(circle at 50% 60%, rgba(236,72,153,0.15) 0%, rgba(168,85,247,0.05) 40%, transparent 70%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            color: #2c3e50;
+        }
+        
+        .header-content {
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .action-button:hover {
+            background-color: rgba(44, 62, 80, 0.1);
+        }
+        
+        .action-button svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .pagination-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .pagination-button:hover:not(:disabled) {
+            background-color: rgba(44, 62, 80, 0.1);
+        }
+        
+        .pagination-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-button svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .page-info {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .character-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .character-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .character-image-container {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+            border-bottom: 3px solid #a1c4fd;
+        }
+        
+        .character-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .character-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .character-name {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            flex-grow: 1;
+        }
+        
+        .character-gender {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .male {
+            background-color: #bbdefb;
+            color: #0d47a1;
+        }
+        
+        .female {
+            background-color: #f8bbd0;
+            color: #880e4f;
+        }
+        
+        .other {
+            background-color: #e0e0e0;
+            color: #424242;
+        }
+        
+        .character-details {
+            color: #666;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+        
+        .character-details p {
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            grid-column: 1 / -1;
+        }
+        
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2c3e50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #ffcdd2;
+            color: #b71c1c;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            grid-column: 1 / -1;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            position: relative;
+            border-bottom: 3px solid #a1c4fd;
+        }
+        
+        .modal-image-container {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+        
+        .modal-actions {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-action-button {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .modal-action-button:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .modal-name {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .modal-gender {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .modal-details {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .modal-details p {
+            margin-bottom: 15px;
+        }
+        
+        .modal-nicknames {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .modal-relatives {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        /* 404 Animation Styles */
+        .error-404-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .error-404-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .error-404-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 2002;
+        }
+        
+        .error-404-content h1 {
+            font-size: 8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        .error-404-content p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .error-404-content button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .error-404-content button:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        .character-404 {
+            position: absolute;
+            width: 100px;
+            height: 150px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><circle cx="50" cy="40" r="25" fill="%23f1c40f"/><rect x="30" y="70" width="40" height="60" fill="%233498db"/><circle cx="40" cy="35" r="5" fill="%232c3e50"/><circle cx="60" cy="35" r="5" fill="%232c3e50"/><path d="M45 50 Q50 55 55 50" stroke="%232c3e50" stroke-width="3" fill="none"/></svg>') no-repeat;
+            background-size: contain;
+            bottom: 0;
+            left: -100px;
+            z-index: 2001;
+            animation: walk 8s linear infinite;
+        }
+        
+        .flashlight {
+            position: absolute;
+            width: 50px;
+            height: 100vh;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+            bottom: 0;
+            left: -50px;
+            z-index: 2000;
+            animation: search 8s linear infinite;
+        }
+        
+        @keyframes walk {
+            0% {
+                left: -100px;
+                transform: scaleX(1);
+            }
+            45% {
+                left: calc(100% - 100px);
+                transform: scaleX(1);
+            }
+            50% {
+                left: calc(100% - 100px);
+                transform: scaleX(-1);
+            }
+            95% {
+                left: -100px;
+                transform: scaleX(-1);
+            }
+            100% {
+                left: -100px;
+                transform: scaleX(1);
+            }
+        }
+        
+        @keyframes search {
+            0% {
+                left: -50px;
+                transform: rotate(5deg);
+            }
+            45% {
+                left: calc(100% - 50px);
+                transform: rotate(5deg);
+            }
+            50% {
+                left: calc(100% - 50px);
+                transform: rotate(-5deg);
+            }
+            95% {
+                left: -50px;
+                transform: rotate(-5deg);
+            }
+            100% {
+                left: -50px;
+                transform: rotate(5deg);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            }
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #2c3e50;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .characters-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .character-image-container {
+                height: 140px;
+            }
+            
+            .modal-name {
+                font-size: 1.5rem;
+            }
+            
+            .pagination {
+                gap: 10px;
+            }
+            
+            .pagination-button svg,
+            .action-button svg {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .error-404-content h1 {
+                font-size: 5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .characters-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 10px;
+            }
+            
+            .character-image-container {
+                height: 120px;
+            }
+            
+            .page-info {
+                font-size: 1rem;
+                min-width: 120px;
+            }
+            
+            .error-404-content h1 {
+                font-size: 4rem;
+            }
+            
+            .error-404-content p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>Bob's Burgers Characters</h1>
+                <p class="subtitle">Meet the quirky characters from the beloved animated series</p>
+            </div>
+            <div class="header-actions">
+                <button class="action-button" id="discordButton" title="Join Discord">
+                    <!-- Discord Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 7V5c0-1.1.9-2 2-2h2" />
+                        <path d="M17 3h2c1.1 0 2 .9 2 2v2" />
+                        <path d="M21 17v2c0 1.1-.9 2-2 2h-2" />
+                        <path d="M7 21H5c-1.1 0-2-.9-2-2v-2" />
+                        <rect width="7" height="5" x="7" y="7" rx="1" />
+                        <rect width="7" height="5" x="10" y="12" rx="1" />
+                    </svg>
+                </button>
+                <button class="action-button" id="languageToggle" title="Toggle Language">
+                    <!-- Globe Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                        <path d="M2 12h20"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        
+        <div class="pagination">
+            <button id="firstBtn" class="pagination-button">
+                <!-- Chevrons Left SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m11 17-5-5 5-5"></path>
+                    <path d="m18 17-5-5 5-5"></path>
+                </svg>
+            </button>
+            <button id="prevBtn" class="pagination-button" disabled>
+                <!-- Chevron Left SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6"></path>
+                </svg>
+            </button>
+            <div class="page-info">
+                <span id="pageInfo">Page 1/1</span>
+            </div>
+            <button id="nextBtn" class="pagination-button">
+                <!-- Chevron Right SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"></path>
+                </svg>
+            </button>
+            <button id="lastBtn" class="pagination-button">
+                <!-- Chevrons Right SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 17 5-5-5-5"></path>
+                    <path d="m13 17 5-5-5-5"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div id="charactersContainer" class="characters-grid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading characters...</p>
+            </div>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-image-container">
+                        <img src="" alt="" class="modal-image" id="modalImage">
+                        <div class="modal-actions">
+                            <button class="modal-action-button" id="downloadButton" title="Download Image">
+                                <!-- Download Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" x2="12" y1="15" y2="3"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="close-button" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <h2 class="modal-name" id="modalName"></h2>
+                    <span class="modal-gender" id="modalGender"></span>
+                    <div class="modal-details" id="modalDetails"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 404 Error Animation -->
+        <div class="error-404-container" id="error404Container">
+            <div class="character-404"></div>
+            <div class="flashlight"></div>
+            <div class="error-404-content">
+                <h1>404</h1>
+                <p>Oops! The characters are hiding...<br>API connection failed.</p>
+                <button id="retryButton">Try Again</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Bob's Burgers Character Database &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const charactersContainer = document.getElementById('charactersContainer');
+            const firstBtn = document.getElementById('firstBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const lastBtn = document.getElementById('lastBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            const languageToggle = document.getElementById('languageToggle');
+            const discordButton = document.getElementById('discordButton');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const closeModal = document.getElementById('closeModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalName = document.getElementById('modalName');
+            const modalGender = document.getElementById('modalGender');
+            const modalDetails = document.getElementById('modalDetails');
+            const error404Container = document.getElementById('error404Container');
+            const retryButton = document.getElementById('retryButton');
+            const downloadButton = document.getElementById('downloadButton');
+            
+            // Language state
+            let currentLanguage = 'EN'; // 'EN' or 'TH'
+            
+            // Pagination variables
+            let currentPage = 1;
+            const itemsPerPage = 24;
+            let isLoading = false;
+            let currentCharacters = [];
+            let totalPages = 1;
+            let apiError = false;
+            let currentCharacterImage = '';
+            
+            // Function to fetch characters from API
+            async function fetchCharacters(skip) {
+                try {
+                    const response = await fetch(`https://bobsburgers-api.herokuapp.com/characters/?limit=24&skip=${skip}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    
+                    const characters = await response.json();
+                    apiError = false;
+                    return characters;
+                } catch (error) {
+                    console.error('Error fetching characters:', error);
+                    apiError = true;
+                    throw error;
+                }
+            }
+            
+            // Function to get total character count
+            async function getTotalCharacters() {
+                try {
+                    // This is a workaround since the API doesn't provide total count
+                    // We'll estimate based on the fact that IDs seem to go up to around 600
+                    return 600;
+                } catch (error) {
+                    console.error('Error getting total characters:', error);
+                    return 600; // Default fallback
+                }
+            }
+            
+            // Function to translate text
+            function translateText(text) {
+                if (currentLanguage === 'EN') return text;
+                
+                // Simple translation map (in a real app, this would be more comprehensive)
+                const translations = {
+                    "Male": "ชาย",
+                    "Female": "หญิง",
+                    "Occupation": "อาชีพ",
+                    "Age": "อายุ",
+                    "Hair": "ผม",
+                    "Nicknames": "ชื่อเล่น",
+                    "First Episode": "ตอนแรก",
+                    "Relatives": "ญาติ",
+                    "Relationship": "ความสัมพันธ์",
+                    "Unknown": "ไม่ทราบ",
+                    "Page": "หน้า",
+                    "Loading characters...": "กำลังโหลดตัวละคร...",
+                    "No more characters to load": "ไม่มีตัวละครเพิ่มเติม",
+                    "Error Loading Characters": "เกิดข้อผิดพลาดในการโหลดตัวละคร",
+                    "Please try again later": "กรุณาลองใหม่อีกครั้ง"
+                };
+                
+                return translations[text] || text;
+            }
+            
+            // Function to display characters with lazy loading
+            async function displayCharacters(page) {
+                if (isLoading) return;
+                
+                isLoading = true;
+                const skip = (page - 1) * itemsPerPage;
+                
+                // Show loading state
+                charactersContainer.innerHTML = `
+                    <div class="loading" style="grid-column: 1 / -1;">
+                        <div class="loading-spinner"></div>
+                        <p>${translateText('Loading characters...')}</p>
+                    </div>
+                `;
+                
+                try {
+                    const characters = await fetchCharacters(skip);
+                    currentCharacters = characters;
+                    
+                    // Update total pages
+                    const totalCharacters = await getTotalCharacters();
+                    totalPages = Math.ceil(totalCharacters / itemsPerPage);
+                    
+                    // Simulate network delay for better UX
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    charactersContainer.innerHTML = '';
+                    
+                    if (characters.length === 0) {
+                        charactersContainer.innerHTML = `
+                            <div class="loading" style="grid-column: 1 / -1;">
+                                <p>${translateText('No more characters to load')}</p>
+                            </div>
+                        `;
+                        nextBtn.disabled = true;
+                        lastBtn.disabled = true;
+                        isLoading = false;
+                        updatePagination();
+                        return;
+                    }
+                    
+                    characters.forEach((character, index) => {
+                        const characterCard = document.createElement('div');
+                        characterCard.className = 'character-card';
+                        characterCard.dataset.index = index;
+                        
+                        // Use actual image if available, otherwise generate placeholder
+                        let imageUrl;
+                        if (character.image && character.image.trim() !== '') {
+                            // Clean up the image URL (remove trailing spaces)
+                            imageUrl = character.image.trim();
+                        } else {
+                            // Generate a placeholder image with the character's name
+                            imageUrl = `https://placehold.co/300x300/${getRandomColor()}/white?text=${encodeURIComponent(character.name || 'Unknown')}`;
+                        }
+                        
+                        // Determine gender class for styling
+                        let genderClass = 'other';
+                        if (character.gender === 'Male') {
+                            genderClass = 'male';
+                        } else if (character.gender === 'Female') {
+                            genderClass = 'female';
+                        }
+                        
+                        characterCard.innerHTML = `
+                            <div class="character-image-container">
+                                <img src="${imageUrl}" alt="${character.name}" class="character-image" onerror="this.src='https://placehold.co/300x300/cccccc/white?text=No+Image'">
+                            </div>
+                            <div class="character-info">
+                                <h3 class="character-name">${character.name || 'Unknown'}</h3>
+                                <span class="character-gender ${genderClass}">
+                                    ${translateText(character.gender || 'Unknown')}
+                                </span>
+                                <div class="character-details">
+                                    ${character.occupation ? `<p><strong>${translateText('Occupation')}:</strong> ${character.occupation}</p>` : ''}
+                                    <p><strong>${translateText('First Episode')}:</strong> ${character.firstEpisode || 'Unknown'}</p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        characterCard.addEventListener('click', () => openModal(character));
+                        charactersContainer.appendChild(characterCard);
+                    });
+                    
+                    // Enable/disable buttons based on current page
+                    updateButtonStates();
+                } catch (error) {
+                    charactersContainer.innerHTML = `
+                        <div class="error">
+                            <h3>${translateText('Error Loading Characters')}</h3>
+                            <p>${error.message}</p>
+                            <p>${translateText('Please try again later')}</p>
+                        </div>
+                    `;
+                    updateButtonStates();
+                    show404Error();
+                }
+                
+                isLoading = false;
+                updatePagination();
+            }
+            
+            // Function to open modal with character details
+            function openModal(character) {
+                // Set modal content
+                let imageUrl;
+                if (character.image && character.image.trim() !== '') {
+                    imageUrl = character.image.trim();
+                    currentCharacterImage = imageUrl;
+                } else {
+                    imageUrl = `https://placehold.co/600x400/${getRandomColor()}/white?text=${encodeURIComponent(character.name || 'Unknown')}`;
+                    currentCharacterImage = imageUrl;
+                }
+                
+                modalImage.src = imageUrl;
+                modalImage.alt = character.name;
+                modalName.textContent = character.name || 'Unknown';
+                
+                // Set gender
+                let genderClass = 'other';
+                if (character.gender === 'Male') {
+                    genderClass = 'male';
+                } else if (character.gender === 'Female') {
+                    genderClass = 'female';
+                }
+                
+                modalGender.className = 'modal-gender ' + genderClass;
+                modalGender.textContent = translateText(character.gender || 'Unknown');
+                
+                // Build details content
+                let detailsHTML = '';
+                
+                if (character.occupation) {
+                    detailsHTML += `<p><strong>${translateText('Occupation')}:</strong> ${character.occupation}</p>`;
+                }
+                
+                if (character.age) {
+                    detailsHTML += `<p><strong>${translateText('Age')}:</strong> ${character.age}</p>`;
+                }
+                
+                if (character.hair) {
+                    detailsHTML += `<p><strong>${translateText('Hair')}:</strong> ${character.hair}</p>`;
+                }
+                
+                if (character.firstEpisode) {
+                    detailsHTML += `<p><strong>${translateText('First Episode')}:</strong> ${character.firstEpisode}</p>`;
+                }
+                
+                // Nicknames
+                if (character.nicknames && character.nicknames.length > 0) {
+                    detailsHTML += `
+                        <div class="modal-nicknames">
+                            <h3>${translateText('Nicknames')}:</h3>
+                            <ul>
+                                ${character.nicknames.map(nickname => `<li>${nickname}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+                
+                // Relatives
+                if (character.relatives && character.relatives.length > 0) {
+                    detailsHTML += `
+                        <div class="modal-relatives">
+                            <h3>${translateText('Relatives')}:</h3>
+                            <ul>
+                                ${character.relatives.map(relative => 
+                                    `<li><strong>${relative.name || 'Unknown'}:</strong> ${translateText(relative.relationship || 'Unknown')}</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+                
+                modalDetails.innerHTML = detailsHTML;
+                
+                // Show modal
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Function to close modal
+            function closeModals() {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+            
+            // Function to download image
+            function downloadImage() {
+                if (!currentCharacterImage) return;
+                
+                const link = document.createElement('a');
+                link.href = currentCharacterImage;
+                link.download = 'character-image.jpg';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            // Function to show 404 error animation
+            function show404Error() {
+                error404Container.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Function to hide 404 error animation
+            function hide404Error() {
+                error404Container.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+            
+            // Helper function to generate random color for placeholders
+            function getRandomColor() {
+                const colors = ['a1c4fd', 'c2e9fb', 'd4fc79', '96e6a1', 'f8bbd0', 'bbdefb'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            // Update pagination controls
+            function updatePagination() {
+                pageInfo.textContent = `${translateText('Page')} ${currentPage}/${totalPages}`;
+            }
+            
+            // Update button states
+            function updateButtonStates() {
+                prevBtn.disabled = currentPage === 1;
+                firstBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+                lastBtn.disabled = currentPage === totalPages;
+            }
+            
+            // Toggle language
+            function toggleLanguage() {
+                currentLanguage = currentLanguage === 'EN' ? 'TH' : 'EN';
+                displayCharacters(currentPage);
+            }
+            
+            // Open Discord link
+            function openDiscord() {
+                window.open('https://discord.com/invite/mNGeUVcjKB', '_blank');
+            }
+            
+            // Retry loading characters
+            function retryLoading() {
+                hide404Error();
+                displayCharacters(currentPage);
+            }
+            
+            // Event listeners for pagination
+            firstBtn.addEventListener('click', () => {
+                currentPage = 1;
+                displayCharacters(currentPage);
+            });
+            
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayCharacters(currentPage);
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayCharacters(currentPage);
+                }
+            });
+            
+            lastBtn.addEventListener('click', () => {
+                currentPage = totalPages;
+                displayCharacters(currentPage);
+            });
+            
+            // Action buttons
+            languageToggle.addEventListener('click', toggleLanguage);
+            discordButton.addEventListener('click', openDiscord);
+            
+            // Modal events
+            closeModal.addEventListener('click', closeModals);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeModals();
+                }
+            });
+            
+            downloadButton.addEventListener('click', downloadImage);
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                    closeModals();
+                }
+            });
+            
+            retryButton.addEventListener('click', retryLoading);
+            
+            displayCharacters(currentPage);
+        });
+    </script>
+</body>
+</html>
