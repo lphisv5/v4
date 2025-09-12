@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anime Clash</title>
+  <title>YANZ - Anime Clash</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -648,10 +648,9 @@
   </style>
 </head>
 <body>
-  <!-- Authentication Screen -->
   <div id="authScreen" class="auth-container">
     <div class="auth-box">
-      <div class="logo">Anime Clash</div>
+      <div class="logo">YANZ - Anime Clash</div>
       <div class="tagline">Battle with your favorite anime characters and choose the ultimate champion!</div>
       
       <div id="authAlert" class="alert hidden"></div>
@@ -709,7 +708,7 @@
     <div class="container">
       <header>
         <div class="header-left">
-          <div class="header-logo">Anime Clash</div>
+          <div class="header-logo">YANZ - Anime Clash</div>
         </div>
         <div class="user-profile">
           <div class="avatar" id="userAvatar">U</div>
@@ -787,7 +786,6 @@
           </button>
         </div>
         <div id="commentsContainer">
-          <!-- Comments will be inserted here -->
         </div>
       </div>
 
@@ -824,19 +822,16 @@
       <div class="section">
         <h3 class="section-title"><i class="fas fa-history"></i> Battle History</h3>
         <div id="historyList">
-          <!-- History items will be inserted here -->
         </div>
       </div>
     </div>
   </div>
 
 <script type="module">
-  // Import Firebase SDK
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
   import { getFirestore, doc, getDoc, setDoc, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
-  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyCXhQjlhxwoucAPNSqAzF3bXhSulijEELo",
     authDomain: "anime-be8d4.firebaseapp.com",
@@ -847,14 +842,12 @@
     measurementId: "G-F57EW6BTBQ"
   };
 
-  // Initialize Firebase
   let app, auth, db;
   try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
     
-    // Enable offline persistence
     enableIndexedDbPersistence(db)
       .catch((err) => {
         if (err.code === 'failed-precondition') {
@@ -870,7 +863,6 @@
     alert('Failed to initialize Firebase. Please check the configuration.');
   }
 
-  // DOM Elements
   const elements = {
     authScreen: document.getElementById('authScreen'),
     appScreen: document.getElementById('appScreen'),
@@ -905,7 +897,6 @@
     logoutBtn: document.getElementById('logoutBtn')
   };
 
-  // Game State
   let currentUser = null;
   let userData = {
     coins: 0,
@@ -920,7 +911,6 @@
   let selectedAnime = null;
   let battleAnimes = [];
 
-  // Event Listeners
   function setupEventListeners() {
     if (elements.loginBtn) elements.loginBtn.addEventListener('click', login);
     if (elements.registerBtn) elements.registerBtn.addEventListener('click', register);
@@ -939,7 +929,6 @@
     });
   }
 
-  // Initialize the app
   function init() {
     if (!auth) {
       console.error('Firebase auth not initialized');
@@ -960,7 +949,6 @@
     setupEventListeners();
   }
 
-  // Show authentication screen
   function showAuthScreen() {
     if (elements.authScreen && elements.appScreen) {
       elements.authScreen.style.display = 'flex';
@@ -969,7 +957,6 @@
     }
   }
 
-  // Show app screen
   function showAppScreen() {
     if (elements.authScreen && elements.appScreen) {
       elements.authScreen.style.display = 'none';
@@ -979,7 +966,6 @@
     }
   }
 
-  // Show login form
   function showLoginForm() {
     if (elements.loginForm && elements.registerForm) {
       elements.loginForm.classList.remove('hidden');
@@ -988,7 +974,6 @@
     }
   }
 
-  // Show register form
   function showRegisterForm() {
     if (elements.loginForm && elements.registerForm) {
       elements.loginForm.classList.add('hidden');
@@ -997,14 +982,12 @@
     }
   }
 
-  // Show alert message
   function showAlert(message, type) {
     if (elements.authAlert) {
       elements.authAlert.textContent = message;
       elements.authAlert.className = `alert alert-${type}`;
       elements.authAlert.classList.remove('hidden');
       
-      // Auto hide success alerts after 3 seconds
       if (type === 'success') {
         setTimeout(() => {
           hideAlert();
@@ -1013,14 +996,12 @@
     }
   }
 
-  // Hide alert message
   function hideAlert() {
     if (elements.authAlert) {
       elements.authAlert.classList.add('hidden');
     }
   }
 
-  // Login function
   async function login() {
     const email = elements.loginEmail?.value.trim();
     const password = elements.loginPassword?.value.trim();
@@ -1031,7 +1012,6 @@
     }
     
     try {
-      // Disable login button during request
       elements.loginBtn.disabled = true;
       elements.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging In...';
       
@@ -1042,7 +1022,6 @@
       console.error('Login error:', error);
       showAlert(getAuthErrorMessage(error), 'error');
     } finally {
-      // Re-enable login button
       if (elements.loginBtn) {
         elements.loginBtn.disabled = false;
         elements.loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log In';
@@ -1050,7 +1029,6 @@
     }
   }
 
-  // Register function
   async function register() {
     const email = elements.registerEmail?.value.trim();
     const password = elements.registerPassword?.value.trim();
@@ -1072,13 +1050,11 @@
     }
     
     try {
-      // Disable register button during request
       elements.registerBtn.disabled = true;
       elements.registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing Up...';
       
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('Registration successful');
-      // Initialize user data in Firestore
       await setDoc(doc(db, 'users', userCredential.user.uid), {
         coins: 0,
         battles: 0,
@@ -1098,7 +1074,6 @@
       console.error('Register error:', error);
       showAlert(getAuthErrorMessage(error), 'error');
     } finally {
-      // Re-enable register button
       if (elements.registerBtn) {
         elements.registerBtn.disabled = false;
         elements.registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
@@ -1106,12 +1081,10 @@
     }
   }
 
-  // Logout function
   async function logout() {
     try {
       await signOut(auth);
       console.log('Logout successful');
-      // Reset userData to initial state
       userData = {
         coins: 0,
         battles: 0,
@@ -1128,7 +1101,6 @@
     }
   }
 
-  // Get auth error messages
   function getAuthErrorMessage(error) {
     switch (error.code) {
       case 'auth/invalid-email':
@@ -1156,7 +1128,6 @@
     }
   }
 
-  // Update user profile in UI
   function updateUserProfile() {
     if (!currentUser) return;
     
@@ -1167,7 +1138,6 @@
     }
   }
 
-  // Load user data from Firestore
   async function loadUserData() {
     if (!currentUser || !db) return;
     
@@ -1182,7 +1152,6 @@
         renderLeaderboard();
         renderComments();
         renderHistory();
-        // Apply custom theme if unlocked
         if (userData.unlockedRewards && userData.unlockedRewards.includes('Custom Theme')) {
           document.documentElement.style.setProperty('--primary', '#ff9ff3');
           document.documentElement.style.setProperty('--secondary', '#feca57');
@@ -1207,7 +1176,6 @@
     }
   }
 
-  // Save user data to Firestore
   async function saveUserData() {
     if (!currentUser || !db) return;
     
@@ -1220,7 +1188,6 @@
     }
   }
 
-  // Update stats in UI
   function updateStatsUI() {
     if (elements.coins) elements.coins.textContent = userData.coins || 0;
     if (elements.battles) elements.battles.textContent = userData.battles || 0;
@@ -1228,7 +1195,6 @@
     if (elements.streak) elements.streak.textContent = userData.streak || 0;
   }
 
-  // Load anime battle
   async function loadBattle() {
     if (elements.battleArena) {
       elements.battleArena.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
@@ -1238,7 +1204,6 @@
     selectedAnime = null;
     battleAnimes = [];
     
-    // Disable button during loading
     if (elements.newBattleBtn) {
       elements.newBattleBtn.disabled = true;
       elements.newBattleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
@@ -1263,7 +1228,6 @@
         elements.battleArena.appendChild(createAnimeCard(anime1));
         elements.battleArena.appendChild(createAnimeCard(anime2));
         
-        // Add VS badge
         const vsBadge = document.createElement('div');
         vsBadge.className = 'vs-badge';
         vsBadge.textContent = 'VS';
@@ -1275,7 +1239,6 @@
         elements.battleArena.innerHTML = '<div class="alert alert-error">Failed to load anime data. Please try again.</div>';
       }
     } finally {
-      // Re-enable button
       if (elements.newBattleBtn) {
         elements.newBattleBtn.disabled = false;
         elements.newBattleBtn.innerHTML = '<i class="fas fa-random"></i> New Battle';
@@ -1283,7 +1246,6 @@
     }
   }
 
-  // Fetch random anime from Jikan API
   async function fetchRandomAnime(genre = '') {
     try {
       const url = genre 
@@ -1298,7 +1260,6 @@
       
       const data = await response.json();
       
-      // Check if data is valid
       if (!data.data || data.data.length === 0) {
         throw new Error('No anime found');
       }
@@ -1306,7 +1267,6 @@
       return data.data[Math.floor(Math.random() * data.data.length)];
     } catch (error) {
       console.error('Error fetching anime:', error);
-      // Try again with a different page
       try {
         const fallbackUrl = 'https://api.jikan.moe/v4/anime?page=1';
         const response = await fetch(fallbackUrl);
@@ -1319,7 +1279,6 @@
     }
   }
 
-  // Create anime card element
   function createAnimeCard(anime) {
     const card = document.createElement('div');
     card.className = 'anime-card';
@@ -1342,7 +1301,6 @@
       </div>
     `;
     
-    // Lazy load image
     const img = card.querySelector('.anime-image');
     img.onload = function() {
       this.classList.add('loaded');
@@ -1357,7 +1315,6 @@
     return card;
   }
 
-  // Handle anime selection
   async function selectAnime(anime) {
     selectedAnime = anime.title;
     if (elements.commentSection) elements.commentSection.classList.remove('hidden');
@@ -1381,7 +1338,6 @@
       userData.history.pop();
     }
     
-    // Mark the winner
     document.querySelectorAll('.anime-card').forEach(card => {
       card.classList.remove('winner');
     });
@@ -1400,7 +1356,6 @@
     await saveUserData();
   }
 
-  // Render leaderboard
   function renderLeaderboard() {
     if (!elements.leaderboardList) return;
     
@@ -1427,7 +1382,6 @@
     });
   }
 
-  // Render comments
   function renderComments() {
     if (!elements.commentsContainer) return;
     
@@ -1457,7 +1411,6 @@
     });
   }
 
-  // Render history
   function renderHistory() {
     if (!elements.historyList) return;
     
@@ -1479,7 +1432,6 @@
     });
   }
 
-  // Submit comment
   async function submitComment() {
     const text = elements.commentBox?.value.trim();
     
@@ -1515,7 +1467,6 @@
     showAlert('Comment posted successfully!', 'success');
   }
 
-  // Unlock reward
   async function unlockReward(reward, cost) {
     if (userData.coins < cost) {
       showAlert(`You need ${cost} coins to unlock this reward!`, 'error');
@@ -1541,7 +1492,6 @@
     }
   }
 
-  // Share battle
   function shareBattle() {
     if (!selectedAnime) return;
     
@@ -1562,7 +1512,6 @@
     }
   }
 
-  // Fallback share method
   function fallbackShare() {
     const shareText = `I chose ${selectedAnime} as the winner in Anime Clash! ${window.location.href}`;
     navigator.clipboard.writeText(shareText)
@@ -1570,7 +1519,6 @@
       .catch(() => prompt('Copy this link to share:', shareText));
   }
 
-  // Escape HTML to prevent XSS
   function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
