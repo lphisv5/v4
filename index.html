@@ -1711,6 +1711,14 @@
           icon: "fas fa-shopping-basket",
           description: "Browse the latest Fortnite item shop",
           status: "checking"
+        },
+        {
+          id: "bob's burgers",
+          name: "Bob's Burgers",
+          url: "https://lphisv5.github.io/v4/Bob's.Burgers",
+          icon: "fas fa-Bob",
+          description: "The official app for the Belcher family's burger restaurant. Now with 100% more puns.",
+          status: "checking"
         }
       ];
 
@@ -1728,14 +1736,12 @@
 
       const webhookUrl = 'https://discord.com/api/webhooks/1413178430496706630/bQDAMQJzOirGV1plK3eZaSCbvaqcj_WpK_FpM_yJg7RzoAwnzBcfWLGnz-23UT6ez6ua';
 
-      // Initialize the application
       function initApp() {
         renderLinkGrid();
         checkLinksStatus();
         setupEventListeners();
         loadUserPreferences();
         
-        // Check for existing user session
         try {
           const storedUser = localStorage.getItem('currentUser');
           if (storedUser) {
