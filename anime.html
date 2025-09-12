@@ -137,6 +137,13 @@
       box-shadow: var(--shadow);
     }
 
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
     .btn i {
       margin-right: 8px;
     }
@@ -324,6 +331,12 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .anime-image.loaded {
+      opacity: 1;
     }
 
     .anime-info {
@@ -568,6 +581,25 @@
       display: none !important;
     }
 
+    .vs-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 50%;
+      z-index: 10;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -575,6 +607,12 @@
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
 
     @media (max-width: 768px) {
@@ -586,7 +624,7 @@
         flex-direction: column;
       }
       
-      .header {
+      header {
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
@@ -595,6 +633,16 @@
       .filter-bar {
         flex-direction: column;
         align-items: stretch;
+      }
+      
+      .battle-arena {
+        grid-template-columns: 1fr;
+      }
+      
+      .vs-badge {
+        font-size: 1.5rem;
+        width: 60px;
+        height: 60px;
       }
     }
   </style>
@@ -784,36 +832,43 @@
 
 <script type="module">
   // Import Firebase SDK
-// Import Firebase SDK
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, initializeFirestore } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
+  import { getFirestore, doc, getDoc, setDoc, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
-// Firebase Configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCXhQjlhxwoucAPNSqAzF3bXhSulijEELo",
-  authDomain: "anime-be8d4.firebaseapp.com",
-  projectId: "anime-be8d4",
-  storageBucket: "anime-be8d4.firebasestorage.app",
-  messagingSenderId: "794531180479",
-  appId: "1:794531180479:web:6ee28da415c3f729a47b0a",
-  measurementId: "G-F57EW6BTBQ"
-};
+  // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCXhQjlhxwoucAPNSqAzF3bXhSulijEELo",
+    authDomain: "anime-be8d4.firebaseapp.com",
+    projectId: "anime-be8d4",
+    storageBucket: "anime-be8d4.firebasestorage.app",
+    messagingSenderId: "794531180479",
+    appId: "1:794531180479:web:6ee28da415c3f729a47b0a",
+    measurementId: "G-F57EW6BTBQ"
+  };
 
-// Initialize Firebase
-let app, auth, db;
-try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  // Initialize Firestore with offline persistence
-  db = initializeFirestore(app, {
-    experimentalForceOwningTab: true // Enables offline persistence in a single-tab context
-  });
-  console.log('Firebase initialized successfully');
-} catch (error) {
-  console.error('Firebase initialization failed:', error);
-  alert('Failed to initialize Firebase. Please check the configuration.');
-}
+  // Initialize Firebase
+  let app, auth, db;
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    
+    // Enable offline persistence
+    enableIndexedDbPersistence(db)
+      .catch((err) => {
+        if (err.code === 'failed-precondition') {
+          console.warn('Offline persistence can only be enabled in one tab at a time.');
+        } else if (err.code === 'unimplemented') {
+          console.warn('The current browser doesn\'t support offline persistence.');
+        }
+      });
+      
+    console.log('Firebase initialized successfully');
+  } catch (error) {
+    console.error('Firebase initialization failed:', error);
+    alert('Failed to initialize Firebase. Please check the configuration.');
+  }
 
   // DOM Elements
   const elements = {
@@ -863,6 +918,7 @@ try {
     unlockedRewards: []
   };
   let selectedAnime = null;
+  let battleAnimes = [];
 
   // Event Listeners
   function setupEventListeners() {
@@ -947,6 +1003,13 @@ try {
       elements.authAlert.textContent = message;
       elements.authAlert.className = `alert alert-${type}`;
       elements.authAlert.classList.remove('hidden');
+      
+      // Auto hide success alerts after 3 seconds
+      if (type === 'success') {
+        setTimeout(() => {
+          hideAlert();
+        }, 3000);
+      }
     }
   }
 
@@ -968,12 +1031,22 @@ try {
     }
     
     try {
+      // Disable login button during request
+      elements.loginBtn.disabled = true;
+      elements.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging In...';
+      
       await signInWithEmailAndPassword(auth, email, password);
       console.log('Login successful');
       showAlert('Login successful!', 'success');
     } catch (error) {
       console.error('Login error:', error);
       showAlert(getAuthErrorMessage(error), 'error');
+    } finally {
+      // Re-enable login button
+      if (elements.loginBtn) {
+        elements.loginBtn.disabled = false;
+        elements.loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log In';
+      }
     }
   }
 
@@ -999,6 +1072,10 @@ try {
     }
     
     try {
+      // Disable register button during request
+      elements.registerBtn.disabled = true;
+      elements.registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing Up...';
+      
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('Registration successful');
       // Initialize user data in Firestore
@@ -1020,6 +1097,12 @@ try {
     } catch (error) {
       console.error('Register error:', error);
       showAlert(getAuthErrorMessage(error), 'error');
+    } finally {
+      // Re-enable register button
+      if (elements.registerBtn) {
+        elements.registerBtn.disabled = false;
+        elements.registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
+      }
     }
   }
 
@@ -1028,7 +1111,6 @@ try {
     try {
       await signOut(auth);
       console.log('Logout successful');
-      showAlert('Logout successful.', 'success');
       // Reset userData to initial state
       userData = {
         coins: 0,
@@ -1101,7 +1183,7 @@ try {
         renderComments();
         renderHistory();
         // Apply custom theme if unlocked
-        if (userData.unlockedRewards.includes('Custom Theme')) {
+        if (userData.unlockedRewards && userData.unlockedRewards.includes('Custom Theme')) {
           document.documentElement.style.setProperty('--primary', '#ff9ff3');
           document.documentElement.style.setProperty('--secondary', '#feca57');
         }
@@ -1154,6 +1236,13 @@ try {
     if (elements.commentSection) elements.commentSection.classList.add('hidden');
     if (elements.shareBtn) elements.shareBtn.classList.add('hidden');
     selectedAnime = null;
+    battleAnimes = [];
+    
+    // Disable button during loading
+    if (elements.newBattleBtn) {
+      elements.newBattleBtn.disabled = true;
+      elements.newBattleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    }
     
     const genre = elements.genreSelect?.value;
     
@@ -1167,15 +1256,29 @@ try {
         throw new Error('Failed to load anime data');
       }
       
+      battleAnimes = [anime1, anime2];
+      
       if (elements.battleArena) {
         elements.battleArena.innerHTML = '';
         elements.battleArena.appendChild(createAnimeCard(anime1));
         elements.battleArena.appendChild(createAnimeCard(anime2));
+        
+        // Add VS badge
+        const vsBadge = document.createElement('div');
+        vsBadge.className = 'vs-badge';
+        vsBadge.textContent = 'VS';
+        elements.battleArena.appendChild(vsBadge);
       }
     } catch (error) {
       console.error('Error loading battle:', error);
       if (elements.battleArena) {
         elements.battleArena.innerHTML = '<div class="alert alert-error">Failed to load anime data. Please try again.</div>';
+      }
+    } finally {
+      // Re-enable button
+      if (elements.newBattleBtn) {
+        elements.newBattleBtn.disabled = false;
+        elements.newBattleBtn.innerHTML = '<i class="fas fa-random"></i> New Battle';
       }
     }
   }
@@ -1194,10 +1297,25 @@ try {
       }
       
       const data = await response.json();
+      
+      // Check if data is valid
+      if (!data.data || data.data.length === 0) {
+        throw new Error('No anime found');
+      }
+      
       return data.data[Math.floor(Math.random() * data.data.length)];
     } catch (error) {
       console.error('Error fetching anime:', error);
-      return null;
+      // Try again with a different page
+      try {
+        const fallbackUrl = 'https://api.jikan.moe/v4/anime?page=1';
+        const response = await fetch(fallbackUrl);
+        const data = await response.json();
+        return data.data[Math.floor(Math.random() * Math.min(10, data.data.length))];
+      } catch (fallbackError) {
+        console.error('Fallback fetch failed:', fallbackError);
+        return null;
+      }
     }
   }
 
@@ -1213,7 +1331,7 @@ try {
     const year = anime.year || anime.aired?.prop?.from?.year || '?';
     
     card.innerHTML = `
-      <img src="${imageUrl}" alt="${title}" class="anime-image">
+      <img src="${imageUrl}" alt="${title}" class="anime-image" loading="lazy">
       <div class="anime-info">
         <div class="anime-title">${title}</div>
         <div class="anime-details">
@@ -1224,18 +1342,24 @@ try {
       </div>
     `;
     
+    // Lazy load image
+    const img = card.querySelector('.anime-image');
+    img.onload = function() {
+      this.classList.add('loaded');
+    };
+    
     card.addEventListener('click', () => {
       document.querySelectorAll('.anime-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
-      selectAnime(title);
+      selectAnime(anime);
     });
     
     return card;
   }
 
   // Handle anime selection
-  async function selectAnime(title) {
-    selectedAnime = title;
+  async function selectAnime(anime) {
+    selectedAnime = anime.title;
     if (elements.commentSection) elements.commentSection.classList.remove('hidden');
     if (elements.shareBtn) elements.shareBtn.classList.remove('hidden');
     
@@ -1245,16 +1369,29 @@ try {
     userData.coins = (userData.coins || 0) + 10;
     
     userData.leaderboard = userData.leaderboard || {};
-    userData.leaderboard[title] = (userData.leaderboard[title] || 0) + 1;
+    userData.leaderboard[anime.title] = (userData.leaderboard[anime.title] || 0) + 1;
     
     userData.history = userData.history || [];
     userData.history.unshift({
-      anime: title,
+      anime: anime.title,
       date: new Date().toISOString()
     });
     
     if (userData.history.length > 10) {
       userData.history.pop();
+    }
+    
+    // Mark the winner
+    document.querySelectorAll('.anime-card').forEach(card => {
+      card.classList.remove('winner');
+    });
+    
+    const selectedCard = Array.from(document.querySelectorAll('.anime-card')).find(card => {
+      return card.querySelector('.anime-title').textContent === anime.title;
+    });
+    
+    if (selectedCard) {
+      selectedCard.classList.add('winner');
     }
     
     updateStatsUI();
@@ -1307,10 +1444,10 @@ try {
       commentEl.innerHTML = `
         <div class="comment-header">
           <div class="comment-avatar">${comment.user.charAt(0).toUpperCase()}</div>
-          <div class="comment-user">${comment.user}</div>
-          <div class="comment-anime">about ${comment.anime}</div>
+          <div class="comment-user">${escapeHtml(comment.user)}</div>
+          <div class="comment-anime">about ${escapeHtml(comment.anime)}</div>
         </div>
-        <div class="comment-text">${comment.text}</div>
+        <div class="comment-text">${escapeHtml(comment.text)}</div>
         <div class="comment-footer">
           <div class="comment-date">${new Date(comment.date).toLocaleString('en-US')}</div>
           <div class="comment-likes">❤️ ${comment.likes || 0}</div>
@@ -1335,7 +1472,7 @@ try {
       const historyEl = document.createElement('div');
       historyEl.className = 'history-item';
       historyEl.innerHTML = `
-        <div class="history-anime">${item.anime}</div>
+        <div class="history-anime">${escapeHtml(item.anime)}</div>
         <div class="history-date">${new Date(item.date).toLocaleString('en-US')}</div>
       `;
       elements.historyList.appendChild(historyEl);
@@ -1348,6 +1485,11 @@ try {
     
     if (!text || !selectedAnime) {
       showAlert('Please select an anime and enter a comment.', 'error');
+      return;
+    }
+    
+    if (text.length > 500) {
+      showAlert('Comment must be less than 500 characters.', 'error');
       return;
     }
     
@@ -1369,6 +1511,8 @@ try {
     if (elements.commentBox) elements.commentBox.value = '';
     renderComments();
     await saveUserData();
+    
+    showAlert('Comment posted successfully!', 'success');
   }
 
   // Unlock reward
@@ -1378,12 +1522,13 @@ try {
       return;
     }
     
-    if (userData.unlockedRewards.includes(reward)) {
+    if (userData.unlockedRewards && userData.unlockedRewards.includes(reward)) {
       showAlert('You already have this reward!', 'error');
       return;
     }
     
     userData.coins -= cost;
+    userData.unlockedRewards = userData.unlockedRewards || [];
     userData.unlockedRewards.push(reward);
     updateStatsUI();
     await saveUserData();
@@ -1425,7 +1570,13 @@ try {
       .catch(() => prompt('Copy this link to share:', shareText));
   }
 
-  // Initialize app
+  // Escape HTML to prevent XSS
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   init();
 </script>
 </body>
