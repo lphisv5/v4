@@ -21,7 +21,6 @@
             position: relative;
         }
         
-        /* Magenta Orb Grid Background - Full page implementation */
         body::before {
             content: "";
             position: fixed;
@@ -401,7 +400,6 @@
             margin: 15px 0;
         }
         
-        /* 404 Animation Styles */
         .error-404-container {
             position: fixed;
             top: 0;
@@ -617,7 +615,6 @@
             </div>
             <div class="header-actions">
                 <button class="action-button" id="discordButton" title="Join Discord">
-                    <!-- Discord Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 7V5c0-1.1.9-2 2-2h2" />
                         <path d="M17 3h2c1.1 0 2 .9 2 2v2" />
@@ -628,7 +625,6 @@
                     </svg>
                 </button>
                 <button class="action-button" id="languageToggle" title="Toggle Language">
-                    <!-- Globe Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
                         <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
@@ -640,14 +636,12 @@
         
         <div class="pagination">
             <button id="firstBtn" class="pagination-button">
-                <!-- Chevrons Left SVG -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m11 17-5-5 5-5"></path>
                     <path d="m18 17-5-5 5-5"></path>
                 </svg>
             </button>
             <button id="prevBtn" class="pagination-button" disabled>
-                <!-- Chevron Left SVG -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m15 18-6-6 6-6"></path>
                 </svg>
@@ -656,13 +650,11 @@
                 <span id="pageInfo">Page 1/1</span>
             </div>
             <button id="nextBtn" class="pagination-button">
-                <!-- Chevron Right SVG -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m9 18 6-6-6-6"></path>
                 </svg>
             </button>
             <button id="lastBtn" class="pagination-button">
-                <!-- Chevrons Right SVG -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 17 5-5-5-5"></path>
                     <path d="m13 17 5-5-5-5"></path>
@@ -677,7 +669,6 @@
             </div>
         </div>
         
-        <!-- Modal -->
         <div class="modal-overlay" id="modalOverlay">
             <div class="modal-content">
                 <div class="modal-header">
@@ -685,7 +676,6 @@
                         <img src="" alt="" class="modal-image" id="modalImage">
                         <div class="modal-actions">
                             <button class="modal-action-button" id="downloadButton" title="Download Image">
-                                <!-- Download Icon -->
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
@@ -704,7 +694,6 @@
             </div>
         </div>
         
-        <!-- 404 Error Animation -->
         <div class="error-404-container" id="error404Container">
             <div class="character-404"></div>
             <div class="flashlight"></div>
@@ -740,10 +729,8 @@
             const retryButton = document.getElementById('retryButton');
             const downloadButton = document.getElementById('downloadButton');
             
-            // Language state
-            let currentLanguage = 'EN'; // 'EN' or 'TH'
+            let currentLanguage = 'EN';
             
-            // Pagination variables
             let currentPage = 1;
             const itemsPerPage = 24;
             let isLoading = false;
@@ -752,7 +739,6 @@
             let apiError = false;
             let currentCharacterImage = '';
             
-            // Function to fetch characters from API
             async function fetchCharacters(skip) {
                 try {
                     const response = await fetch(`https://bobsburgers-api.herokuapp.com/characters/?limit=24&skip=${skip}`);
@@ -771,23 +757,18 @@
                 }
             }
             
-            // Function to get total character count
             async function getTotalCharacters() {
                 try {
-                    // This is a workaround since the API doesn't provide total count
-                    // We'll estimate based on the fact that IDs seem to go up to around 600
                     return 600;
                 } catch (error) {
                     console.error('Error getting total characters:', error);
-                    return 600; // Default fallback
+                    return 600;
                 }
             }
             
-            // Function to translate text
             function translateText(text) {
                 if (currentLanguage === 'EN') return text;
                 
-                // Simple translation map (in a real app, this would be more comprehensive)
                 const translations = {
                     "Male": "ชาย",
                     "Female": "หญิง",
@@ -809,14 +790,12 @@
                 return translations[text] || text;
             }
             
-            // Function to display characters with lazy loading
             async function displayCharacters(page) {
                 if (isLoading) return;
                 
                 isLoading = true;
                 const skip = (page - 1) * itemsPerPage;
                 
-                // Show loading state
                 charactersContainer.innerHTML = `
                     <div class="loading" style="grid-column: 1 / -1;">
                         <div class="loading-spinner"></div>
@@ -828,11 +807,9 @@
                     const characters = await fetchCharacters(skip);
                     currentCharacters = characters;
                     
-                    // Update total pages
                     const totalCharacters = await getTotalCharacters();
                     totalPages = Math.ceil(totalCharacters / itemsPerPage);
                     
-                    // Simulate network delay for better UX
                     await new Promise(resolve => setTimeout(resolve, 500));
                     
                     charactersContainer.innerHTML = '';
