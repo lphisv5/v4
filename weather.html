@@ -664,13 +664,13 @@
         if (isStart) {
           embed.fields.push(
             {
-              name: "ชื่อสภาพอากาศที่ทำงานอยู่",
+              name: "Active weather name",
               value: weather.weather_name,
               inline: false
             },
             {
               name: "Ends",
-              value: `อีก ${endsInMinutes} นาที`,
+              value: `Another ${endsInMinutes} minutes`,
               inline: true
             },
             {
@@ -682,8 +682,8 @@
         } else {
           embed.fields.push(
             {
-              name: "สถานะ",
-              value: "หยุดทำงานแล้ว",
+              name: "Status",
+              value: "It has stopped working.",
               inline: false
             }
           );
