@@ -222,6 +222,9 @@
       text-align: center;
       padding: 1.5rem 0;
       margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
     }
 
     .next-button {
@@ -245,6 +248,14 @@
 
     .next-button:active {
       transform: translateY(0);
+    }
+
+    .next-button.secondary {
+      background: var(--muted);
+    }
+
+    .next-button.secondary:hover {
+      background: #718096;
     }
 
     .connection-status {
@@ -271,6 +282,114 @@
       color: white;
     }
 
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 500px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--muted);
+      border-radius: var(--radius);
+      font-size: 1rem;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #319795;
+    }
+
+    .btn-secondary {
+      background: var(--muted);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #718096;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--danger);
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+
     @media (min-width: 600px) {
       #weather-container {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -294,12 +413,16 @@
       .controls {
         justify-content: center;
       }
+
+      #next-page-container {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1><i class="fas fa-cloud-sun"></i> Grow A Garden</h1>
+    <h1><i class="fas fa-cloud-sun"></i> Grow A Garden Weather</h1>
     <div class="last-updated" id="last-updated">Last updated: <span id="update-time">-</span></div>
   </header>
 
@@ -324,10 +447,38 @@
     <a href="https://lphisv5.github.io/webv4/growagarden-stock" class="next-button">
       <i class="fas fa-seedling"></i> STOCK
     </a>
+    <button id="webhook-config-btn" class="next-button secondary">
+      <i class="fas fa-bell"></i> NOTIFICATIONS
+    </button>
   </div>
 
   <div id="connection-status" class="connection-status disconnected">
     <i class="fas fa-wifi"></i> <span>Disconnected</span>
+  </div>
+
+  <div id="webhook-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Discord Webhook Settings</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="form-group">
+        <label for="webhook-url">Webhook URL</label>
+        <input type="url" id="webhook-url" placeholder="https://discord.com/api/webhooks/..." value="">
+      </div>
+      <div class="form-group">
+        <label for="notification-pref">Notification Preference</label>
+        <select id="notification-pref" class="form-control">
+          <option value="all">All weather changes</option>
+          <option value="active">Only when weather becomes active</option>
+          <option value="inactive">Only when weather becomes inactive</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" id="test-webhook">Test Webhook</button>
+        <button class="btn btn-primary" id="save-webhook">Save Settings</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -338,6 +489,176 @@
     let searchQuery = '';
     let weatherData = [];
     let timeUpdateInterval;
+    let previousWeatherStates = {};
+    let webhookUrl = '';
+    let notificationPreference = 'all';
+
+    function loadWebhookSettings() {
+      const savedWebhook = localStorage.getItem('growagarden_webhook');
+      const savedPref = localStorage.getItem('growagarden_notification_pref');
+      
+      if (savedWebhook) {
+        webhookUrl = savedWebhook;
+        document.getElementById('webhook-url').value = webhookUrl;
+      }
+      
+      if (savedPref) {
+        notificationPreference = savedPref;
+        document.getElementById('notification-pref').value = notificationPreference;
+      }
+    }
+
+    function saveWebhookSettings() {
+      const url = document.getElementById('webhook-url').value;
+      const pref = document.getElementById('notification-pref').value;
+      
+      if (url) {
+        webhookUrl = url;
+        localStorage.setItem('growagarden_webhook', url);
+      }
+      
+      notificationPreference = pref;
+      localStorage.setItem('growagarden_notification_pref', pref);
+      
+      alert('Settings saved successfully!');
+      document.getElementById('webhook-modal').style.display = 'none';
+    }
+
+    async function testWebhook() {
+      const url = document.getElementById('webhook-url').value;
+      
+      if (!url) {
+        alert('Please enter a webhook URL first');
+        return;
+      }
+      
+      try {
+        const response = await sendDiscordWebhook(
+          url, 
+          'Test Notification', 
+          'This is a test notification from Grow A Garden Weather System',
+          'https://via.placeholder.com/64',
+          'Test Weather',
+          'active',
+          60,
+          30
+        );
+        
+        if (response.ok) {
+          alert('Test notification sent successfully!');
+        } else {
+          alert('Failed to send test notification. Please check your webhook URL.');
+        }
+      } catch (error) {
+        alert('Error sending test notification: ' + error.message);
+      }
+    }
+
+    async function sendDiscordWebhook(url, title, description, icon, weatherName, status, duration, timeLeft) {
+      const now = new Date();
+      const timestamp = now.toISOString();
+      
+      const embed = {
+        title: title,
+        description: description,
+        color: status === 'active' ? 0x48BB78 : 0xF56565,
+        timestamp: timestamp,
+        footer: {
+          text: "Grow A Garden • lphisv5.github.io/v4/",
+          icon_url: "https://cdn.discordapp.com/embed/avatars/0.png"
+        },
+        thumbnail: {
+          url: icon
+        },
+        fields: [
+          {
+            name: "Weather Condition",
+            value: weatherName,
+            inline: true
+          },
+          {
+            name: "Status",
+            value: status.charAt(0).toUpperCase() + status.slice(1),
+            inline: true
+          },
+          {
+            name: "Duration",
+            value: `${duration} seconds`,
+            inline: true
+          }
+        ]
+      };
+      
+      if (timeLeft > 0) {
+        embed.fields.push({
+          name: "Ends In",
+          value: `${timeLeft} seconds`,
+          inline: true
+        });
+      }
+      
+      const payload = {
+        username: "Grow A Garden Weather",
+        avatar_url: "https://cdn.discordapp.com/embed/avatars/0.png",
+        embeds: [embed]
+      };
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      return response;
+    }
+
+    function checkForWeatherChanges(newData) {
+      if (!webhookUrl || !newData || !newData.weather) return;
+      
+      newData.weather.forEach(weather => {
+        const weatherId = weather.weather_id;
+        const isActive = weather.active;
+        const previousState = previousWeatherStates[weatherId];
+        
+        if (previousState === undefined) {
+          previousWeatherStates[weatherId] = isActive;
+          return;
+        }
+        
+        if (previousState !== isActive) {
+          const shouldNotify = 
+            notificationPreference === 'all' ||
+            (notificationPreference === 'active' && isActive) ||
+            (notificationPreference === 'inactive' && !isActive);
+          
+          if (shouldNotify) {
+            const statusText = isActive ? 'active' : 'inactive';
+            const title = `Weather Condition ${isActive ? 'Started' : 'Ended'}`;
+            const description = `The weather condition **${weather.weather_name}** is now ${statusText}.`;
+            
+            const timeLeft = weather.end_duration_unix > 0 ? 
+              Math.max(0, weather.end_duration_unix - Math.floor(Date.now() / 1000)) : 0;
+            
+            sendDiscordWebhook(
+              webhookUrl,
+              title,
+              description,
+              weather.icon,
+              weather.weather_name,
+              statusText,
+              weather.duration,
+              timeLeft
+            ).catch(error => {
+              console.error('Failed to send Discord webhook:', error);
+            });
+          }
+          
+          previousWeatherStates[weatherId] = isActive;
+        }
+      });
+    }
 
     function generateHash(data) {
       if (!data || !data.weather || !Array.isArray(data.weather)) {
@@ -398,6 +719,9 @@
         console.warn('No valid weather data to update UI');
         return;
       }
+      
+      checkForWeatherChanges(data);
+      
       weatherData = data.weather;
       applyFilters();
       updateLastUpdated();
@@ -596,6 +920,32 @@
     }
 
     window.addEventListener('load', () => {
+      loadWebhookSettings();
+      
+      const modal = document.getElementById('webhook-modal');
+      const configBtn = document.getElementById('webhook-config-btn');
+      const closeBtn = document.querySelector('.modal-close');
+      const saveBtn = document.getElementById('save-webhook');
+      const testBtn = document.getElementById('test-webhook');
+      
+      configBtn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+      });
+      
+      closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+      });
+      
+      saveBtn.addEventListener('click', saveWebhookSettings);
+      
+      testBtn.addEventListener('click', testWebhook);
+      
+      window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+      
       startRealTimeClock();
       
       document.querySelectorAll('.filter-btn').forEach(btn => {
