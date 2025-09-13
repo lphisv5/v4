@@ -10,23 +10,29 @@
   />
   <link
     rel="stylesheet"
-    href="https://unpkg.com/leaflet/dist/leaflet.css"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
   />
   <style>
     :root {
       --primary: #4a90e2;
+      --primary-dark: #3a70b2;
       --secondary: #f5f9fc;
       --card-bg: rgba(255,255,255,0.95);
       --card-shadow: rgba(0,0,0,0.1);
       --radius: 12px;
       --gap: 1rem;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --error: #f44336;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
@@ -42,49 +48,82 @@
     .container {
       background: var(--card-bg);
       border-radius: var(--radius);
-      box-shadow: 0 10px 25px var(--card-shadow);
-      padding: calc(var(--gap) * 1.5);
-      max-width: 500px;
+      box-shadow: 0 10px 30px var(--card-shadow);
+      padding: calc(var(--gap) * 2);
+      max-width: 550px;
       width: 100%;
       text-align: center;
+      transition: all 0.3s ease;
     }
 
     h1 {
       margin-bottom: var(--gap);
       color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
     .status {
       font-size: 1rem;
-      color: var(--primary);
       margin-bottom: var(--gap);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status.error {
+      color: var(--error);
     }
 
     .ip {
       font-size: 2rem;
       font-weight: bold;
       margin-bottom: var(--gap);
+      color: var(--primary-dark);
+      word-break: break-all;
     }
 
-    .info {
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
       text-align: left;
       margin-top: var(--gap);
-      line-height: 1.4;
     }
 
-    .info div {
-      margin: 0.5rem 0;
+    .info-item {
+      background: var(--secondary);
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     .label {
       font-weight: bold;
       color: var(--primary);
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .value {
+      font-size: 1.1rem;
     }
 
     .error {
-      color: red;
+      color: var(--error);
       margin-top: var(--gap);
       font-weight: bold;
+      padding: 10px;
+      background: rgba(244, 67, 54, 0.1);
+      border-radius: 8px;
     }
 
     #map {
@@ -93,25 +132,73 @@
       border-radius: var(--radius);
       margin-top: var(--gap);
       display: none;
+      z-index: 1;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: var(--gap);
     }
 
     button {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
+      padding: 10px 20px;
       border-radius: var(--radius);
       cursor: pointer;
-      margin-top: var(--gap);
       font-size: 1rem;
-    }
-
-    button i {
-      margin-right: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
     }
 
     button:hover {
-      opacity: 0.85;
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.secondary {
+      background: #78909c;
+    }
+
+    button.secondary:hover {
+      background: #546e7a;
+    }
+
+    .copy-notification {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .copy-notification.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -122,106 +209,223 @@
       <i class="fas fa-spinner fa-spin"></i> Loading…
     </div>
     <div class="ip" id="user-ip">—</div>
-    <div class="info" id="ip-info"></div>
+    <div class="info-grid" id="ip-info"></div>
     <div class="error" id="error-msg"></div>
-    <button id="refresh-btn">
-      <i class="fas fa-redo"></i> Refresh
-    </button>
     <div id="map"></div>
+    <div class="button-group">
+      <button id="refresh-btn">
+        <i class="fas fa-redo"></i> Refresh
+      </button>
+      <button id="copy-btn" class="secondary">
+        <i class="fas fa-copy"></i> Copy IP
+      </button>
+    </div>
+  </div>
+
+  <div class="copy-notification" id="copy-notification">
+    IP address copied to clipboard!
   </div>
 
   <script
-    src="https://unpkg.com/leaflet/dist/leaflet.js"
-    defer
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
   ></script>
-  <script defer>
+  <script>
     (function () {
       const statusEl = document.getElementById('status');
-      const ipEl     = document.getElementById('user-ip');
-      const infoEl   = document.getElementById('ip-info');
-      const errorEl  = document.getElementById('error-msg');
-      const mapEl    = document.getElementById('map');
-      const btn      = document.getElementById('refresh-btn');
-
+      const ipEl = document.getElementById('user-ip');
+      const infoEl = document.getElementById('ip-info');
+      const errorEl = document.getElementById('error-msg');
+      const mapEl = document.getElementById('map');
+      const refreshBtn = document.getElementById('refresh-btn');
+      const copyBtn = document.getElementById('copy-btn');
+      const copyNotification = document.getElementById('copy-notification');
+      
       let map, marker;
+      let currentData = null;
 
+      // ฟังก์ชันสำหรับแสดงการแจ้งเตือน
+      function showNotification(message) {
+        copyNotification.textContent = message;
+        copyNotification.classList.add('show');
+        
+        setTimeout(() => {
+          copyNotification.classList.remove('show');
+        }, 2000);
+      }
+
+      // ฟังก์ชันสำหรับจัดการ Leaflet map
       function initMap(lat = 0, lon = 0) {
-        mapEl.style.display = 'block';
-        if (!map) {
-          map = L.map('map').setView([lat, lon], 4);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-          }).addTo(map);
-          marker = L.marker([lat, lon]).addTo(map);
-        } else {
-          map.setView([lat, lon], 6);
-          marker.setLatLng([lat, lon]);
+        try {
+          mapEl.style.display = 'block';
+          
+          if (!map) {
+            map = L.map('map').setView([lat, lon], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            marker = L.marker([lat, lon]).addTo(map)
+              .bindPopup('Your approximate location')
+              .openPopup();
+          } else {
+            map.setView([lat, lon], 10);
+            marker.setLatLng([lat, lon]);
+          }
+        } catch (error) {
+          console.error('Error initializing map:', error);
+          mapEl.style.display = 'none';
+          showNotification('Error loading map');
         }
       }
 
+      // ฟังก์ชันสำหรับเรียกข้อมูล IP
       async function fetchIP() {
-        statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching IP…';
-        ipEl.textContent    = '—';
-        infoEl.innerHTML    = '';
+        statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching IP information…';
+        statusEl.className = 'status';
+        ipEl.textContent = '—';
+        infoEl.innerHTML = '';
         errorEl.textContent = '';
         mapEl.style.display = 'none';
 
         try {
+          // ลองใช้ API หลักก่อน
           const res = await fetch('https://ipwho.is/');
-          if (!res.ok) throw new Error('Primary API not responding');
+          if (!res.ok) throw new Error(`API responded with status: ${res.status}`);
+          
           const data = await res.json();
-          if (!data.success) throw new Error('Primary API returned failure');
-          renderData({
-            ip:       data.ip,
-            country:  data.country,
-            region:   data.region,
-            city:     data.city,
-            timezone: data.timezone,
-            isp:      data.connection?.isp || 'N/A',
-            lat:      data.latitude,
-            lon:      data.longitude
-          });
+          
+          if (!data.success) {
+            throw new Error(data.message || 'Failed to fetch IP information');
+          }
+          
+          currentData = {
+            ip: data.ip,
+            country: data.country || 'N/A',
+            region: data.region || 'N/A',
+            city: data.city || 'N/A',
+            timezone: data.timezone?.utc || 'N/A',
+            isp: data.connection?.isp || 'N/A',
+            lat: data.latitude || 0,
+            lon: data.longitude || 0,
+            country_code: data.country_code || '',
+            postal: data.postal || 'N/A',
+            continent: data.continent || 'N/A'
+          };
+          
+          renderData(currentData);
         } catch (e1) {
           console.warn('Primary API error:', e1.message);
+          
           try {
-            const res2 = await fetch('https://ipinfo.io/json?token=YOUR_TOKEN_HERE');
-            if (!res2.ok) throw new Error('Backup API not responding');
-            const d2 = await res2.json();
-            const [lat, lon] = d2.loc ? d2.loc.split(',').map(Number) : [0, 0];
-            renderData({
-              ip:       d2.ip,
-              country:  d2.country,
-              region:   d2.region,
-              city:     d2.city,
-              timezone: d2.timezone,
-              isp:      d2.org || 'N/A',
-              lat,
-              lon
-            });
+            // ลองใช้ API สำรอง (ipapi.co) ที่ไม่ต้องการ token
+            const res2 = await fetch('https://ipapi.co/json/');
+            if (!res2.ok) throw new Error(`Backup API responded with status: ${res2.status}`);
+            
+            const data = await res2.json();
+            
+            currentData = {
+              ip: data.ip,
+              country: data.country_name || 'N/A',
+              region: data.region || 'N/A',
+              city: data.city || 'N/A',
+              timezone: data.timezone || 'N/A',
+              isp: data.org || 'N/A',
+              lat: data.latitude || 0,
+              lon: data.longitude || 0,
+              country_code: data.country_code || '',
+              postal: data.postal || 'N/A',
+              continent: data.continent_code || 'N/A'
+            };
+            
+            renderData(currentData);
           } catch (e2) {
             console.error('Backup API error:', e2.message);
-            statusEl.textContent = 'Error';
-            errorEl.textContent  = 'ทั้งสอง API ไม่ตอบสนอง';
+            showError('Failed to fetch IP information from all sources. Please check your connection and try again.');
           }
         }
       }
 
-      function renderData({ ip, country, region, city, timezone, isp, lat, lon }) {
-        statusEl.textContent = 'Success';
-        ipEl.textContent     = ip;
+      // ฟังก์ชันสำหรับแสดงข้อมูล
+      function renderData(data) {
+        statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Success';
+        statusEl.className = 'status success';
+        ipEl.textContent = data.ip;
+        
         infoEl.innerHTML = `
-          <div><span class="label">Country:</span> ${country}</div>
-          <div><span class="label">Region:</span> ${region}</div>
-          <div><span class="label">City:</span> ${city}</div>
-          <div><span class="label">Timezone:</span> ${timezone}</div>
-          <div><span class="label">ISP/Org:</span> ${isp}</div>
+          <div class="info-item">
+            <span class="label">Country:</span>
+            <span class="value">${data.country} ${data.country_code ? `(${data.country_code})` : ''}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Region:</span>
+            <span class="value">${data.region}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">City:</span>
+            <span class="value">${data.city}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Postal Code:</span>
+            <span class="value">${data.postal}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Timezone:</span>
+            <span class="value">${data.timezone}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Continent:</span>
+            <span class="value">${data.continent}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">ISP/Organization:</span>
+            <span class="value">${data.isp}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Coordinates:</span>
+            <span class="value">${data.lat.toFixed(4)}, ${data.lon.toFixed(4)}</span>
+          </div>
         `;
-        initMap(lat, lon);
+        
+        if (data.lat && data.lon) {
+          initMap(data.lat, data.lon);
+        }
       }
 
-      btn.addEventListener('click', fetchIP);
+      function showError(message) {
+        statusEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error';
+        statusEl.className = 'status error';
+        errorEl.textContent = message;
+      }
+
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('IP address copied to clipboard!');
+        }).catch(err => {
+          console.error('Could not copy text: ', err);
+          showNotification('Failed to copy IP address');
+        });
+      }
+
+      refreshBtn.addEventListener('click', fetchIP);
+      
+      copyBtn.addEventListener('click', () => {
+        if (currentData && currentData.ip) {
+          copyToClipboard(currentData.ip);
+        } else {
+          showNotification('No IP address to copy');
+        }
+      });
 
       window.addEventListener('load', fetchIP);
+      
+      window.addEventListener('load', () => {
+        if (typeof L === 'undefined') {
+          console.error('Leaflet library failed to load');
+          showNotification('Map library failed to load');
+        }
+      });
     })();
   </script>
 </body>
