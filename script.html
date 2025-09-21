@@ -24,9 +24,7 @@
       --gradient: linear-gradient(135deg, #1a1a1a, #4a90e2);
       --transition: all 0.3s ease;
       --font-scale: calc(1 + (var(--dpi, 1) - 1) * 0.2);
-      --icon-scale:
-
- calc(1 + (var(--dpi, 1) - 1) * 0.3);
+      --icon-scale: calc(1 + (var(--dpi, 1) - 1) * 0.3);
     }
 
     * {
@@ -251,7 +249,7 @@
       transform: scale(1.1);
     }
 
-    .clear-cache-btn, .discord-btn {
+    .clear-cache-btn, .discord-btn, .quick-load-btn {
       background: var(--danger);
       color: #fff;
       padding: calc(0.6rem * var(--font-scale));
@@ -264,11 +262,18 @@
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
       transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
     }
 
     .discord-btn {
       background: var(--discord-bg);
       text-decoration: none;
+    }
+
+    .quick-load-btn {
+      background: var(--success);
     }
 
     .clear-cache-btn:hover {
@@ -278,6 +283,11 @@
 
     .discord-btn:hover {
       background: var(--discord-hover);
+      transform: scale(1.02);
+    }
+
+    .quick-load-btn:hover {
+      background: #27ae60;
       transform: scale(1.02);
     }
 
@@ -448,6 +458,22 @@
       z-index: 1; /* Ensure badges are above image */
     }
 
+    .card-views {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: calc(0.8rem * var(--font-scale));
+      font-weight: 600;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
     .card-content {
       padding: calc(1.2rem * var(--font-scale));
       display: flex;
@@ -615,6 +641,186 @@
       100% { background-color: rgba(255, 255, 255, 0.05); }
     }
 
+    .load-more-container {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .load-more-btn {
+      background: var(--gradient);
+      color: #fff;
+      padding: calc(0.8rem * var(--font-scale)) calc(1.5rem * var(--font-scale));
+      border-radius: var(--border-radius);
+      font-size: calc(0.95rem * var(--font-scale));
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      box-shadow: var(--box-shadow);
+    }
+
+    .load-more-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.05);
+    }
+
+    .load-more-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: scale(1);
+    }
+
+    .end-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: calc(1.5rem * var(--font-scale));
+      color: var(--danger);
+      background: rgba(231, 76, 60, 0.1);
+      border-radius: var(--border-radius);
+      margin-top: 1rem;
+    }
+
+    .auto-load-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      padding: calc(0.5rem * var(--font-scale));
+      background: #2a2a2a;
+      border-radius: var(--border-radius);
+    }
+
+    .toggle-label {
+      font-size: calc(0.85rem * var(--font-scale));
+      font-weight: 600;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--danger);
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--success);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Fullscreen Loader */
+    .fullscreen-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .fullscreen-loader.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loader-content {
+      text-align: center;
+      color: var(--text);
+      max-width: 500px;
+      padding: 2rem;
+    }
+
+    .loader-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .loader-text {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .loader-progress {
+      width: 100%;
+      height: 6px;
+      background: #2a2a2a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .loader-progress-bar {
+      height: 100%;
+      background: var(--gradient);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .loader-status {
+      font-size: 0.9rem;
+      color: #bbb;
+    }
+
+    .loader-icon {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+      animation: pulse-icon 2s infinite;
+    }
+
+    @keyframes pulse-icon {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
     @media (max-width: 768px) {
       :root {
         --font-scale: calc(0.85 + (var(--dpi, 1) - 1) * 0.15);
@@ -646,7 +852,7 @@
         width: calc(1.8rem * var(--icon-scale));
         height: calc(1.8rem * var(--icon-scale));
       }
-      .clear-cache-btn, .discord-btn {
+      .clear-cache-btn, .discord-btn, .quick-load-btn {
         padding: calc(0.5rem * var(--font-scale));
         font-size: calc(0.85rem * var(--font-scale));
       }
@@ -777,9 +983,23 @@
           </div>
         </div>
       </div>
-      <button class="clear-cache-btn" id="clearCacheButton" aria-label="Clear cache">
+      
+      <div class="auto-load-toggle">
+        <span class="toggle-label">Auto Load</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="autoLoadToggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      
+      <button class="quick-load-btn" id="quickLoadButton">
+        <i class="fas fa-bolt"></i> Quickly load all scripts
+      </button>
+      
+      <button class="clear-cache-btn" id="clearCacheButton">
         <i class="fas fa-trash"></i> Clear Cache
       </button>
+      
       <a href="https://discord.com/invite/mNGeUVcjKB" class="discord-btn" aria-label="Join our Discord">
         <i class="fab fa-discord"></i> Discord
       </a>
@@ -792,7 +1012,27 @@
   </div>
 
   <div id="results"></div>
+  
+  <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+    <button class="load-more-btn" id="loadMoreButton">Load More</button>
+  </div>
+  
   <div class="toast" id="toast" aria-live="polite"></div>
+
+  <!-- Fullscreen Loader -->
+  <div class="fullscreen-loader" id="fullscreenLoader">
+    <div class="loader-content">
+      <div class="loader-icon">
+        <i class="fas fa-code"></i>
+      </div>
+      <h2 class="loader-title">Loading All Scripts</h2>
+      <p class="loader-text">Please wait while we load all available scripts. This may take a moment...</p>
+      <div class="loader-progress">
+        <div class="loader-progress-bar" id="loaderProgressBar"></div>
+      </div>
+      <div class="loader-status" id="loaderStatus">Initializing...</div>
+    </div>
+  </div>
 
   <script>
     document.documentElement.style.setProperty('--dpi', window.devicePixelRatio || 1);
@@ -800,17 +1040,20 @@
     const CONFIG = {
       API_URL: "https://scriptblox.com/api/script/search",
       CACHE_DURATION: 1000 * 60 * 60,
-      CACHE_VERSION: "v1",
-      RANDOM_QUERIES: ["Blox Fruits", "Adopt Me", "Murder Mystery 2", "Pet Simulator X"],
+      CACHE_VERSION: "v2",
       CORS_PROXY: "https://api.allorigins.win/get?url=",
       SUGGESTED_QUERIES: ["Blox Fruits", "Adopt Me", "Murder Mystery 2", "Pet Simulator X"],
       TITLE_TIMEOUT: 3000,
       ITEMS_PER_PAGE: 20,
+      MAX_RETRIES: 3,
+      RETRY_DELAY: 1000,
+      FALLBACK_IMAGE: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrvP9g6B0TIxSke0IGLEGRfY7HfzkCxwpNdamQdikRRA&s=10",
+      MAX_PAGES_TO_LOAD: 10 // Safety limit for quick load
     };
 
     const state = {
       scripts: [],
-      currentQuery: "",
+      currentQuery: "free", // Default to "free" for initial load
       currentPage: 1,
       isLoading: false,
       lastError: null,
@@ -820,6 +1063,10 @@
       titleTimeout: null,
       observer: null,
       hasMore: true,
+      abortController: null,
+      autoLoadEnabled: false,
+      isQuickLoading: false,
+      quickLoadPages: 0
     };
 
     const elements = {
@@ -837,6 +1084,13 @@
       iconWrapper: document.getElementById("iconWrapper"),
       titleSlide: document.getElementById("titleSlide"),
       logoContainer: document.querySelector(".logo-container"),
+      loadMoreButton: document.getElementById("loadMoreButton"),
+      loadMoreContainer: document.getElementById("loadMoreContainer"),
+      autoLoadToggle: document.getElementById("autoLoadToggle"),
+      quickLoadButton: document.getElementById("quickLoadButton"),
+      fullscreenLoader: document.getElementById("fullscreenLoader"),
+      loaderProgressBar: document.getElementById("loaderProgressBar"),
+      loaderStatus: document.getElementById("loaderStatus")
     };
 
     const init = () => {
@@ -844,8 +1098,13 @@
       setupDropdown();
       setupIntersectionObserver();
       setupInfiniteScroll();
-      loadRandomQuery();
+      setupImageErrorHandling();
       setupIconAnimation();
+      
+      // Load free scripts automatically on page load
+      setTimeout(() => {
+        fetchResults(true);
+      }, 500);
     };
 
     const resetTitleAndIcon = () => {
@@ -882,6 +1141,80 @@
           state.titleTimeout = setTimeout(resetTitleAndIcon, CONFIG.TITLE_TIMEOUT);
         }
       });
+    };
+
+    const setupImageErrorHandling = () => {
+      document.addEventListener('error', (e) => {
+        if (e.target.tagName === 'IMG' && e.target.classList.contains('card-img')) {
+          e.target.src = CONFIG.FALLBACK_IMAGE;
+          e.target.onerror = null; // Prevent infinite loop
+        }
+      }, true);
+    };
+
+    const updateLoaderProgress = (percentage, status) => {
+      elements.loaderProgressBar.style.width = `${percentage}%`;
+      if (status) {
+        elements.loaderStatus.textContent = status;
+      }
+    };
+
+    const showFullscreenLoader = () => {
+      elements.fullscreenLoader.classList.add('active');
+      updateLoaderProgress(0, "Starting quick load...");
+    };
+
+    const hideFullscreenLoader = () => {
+      elements.fullscreenLoader.classList.remove('active');
+    };
+
+    const quickLoadAllScripts = async () => {
+      if (state.isLoading || state.isQuickLoading) return;
+      
+      state.isQuickLoading = true;
+      state.quickLoadPages = 0;
+      showFullscreenLoader();
+      
+      // Reset state for quick loading
+      state.scripts = [];
+      state.currentPage = 1;
+      state.hasMore = true;
+      
+      try {
+        // Load multiple pages quickly
+        for (let page = 1; page <= CONFIG.MAX_PAGES_TO_LOAD && state.hasMore; page++) {
+          state.currentPage = page;
+          updateLoaderProgress(
+            Math.min((page / CONFIG.MAX_PAGES_TO_LOAD) * 100, 90),
+            `Loading page ${page} of ${CONFIG.MAX_PAGES_TO_LOAD}...`
+          );
+          
+          await fetchResults(false, true);
+          state.quickLoadPages = page;
+          
+          // Small delay to prevent overwhelming the API
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+        
+        updateLoaderProgress(100, "All scripts loaded successfully!");
+        showToast(`Loaded ${state.scripts.length} scripts from ${state.quickLoadPages} pages`, "success");
+        
+        // Hide loader after a short delay
+        setTimeout(() => {
+          hideFullscreenLoader();
+          state.isQuickLoading = false;
+        }, 1500);
+        
+      } catch (error) {
+        console.error("Quick load error:", error);
+        updateLoaderProgress(100, "Error loading scripts");
+        showToast("Error during quick load: " + error.message, "danger");
+        
+        setTimeout(() => {
+          hideFullscreenLoader();
+          state.isQuickLoading = false;
+        }, 2000);
+      }
     };
 
     const setupEventListeners = () => {
@@ -925,12 +1258,20 @@
         elements.filterButton.focus();
       });
 
-      elements.filterPanel.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          state.isFilterPanelVisible = false;
-          elements.filterPanel.classList.remove("show");
-          elements.filterButton.focus();
+      elements.autoLoadToggle.addEventListener("change", (e) => {
+        state.autoLoadEnabled = e.target.checked;
+        localStorage.setItem('autoLoadEnabled', state.autoLoadEnabled);
+        elements.loadMoreContainer.style.display = state.autoLoadEnabled ? "none" : "flex";
+      });
+
+      elements.loadMoreButton.addEventListener("click", () => {
+        if (!state.isLoading && state.hasMore) {
+          fetchResults(false);
         }
+      });
+
+      elements.quickLoadButton.addEventListener("click", () => {
+        quickLoadAllScripts();
       });
 
       elements.clearCacheButton.addEventListener("click", () => {
@@ -1011,7 +1352,9 @@
       };
 
       window.addEventListener('scroll', debounce(() => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !state.isLoading && state.hasMore) {
+        if (state.autoLoadEnabled && 
+            window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && 
+            !state.isLoading && state.hasMore) {
           fetchResults(false);
         }
       }, 100));
@@ -1026,31 +1369,34 @@
     const normalizeQuery = (query) =>
       query.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ");
 
-    const loadRandomQuery = () => {
-      state.currentQuery = CONFIG.RANDOM_QUERIES[Math.floor(Math.random() * CONFIG.RANDOM_QUERIES.length)];
-      elements.searchInput.value = state.currentQuery;
-      state.currentPage = 1;
-      state.hasMore = true;
-      fetchResults(true);
-    };
-
     const getCachedResults = (query, page) => {
       const cacheKey = `scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}_page${page}`;
       const cached = localStorage.getItem(cacheKey);
       if (!cached) return null;
-      const { data, timestamp } = JSON.parse(cached);
-      if (Date.now() - timestamp > CONFIG.CACHE_DURATION) {
+      try {
+        const { data, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp > CONFIG.CACHE_DURATION) {
+          localStorage.removeItem(cacheKey);
+          return null;
+        }
+        return data;
+      } catch (e) {
+        console.error("Error parsing cached data:", e);
         localStorage.removeItem(cacheKey);
         return null;
       }
-      return data;
     };
 
     const cacheResults = (data, query, page) => {
-      localStorage.setItem(`scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}_page${page}`, JSON.stringify({
-        data,
-        timestamp: Date.now(),
-      }));
+      try {
+        localStorage.setItem(`scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}_page${page}`, JSON.stringify({
+          data,
+          timestamp: Date.now(),
+        }));
+      } catch (e) {
+        console.error("Error caching data:", e);
+        clearCache();
+      }
     };
 
     const clearCache = () => {
@@ -1061,7 +1407,6 @@
       state.currentPage = 1;
       state.hasMore = true;
       renderResults();
-      fetchResults(true);
     };
 
     const validateScriptData = (script) => {
@@ -1074,12 +1419,22 @@
       );
     };
 
-    const fetchResults = async (reset = false) => {
+    const fetchResults = async (reset = false, isQuickLoad = false) => {
       if (state.isLoading || !state.hasMore) return;
+      
+      // Abort previous request if still in progress
+      if (state.abortController) {
+        state.abortController.abort();
+      }
+      
+      state.abortController = new AbortController();
       state.isLoading = true;
-      state.lastError = null;
-      elements.loadingMessage.textContent = `Loading scripts for "${state.currentQuery || "free"}" (Page ${state.currentPage})... Please wait.`;
-      elements.loading.style.display = "flex";
+      
+      if (!isQuickLoad) {
+        state.lastError = null;
+        elements.loadingMessage.textContent = `Loading scripts for "${state.currentQuery || "free"}". Please wait.`;
+        elements.loading.style.display = "flex";
+      }
 
       if (reset) {
         state.scripts = [];
@@ -1093,8 +1448,14 @@
         if (cached) {
           state.scripts = reset ? cached : [...state.scripts, ...cached];
           renderResults();
-          showToast(`Loaded ${cached.length} scripts from cache`, "success");
+          if (!isQuickLoad) {
+            showToast(`Script loaded successfully`, "success");
+          }
           state.currentPage++;
+          state.isLoading = false;
+          if (!isQuickLoad) {
+            elements.loading.style.display = "none";
+          }
           return;
         }
 
@@ -1105,33 +1466,57 @@
 
         let res;
         try {
-          res = await fetchWithRetry(CONFIG.CORS_PROXY + encodeURIComponent(url));
+          res = await fetchWithRetry(CONFIG.CORS_PROXY + encodeURIComponent(url), {
+            signal: state.abortController.signal
+          });
         } catch (proxyErr) {
           console.warn("CORS proxy failed, trying direct API...");
-          res = await fetchWithRetry(url);
+          res = await fetchWithRetry(url, {
+            signal: state.abortController.signal
+          });
         }
 
         if (!res.ok) throw new Error(`API failed: ${res.status}`);
         const data = await res.json();
-        if (!data.contents) throw new Error("Invalid API response: Missing contents");
-        const parsed = JSON.parse(data.contents);
+        
+        // Handle CORS proxy response format
+        let parsed;
+        if (data.contents) {
+          parsed = JSON.parse(data.contents);
+        } else {
+          parsed = data;
+        }
+        
         if (!parsed.result || !Array.isArray(parsed.result.scripts)) {
           throw new Error("Invalid API response: Missing or invalid scripts array");
         }
+        
         const newScripts = parsed.result.scripts.filter(validateScriptData);
         state.scripts = reset ? newScripts : [...state.scripts, ...newScripts];
         state.hasMore = newScripts.length === CONFIG.ITEMS_PER_PAGE;
         cacheResults(newScripts, query, state.currentPage);
         renderResults();
-        showToast(`Loaded ${newScripts.length} scripts`, newScripts.length ? "success" : "warning");
+        
+        if (!isQuickLoad) {
+          showToast(`Script loaded successfully`, newScripts.length ? "success" : "warning");
+        }
+        
         if (!state.scripts.length && reset) {
           state.scripts = getSampleData();
           renderResults();
         }
+        
         state.currentPage++;
       } catch (err) {
+        if (err.name === 'AbortError') {
+          console.log('Request aborted');
+          return;
+        }
+        
         state.lastError = err;
-        showToast(`Error: ${err.message}. Using sample data.`, "danger");
+        if (!isQuickLoad) {
+          showToast(`Error: ${err.message}. Using sample data.`, "danger");
+        }
         if (reset) {
           const cached = getCachedResults(query, 1) || getSampleData();
           state.scripts = cached;
@@ -1139,24 +1524,35 @@
         }
       } finally {
         state.isLoading = false;
-        elements.loading.style.display = "none";
+        if (!isQuickLoad) {
+          elements.loading.style.display = "none";
+        }
+        state.abortController = null;
       }
     };
 
-    const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
+    const fetchWithRetry = async (url, options = {}, retries = CONFIG.MAX_RETRIES, delay = CONFIG.RETRY_DELAY) => {
       for (let i = 0; i < retries; i++) {
         try {
-          const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+          const res = await fetch(url, { 
+            headers: { 'Accept': 'application/json' },
+            ...options 
+          });
+          
           if (res.status === 429) {
             const retryAfter = res.headers.get('Retry-After') || delay * 2 ** i;
             await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
             continue;
           }
+          
           if (res.ok) return res;
           throw new Error(`HTTP ${res.status}`);
         } catch (err) {
-          if (i < retries - 1) await new Promise((resolve) => setTimeout(resolve, delay * 2 ** i));
-          else throw err;
+          if (i < retries - 1) {
+            await new Promise((resolve) => setTimeout(resolve, delay * 2 ** i));
+          } else {
+            throw err;
+          }
         }
       }
       throw new Error("Max retries reached.");
@@ -1210,7 +1606,7 @@
     const renderResults = () => {
       requestAnimationFrame(() => {
         const container = elements.results;
-        if (state.isLoading) {
+        if (state.isLoading && !state.isQuickLoading) {
           container.innerHTML = Array(6).fill().map(() => '<div class="skeleton-card"></div>').join("");
           return;
         }
@@ -1243,6 +1639,18 @@
         }
 
         container.innerHTML = scripts.map(createScriptCard).join("");
+        
+        // Show/hide load more button based on auto-load setting
+        elements.loadMoreContainer.style.display = state.autoLoadEnabled || !state.hasMore ? "none" : "flex";
+        
+        // Show end message if no more results
+        if (!state.hasMore) {
+          const endMessage = document.createElement('div');
+          endMessage.className = 'end-message';
+          endMessage.textContent = `The end of the page (${state.currentPage - 1}) has been reached.`;
+          container.appendChild(endMessage);
+        }
+        
         setupIntersectionObserver();
       });
     };
@@ -1266,15 +1674,19 @@
     };
 
     const createScriptCard = (script) => {
-      const imgSrc = sanitizeHTML(script.image || script.game.imageUrl || '/images/fallback.webp');
+      const imgSrc = sanitizeHTML(script.image || script.game.imageUrl || CONFIG.FALLBACK_IMAGE);
       const createdAt = new Date(script.createdAt).toLocaleDateString();
       const lastBump = new Date(script.lastBump).toLocaleDateString();
       const matchedFields = script.matched ? script.matched.join(", ") : "None";
+      const gameId = script.game.gameId === 0 ? "ERROR ID" : script.game.gameId;
 
       return `
         <div class="card" data-id="${sanitizeHTML(script._id)}">
           <div style="position: relative;">
-            <img src="${imgSrc}" class="card-img" loading="lazy" alt="${sanitizeHTML(script.game.name)}">
+            <img src="${imgSrc}" class="card-img" loading="lazy" alt="${sanitizeHTML(script.game.name)}" onerror="this.src='${CONFIG.FALLBACK_IMAGE}'">
+            <div class="card-views">
+              <i class="fas fa-eye"></i> ${script.views.toLocaleString()}
+            </div>
             ${script.scriptType === "paid" ? '<span class="card-badge">PREMIUM</span>' : ""}
             ${script.isUniversal ? '<span class="card-badge universal">UNIVERSAL</span>' : ""}
             ${script.isPatched ? '<span class="card-badge patched">PATCHED</span>' : ""}
@@ -1282,9 +1694,6 @@
           <div class="card-content">
             <div class="card-header">
               <h3 class="card-title">${sanitizeHTML(script.title)}</h3>
-              <div class="card-meta">
-                <i class="fas fa-eye"></i> ${script.views.toLocaleString()}
-              </div>
             </div>
             <div class="card-game">
               <i class="fas fa-gamepad"></i> ${sanitizeHTML(script.game.name)}
@@ -1293,10 +1702,7 @@
               <i class="fas fa-id-badge"></i> ID: ${sanitizeHTML(script._id)}
             </div>
             <div class="card-meta">
-              <i class="fas fa-link"></i> Slug: ${sanitizeHTML(script.slug)}
-            </div>
-            <div class="card-meta">
-              <i class="fas fa-gamepad"></i> Game ID: ${script.game.gameId}
+              <i class="fas fa-gamepad"></i> Game ID: ${gameId}
             </div>
             <div class="card-meta">
               <i class="fas fa-calendar-alt"></i> Created: ${createdAt}
