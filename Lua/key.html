@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YANZ | KEY SYSTEM - Copy Key</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        .key-box {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YANZ | KEY SYSTEM</h1>
+        <p>Game: <span id="game-name"></span></p>
+        <p>Your Key:</p>
+        <div class="key-box" id="key">Loading...</div>
+        <button onclick="copyKey()">Copy Key</button>
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const game = urlParams.get('game');
+        document.getElementById('game-name').textContent = game;
+
+        const key = Math.random().toString(36).substring(2, 15);
+        document.getElementById('key').textContent = key;
+
+        function copyKey() {
+            navigator.clipboard.writeText(key);
+            alert('Key copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
