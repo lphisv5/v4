@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YANZ | KEY SYSTEM - Select Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        .game-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YANZ | KEY SYSTEM</h1>
+        <p>Select a game to generate your key:</p>
+        <div class="game-list">
+            <button onclick="selectGame('Fick IT')">Fick IT</button>
+            <button onclick="selectGame('Race Clicker')">Race Clicker</button>
+            <button onclick="selectGame('+1 Blocks Every Second')">+1 Blocks Every Second</button>
+            <button onclick="selectGame('Doors')">Doors</button>
+            <button onclick="selectGame('Ninja Legends')">Ninja Legends</button>
+            <button onclick="selectGame('Plants Vs Brainrots')">Plants Vs Brainrots</button>
+        </div>
+    </div>
+    <script>
+        function selectGame(game) {
+            console.log(`Selected game: ${game}`);
+            window.location.href = `key.html?game=${encodeURIComponent(game)}`;
+        }
+    </script>
+</body>
+</html>
