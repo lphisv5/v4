@@ -23,6 +23,7 @@
             border: 1px solid #ccc;
             margin: 20px 0;
             font-size: 18px;
+            word-break: break-all;
         }
         button {
             padding: 10px 20px;
@@ -32,6 +33,9 @@
             color: white;
             border: none;
             border-radius: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
         }
     </style>
 </head>
@@ -44,13 +48,26 @@
         <button onclick="copyKey()">Copy Key</button>
     </div>
     <script>
+        // กำหนดคีย์สำหรับแต่ละเกม
+        const gameKeys = {
+            'Fick IT': 'FICK-1234-ABCD-5678',
+            'Race Clicker': 'RACE-9876-WXYZ-4321',
+            '+1 Blocks Every Second': 'BLOCK-4567-PQRS-8901',
+            'Doors': 'DOOR-2345-KLMN-6789',
+            'Ninja Legends': 'NINJA-3456-EFGH-7890',
+            'Plants Vs Brainrots': 'PLANT-5678-IJKL-9012'
+        };
+
+        // ดึงชื่อเกมจาก URL
         const urlParams = new URLSearchParams(window.location.search);
         const game = urlParams.get('game');
         document.getElementById('game-name').textContent = game;
 
-        const key = Math.random().toString(36).substring(2, 15);
+        // แสดงคีย์ของเกมที่เลือก
+        const key = gameKeys[game] || 'No key available';
         document.getElementById('key').textContent = key;
 
+        // ฟังก์ชันคัดลอกคีย์
         function copyKey() {
             navigator.clipboard.writeText(key);
             alert('Key copied to clipboard!');
