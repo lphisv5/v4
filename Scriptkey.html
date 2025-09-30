@@ -1,78 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YANZ | KEY SYSTEM - Copy Key</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        .container {
-            text-align: center;
-        }
-        .key-box {
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            margin: 20px 0;
-            font-size: 18px;
-            word-break: break-all;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .error {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>YANZ | KEY SYSTEM - Your Key</title>
+  <style>
+    :root{
+      --bg:#071428; --card: rgba(255,255,255,0.02);
+      --accent:#3b82f6; --muted:#94a3b8; --radius:12px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+      font-family:Inter, Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg,#041022,#071428);
+      color:#ecf8ff;
+    }
+    .card{
+      width:min(860px,96%); padding:20px; border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow:0 8px 30px rgba(0,0,0,0.6); text-align:center;
+    }
+    h1{margin:0; font-size:18px;}
+    .sub{ color:var(--muted); margin-top:6px; font-size:13px }
+
+    .key-card{
+      background:var(--card); padding:12px 14px; border-radius:10px;
+      margin-top:16px; word-break:break-all; font-weight:700; font-size:14px;
+      color:#e6fff7;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .key-text{ flex:1; text-align:left; padding-right:10px; color:#e6fff7 }
+    button{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700;
+      background:linear-gradient(90deg,var(--accent),#60a5fa); color:#042024; }
+    .note{ color:var(--muted); margin-top:8px; font-size:13px }
+    .error{ color:#ffb4b4; font-weight:700; margin-top:12px }
+
+    .toast{ position:fixed; right:18px; bottom:18px;
+      background:rgba(0,0,0,0.6); color:#dffbf3;
+      padding:10px 14px; border-radius:10px; display:none }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>YANZ | KEY SYSTEM</h1>
-        <p id="message">Your Key:</p>
-        <div class="key-box" id="key">Loading...</div>
-        <button onclick="copyKey()">Copy Key</button>
-    </div>
-    <script>
-        // คีย์ที่กำหนดเอง (แก้ไขส่วน XXXXXXXX ได้ที่นี่)
-        const key = 'YANZ-KEY-12345678';
+  <div class="card" role="main" aria-live="polite">
+    <h1>YANZ | KEY SYSTEM</h1>
+    <div id="content"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
 
-        // ตรวจสอบว่า session ผ่านการตรวจสอบความปลอดภัยหรือไม่
-        if (!localStorage.getItem('securityPassed')) {
-            document.getElementById('message').className = 'error';
-            document.getElementById('message').textContent = 'Access Denied: Please complete security check first.';
-            document.getElementById('key').style.display = 'none';
-            document.querySelector('button').style.display = 'none';
-            setTimeout(() => {
-                window.location.href = '';
-            }, 3000);
-        } else {
-            // แสดงคีย์ที่กำหนด
-            document.getElementById('key').textContent = key;
+<script>
+  const ALLOWED_KEYS = [
+    'YANZ-KEY-OQQ4NM968Y6BRGH02T1PM3ENJWU0FVRGGIQWGUMPM1A79WHNAK',
+    'YANZ-KEY-P0R2A31BU2YW0TG99YL4Y1OPIJQ5JLUQ8PPRO5CRINBCO4V7IR'
+  ];
 
-            // ฟังก์ชันคัดลอกคีย์
-            function copyKey() {
-                navigator.clipboard.writeText(key);
-                alert('Key copied to clipboard!');
-            }
-        }
-    </script>
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  const content = document.getElementById('content');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg, ms=1600){
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(()=> toast.style.display = 'none', ms);
+  }
+
+  function getSavedData(){
+    try { return JSON.parse(localStorage.getItem('copiedKeyData') || '{}'); }
+    catch(e){ return {}; }
+  }
+  function saveData(data){
+    try { localStorage.setItem('copiedKeyData', JSON.stringify(data)); }
+    catch(e){}
+  }
+
+  function copyToClipboard(text){
+    navigator.clipboard?.writeText(text).then(()=>{
+      showToast('Key copied ✅');
+      // กดคัดลอก → อัปเดตเวลาใหม่ + ซ่อนคีย์ทันที
+      const saved = getSavedData();
+      saved.time = Date.now();
+      saveData(saved);
+      render(); // รีเฟรช UI ทันที
+    }).catch(()=>{
+      showToast('Unable to copy — please copy manually');
+    });
+  }
+
+  function formatCountdown(ms){
+    const totalSec = Math.floor(ms/1000);
+    const h = Math.floor(totalSec/3600);
+    const m = Math.floor((totalSec%3600)/60);
+    const s = totalSec%60;
+    return `${h}h ${m}m ${s}s`;
+  }
+
+  function render(){
+    const saved = getSavedData();
+    const now = Date.now();
+
+    if(saved.key){
+      if(saved.time && now - saved.time < ONE_DAY){
+        // เคยคัดลอกแล้ว และยังไม่ครบ 24 ชม.
+        const remaining = ONE_DAY - (now - saved.time);
+        content.innerHTML = `
+          <p class="error">Come back within 24 hours to receive a new key.</p>
+          <div class="note">Time remaining: <span id="countdown"></span></div>
+        `;
+        startCountdown(remaining);
+        return;
+      } else if(saved.time && now - saved.time >= ONE_DAY){
+        // หมดเวลาแล้ว → ลบข้อมูลเก่า
+        localStorage.removeItem('copiedKeyData');
+      } else {
+        // มีคีย์แต่ยังไม่เคยกด Copy
+        content.innerHTML = `
+          <div class="sub">Your random key is shown below.</div>
+          <div class="key-card">
+            <div class="key-text">${saved.key}</div>
+            <button id="copyBtn">Copy</button>
+          </div>
+          <div class="note">Copy the key to activate it.</div>
+        `;
+        document.getElementById('copyBtn').addEventListener('click', ()=>{
+          copyToClipboard(saved.key);
+        });
+        return;
+      }
+    }
+
+    // ถ้ายังไม่มี key → สุ่มใหม่
+    const randomKey = ALLOWED_KEYS[Math.floor(Math.random() * ALLOWED_KEYS.length)];
+    saveData({ key: randomKey });
+    content.innerHTML = `
+      <div class="sub">Your random key is shown below.</div>
+      <div class="key-card">
+        <div class="key-text">${randomKey}</div>
+        <button id="copyBtn">Copy</button>
+      </div>
+      <div class="note">Copy the key to activate it.</div>
+    `;
+    document.getElementById('copyBtn').addEventListener('click', ()=>{
+      copyToClipboard(randomKey);
+    });
+  }
+
+  function startCountdown(ms){
+    const cd = document.getElementById('countdown');
+    function tick(){
+      const saved = getSavedData();
+      const now = Date.now();
+      const remain = ONE_DAY - (now - saved.time);
+      if(remain <= 0){ location.reload(); return; }
+      cd.textContent = formatCountdown(remain);
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  render();
+</script>
 </body>
 </html>
