@@ -106,6 +106,10 @@
       box-shadow: 0 0 0 3px rgba(255, 77, 137, 0.2);
     }
 
+    .input-field:invalid {
+      border-color: var(--danger);
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -132,7 +136,7 @@
       color: var(--light);
     }
 
-    .btn:hover {
+    .btn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: var(--shadow);
     }
@@ -165,6 +169,10 @@
       text-decoration: none;
     }
 
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
     .alert {
       padding: 12px 16px;
       border-radius: var(--radius);
@@ -184,6 +192,17 @@
       background: rgba(220, 53, 69, 0.2);
       color: var(--danger);
       border: 1px solid var(--danger);
+    }
+
+    .app-alert {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 1200px;
+      margin: 20px auto;
     }
 
     /* App Screen */
@@ -242,10 +261,13 @@
       color: rgba(255, 255, 255, 0.6);
       cursor: pointer;
       transition: var(--transition);
+      padding: 5px 10px;
+      border-radius: var(--radius);
     }
 
     .sign-out-btn:hover {
       color: var(--primary);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .filter-bar {
@@ -286,11 +308,19 @@
       cursor: pointer;
     }
 
+    .select-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 77, 137, 0.2);
+    }
+
     .battle-arena {
+      position: relative;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 30px;
       margin-bottom: 40px;
+      min-height: 500px;
     }
 
     .anime-card {
@@ -325,6 +355,7 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      z-index: 5;
     }
 
     .anime-image {
@@ -352,6 +383,9 @@
       font-size: 1.3rem;
       font-weight: 500;
       margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .anime-details {
@@ -448,6 +482,9 @@
     .anime-name {
       flex: 1;
       margin: 0 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .score {
@@ -469,9 +506,16 @@
       background: rgba(0, 0, 0, 0.3);
       color: var(--light);
       font-size: 1rem;
-      resize: none;
+      resize: vertical;
       margin-bottom: 15px;
       min-height: 100px;
+      max-height: 200px;
+    }
+
+    .comment-box:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 77, 137, 0.2);
     }
 
     .comment-card {
@@ -479,6 +523,7 @@
       border-radius: var(--radius);
       padding: 15px;
       margin-bottom: 15px;
+      border-left: 4px solid var(--primary);
     }
 
     .comment-header {
@@ -498,6 +543,7 @@
       margin-right: 10px;
       font-size: 1rem;
       font-weight: bold;
+      color: white;
     }
 
     .comment-user {
@@ -512,6 +558,7 @@
 
     .comment-text {
       margin-bottom: 10px;
+      line-height: 1.5;
     }
 
     .comment-footer {
@@ -533,11 +580,17 @@
       padding: 20px;
       text-align: center;
       transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .reward-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .reward-card.unlocked {
+      border-color: var(--success);
+      background: rgba(40, 167, 69, 0.1);
     }
 
     .reward-icon {
@@ -566,10 +619,19 @@
       align-items: center;
       padding: 15px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      transition: var(--transition);
+    }
+
+    .history-item:hover {
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .history-anime {
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
     }
 
     .history-date {
@@ -598,6 +660,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--shadow);
+      animation: pulse 2s infinite;
     }
 
     @keyframes spin {
@@ -610,9 +674,9 @@
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      0% { transform: scale(1) translate(-50%, -50%); }
+      50% { transform: scale(1.05) translate(-50%, -50%); }
+      100% { transform: scale(1) translate(-50%, -50%); }
     }
 
     @media (max-width: 768px) {
@@ -637,12 +701,31 @@
       
       .battle-arena {
         grid-template-columns: 1fr;
+        min-height: 600px;
       }
       
       .vs-badge {
         font-size: 1.5rem;
         width: 60px;
         height: 60px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .rewards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -662,7 +745,7 @@
         </div>
         <div class="form-group">
           <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" class="input-field" placeholder="Enter your password" required>
+          <input type="password" id="loginPassword" class="input-field" placeholder="Enter your password" required minlength="6">
         </div>
         <div class="btn-group">
           <button id="loginBtn" class="btn btn-primary">
@@ -681,11 +764,11 @@
         </div>
         <div class="form-group">
           <label for="registerPassword">Password</label>
-          <input type="password" id="registerPassword" class="input-field" placeholder="Create a password" required>
+          <input type="password" id="registerPassword" class="input-field" placeholder="Create a password" required minlength="6">
         </div>
         <div class="form-group">
           <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm your password" required>
+          <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm your password" required minlength="6">
         </div>
         <div class="btn-group">
           <button id="registerBtn" class="btn btn-primary">
@@ -698,7 +781,7 @@
       </div>
       
       <div class="auth-footer">
-        By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        By continuing, you agree to our <a href="#" onclick="alert('Terms of Service: This is a demo app. All rights reserved.')">Terms of Service</a> and <a href="#" onclick="alert('Privacy Policy: User data is stored securely in Firebase.')">Privacy Policy</a>
       </div>
     </div>
   </div>
@@ -706,6 +789,7 @@
   <!-- App Screen -->
   <div id="appScreen" class="app-container">
     <div class="container">
+      <div id="appAlert" class="app-alert hidden"></div>
       <header>
         <div class="header-left">
           <div class="header-logo">YANZ - Anime Clash</div>
@@ -771,16 +855,16 @@
       </div>
 
       <div class="section">
-        <h3 class="section-title"><i class="fas fa-trophy"></i> Leaderboard</h3>
+        <h3 class="section-title"><i class="fas fa-trophy"></i> Your Leaderboard</h3>
         <ul id="leaderboardList" class="leaderboard-list">
           <!-- Leaderboard items will be inserted here -->
         </ul>
       </div>
 
       <div id="commentSection" class="section hidden">
-        <h3 class="section-title"><i class="fas fa-comments"></i> Community</h3>
-        <div class="form-group">
-          <textarea id="commentBox" class="comment-box" placeholder="Why did you choose this anime?"></textarea>
+        <h3 class="section-title"><i class="fas fa-comments"></i> Community Comments</h3>
+        <div class="comment-form">
+          <textarea id="commentBox" class="comment-box" placeholder="Why did you choose this anime? Share your thoughts! (Max 500 chars)"></textarea>
           <button id="submitCommentBtn" class="btn btn-primary">
             <i class="fas fa-paper-plane"></i> Post Comment
           </button>
@@ -790,29 +874,53 @@
       </div>
 
       <div class="section">
-        <h3 class="section-title"><i class="fas fa-gift"></i> Rewards</h3>
+        <h3 class="section-title"><i class="fas fa-gift"></i> Rewards Shop</h3>
         <div class="rewards-grid">
-          <div class="reward-card">
+          <div class="reward-card" data-reward="Custom Theme" data-cost="50">
             <div class="reward-icon"><i class="fas fa-palette"></i></div>
             <div class="reward-name">Custom Theme</div>
             <div class="reward-price">50 Coins</div>
-            <button class="btn btn-outline" data-reward="Custom Theme" data-cost="50">
+            <button class="btn btn-outline unlock-btn">
               <i class="fas fa-unlock"></i> Unlock
             </button>
           </div>
-          <div class="reward-card">
+          <div class="reward-card" data-reward="Premium Badge" data-cost="100">
             <div class="reward-icon"><i class="fas fa-id-badge"></i></div>
             <div class="reward-name">Premium Badge</div>
             <div class="reward-price">100 Coins</div>
-            <button class="btn btn-outline" data-reward="Premium Badge" data-cost="100">
+            <button class="btn btn-outline unlock-btn">
               <i class="fas fa-unlock"></i> Unlock
             </button>
           </div>
-          <div class="reward-card">
+          <div class="reward-card" data-reward="Special Avatar" data-cost="150">
             <div class="reward-icon"><i class="fas fa-user-astronaut"></i></div>
             <div class="reward-name">Special Avatar</div>
             <div class="reward-price">150 Coins</div>
-            <button class="btn btn-outline" data-reward="Special Avatar" data-cost="150">
+            <button class="btn btn-outline unlock-btn">
+              <i class="fas fa-unlock"></i> Unlock
+            </button>
+          </div>
+          <div class="reward-card" data-reward="Ad-Free Mode" data-cost="200">
+            <div class="reward-icon"><i class="fas fa-ad"></i></div>
+            <div class="reward-name">Ad-Free Mode</div>
+            <div class="reward-price">200 Coins</div>
+            <button class="btn btn-outline unlock-btn">
+              <i class="fas fa-unlock"></i> Unlock
+            </button>
+          </div>
+          <div class="reward-card" data-reward="Coin Booster" data-cost="250">
+            <div class="reward-icon"><i class="fas fa-coins"></i></div>
+            <div class="reward-name">Coin Booster</div>
+            <div class="reward-price">250 Coins</div>
+            <button class="btn btn-outline unlock-btn">
+              <i class="fas fa-unlock"></i> Unlock
+            </button>
+          </div>
+          <div class="reward-card" data-reward="Exclusive Emojis" data-cost="300">
+            <div class="reward-icon"><i class="fas fa-smile"></i></div>
+            <div class="reward-name">Exclusive Emojis</div>
+            <div class="reward-price">300 Coins</div>
+            <button class="btn btn-outline unlock-btn">
               <i class="fas fa-unlock"></i> Unlock
             </button>
           </div>
@@ -820,7 +928,7 @@
       </div>
 
       <div class="section">
-        <h3 class="section-title"><i class="fas fa-history"></i> Battle History</h3>
+        <h3 class="section-title"><i class="fas fa-history"></i> Battle History (Last 10)</h3>
         <div id="historyList">
         </div>
       </div>
@@ -828,6 +936,7 @@
   </div>
 
 <script type="module">
+  // Firebase imports and configuration
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
   import { getFirestore, doc, getDoc, setDoc, enableIndexedDbPersistence } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
@@ -842,61 +951,8 @@
     measurementId: "G-F57EW6BTBQ"
   };
 
+  // Global variables
   let app, auth, db;
-  try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-    
-    enableIndexedDbPersistence(db)
-      .catch((err) => {
-        if (err.code === 'failed-precondition') {
-          console.warn('Offline persistence can only be enabled in one tab at a time.');
-        } else if (err.code === 'unimplemented') {
-          console.warn('The current browser doesn\'t support offline persistence.');
-        }
-      });
-      
-    console.log('Firebase initialized successfully');
-  } catch (error) {
-    console.error('Firebase initialization failed:', error);
-    alert('Failed to initialize Firebase. Please check the configuration.');
-  }
-
-  const elements = {
-    authScreen: document.getElementById('authScreen'),
-    appScreen: document.getElementById('appScreen'),
-    authAlert: document.getElementById('authAlert'),
-    loginForm: document.getElementById('loginForm'),
-    registerForm: document.getElementById('registerForm'),
-    loginEmail: document.getElementById('loginEmail'),
-    loginPassword: document.getElementById('loginPassword'),
-    registerEmail: document.getElementById('registerEmail'),
-    registerPassword: document.getElementById('registerPassword'),
-    confirmPassword: document.getElementById('confirmPassword'),
-    userAvatar: document.getElementById('userAvatar'),
-    username: document.getElementById('username'),
-    coins: document.getElementById('coins'),
-    battles: document.getElementById('battles'),
-    wins: document.getElementById('wins'),
-    streak: document.getElementById('streak'),
-    battleArena: document.getElementById('battleArena'),
-    leaderboardList: document.getElementById('leaderboardList'),
-    commentsContainer: document.getElementById('commentsContainer'),
-    commentSection: document.getElementById('commentSection'),
-    commentBox: document.getElementById('commentBox'),
-    shareBtn: document.getElementById('shareBtn'),
-    historyList: document.getElementById('historyList'),
-    genreSelect: document.getElementById('genreSelect'),
-    loginBtn: document.getElementById('loginBtn'),
-    registerBtn: document.getElementById('registerBtn'),
-    showRegisterBtn: document.getElementById('showRegisterBtn'),
-    showLoginBtn: document.getElementById('showLoginBtn'),
-    newBattleBtn: document.getElementById('newBattleBtn'),
-    submitCommentBtn: document.getElementById('submitCommentBtn'),
-    logoutBtn: document.getElementById('logoutBtn')
-  };
-
   let currentUser = null;
   let userData = {
     coins: 0,
@@ -911,98 +967,233 @@
   let selectedAnime = null;
   let battleAnimes = [];
 
-  function setupEventListeners() {
-    if (elements.loginBtn) elements.loginBtn.addEventListener('click', login);
-    if (elements.registerBtn) elements.registerBtn.addEventListener('click', register);
-    if (elements.showRegisterBtn) elements.showRegisterBtn.addEventListener('click', showRegisterForm);
-    if (elements.showLoginBtn) elements.showLoginBtn.addEventListener('click', showLoginForm);
-    if (elements.newBattleBtn) elements.newBattleBtn.addEventListener('click', loadBattle);
-    if (elements.submitCommentBtn) elements.submitCommentBtn.addEventListener('click', submitComment);
-    if (elements.shareBtn) elements.shareBtn.addEventListener('click', shareBattle);
-    if (elements.logoutBtn) elements.logoutBtn.addEventListener('click', logout);
-    document.querySelectorAll('.reward-card button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const reward = btn.dataset.reward;
-        const cost = parseInt(btn.dataset.cost);
-        unlockReward(reward, cost);
-      });
-    });
+  // DOM element cache for performance - queried after DOM load to prevent null errors
+  let elements = {};
+
+  /**
+   * Queries all DOM elements after ensuring DOM is loaded.
+   * Prevents "Cannot read properties of null" errors by guaranteeing elements exist.
+   */
+  function queryElements() {
+    elements = {
+      authScreen: document.getElementById('authScreen'),
+      appScreen: document.getElementById('appScreen'),
+      authAlert: document.getElementById('authAlert'),
+      appAlert: document.getElementById('appAlert'),
+      loginForm: document.getElementById('loginForm'),
+      registerForm: document.getElementById('registerForm'),
+      loginEmail: document.getElementById('loginEmail'),
+      loginPassword: document.getElementById('loginPassword'),
+      registerEmail: document.getElementById('registerEmail'),
+      registerPassword: document.getElementById('registerPassword'),
+      confirmPassword: document.getElementById('confirmPassword'),
+      userAvatar: document.getElementById('userAvatar'),
+      username: document.getElementById('username'),
+      coins: document.getElementById('coins'),
+      battles: document.getElementById('battles'),
+      wins: document.getElementById('wins'),
+      streak: document.getElementById('streak'),
+      battleArena: document.getElementById('battleArena'),
+      leaderboardList: document.getElementById('leaderboardList'),
+      commentsContainer: document.getElementById('commentsContainer'),
+      commentSection: document.getElementById('commentSection'),
+      commentBox: document.getElementById('commentBox'),
+      shareBtn: document.getElementById('shareBtn'),
+      historyList: document.getElementById('historyList'),
+      genreSelect: document.getElementById('genreSelect'),
+      loginBtn: document.getElementById('loginBtn'),
+      registerBtn: document.getElementById('registerBtn'),
+      showRegisterBtn: document.getElementById('showRegisterBtn'),
+      showLoginBtn: document.getElementById('showLoginBtn'),
+      newBattleBtn: document.getElementById('newBattleBtn'),
+      submitCommentBtn: document.getElementById('submitCommentBtn'),
+      logoutBtn: document.getElementById('logoutBtn')
+    };
+
+    // Log if any critical element is missing
+    const missing = Object.entries(elements).filter(([key, el]) => !el && key !== 'authAlert' && key !== 'appAlert').map(([key]) => key);
+    if (missing.length > 0) {
+      console.error('Missing DOM elements:', missing);
+    }
   }
 
-  function init() {
-    if (!auth) {
-      console.error('Firebase auth not initialized');
-      showAlert('Cannot connect to Firebase. Please check the configuration.', 'error');
+  /**
+   * Initializes Firebase app, auth, and Firestore with offline persistence.
+   * Handles initialization errors gracefully.
+   */
+  function initializeFirebase() {
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      
+      enableIndexedDbPersistence(db)
+        .catch((err) => {
+          if (err.code === 'failed-precondition') {
+            console.warn('Offline persistence can only be enabled in one tab at a time.');
+          } else if (err.code === 'unimplemented') {
+            console.warn('The current browser doesn\'t support offline persistence.');
+          } else {
+            console.error('Persistence error:', err);
+          }
+        });
+      
+      console.log('Firebase initialized successfully');
+    } catch (error) {
+      console.error('Firebase initialization failed:', error);
+      showAlert('Failed to initialize Firebase. Please check your connection and try again.', 'error', true); // true for app alert if available
+      throw error; // Re-throw to prevent app init
+    }
+  }
+
+  /**
+   * Sets up all event listeners for buttons and forms.
+   * Uses optional chaining for safety and only after elements are queried.
+   */
+  function setupEventListeners() {
+    elements.loginBtn?.addEventListener('click', handleLogin);
+    elements.registerBtn?.addEventListener('click', handleRegister);
+    elements.showRegisterBtn?.addEventListener('click', showRegisterForm);
+    elements.showLoginBtn?.addEventListener('click', showLoginForm);
+    elements.newBattleBtn?.addEventListener('click', loadBattle);
+    elements.submitCommentBtn?.addEventListener('click', submitComment);
+    elements.shareBtn?.addEventListener('click', shareBattle);
+    elements.logoutBtn?.addEventListener('click', handleLogout);
+    elements.genreSelect?.addEventListener('change', loadBattle); // Auto-load on genre change for better UX
+
+    // Delegate reward unlocks for dynamic elements
+    elements.appScreen?.addEventListener('click', (e) => {
+      if (e.target.classList?.contains('unlock-btn')) {
+        const card = e.target.closest('.reward-card');
+        if (card) {
+          const reward = card.dataset.reward;
+          const cost = parseInt(card.dataset.cost);
+          unlockReward(reward, cost);
+        }
+      }
+    });
+
+    // Enter key support for forms
+    elements.loginPassword?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+    elements.registerPassword?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
+    elements.confirmPassword?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
+    elements.commentBox?.addEventListener('keypress', (e) => { if (e.key === 'Enter' && e.ctrlKey) submitComment(); });
+  }
+
+  /**
+   * Initializes the application: DOM query, Firebase, auth listener, and event listeners.
+   * Ensures DOM is fully loaded before querying elements.
+   */
+  async function init() {
+    // Ensure DOM is loaded before querying elements
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        queryElements();
+        initializeAppCore();
+      });
+    } else {
+      queryElements();
+      initializeAppCore();
+    }
+  }
+
+  function initializeAppCore() {
+    try {
+      initializeFirebase();
+      setupEventListeners();
+
+      onAuthStateChanged(auth, async (user) => {
+        console.log('Auth state changed:', user ? `User ${user.uid} logged in` : 'No user');
+        currentUser = user;
+        if (user) {
+          await loadUserData();
+          showAppScreen();
+        } else {
+          showAuthScreen();
+        }
+      });
+    } catch (error) {
+      console.error('App initialization failed:', error);
+      showAlert('Application failed to start. Please refresh the page.', 'error', true);
+    }
+  }
+
+  /**
+   * Displays the authentication screen and shows the login form by default.
+   */
+  function showAuthScreen() {
+    if (!elements.authScreen || !elements.appScreen) return;
+    elements.authScreen.style.display = 'flex';
+    elements.appScreen.style.display = 'none';
+    showLoginForm();
+  }
+
+  /**
+   * Displays the main app screen, updates profile, and loads initial battle.
+   */
+  function showAppScreen() {
+    if (!elements.authScreen || !elements.appScreen) return;
+    elements.authScreen.style.display = 'none';
+    elements.appScreen.style.display = 'block';
+    updateUserProfile();
+    loadBattle(); // Load initial battle for immediate engagement
+  }
+
+  /**
+   * Shows the login form and hides the register form.
+   */
+  function showLoginForm() {
+    if (elements.loginForm) elements.loginForm.classList.remove('hidden');
+    if (elements.registerForm) elements.registerForm.classList.add('hidden');
+    hideAlert(false);
+    elements.loginEmail?.focus();
+  }
+
+  /**
+   * Shows the register form and hides the login form.
+   */
+  function showRegisterForm() {
+    if (elements.loginForm) elements.loginForm.classList.add('hidden');
+    if (elements.registerForm) elements.registerForm.classList.remove('hidden');
+    hideAlert(false);
+    elements.registerEmail?.focus();
+  }
+
+  /**
+   * Displays an alert message with type (success/error) and auto-hides success after 3s.
+   * Supports auth or app alert based on isApp flag.
+   * @param {string} message - The message to display.
+   * @param {string} type - 'success' or 'error'.
+   * @param {boolean} isApp - Use app alert if true (default false for auth).
+   */
+  function showAlert(message, type, isApp = false) {
+    const alertEl = isApp ? elements.appAlert : elements.authAlert;
+    if (!alertEl) {
+      console.warn('Alert element not found, logging message:', message);
       return;
     }
-
-    onAuthStateChanged(auth, user => {
-      console.log('Auth state changed:', user ? 'User logged in' : 'No user');
-      currentUser = user;
-      if (user) {
-        showAppScreen();
-        loadUserData();
-      } else {
-        showAuthScreen();
-      }
-    });
-    setupEventListeners();
-  }
-
-  function showAuthScreen() {
-    if (elements.authScreen && elements.appScreen) {
-      elements.authScreen.style.display = 'flex';
-      elements.appScreen.style.display = 'none';
-      showLoginForm();
+    alertEl.textContent = message;
+    alertEl.className = `alert alert-${type} ${isApp ? 'app-alert' : ''}`;
+    alertEl.classList.remove('hidden');
+    if (type === 'success') {
+      setTimeout(() => hideAlert(isApp), 3000);
     }
   }
 
-  function showAppScreen() {
-    if (elements.authScreen && elements.appScreen) {
-      elements.authScreen.style.display = 'none';
-      elements.appScreen.style.display = 'block';
-      updateUserProfile();
-      loadBattle();
-    }
+  /**
+   * Hides the alert message.
+   * @param {boolean} isApp - Hide app alert if true.
+   */
+  function hideAlert(isApp = false) {
+    const alertEl = isApp ? elements.appAlert : elements.authAlert;
+    if (alertEl) alertEl.classList.add('hidden');
   }
 
-  function showLoginForm() {
-    if (elements.loginForm && elements.registerForm) {
-      elements.loginForm.classList.remove('hidden');
-      elements.registerForm.classList.add('hidden');
-      hideAlert();
-    }
-  }
-
-  function showRegisterForm() {
-    if (elements.loginForm && elements.registerForm) {
-      elements.loginForm.classList.add('hidden');
-      elements.registerForm.classList.remove('hidden');
-      hideAlert();
-    }
-  }
-
-  function showAlert(message, type) {
-    if (elements.authAlert) {
-      elements.authAlert.textContent = message;
-      elements.authAlert.className = `alert alert-${type}`;
-      elements.authAlert.classList.remove('hidden');
-      
-      if (type === 'success') {
-        setTimeout(() => {
-          hideAlert();
-        }, 3000);
-      }
-    }
-  }
-
-  function hideAlert() {
-    if (elements.authAlert) {
-      elements.authAlert.classList.add('hidden');
-    }
-  }
-
-  async function login() {
+  /**
+   * Handles user login with email/password.
+   * Includes validation, loading state, and error handling.
+   */
+  async function handleLogin() {
     const email = elements.loginEmail?.value.trim();
     const password = elements.loginPassword?.value.trim();
     
@@ -1011,25 +1202,35 @@
       return;
     }
     
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showAlert('Please enter a valid email address.', 'error');
+      return;
+    }
+    
+    const btn = elements.loginBtn;
+    if (!btn) return;
     try {
-      elements.loginBtn.disabled = true;
-      elements.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging In...';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging In...';
+      hideAlert(false);
       
       await signInWithEmailAndPassword(auth, email, password);
       console.log('Login successful');
-      showAlert('Login successful!', 'success');
+      // Alert not needed as screen switches automatically
     } catch (error) {
       console.error('Login error:', error);
       showAlert(getAuthErrorMessage(error), 'error');
     } finally {
-      if (elements.loginBtn) {
-        elements.loginBtn.disabled = false;
-        elements.loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log In';
-      }
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log In';
     }
   }
 
-  async function register() {
+  /**
+   * Handles user registration with email/password.
+   * Includes validation for passwords and email.
+   */
+  async function handleRegister() {
     const email = elements.registerEmail?.value.trim();
     const password = elements.registerPassword?.value.trim();
     const confirm = elements.confirmPassword?.value.trim();
@@ -1039,8 +1240,14 @@
       return;
     }
     
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showAlert('Please enter a valid email address.', 'error');
+      return;
+    }
+    
     if (password !== confirm) {
       showAlert('Passwords do not match.', 'error');
+      if (elements.confirmPassword) elements.confirmPassword.value = '';
       return;
     }
     
@@ -1049,14 +1256,19 @@
       return;
     }
     
+    const btn = elements.registerBtn;
+    if (!btn) return;
     try {
-      elements.registerBtn.disabled = true;
-      elements.registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing Up...';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing Up...';
+      hideAlert(false);
       
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('Registration successful');
+      
+      // Initialize user data in Firestore
       await setDoc(doc(db, 'users', userCredential.user.uid), {
-        coins: 0,
+        coins: 100, // Starter coins for new users
         battles: 0,
         wins: 0,
         streak: 0,
@@ -1065,79 +1277,72 @@
         history: [],
         unlockedRewards: []
       });
-      showAlert('Sign-up successful! Please log in.', 'success');
-      showLoginForm();
-      elements.registerEmail.value = '';
-      elements.registerPassword.value = '';
-      elements.confirmPassword.value = '';
+      
+      showAlert('Account created! Redirecting to app...', 'success');
+      // Clear forms
+      if (elements.registerEmail) elements.registerEmail.value = '';
+      if (elements.registerPassword) elements.registerPassword.value = '';
+      if (elements.confirmPassword) elements.confirmPassword.value = '';
+      // Screen switch handled by auth listener
     } catch (error) {
       console.error('Register error:', error);
       showAlert(getAuthErrorMessage(error), 'error');
     } finally {
-      if (elements.registerBtn) {
-        elements.registerBtn.disabled = false;
-        elements.registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
-      }
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
     }
   }
 
-  async function logout() {
+  /**
+   * Handles user logout and resets local state.
+   */
+  async function handleLogout() {
     try {
       await signOut(auth);
       console.log('Logout successful');
-      userData = {
-        coins: 0,
-        battles: 0,
-        wins: 0,
-        streak: 0,
-        leaderboard: {},
-        comments: [],
-        history: [],
-        unlockedRewards: []
-      };
+      // Reset local state
+      resetUserData();
     } catch (error) {
       console.error('Logout error:', error);
-      showAlert('An error occurred while logging out.', 'error');
+      showAlert('An error occurred while logging out. Please try again.', 'error', true);
     }
   }
 
+  /**
+   * Maps Firebase auth errors to user-friendly messages.
+   * @param {Object} error - The error object from Firebase.
+   * @returns {string} User-friendly error message.
+   */
   function getAuthErrorMessage(error) {
-    switch (error.code) {
-      case 'auth/invalid-email':
-        return 'Invalid email address.';
-      case 'auth/user-disabled':
-        return 'This account has been disabled.';
-      case 'auth/user-not-found':
-        return 'User not found.';
-      case 'auth/wrong-password':
-        return 'Incorrect password.';
-      case 'auth/email-already-in-use':
-        return 'This email is already in use.';
-      case 'auth/weak-password':
-        return 'Password is too weak.';
-      case 'auth/invalid-credential':
-        return 'Invalid login credentials.';
-      case 'auth/too-many-requests':
-        return 'Too many requests. Please try again later.';
-      case 'auth/configuration-not-found':
-        return 'Project configuration not found. Please check Firebase settings.';
-      case 'auth/network-request-failed':
-        return 'Network connection failed. Please check your internet connection.';
-      default:
-        return `An error occurred: ${error.message}`;
-    }
+    const code = error.code || '';
+    const messages = {
+      'auth/invalid-email': 'Invalid email address.',
+      'auth/user-disabled': 'This account has been disabled.',
+      'auth/user-not-found': 'No account found with this email.',
+      'auth/wrong-password': 'Incorrect password.',
+      'auth/email-already-in-use': 'This email is already registered.',
+      'auth/weak-password': 'Password is too weak. Use at least 6 characters.',
+      'auth/invalid-credential': 'Invalid login credentials.',
+      'auth/too-many-requests': 'Too many failed attempts. Try again later.',
+      'auth/network-request-failed': 'Network error. Check your connection.'
+    };
+    return messages[code] || `An error occurred: ${error.message}`;
   }
 
+  /**
+   * Updates the user profile display with avatar and username.
+   */
   function updateUserProfile() {
     if (!currentUser) return;
-    
-    const displayName = currentUser.displayName || currentUser.email.split('@')[0];
-    if (elements.username && elements.userAvatar) {
-      elements.username.textContent = displayName;
-      elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
-    }
+    const displayName = currentUser.displayName || currentUser.email?.split('@')[0] || 'User';
+    if (elements.username) elements.username.textContent = displayName;
+    if (elements.userAvatar) elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
   }
 
+  /**
+   * Loads user data from Firestore and updates local state/UI.
+   * Initializes if no data exists.
+   */
   async function loadUserData() {
     if (!currentUser || !db) return;
     
@@ -1146,48 +1351,43 @@
       const docSnap = await getDoc(userDoc);
       
       if (docSnap.exists()) {
-        userData = docSnap.data();
-        console.log('User data loaded:', userData);
-        updateStatsUI();
-        renderLeaderboard();
-        renderComments();
-        renderHistory();
-        if (userData.unlockedRewards && userData.unlockedRewards.includes('Custom Theme')) {
-          document.documentElement.style.setProperty('--primary', '#ff9ff3');
-          document.documentElement.style.setProperty('--secondary', '#feca57');
-        }
+        userData = { ...userData, ...docSnap.data() }; // Merge to preserve defaults
+        console.log('User data loaded');
       } else {
-        console.log('No user data found, initializing new data');
-        userData = {
-          coins: 0,
-          battles: 0,
-          wins: 0,
-          streak: 0,
-          leaderboard: {},
-          comments: [],
-          history: [],
-          unlockedRewards: []
-        };
+        console.log('No existing user data, using defaults');
         await saveUserData();
       }
+      
+      updateStatsUI();
+      renderLeaderboard();
+      renderComments();
+      renderHistory();
+      applyUnlockedRewards();
     } catch (error) {
       console.error('Error loading user data:', error);
-      showAlert('Failed to load user data.', 'error');
+      showAlert('Failed to load your data. Some features may be limited.', 'error', true);
+      // Use local defaults as fallback
     }
   }
 
+  /**
+   * Saves current userData to Firestore with merge to avoid overwrites.
+   */
   async function saveUserData() {
     if (!currentUser || !db) return;
     
     try {
       await setDoc(doc(db, 'users', currentUser.uid), userData, { merge: true });
-      console.log('User data saved');
+      console.log('User data saved successfully');
     } catch (error) {
       console.error('Error saving user data:', error);
-      showAlert('Failed to save user data.', 'error');
+      showAlert('Failed to save your progress. Please try again.', 'error', true);
     }
   }
 
+  /**
+   * Updates the stats grid UI with current userData values.
+   */
   function updateStatsUI() {
     if (elements.coins) elements.coins.textContent = userData.coins || 0;
     if (elements.battles) elements.battles.textContent = userData.battles || 0;
@@ -1195,258 +1395,327 @@
     if (elements.streak) elements.streak.textContent = userData.streak || 0;
   }
 
+  /**
+   * Loads a new battle by fetching two random anime based on selected genre.
+   * Handles loading states and errors.
+   */
   async function loadBattle() {
-    if (elements.battleArena) {
-      elements.battleArena.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+    const arena = elements.battleArena;
+    const btn = elements.newBattleBtn;
+    if (!arena || !btn) {
+      console.error('Battle arena or button not found');
+      return;
     }
+
+    arena.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
     if (elements.commentSection) elements.commentSection.classList.add('hidden');
     if (elements.shareBtn) elements.shareBtn.classList.add('hidden');
     selectedAnime = null;
     battleAnimes = [];
     
-    if (elements.newBattleBtn) {
-      elements.newBattleBtn.disabled = true;
-      elements.newBattleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-    }
-    
-    const genre = elements.genreSelect?.value;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Battle...';
     
     try {
+      const genre = elements.genreSelect?.value || '';
       const [anime1, anime2] = await Promise.all([
         fetchRandomAnime(genre),
         fetchRandomAnime(genre)
       ]);
       
-      if (!anime1 || !anime2) {
-        throw new Error('Failed to load anime data');
+      if (!anime1 || !anime2 || anime1.mal_id === anime2.mal_id) {
+        throw new Error('Failed to load unique anime pair');
       }
       
       battleAnimes = [anime1, anime2];
+      arena.innerHTML = '';
+      arena.appendChild(createAnimeCard(anime1, 0));
+      arena.appendChild(createAnimeCard(anime2, 1));
       
-      if (elements.battleArena) {
-        elements.battleArena.innerHTML = '';
-        elements.battleArena.appendChild(createAnimeCard(anime1));
-        elements.battleArena.appendChild(createAnimeCard(anime2));
-        
-        const vsBadge = document.createElement('div');
-        vsBadge.className = 'vs-badge';
-        vsBadge.textContent = 'VS';
-        elements.battleArena.appendChild(vsBadge);
-      }
+      // Add VS badge overlay
+      const vsBadge = document.createElement('div');
+      vsBadge.className = 'vs-badge';
+      vsBadge.textContent = 'VS';
+      arena.appendChild(vsBadge);
+      
+      console.log('Battle loaded:', anime1.title, 'vs', anime2.title);
     } catch (error) {
       console.error('Error loading battle:', error);
-      if (elements.battleArena) {
-        elements.battleArena.innerHTML = '<div class="alert alert-error">Failed to load anime data. Please try again.</div>';
-      }
+      arena.innerHTML = '<div class="alert alert-error">Failed to load battle. <button class="btn btn-primary" style="margin-top:10px; width:auto;" onclick="loadBattle()">Retry</button></div>';
+      showAlert('Battle load failed. Check your connection.', 'error', true);
     } finally {
-      if (elements.newBattleBtn) {
-        elements.newBattleBtn.disabled = false;
-        elements.newBattleBtn.innerHTML = '<i class="fas fa-random"></i> New Battle';
-      }
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-random"></i> New Battle';
     }
   }
 
-  async function fetchRandomAnime(genre = '') {
-    try {
-      const url = genre 
-        ? `https://api.jikan.moe/v4/anime?genres=${genre}&page=${Math.floor(Math.random() * 10) + 1}`
-        : `https://api.jikan.moe/v4/anime?page=${Math.floor(Math.random() * 10) + 1}`;
-      
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
-      
-      const data = await response.json();
-      
-      if (!data.data || data.data.length === 0) {
-        throw new Error('No anime found');
-      }
-      
-      return data.data[Math.floor(Math.random() * data.data.length)];
-    } catch (error) {
-      console.error('Error fetching anime:', error);
+  /**
+   * Fetches a random anime from Jikan API, optionally filtered by genre.
+   * Includes fallback and rate-limit handling.
+   * @param {string} genreId - Genre ID (e.g., '1' for Action).
+   * @returns {Object|null} Anime object or null on failure.
+   */
+  async function fetchRandomAnime(genreId = '') {
+    const maxRetries = 3;
+    let attempt = 0;
+    
+    while (attempt < maxRetries) {
       try {
-        const fallbackUrl = 'https://api.jikan.moe/v4/anime?page=1';
-        const response = await fetch(fallbackUrl);
+        const page = Math.floor(Math.random() * 5) + 1; // Limit pages to reduce load
+        const baseUrl = 'https://api.jikan.moe/v4/anime';
+        const params = genreId ? `genres=${genreId}&sfw=true&order_by=score&sort=desc` : 'sfw=true&order_by=score&sort=desc';
+        const url = `${baseUrl}?${params}&page=${page}`;
+        
+        const response = await fetch(url, {
+          headers: { 'User-Agent': 'YANZ-AnimeClash/1.0' } // Polite API usage
+        });
+        
+        if (!response.ok) {
+          if (response.status === 429) { // Rate limit
+            await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1))); // Backoff
+            attempt++;
+            continue;
+          }
+          throw new Error(`API error: ${response.status}`);
+        }
+        
         const data = await response.json();
-        return data.data[Math.floor(Math.random() * Math.min(10, data.data.length))];
-      } catch (fallbackError) {
-        console.error('Fallback fetch failed:', fallbackError);
-        return null;
+        if (!data.data || data.data.length === 0) {
+          throw new Error('No anime available');
+        }
+        
+        // Filter out NSFW or invalid
+        let anime = data.data[Math.floor(Math.random() * data.data.length)];
+        if (!anime.images?.jpg?.image_url || anime.score < 5) { // Basic quality filter
+          return fetchRandomAnime(genreId); // Recursive retry for quality
+        }
+        
+        return anime;
+      } catch (error) {
+        console.warn(`Fetch attempt ${attempt + 1} failed:`, error);
+        attempt++;
+        if (attempt >= maxRetries) {
+          // Fallback to any anime
+          try {
+            const fallbackResponse = await fetch('https://api.jikan.moe/v4/top/anime?page=1&limit=1');
+            const fallbackData = await fallbackResponse.json();
+            return fallbackData.data?.[0] || null;
+          } catch (fallbackError) {
+            console.error('Complete fallback failed:', fallbackError);
+            return null;
+          }
+        }
       }
     }
   }
 
-  function createAnimeCard(anime) {
+  /**
+   * Creates a clickable anime card element for the battle arena.
+   * @param {Object} anime - Anime data from API.
+   * @param {number} index - Index for event handling.
+   * @returns {HTMLElement} The card element.
+   */
+  function createAnimeCard(anime, index) {
     const card = document.createElement('div');
     card.className = 'anime-card';
+    card.dataset.index = index;
     
     const imageUrl = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || 'https://via.placeholder.com/300x450?text=No+Image';
-    const title = anime.title || 'No Title';
-    const score = anime.score ? anime.score.toFixed(1) : 'N/A';
+    const title = anime.title?.english || anime.title || 'Unknown Anime';
+    const score = anime.score ? parseFloat(anime.score).toFixed(1) : 'N/A';
     const episodes = anime.episodes || '?';
-    const year = anime.year || anime.aired?.prop?.from?.year || '?';
+    const year = anime.year || (anime.aired?.prop?.from?.year || '?');
     
     card.innerHTML = `
-      <img src="${imageUrl}" alt="${title}" class="anime-image" loading="lazy">
+      <img src="${imageUrl}" alt="${title.replace(/"/g, '&quot;')}" class="anime-image" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Error'">
       <div class="anime-info">
-        <div class="anime-title">${title}</div>
+        <div class="anime-title" title="${title}">${title}</div>
         <div class="anime-details">
           <span>⭐ ${score}</span>
-          <span>📺 ${episodes}</span>
+          <span>📺 ${episodes} eps</span>
           <span>📅 ${year}</span>
         </div>
       </div>
     `;
     
     const img = card.querySelector('.anime-image');
-    img.onload = function() {
-      this.classList.add('loaded');
-    };
+    if (img) {
+      img.onload = () => img.classList.add('loaded');
+      img.onerror = () => { img.src = 'https://via.placeholder.com/300x450?text=No+Image'; };
+    }
     
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.anime-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      selectAnime(anime);
-    });
+    card.addEventListener('click', (e) => handleAnimeSelect(e, anime));
     
     return card;
   }
 
-  async function selectAnime(anime) {
-    selectedAnime = anime.title;
+  /**
+   * Handles anime selection in a battle, updates stats, and shows winner effects.
+   * @param {Event} event - Click event.
+   * @param {Object} anime - Selected anime data.
+   */
+  async function handleAnimeSelect(event, anime) {
+    if (selectedAnime) return; // Prevent multiple selections
+    const currentTarget = event.currentTarget;
+    if (!currentTarget || !currentTarget.classList) return;
+    
+    currentTarget.classList.add('selected');
+    document.querySelectorAll('.anime-card').forEach(c => {
+      if (c !== currentTarget) c.style.opacity = '0.7'; // Dim loser
+    });
+    
+    selectedAnime = anime;
     if (elements.commentSection) elements.commentSection.classList.remove('hidden');
     if (elements.shareBtn) elements.shareBtn.classList.remove('hidden');
+    elements.commentBox?.focus();
     
+    // Update user stats (always "win" on selection)
     userData.battles = (userData.battles || 0) + 1;
     userData.wins = (userData.wins || 0) + 1;
-    userData.streak = (userData.streak || 0) + 1;
-    userData.coins = (userData.coins || 0) + 10;
+    userData.streak = (userData.streak || 0) + 1; // Note: Always increases; consider loss mechanic for real streak
+    let coinReward = 10; // Base reward
+    if (userData.unlockedRewards && userData.unlockedRewards.includes('Coin Booster')) {
+      coinReward *= 2; // Double coins if booster unlocked
+    }
+    userData.coins = (userData.coins || 0) + coinReward;
     
+    // Update leaderboard (personal votes)
     userData.leaderboard = userData.leaderboard || {};
     userData.leaderboard[anime.title] = (userData.leaderboard[anime.title] || 0) + 1;
     
+    // Add to history
     userData.history = userData.history || [];
     userData.history.unshift({
       anime: anime.title,
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
+      score: anime.score
     });
+    if (userData.history.length > 10) userData.history.pop();
     
-    if (userData.history.length > 10) {
-      userData.history.pop();
-    }
-    
-    document.querySelectorAll('.anime-card').forEach(card => {
-      card.classList.remove('winner');
-    });
-    
-    const selectedCard = Array.from(document.querySelectorAll('.anime-card')).find(card => {
-      return card.querySelector('.anime-title').textContent === anime.title;
-    });
-    
-    if (selectedCard) {
-      selectedCard.classList.add('winner');
-    }
+    // Visual winner effect
+    setTimeout(() => {
+      currentTarget.classList.add('winner');
+      // Confetti or animation could be added here for UX
+    }, 500);
     
     updateStatsUI();
     renderLeaderboard();
     renderHistory();
     await saveUserData();
+    
+    console.log(`Selected winner: ${anime.title}`);
   }
 
+  /**
+   * Renders the user's personal leaderboard based on choice counts.
+   */
   function renderLeaderboard() {
-    if (!elements.leaderboardList) return;
+    const list = elements.leaderboardList;
+    if (!list) return;
     
-    elements.leaderboardList.innerHTML = '';
+    list.innerHTML = '';
     
     const sorted = Object.entries(userData.leaderboard || {})
-      .sort((a, b) => b[1] - a[1])
+      .sort(([,a], [,b]) => b - a)
       .slice(0, 10);
     
     if (sorted.length === 0) {
-      elements.leaderboardList.innerHTML = '<div class="alert">No battle data yet. Start battling to see rankings!</div>';
+      list.innerHTML = '<li class="leaderboard-item"><div class="alert" style="margin:0; width:100%; text-align:center;">No battles yet. Start choosing winners!</div></li>';
       return;
     }
     
-    sorted.forEach(([title, score], index) => {
+    sorted.forEach(([title, wins], index) => {
       const li = document.createElement('li');
       li.className = 'leaderboard-item';
       li.innerHTML = `
-        <div class="rank">${index + 1}</div>
-        <div class="anime-name">${title}</div>
-        <div class="score">${score} Wins</div>
+        <div class="rank">${index + 1}${index === 0 ? ' 👑' : ''}</div>
+        <div class="anime-name" title="${title}">${title}</div>
+        <div class="score">${wins} Wins</div>
       `;
-      elements.leaderboardList.appendChild(li);
+      list.appendChild(li);
     });
   }
 
+  /**
+   * Renders the last 5 comments in the community section.
+   */
   function renderComments() {
-    if (!elements.commentsContainer) return;
+    const container = elements.commentsContainer;
+    if (!container) return;
     
-    elements.commentsContainer.innerHTML = '';
+    container.innerHTML = '';
     
-    if (!userData.comments || userData.comments.length === 0) {
-      elements.commentsContainer.innerHTML = '<div class="alert">No comments yet. Be the first to comment!</div>';
+    const comments = userData.comments || [];
+    if (comments.length === 0) {
+      container.innerHTML = '<div class="alert" style="margin:0;">No comments yet. Share your thoughts on your choice!</div>';
       return;
     }
     
-    userData.comments.slice(0, 5).forEach(comment => {
-      const commentEl = document.createElement('div');
-      commentEl.className = 'comment-card';
-      commentEl.innerHTML = `
+    comments.slice(0, 5).forEach(comment => {
+      const div = document.createElement('div');
+      div.className = 'comment-card';
+      div.innerHTML = `
         <div class="comment-header">
-          <div class="comment-avatar">${comment.user.charAt(0).toUpperCase()}</div>
-          <div class="comment-user">${escapeHtml(comment.user)}</div>
-          <div class="comment-anime">about ${escapeHtml(comment.anime)}</div>
+          <div class="comment-avatar">${(comment.user || 'U').charAt(0).toUpperCase()}</div>
+          <div class="comment-user">${escapeHtml(comment.user || 'Anonymous')}</div>
+          <div class="comment-anime">on ${escapeHtml(comment.anime)}</div>
         </div>
         <div class="comment-text">${escapeHtml(comment.text)}</div>
         <div class="comment-footer">
-          <div class="comment-date">${new Date(comment.date).toLocaleString('en-US')}</div>
+          <div class="comment-date">${new Date(comment.date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</div>
           <div class="comment-likes">❤️ ${comment.likes || 0}</div>
         </div>
       `;
-      elements.commentsContainer.appendChild(commentEl);
+      container.appendChild(div);
     });
   }
 
+  /**
+   * Renders the battle history list.
+   */
   function renderHistory() {
-    if (!elements.historyList) return;
+    const list = elements.historyList;
+    if (!list) return;
     
-    elements.historyList.innerHTML = '';
+    list.innerHTML = '';
     
-    if (!userData.history || userData.history.length === 0) {
-      elements.historyList.innerHTML = '<div class="alert">No battle history yet.</div>';
+    const history = userData.history || [];
+    if (history.length === 0) {
+      list.innerHTML = '<div class="alert" style="margin:0;">No history yet. Battle to see your choices!</div>';
       return;
     }
     
-    userData.history.forEach(item => {
-      const historyEl = document.createElement('div');
-      historyEl.className = 'history-item';
-      historyEl.innerHTML = `
-        <div class="history-anime">${escapeHtml(item.anime)}</div>
-        <div class="history-date">${new Date(item.date).toLocaleString('en-US')}</div>
+    history.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'history-item';
+      div.innerHTML = `
+        <div class="history-anime" title="${item.anime}">${item.anime}</div>
+        <div class="history-date">${new Date(item.date).toLocaleDateString('en-US')} ${item.score ? `⭐ ${item.score}` : ''}</div>
       `;
-      elements.historyList.appendChild(historyEl);
+      list.appendChild(div);
     });
   }
 
+  /**
+   * Submits a new comment on the selected anime.
+   * Validates length and updates UI/data.
+   */
   async function submitComment() {
-    const text = elements.commentBox?.value.trim();
+    const text = (elements.commentBox?.value || '').trim();
     
     if (!text || !selectedAnime) {
-      showAlert('Please select an anime and enter a comment.', 'error');
+      showAlert('Please select an anime and write a comment first.', 'error', true);
+      elements.commentBox?.focus();
       return;
     }
     
     if (text.length > 500) {
-      showAlert('Comment must be less than 500 characters.', 'error');
+      showAlert('Comment too long! Keep it under 500 characters.', 'error', true);
       return;
     }
     
     const comment = {
-      user: elements.username?.textContent || 'User',
+      user: elements.username?.textContent || 'Anonymous',
       anime: selectedAnime,
       text: text,
       date: new Date().toISOString(),
@@ -1455,77 +1724,193 @@
     
     userData.comments = userData.comments || [];
     userData.comments.unshift(comment);
-    
-    if (userData.comments.length > 50) {
-      userData.comments.pop();
-    }
+    if (userData.comments.length > 50) userData.comments.pop();
     
     if (elements.commentBox) elements.commentBox.value = '';
     renderComments();
     await saveUserData();
     
-    showAlert('Comment posted successfully!', 'success');
+    showAlert('Comment posted! Great share!', 'success', true);
+    if (elements.commentBox) elements.commentBox.placeholder = 'Your comment has been added. Why the next winner?';
   }
 
+  /**
+   * Unlocks a reward if user has enough coins.
+   * Updates UI and applies effects.
+   * @param {string} reward - Reward name.
+   * @param {number} cost - Coin cost.
+   */
   async function unlockReward(reward, cost) {
-    if (userData.coins < cost) {
-      showAlert(`You need ${cost} coins to unlock this reward!`, 'error');
+    if ((userData.coins || 0) < cost) {
+      showAlert(`Not enough coins! You need ${cost - (userData.coins || 0)} more. Battle to earn!`, 'error', true);
       return;
     }
     
-    if (userData.unlockedRewards && userData.unlockedRewards.includes(reward)) {
-      showAlert('You already have this reward!', 'error');
+    if (userData.unlockedRewards?.includes(reward)) {
+      showAlert(`You already unlocked ${reward}! Check your profile.`, 'error', true);
       return;
     }
     
     userData.coins -= cost;
     userData.unlockedRewards = userData.unlockedRewards || [];
     userData.unlockedRewards.push(reward);
+    
+    // Update reward card UI
+    const card = document.querySelector(`[data-reward="${reward}"]`);
+    if (card) {
+      card.classList.add('unlocked');
+      const btn = card.querySelector('.unlock-btn');
+      if (btn) {
+        btn.innerHTML = '<i class="fas fa-check"></i> Unlocked!';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+      }
+    }
+    
     updateStatsUI();
     await saveUserData();
+    showAlert(`Unlocked ${reward}! Enjoy your new perk.`, 'success', true);
     
-    showAlert(`Congratulations! You unlocked ${reward}!`, 'success');
-    
-    if (reward === 'Custom Theme') {
-      document.documentElement.style.setProperty('--primary', '#ff9ff3');
-      document.documentElement.style.setProperty('--secondary', '#feca57');
+    applyRewardEffect(reward);
+  }
+
+  /**
+   * Applies visual/effect changes for unlocked rewards.
+   * @param {string} reward - The unlocked reward.
+   */
+  function applyRewardEffect(reward) {
+    switch (reward) {
+      case 'Custom Theme':
+        document.documentElement.style.setProperty('--primary', '#ff9ff3');
+        document.documentElement.style.setProperty('--secondary', '#feca57');
+        showAlert('Theme applied! Refresh for full effect.', 'success', true);
+        break;
+      case 'Premium Badge':
+        if (elements.userAvatar) {
+          elements.userAvatar.style.background = 'linear-gradient(45deg, gold, silver)';
+          elements.userAvatar.innerHTML += ' ⭐';
+        }
+        break;
+      case 'Special Avatar':
+        if (elements.userAvatar) elements.userAvatar.innerHTML = '🚀';
+        break;
+      case 'Ad-Free Mode':
+        // Simulate ad-free by hiding potential ad placeholders (none exist, but extensible)
+        console.log('Ad-Free Mode activated: No ads will appear.');
+        showAlert('Ad-Free Mode activated! Enjoy uninterrupted battles.', 'success', true);
+        break;
+      case 'Coin Booster':
+        // Effect applied in handleAnimeSelect (doubles coin rewards)
+        showAlert('Coin Booster activated! Future battles earn double coins.', 'success', true);
+        break;
+      case 'Exclusive Emojis':
+        // Add emoji to comments or UI (simulated by updating placeholder)
+        if (elements.commentBox) elements.commentBox.placeholder += ' 🎉🔥';
+        showAlert('Exclusive Emojis unlocked! Use them in comments for flair.', 'success', true);
+        break;
+      default:
+        break;
     }
   }
 
+  /**
+   * Applies all unlocked rewards on load.
+   */
+  function applyUnlockedRewards() {
+    (userData.unlockedRewards || []).forEach(applyRewardEffect);
+    
+    // Update reward cards
+    document.querySelectorAll('.reward-card').forEach(card => {
+      const reward = card.dataset.reward;
+      if (userData.unlockedRewards?.includes(reward)) {
+        card.classList.add('unlocked');
+        const btn = card.querySelector('.unlock-btn');
+        if (btn) {
+          btn.innerHTML = '<i class="fas fa-check"></i> Unlocked!';
+          btn.disabled = true;
+        }
+      }
+    });
+  }
+
+  /**
+   * Shares the selected battle result via Web Share API or fallback.
+   */
   function shareBattle() {
-    if (!selectedAnime) return;
+    if (!selectedAnime) {
+      showAlert('Select a winner first to share!', 'error', true);
+      return;
+    }
     
     const shareData = {
-      title: 'Anime Clash',
-      text: `I chose ${selectedAnime} as the winner in Anime Clash! Can you beat my choice?`,
+      title: 'YANZ - Anime Clash',
+      text: `I picked ${selectedAnime} as the champion! Battle me: ${window.location.href}`,
       url: window.location.href
     };
     
     if (navigator.share) {
-      navigator.share(shareData)
-        .catch(err => {
-          console.error('Error sharing:', err);
-          fallbackShare();
-        });
+      navigator.share(shareData).catch(err => {
+        console.error('Share failed:', err);
+        fallbackShare(shareData.text);
+      });
     } else {
-      fallbackShare();
+      fallbackShare(shareData.text);
     }
   }
 
-  function fallbackShare() {
-    const shareText = `I chose ${selectedAnime} as the winner in Anime Clash! ${window.location.href}`;
-    navigator.clipboard.writeText(shareText)
-      .then(() => alert('Link copied to clipboard!'))
-      .catch(() => prompt('Copy this link to share:', shareText));
+  /**
+   * Fallback sharing via clipboard or prompt.
+   * @param {string} text - Text to share.
+   */
+  function fallbackShare(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      showAlert('Battle link copied! Share with friends.', 'success', true);
+    }).catch(() => {
+      const input = prompt('Copy this to share:', text);
+      if (input !== null) showAlert('Copied manually!', 'success', true);
+    });
   }
 
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  /**
+   * Escapes HTML to prevent XSS in rendered content.
+   * @param {string} unsafe - Input text.
+   * @returns {string} Escaped text.
+   */
+  function escapeHtml(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
+  /**
+   * Resets userData to defaults on logout.
+   */
+  function resetUserData() {
+    userData = {
+      coins: 0,
+      battles: 0,
+      wins: 0,
+      streak: 0,
+      leaderboard: {},
+      comments: [],
+      history: [],
+      unlockedRewards: []
+    };
+    selectedAnime = null;
+    battleAnimes = [];
+    // Reset theme
+    document.documentElement.style.setProperty('--primary', '#ff4d89');
+    document.documentElement.style.setProperty('--secondary', '#6a5acd');
+  }
+
+  // Initialize the app
   init();
+
+  // Expose functions globally for inline onclicks (e.g., retry button)
+  window.loadBattle = loadBattle;
 </script>
 </body>
 </html>
