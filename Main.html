@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+  <meta name="keywords" content="YANZ, lphisv5, tools, scripts, systems, web hub, productivity tools">
+  <meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0" />
+  <meta name="google-site-verification" content="ctalwY44kcnXVpIVYysi59z66XwVqQqhN-LME8GssAQ" />
+  <meta name="theme-color" content="#0c1b33">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="YANZ Hub">
+
+  <link rel="canonical" href="https://lphisv5.github.io/v4/">
+  <link rel="icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" type="image/png" alt="YANZ favicon" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="author" content="YANZ" />
+  <title>YANZ</title>
+  <meta name="description" content="YANZ Winter Edition - Tools collection with a beautiful winter interface." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" />
+  <meta property="og:url" content="https://lphisv5.github.io/v4" />
+  <meta property="og:title" content="YANZ Hub - Winter Edition" />
+  <meta property="og:description" content="YANZ Winter Edition - Tools collection with a beautiful winter interface." />
+  <meta property="og:image" content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif" alt="YANZ preview image" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      /* Winter Colors */
+      --primary-bg: #0c1b33;
+      --secondary-bg: #1e3a5f;
+      --accent-color: #4fc3f7;
+      --accent-secondary: #29b6f6;
+      --winter-blue: #4fc3f7;
+      --winter-light-blue: #b3e5fc;
+      --winter-white: #e1f5fe;
+      --winter-silver: #eceff1;
+      --text-primary: #f8fafc;
+      --text-secondary: #e2e8f0;
+      --text-muted: #a0aec0;
+      --success-color: #81c784;
+      --error-color: #e57373;
+      --warning-color: #ffb74d;
+      --card-bg: rgba(30, 58, 95, 0.8);
+      --card-hover-bg: rgba(41, 98, 158, 0.9);
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+      --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --border-radius: 12px;
+      --border-radius-lg: 16px;
+      --border-radius-xl: 24px;
+      
+      /* Spacing */
+      --space-xs: 0.5rem;
+      --space-sm: 1rem;
+      --space-md: 1.5rem;
+      --space-lg: 2rem;
+      --space-xl: 3rem;
+      
+      /* Typography */
+      --font-size-xs: 0.75rem;
+      --font-size-sm: 0.875rem;
+      --font-size-base: 1rem;
+      --font-size-lg: 1.125rem;
+      --font-size-xl: 1.25rem;
+      --font-size-2xl: 1.5rem;
+      --font-size-3xl: 1.875rem;
+      --font-size-4xl: 2.25rem;
+    }
+
+    /* Light Theme */
+    body.theme-light {
+      --primary-bg: #f8fafc;
+      --secondary-bg: #e2e8f0;
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+      --text-muted: #718096;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-hover-bg: rgba(255, 255, 255, 1);
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --winter-blue: #3182ce;
+      --winter-light-blue: #bee3f8;
+      --winter-white: #ffffff;
+      --winter-silver: #edf2f7;
+    }
+
+    /* Blue Theme */
+    body.theme-blue {
+      --primary-bg: #0c1b33;
+      --secondary-bg: #1e40af;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --card-bg: rgba(30, 64, 175, 0.8);
+      --card-hover-bg: rgba(59, 130, 246, 0.9);
+      --winter-blue: #60a5fa;
+      --winter-light-blue: #bfdbfe;
+      --winter-white: #f8fafc;
+      --winter-silver: #e2e8f0;
+    }
+
+    /* Matrix Theme */
+    body.theme-matrix {
+      --primary-bg: #001100;
+      --secondary-bg: #003300;
+      --text-primary: #00ff00;
+      --text-secondary: #00cc00;
+      --text-muted: #008800;
+      --card-bg: rgba(0, 51, 0, 0.8);
+      --card-hover-bg: rgba(0, 102, 0, 0.9);
+      --winter-blue: #00ff00;
+      --winter-light-blue: #00cc00;
+      --winter-white: #00ff00;
+      --winter-silver: #006600;
+      --success-color: #00ff00;
+    }
+
+    /* ===== WINTER ANIMATIONS ===== */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes winter-glow {
+      0%, 100% { box-shadow: 0 0 5px var(--winter-blue), 0 0 10px var(--winter-blue); }
+      50% { box-shadow: 0 0 15px var(--winter-blue), 0 0 30px var(--winter-blue); }
+    }
+
+    @keyframes winter-text {
+      0%, 100% { text-shadow: 0 0 5px var(--winter-blue), 0 0 10px var(--winter-blue); }
+      50% { text-shadow: 0 0 10px var(--winter-blue), 0 0 20px var(--winter-blue), 0 0 30px var(--winter-blue); }
+    }
+
+    @keyframes snow-fall {
+      0% { transform: translateY(-100px) translateX(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) translateX(20px) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes snowflake-float {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0.7; }
+      25% { transform: translateY(-10px) translateX(10px); opacity: 0.9; }
+      50% { transform: translateY(-5px) translateX(-10px); opacity: 0.8; }
+      75% { transform: translateY(-8px) translateX(5px); opacity: 0.9; }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ===== BASE STYLES ===== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      background: var(--primary-bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    /* Winter Background Elements */
+    .winter-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      background: linear-gradient(to bottom, var(--primary-bg), var(--secondary-bg), var(--primary-bg));
+    }
+
+    .snowflake {
+      position: absolute;
+      color: var(--winter-white);
+      font-size: 20px;
+      animation: snow-fall 10s linear infinite;
+      z-index: -1;
+      opacity: 0.7;
+      user-select: none;
+    }
+
+    .snowflake:nth-child(2n) {
+      animation-duration: 12s;
+    }
+
+    .snowflake:nth-child(3n) {
+      animation-duration: 8s;
+    }
+
+    .snowflake:nth-child(4n) {
+      animation-duration: 14s;
+    }
+
+    .ice-crystal {
+      position: absolute;
+      font-size: 30px;
+      color: var(--winter-light-blue);
+      animation: snowflake-float 8s ease-in-out infinite;
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    /* ===== LAYOUT COMPONENTS ===== */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* ===== HEADER STYLES ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(12, 27, 51, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(79, 195, 247, 0.3);
+      transition: var(--transition);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .logo:hover {
+      transform: translateY(-2px);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      transition: var(--transition);
+      border: 2px solid var(--winter-blue);
+      animation: winter-glow 3s infinite;
+    }
+
+    .logo-text {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: winter-text 3s infinite;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .search-container {
+      position: relative;
+    }
+
+    .search-input {
+      padding: var(--space-xs) var(--space-sm) var(--space-xs) 2.5rem;
+      background: var(--card-bg);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      width: 280px;
+      transition: var(--transition);
+      font-size: var(--font-size-sm);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--winter-blue);
+      box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3);
+      animation: winter-glow 2s infinite;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--winter-blue);
+    }
+
+    .control-buttons {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      color: #0c1b33;
+      box-shadow: 0 4px 6px rgba(79, 195, 247, 0.3);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(79, 195, 247, 0.4);
+      animation: winter-glow 2s infinite;
+    }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text-secondary);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(79, 195, 247, 0.1);
+      color: var(--winter-blue);
+      border-color: var(--winter-blue);
+    }
+
+    .theme-selector {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--secondary-bg);
+      border-radius: var(--border-radius);
+      padding: var(--space-sm);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      display: none;
+      z-index: 101;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-xs);
+      margin-top: var(--space-xs);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+    }
+
+    .theme-selector.show {
+      display: grid;
+    }
+
+    .theme-option {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: var(--transition);
+    }
+
+    .theme-option:hover {
+      transform: scale(1.1);
+    }
+
+    .theme-option.active {
+      border-color: var(--winter-blue);
+      transform: scale(1.1);
+    }
+
+    .theme-dark-btn { background: linear-gradient(135deg, #0c1b33, #1e3a5f); }
+    .theme-light-btn { background: linear-gradient(135deg, #f8fafc, #e2e8f0); }
+    .theme-blue-btn { background: linear-gradient(135deg, #0c1b33, #1e40af); }
+    .theme-matrix-btn { background: linear-gradient(135deg, #001100, #003300); }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      padding: var(--space-xl) 0;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(12, 27, 51, 0.9), rgba(30, 58, 95, 0.7));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(79, 195, 247, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(179, 229, 252, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(225, 245, 254, 0.1) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    .hero h1 {
+      font-size: var(--font-size-4xl);
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue), var(--winter-white));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: winter-text 3s infinite;
+    }
+
+    .hero p {
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    /* ===== STATS SECTION ===== */
+    .stats {
+      padding: var(--space-lg) 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      padding: var(--space-lg);
+      border-radius: var(--border-radius-lg);
+      text-align: center;
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--card-hover-shadow);
+      animation: winter-glow 2s infinite;
+    }
+
+    .stat-icon {
+      font-size: 2.5rem;
+      color: var(--winter-blue);
+      margin-bottom: var(--space-sm);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .stat-value {
+      font-size: var(--font-size-3xl);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    /* ===== TOOLS GRID ===== */
+    .tools-section {
+      padding: var(--space-xl) 0;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .section-title {
+      font-size: var(--font-size-2xl);
+      font-weight: 600;
+      color: var(--text-primary);
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue));
+      border-radius: 2px;
+    }
+
+    .tools-filter {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      background: var(--card-bg);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      border-radius: var(--border-radius);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: var(--font-size-sm);
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--winter-blue);
+      color: #0c1b33;
+      font-weight: 600;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .tool-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      pointer-events: auto; /* แก้ปัญหาคลิกไม่ได้ */
+    }
+
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue), var(--winter-white));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--card-hover-shadow);
+      animation: winter-glow 2s infinite;
+    }
+
+    .tool-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .tool-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .tool-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--border-radius);
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0c1b33;
+      font-size: 1.25rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .tool-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .tool-description {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-md);
+      line-height: 1.5;
+    }
+
+    .tool-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+    }
+
+    .tool-clicks {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    /* ===== ABOUT SECTION ===== */
+    .about-section {
+      padding: var(--space-xl) 0;
+      background: var(--secondary-bg);
+      margin-top: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(79, 195, 247, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(225, 245, 254, 0.05) 0%, transparent 50%);
+      z-index: 0;
+    }
+
+    .about-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .about-title {
+      font-size: var(--font-size-2xl);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+
+    .about-title::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue));
+      border-radius: 2px;
+    }
+
+    .about-text {
+      color: var(--text-secondary);
+      font-size: var(--font-size-base);
+      line-height: 1.7;
+      margin-bottom: var(--space-lg);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      padding: var(--space-lg);
+      border-radius: var(--border-radius-lg);
+      text-align: center;
+      transition: var(--transition);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--card-hover-shadow);
+      animation: winter-glow 2s infinite;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--winter-blue);
+      margin-bottom: var(--space-sm);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .feature-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--secondary-bg);
+      padding: var(--space-xl) 0;
+      border-top: 1px solid rgba(79, 195, 247, 0.3);
+      position: relative;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-lg);
+    }
+
+    .footer-text {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      text-align: center;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      border: none;
+      color: #0c1b33;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(79, 195, 247, 0.3);
+      animation: winter-glow 2s infinite;
+    }
+
+    /* ===== MODALS & OVERLAYS ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: var(--space-md);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--secondary-bg);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-xl);
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      animation: modalSlideIn 0.3s ease-out;
+      position: relative;
+    }
+
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue), var(--winter-white));
+      border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .modal-title {
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .modal-subtitle {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .modal-body {
+      margin-bottom: var(--space-lg);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-md);
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: var(--space-xs);
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--card-bg);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--winter-blue);
+      box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3);
+      animation: winter-glow 2s infinite;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: var(--space-sm);
+      justify-content: flex-end;
+    }
+
+    /* ===== NOTIFICATION ===== */
+    .notification {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      background: var(--secondary-bg);
+      color: var(--text-primary);
+      padding: var(--space-md);
+      border-radius: var(--border-radius);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: var(--transition);
+      max-width: 400px;
+      border-left: 4px solid var(--winter-blue);
+      animation: winter-glow 2s infinite;
+    }
+
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      margin-left: auto;
+      transition: var(--transition);
+    }
+
+    .notification-close:hover {
+      color: var(--text-primary);
+    }
+
+    /* ===== LOADER ===== */
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-content {
+      text-align: center;
+    }
+
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(79, 195, 247, 0.3);
+      border-top: 4px solid var(--winter-blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto var(--space-md);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    /* ===== BACK TO TOP ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--winter-blue);
+      color: #0c1b33;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: var(--transition);
+      z-index: 99;
+      box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+      animation: winter-glow 3s infinite;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+      background: var(--winter-light-blue);
+      transform: translateY(-5px);
+    }
+
+    /* ===== REAL-TIME COUNTER STYLES ===== */
+    .real-time-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--success-color);
+      border-radius: 50%;
+      margin-left: 5px;
+      animation: pulse 2s infinite;
+    }
+
+    .online-users-list {
+      margin-top: 10px;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+
+    .user-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+
+    .user-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--success-color);
+      border-radius: 50%;
+    }
+
+    /* ===== RESPONSIVE STYLES ===== */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: var(--space-md);
+      }
+
+      .nav-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .search-input {
+        width: 200px;
+      }
+
+      .hero h1 {
+        font-size: var(--font-size-3xl);
+      }
+
+      .hero p {
+        font-size: var(--font-size-base);
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+      }
+
+      .tools-filter {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: var(--space-xs);
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal {
+        padding: var(--space-lg);
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search-input {
+        width: 150px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: var(--space-lg) 0;
+      }
+    }
+  </style>
+</head>
+<body class="theme-dark">
+  <!-- Winter Background Elements -->
+  <div class="winter-bg" id="winter-bg">
+    <!-- Snowflakes and ice crystals will be added dynamically -->
+  </div>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Loading Winter YANZ...</div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo">
+          <img src="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="YANZ Logo">
+          <span class="logo-text">YANZ</span>
+        </a>
+        
+        <div class="nav-controls">
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Search tools...">
+          </div>
+          
+          <div class="control-buttons">
+            <div class="theme-selector-container" style="position: relative;">
+              <button class="btn btn-secondary" id="theme-toggle">
+                <i class="fas fa-palette"></i> Theme
+              </button>
+              <div class="theme-selector" id="theme-selector">
+                <div class="theme-option theme-dark-btn active" data-theme="dark"></div>
+                <div class="theme-option theme-light-btn" data-theme="light"></div>
+                <div class="theme-option theme-blue-btn" data-theme="blue"></div>
+                <div class="theme-option theme-matrix-btn" data-theme="matrix"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Winter Web Tools Collection</h1>
+      <p>Access all your essential tools, scripts, and systems in one beautifully designed winter platform for productivity.</p>
+      <div class="control-buttons">
+        <button class="btn btn-primary" id="explore-btn">
+          <i class="fas fa-snowflake"></i> Explore Tools
+        </button>
+        <button class="btn btn-secondary" id="about-btn">
+          <i class="fas fa-info-circle"></i> Learn More
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-link"></i>
+          </div>
+          <div class="stat-value" id="total-tools">0</div>
+          <div class="stat-label">Winter Tools</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-mouse-pointer"></i>
+          </div>
+          <div class="stat-value" id="total-clicks">0</div>
+          <div class="stat-label">Total Clicks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="stat-value" id="active-users">1</div>
+          <div class="stat-label">
+            Active Users 
+            <span class="real-time-indicator"></span>
+          </div>
+          <div class="online-users-list" id="online-users-list"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Section -->
+  <section class="tools-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Winter Tools</h2>
+        <div class="tools-filter">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="development">Development</button>
+          <button class="filter-btn" data-filter="entertainment">Entertainment</button>
+          <button class="filter-btn" data-filter="utility">Utility</button>
+        </div>
+      </div>
+      
+      <div class="tools-grid" id="tools-grid">
+        <!-- Tools will be dynamically inserted here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="container">
+      <div class="about-content">
+        <h2 class="about-title">About YANZ</h2>
+        <p class="about-text">
+          YANZ Winter Edition brings you the ultimate gateway combining essential tools, scripts, and systems in a fast, sleek platform with a winter theme. 
+          Our mission is to provide a centralized location for all your web tool needs, streamlining your workflow 
+          and boosting productivity with a beautifully designed interface.
+        </p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <h3 class="feature-title">Fast & Reliable</h3>
+            <p class="feature-description">Quick access to all your tools with minimal loading times and maximum uptime.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+            <h3 class="feature-title">Secure</h3>
+            <p class="feature-description">Your data is protected with advanced security measures and privacy controls.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-palette"></i>
+            </div>
+            <h3 class="feature-title">Customizable</h3>
+            <p class="feature-description">Choose from multiple themes and layouts to personalize your experience.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3 class="feature-title">Responsive</h3>
+            <p class="feature-description">Works seamlessly on all devices from desktop to mobile with optimized interfaces.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-text">© 2025 All Websites are Powered by YANZn</p>
+        <button class="logout-btn" id="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Log Out
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Welcome to Winter YANZ</h3>
+        <p class="modal-subtitle">Sign in to access your personalized dashboard</p>
+      </div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" class="form-input" placeholder="Enter your username" required>
+          </div>
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="login-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary">Sign In</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="confirm-title">Visit Tool?</h3>
+        <p class="modal-subtitle" id="confirm-description">You're about to visit this tool in a new tab</p>
+      </div>
+      <div class="modal-body">
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirm-ok">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification -->
+  <div class="notification" id="notification">
+    <i class="fas fa-info-circle"></i>
+    <span id="notification-message">This is a notification</span>
+    <button class="notification-close" id="notification-close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Back to Top -->
+  <div class="back-to-top" id="back-to-top">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, set, onValue, onDisconnect, remove, serverTimestamp, runTransaction } 
+        from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
+        authDomain: "yanzz-6e06c.firebaseapp.com",
+        databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "yanzz-6e06c",
+        storageBucket: "yanzz-6e06c.firebasestorage.app",
+        messagingSenderId: "951083749698",
+        appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
+        measurementId: "G-YV2G95Z9HE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    const userId = 'user_' + Math.random().toString(36).substr(2, 9);
+    let currentToolClicks = 0;
+
+    const userRef = ref(database, 'onlineUsers/' + userId);
+    const onlineUsersRef = ref(database, 'onlineUsers');
+    const clicksRef = ref(database, 'totalClicks');
+    const connectedRef = ref(database, '.info/connected');
+
+    onValue(connectedRef, (snap) => {
+        if (snap.val() === true) {
+            console.log('✅ Connected to Firebase');
+            
+            set(userRef, {
+                name: 'User-' + userId.substr(5, 4),
+                timestamp: serverTimestamp(),
+                userAgent: navigator.userAgent.substring(0, 50),
+                lastSeen: serverTimestamp()
+            });
+
+            onDisconnect(userRef).remove();
+        }
+    });
+
+    onValue(onlineUsersRef, (snapshot) => {
+        const users = snapshot.val();
+        const userCount = users ? Object.keys(users).length : 0;
+        document.getElementById('active-users').textContent = userCount;
+        
+        updateOnlineUsersList(users);
+    });
+
+    onValue(clicksRef, (snapshot) => {
+        const clicks = snapshot.val() || 0;
+        currentToolClicks = clicks;
+        document.getElementById('total-clicks').textContent = clicks.toLocaleString();
+    });
+
+    function updateOnlineUsersList(users) {
+        const usersList = document.getElementById('online-users-list');
+        
+        if (!users || Object.keys(users).length === 0) {
+            usersList.innerHTML = '<div class="user-item">No active users</div>';
+            return;
+        }
+        
+        let usersHTML = '';
+        Object.keys(users).forEach(userId => {
+            const user = users[userId];
+            usersHTML += `
+                <div class="user-item">
+                    <div class="user-dot"></div>
+                    <span>${user.name || 'Anonymous User'}</span>
+                </div>
+            `;
+        });
+        
+        usersList.innerHTML = usersHTML;
+    }
+
+    window.addClickToCounter = async function() {
+        try {
+            await runTransaction(clicksRef, (currentCount) => {
+                return (currentCount || 0) + 1;
+            });
+        } catch (error) {
+            console.error('Error adding click:', error);
+        }
+    };
+
+    console.log('🔥 Firebase Real-time Counter initialized!');
+    console.log('User ID:', userId);
+  </script>
+
+  <script>
+    const toolsData = [
+      {
+        id: "genkey",
+        name: "GEN KEY",
+        url: "https://lphisv5.github.io/v4/genkey",
+        icon: "fas fa-key",
+        description: "Generate secure keys and tokens for your projects and applications",
+        category: "development",
+        popularity: 4.5
+      },
+      {
+        id: "addapi",
+        name: "ADD API",
+        url: "https://lphisv5.github.io/v4/addapi",
+        icon: "fas fa-plus",
+        description: "Integrate and manage APIs in your applications with ease",
+        category: "development",
+        popularity: 4.2
+      },
+      {
+        id: "invite",
+        name: "INVITE BOT",
+        url: "https://lphisv5.github.io/v4/botinvite",
+        icon: "fas fa-robot",
+        description: "Invite and configure bots for your Discord servers",
+        category: "utility",
+        popularity: 4.0
+      },
+      {
+        id: "robloxver",
+        name: "ROBLOX VERSION",
+        url: "https://lphisv5.github.io/v4/roblox-version",
+        icon: "fas fa-cube",
+        description: "Check the latest Roblox client version and update information",
+        category: "entertainment",
+        popularity: 3.8
+      },
+      {
+        id: "gardenpet",
+        name: "GROW A GARDEN PET",
+        url: "https://lphisv5.github.io/v4/growagarden-pet",
+        icon: "fas fa-dog",
+        description: "Raise and care for virtual pets in your digital garden",
+        category: "entertainment",
+        popularity: 4.1
+      },
+      {
+        id: "gardenstock",
+        name: "GROW A GARDEN STOCK",
+        url: "https://lphisv5.github.io/v4/growagarden-stock",
+        icon: "fas fa-seedling",
+        description: "Manage your garden inventory and track plant growth",
+        category: "entertainment",
+        popularity: 3.9
+      },
+      {
+        id: "gardenweather",
+        name: "GROW A GARDEN WEATHER",
+        url: "https://lphisv5.github.io/v4/weather",
+        icon: "fas fa-cloud-sun",
+        description: "Check weather conditions optimal for your garden plants",
+        category: "utility",
+        popularity: 3.7
+      },
+      {
+        id: "executors",
+        name: "EXECUTORS",
+        url: "https://executors.samrat.lol/",
+        icon: "fas fa-bolt",
+        description: "Run and manage script executors for development and testing",
+        category: "development",
+        popularity: 4.7
+      },
+      {
+        id: "meme",
+        name: "MEME",
+        url: "https://lphisv5.github.io/v4/meme",
+        icon: "fas fa-image",
+        description: "Browse and share the latest internet memes and viral content",
+        category: "entertainment",
+        popularity: 4.3
+      },
+      {
+        id: "uuid",
+        name: "UUID",
+        url: "https://lphisv5.github.io/v4/uuid",
+        icon: "fas fa-id-card",
+        description: "Generate and validate Universally Unique Identifiers (UUIDs)",
+        category: "development",
+        popularity: 4.0
+      },
+      {
+        id: "youtube",
+        name: "YOUTUBE",
+        url: "https://lphisv5.github.io/v4/youtube",
+        icon: "fas fa-video",
+        description: "Access YouTube tools and utilities for content management",
+        category: "entertainment",
+        popularity: 4.4
+      },
+      {
+        id: "apitester",
+        name: "API TESTER",
+        url: "https://lphisv5.github.io/v4/apitester",
+        icon: "fas fa-terminal",
+        description: "Test and debug your APIs with a comprehensive testing suite",
+        category: "development",
+        popularity: 4.6
+      },
+      {
+        id: "anime",
+        name: "ANIME",
+        url: "https://lphisv5.github.io/v4/anime",
+        icon: "fas fa-hippo",
+        description: "Discover and vote for your favorite anime series and characters",
+        category: "entertainment",
+        popularity: 4.2
+      },
+      {
+        id: "script",
+        name: "SEARCH SCRIPT",
+        url: "https://lphisv5.github.io/v4/script",
+        icon: "fas fa-code",
+        description: "Find trending scripts and code snippets for various platforms",
+        category: "development",
+        popularity: 4.5
+      },
+      {
+        id: "coin",
+        name: "COIN",
+        url: "https://lphisv5.github.io/v4/coin",
+        icon: "fas fa-coins",
+        description: "Track cryptocurrency prices and market data in real-time",
+        category: "utility",
+        popularity: 4.1
+      },
+      {
+        id: "binance",
+        name: "BINANCE",
+        url: "https://lphisv5.github.io/v4/binance",
+        icon: "fas fa-dollar-sign",
+        description: "Monitor Binance exchange data and trading information",
+        category: "utility",
+        popularity: 4.3
+      },
+      {
+        id: "deck",
+        name: "DECK",
+        url: "https://lphisv5.github.io/v4/deck",
+        icon: "fas fa-heart",
+        description: "Create and manage digital card decks for games and activities",
+        category: "entertainment",
+        popularity: 3.8
+      },
+      {
+        id: "ip",
+        name: "IP",
+        url: "https://lphisv5.github.io/v4/ip",
+        icon: "fas fa-network-wired",
+        description: "Check your current IP address and network information",
+        category: "utility",
+        popularity: 4.0
+      },
+      {
+        id: "btc",
+        name: "BTC",
+        url: "https://lphisv5.github.io/v4/BTC",
+        icon: "fab fa-bitcoin",
+        description: "Monitor Bitcoin price movements and blockchain statistics",
+        category: "utility",
+        popularity: 4.4
+      },
+      {
+        id: "neko",
+        name: "Neko",
+        url: "https://lphisv5.github.io/v4/neko",
+        icon: "fas fa-cat",
+        description: "Browse adorable cat images and Neko-themed content",
+        category: "entertainment",
+        popularity: 4.2
+      },
+      {
+        id: "fortnite",
+        name: "Fortnite Shop",
+        url: "https://lphisv5.github.io/v4/fortniteshop",
+        icon: "fas fa-shopping-basket",
+        description: "Browse the latest Fortnite item shop and cosmetic offerings",
+        category: "entertainment",
+        popularity: 4.1
+      },
+      {
+        id: "bobs-burgers",
+        name: "Bob's Burgers",
+        url: "https://lphisv5.github.io/v4/Bob's.Burgers",
+        icon: "fas fa-hamburger",
+        description: "Explore detailed information about Bob's Burgers characters and episodes",
+        category: "entertainment",
+        popularity: 3.9
+      }
+    ];
+
+    let appState = {
+      currentUser: null,
+      currentFilter: 'all',
+      currentSort: 'name',
+      pendingTool: null,
+      sessionTimeout: null,
+      INACTIVITY_TIMEOUT: 10 * 60 * 1000 // 10 minutes
+    };
+
+    const elements = {
+      loader: document.getElementById('loader'),
+      winterBg: document.getElementById('winter-bg'),
+      toolsGrid: document.getElementById('tools-grid'),
+      searchInput: document.getElementById('search-input'),
+      themeToggle: document.getElementById('theme-toggle'),
+      themeSelector: document.getElementById('theme-selector'),
+      filterButtons: document.querySelectorAll('.filter-btn'),
+      loginModal: document.getElementById('login-modal'),
+      confirmModal: document.getElementById('confirm-modal'),
+      confirmTitle: document.getElementById('confirm-title'),
+      confirmDescription: document.getElementById('confirm-description'),
+      confirmCancel: document.getElementById('confirm-cancel'),
+      confirmOk: document.getElementById('confirm-ok'),
+      loginForm: document.getElementById('login-form'),
+      loginCancel: document.getElementById('login-cancel'),
+      logoutBtn: document.getElementById('logout-btn'),
+      notification: document.getElementById('notification'),
+      notificationMessage: document.getElementById('notification-message'),
+      notificationClose: document.getElementById('notification-close'),
+      backToTop: document.getElementById('back-to-top'),
+      exploreBtn: document.getElementById('explore-btn'),
+      aboutBtn: document.getElementById('about-btn'),
+      stats: {
+        totalTools: document.getElementById('total-tools'),
+        totalClicks: document.getElementById('total-clicks'),
+        activeUsers: document.getElementById('active-users')
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeApp();
+    });
+
+    function initializeApp() {
+      loadUserPreferences();
+      
+      createWinterElements();
+      
+      renderToolsGrid();
+      
+      setupEventListeners();
+      
+      updateStatistics();
+      
+      checkAuthentication();
+      
+      setTimeout(() => {
+        elements.loader.classList.add('hidden');
+      }, 1000);
+    }
+
+    function createWinterElements() {
+      // Create snowflakes
+      const snowflakeSymbols = ['❄', '❅', '❆'];
+      for (let i = 0; i < 30; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.innerHTML = snowflakeSymbols[Math.floor(Math.random() * snowflakeSymbols.length)];
+        snowflake.style.left = `${Math.random() * 100}%`;
+        snowflake.style.animationDelay = `${Math.random() * 10}s`;
+        elements.winterBg.appendChild(snowflake);
+      }
+      
+      // Create ice crystals
+      for (let i = 0; i < 8; i++) {
+        const crystal = document.createElement('div');
+        crystal.className = 'ice-crystal';
+        crystal.innerHTML = '✦';
+        crystal.style.left = `${Math.random() * 90}%`;
+        crystal.style.top = `${Math.random() * 90}%`;
+        crystal.style.animationDelay = `${Math.random() * 8}s`;
+        elements.winterBg.appendChild(crystal);
+      }
+    }
+
+    function renderToolsGrid(filteredTools = null) {
+      const toolsToRender = filteredTools || toolsData;
+      elements.toolsGrid.innerHTML = '';
+      
+      toolsToRender.forEach(tool => {
+        const clickCount = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10);
+        
+        const toolCard = document.createElement('div');
+        toolCard.className = 'tool-card';
+        toolCard.dataset.id = tool.id;
+        toolCard.dataset.category = tool.category;
+        toolCard.tabIndex = 0; // สำหรับ keyboard navigation
+        
+        toolCard.innerHTML = `
+          <div class="tool-header">
+            <div class="tool-icon">
+              <i class="${tool.icon}"></i>
+            </div>
+            <h3 class="tool-title">${tool.name}</h3>
+          </div>
+          <p class="tool-description">${tool.description}</p>
+          <div class="tool-meta">
+            <span class="tool-category">${formatCategory(tool.category)}</span>
+            <div class="tool-clicks">
+              <i class="fas fa-mouse-pointer"></i>
+              <span>${clickCount}</span>
+            </div>
+          </div>
+        `;
+        
+        // Event listener สำหรับคลิก - แก้ให้ชัดเจน
+        toolCard.addEventListener('click', (e) => {
+          if (e.target.closest('i') || e.target.closest('.tool-icon')) return; // ละเว้น icon ถ้าต้องการ
+          handleToolClick(tool);
+        });
+        
+        // Keyboard support
+        toolCard.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleToolClick(tool);
+          }
+        });
+        
+        elements.toolsGrid.appendChild(toolCard);
+      });
+    }
+
+    function formatCategory(category) {
+      const categoryMap = {
+        'development': 'Development',
+        'entertainment': 'Entertainment',
+        'utility': 'Utility'
+      };
+      return categoryMap[category] || category;
+    }
+
+    function setupEventListeners() {
+      elements.searchInput.addEventListener('input', handleSearch);
+      
+      elements.filterButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const filter = e.target.dataset.filter;
+          handleFilter(filter);
+        });
+      });
+      
+      elements.themeToggle.addEventListener('click', toggleThemeSelector);
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+          const theme = e.target.dataset.theme;
+          changeTheme(theme);
+          elements.themeSelector.classList.remove('show');
+        });
+      });
+      
+      document.addEventListener('click', (e) => {
+        if (!elements.themeToggle.contains(e.target) && !elements.themeSelector.contains(e.target)) {
+          elements.themeSelector.classList.remove('show');
+        }
+      });
+      
+      elements.confirmCancel.addEventListener('click', hideConfirmModal);
+      elements.confirmOk.addEventListener('click', handleConfirmVisit);
+      elements.loginCancel.addEventListener('click', hideLoginModal);
+      elements.loginForm.addEventListener('submit', handleLogin);
+      
+      elements.logoutBtn.addEventListener('click', handleLogout);
+      
+      elements.exploreBtn.addEventListener('click', () => {
+        document.querySelector('.tools-section').scrollIntoView({ behavior: 'smooth' });
+      });
+      
+      elements.aboutBtn.addEventListener('click', () => {
+        document.querySelector('.about-section').scrollIntoView({ behavior: 'smooth' });
+      });
+      
+      elements.notificationClose.addEventListener('click', hideNotification);
+      
+      elements.backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      
+      window.addEventListener('scroll', handleScroll);
+      
+      document.addEventListener('mousemove', resetSessionTimeout);
+      document.addEventListener('keypress', resetSessionTimeout);
+      document.addEventListener('click', resetSessionTimeout);
+    }
+
+    function handleSearch(e) {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      
+      if (searchTerm === '') {
+        renderToolsGrid();
+        return;
+      }
+      
+      const filteredTools = toolsData.filter(tool => 
+        tool.name.toLowerCase().includes(searchTerm) || 
+        tool.description.toLowerCase().includes(searchTerm) ||
+        tool.category.toLowerCase().includes(searchTerm)
+      );
+      
+      renderToolsGrid(filteredTools);
+    }
+
+    function handleFilter(filter) {
+      appState.currentFilter = filter;
+      
+      elements.filterButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+      });
+      
+      if (filter === 'all') {
+        renderToolsGrid();
+      } else {
+        const filteredTools = toolsData.filter(tool => tool.category === filter);
+        renderToolsGrid(filteredTools);
+      }
+    }
+
+    function handleToolClick(tool) {
+      appState.pendingTool = tool;
+      showConfirmModal(tool);
+    }
+
+    function handleConfirmVisit() {
+      if (appState.pendingTool) {
+        const tool = appState.pendingTool;
+        
+        const clickCount = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10) + 1;
+        localStorage.setItem(`clicks_${tool.id}`, clickCount.toString());
+        
+        if (typeof window.addClickToCounter === 'function') {
+          window.addClickToCounter();
+        }
+        
+        updateStatistics();
+        
+        // แก้ลิงค์ให้เปิดได้ - เพิ่ม noopener สำหรับ security
+        window.open(tool.url, '_blank', 'noopener,noreferrer');
+        
+        showNotification(`Opening ${tool.name}`, 'success');
+        
+        hideConfirmModal();
+      }
+    }
+
+    function checkAuthentication() {
+      const storedUser = localStorage.getItem('currentUser');
+      
+      if (storedUser) {
+        appState.currentUser = JSON.parse(storedUser);
+        resetSessionTimeout();
+      } else {
+        showLoginModal();
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      if (username && password) {
+        appState.currentUser = { username, loginTime: new Date().toISOString() };
+        localStorage.setItem('currentUser', JSON.stringify(appState.currentUser));
+        
+        hideLoginModal();
+        showNotification(`Welcome to the winter wonderland, ${username}!`, 'success');
+        resetSessionTimeout();
+        
+        updateStatistics();
+      } else {
+        showNotification('Please enter both username and password', 'error');
+      }
+    }
+
+    function handleLogout() {
+      appState.currentUser = null;
+      localStorage.removeItem('currentUser');
+      
+      if (appState.sessionTimeout) {
+        clearTimeout(appState.sessionTimeout);
+        appState.sessionTimeout = null;
+      }
+      
+      showNotification('You have been logged out', 'info');
+      showLoginModal();
+      
+      updateStatistics();
+    }
+
+    function resetSessionTimeout() {
+      if (appState.sessionTimeout) {
+        clearTimeout(appState.sessionTimeout);
+      }
+      
+      if (appState.currentUser) {
+        appState.sessionTimeout = setTimeout(() => {
+          showNotification('Session expired due to inactivity', 'warning');
+          handleLogout();
+        }, appState.INACTIVITY_TIMEOUT);
+      }
+    }
+
+    function toggleThemeSelector() {
+      elements.themeSelector.classList.toggle('show');
+    }
+
+    function changeTheme(theme) {
+      document.body.className = `theme-${theme}`;
+      
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.toggle('active', option.dataset.theme === theme);
+      });
+      
+      localStorage.setItem('theme', theme);
+      
+      showNotification(`Theme changed to ${theme}`, 'info');
+    }
+
+    function loadUserPreferences() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        changeTheme(savedTheme);
+      }
+    }
+
+    function showLoginModal() {
+      elements.loginModal.classList.add('active');
+    }
+
+    function hideLoginModal() {
+      elements.loginModal.classList.remove('active');
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+    }
+
+    function showConfirmModal(tool) {
+      elements.confirmTitle.textContent = `Visit ${tool.name}?`;
+      elements.confirmDescription.textContent = `You're about to visit "${tool.description}" in a new tab.`;
+      elements.confirmModal.classList.add('active');
+    }
+
+    function hideConfirmModal() {
+      elements.confirmModal.classList.remove('active');
+      appState.pendingTool = null;
+    }
+
+    function showNotification(message, type = 'info') {
+      elements.notificationMessage.textContent = message;
+      elements.notification.className = `notification show`;
+      elements.notification.style.borderLeftColor = `var(--${type}-color)`;
+      
+      setTimeout(() => {
+        hideNotification();
+      }, 5000);
+    }
+
+    function hideNotification() {
+      elements.notification.classList.remove('show');
+    }
+
+    function updateStatistics() {
+      elements.stats.totalTools.textContent = toolsData.length;
+    }
+
+    function handleScroll() {
+      if (window.scrollY > 300) {
+        elements.backToTop.classList.add('visible');
+      } else {
+        elements.backToTop.classList.remove('visible');
+      }
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    elements.searchInput.addEventListener('input', debounce(handleSearch, 300));
+  </script>
+</body>
+</html>
