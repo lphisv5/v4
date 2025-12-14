@@ -1209,20 +1209,20 @@
     function initializeEmailJS() {
       try {
         // Initialize with YOUR Public Key
-        emailjs.init("nWuoiv0cTSOKPxj_yooqi");
-        console.log('✅ EmailJS initialized with Public Key');
+        emailjs.init("QRpj9mdUY5jURnFt7");
+        console.log('EmailJS initialized with Public Key');
         
         // Add EmailJS test button
         addEmailJSTestButton();
         
       } catch (error) {
-        console.error('❌ EmailJS initialization failed:', error);
+        console.error('EmailJS initialization failed:', error);
       }
     }
 
     function addEmailJSTestButton() {
       const testBtn = document.createElement('button');
-      testBtn.textContent = '📧 Test EmailJS';
+      testBtn.textContent = 'Test EmailJS';
       testBtn.style.cssText = `
         position: fixed;
         bottom: 60px;
