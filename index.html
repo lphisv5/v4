@@ -727,6 +727,27 @@
     .debug-status.disconnected { background: #f44336; }
     .debug-status.connecting { background: #ff9800; }
 
+    /* ===== OTP DISPLAY ===== */
+    .otp-display {
+      position: fixed;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff4444;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      z-index: 9999;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .auth-card {
@@ -1031,7 +1052,7 @@
     </button>
   </div>
 
-  <!-- Firebase SDK (Namespaced - Works Better) -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   
@@ -1041,7 +1062,7 @@
   <script>
     // ========== INITIALIZATION ==========
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('YANZ Hub Initializing...');
+      console.log('🔥 YANZ Hub Initializing...');
       
       // Initialize winter background
       createWinterElements();
@@ -1108,7 +1129,7 @@
         database = firebase.database();
         
         console.log('✅ Firebase initialized successfully');
-        console.log('Database URL:', firebaseConfig.databaseURL);
+        console.log('📡 Database URL:', firebaseConfig.databaseURL);
         
         // Test connection
         testFirebaseConnection();
@@ -1143,23 +1164,105 @@
         // Show debug panel
         document.getElementById('debug-panel').style.display = 'block';
         
+        // Add to Firebase button
+        addFirebaseTestButton();
+        
       } catch (error) {
         console.error('❌ Firebase test failed:', error);
         showDebugInfo('Firebase Disconnected ✗', 'error');
       }
     }
 
+    function addFirebaseTestButton() {
+      const testBtn = document.createElement('button');
+      testBtn.textContent = '🔥 Test Firebase';
+      testBtn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        background: #FFA000;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 9999;
+        font-weight: bold;
+      `;
+      testBtn.onclick = async () => {
+        try {
+          const testRef = database.ref('test_button/' + Date.now());
+          await testRef.set({
+            clicked: true,
+            time: new Date().toISOString(),
+            userAgent: navigator.userAgent.substring(0, 50)
+          });
+          alert('✅ Firebase write successful! Check Firebase console.');
+        } catch (error) {
+          alert('❌ Firebase error: ' + error.message);
+        }
+      };
+      document.body.appendChild(testBtn);
+    }
+
     // ========== EMAILJS INITIALIZATION ==========
     function initializeEmailJS() {
       try {
-        // Initialize with your PUBLIC KEY (not service ID)
-        // Get from: https://dashboard.emailjs.com/admin
-        emailjs.init("YOUR_PUBLIC_KEY_HERE"); // เปลี่ยนเป็น Public Key ของคุณ
+        // Initialize with YOUR Public Key
+        emailjs.init("nWuoiv0cTSOKPxj_yooqi");
+        console.log('✅ EmailJS initialized with Public Key');
         
-        console.log('✅ EmailJS initialized');
+        // Add EmailJS test button
+        addEmailJSTestButton();
+        
       } catch (error) {
         console.error('❌ EmailJS initialization failed:', error);
       }
+    }
+
+    function addEmailJSTestButton() {
+      const testBtn = document.createElement('button');
+      testBtn.textContent = '📧 Test EmailJS';
+      testBtn.style.cssText = `
+        position: fixed;
+        bottom: 60px;
+        right: 20px;
+        padding: 10px 15px;
+        background: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 9999;
+        font-weight: bold;
+      `;
+      testBtn.onclick = async () => {
+        const email = prompt('Enter test email address:') || 'test@example.com';
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        
+        try {
+          const templateParams = {
+            to_email: email,
+            otp_code: otp,
+            app_name: 'YANZ Test',
+            from_name: 'YANZ Support',
+            reply_to: 'noreply@yanz.com'
+          };
+
+          const response = await emailjs.send(
+            'service_pt8m9lp',
+            'QRpj9mdUY5jURnFt7',
+            templateParams
+          );
+
+          alert(`✅ Test email sent to ${email}!\nStatus: ${response.status}\nOTP: ${otp}`);
+          
+        } catch (error) {
+          console.error('EmailJS test error:', error);
+          alert(`❌ EmailJS test failed:\n${error.text || error.message}\n\nDemo OTP: ${otp}`);
+        }
+      };
+      document.body.appendChild(testBtn);
     }
 
     // ========== AUTHENTICATION SYSTEM ==========
@@ -1171,6 +1274,7 @@
         this.otpTimer = null;
         this.resendTimer = null;
         this.loginAttempts = {};
+        this.isDemoMode = false;
       }
 
       generateCaptcha() {
@@ -1187,7 +1291,6 @@
       }
 
       hashPassword(password) {
-        // Simple hash for demo - ใน production ใช้ bcrypt หรือ similar
         let hash = 0;
         for (let i = 0; i < password.length; i++) {
           const char = password.charCodeAt(i);
@@ -1203,7 +1306,7 @@
         try {
           const snapshot = await database.ref('users')
             .orderByChild('email')
-            .equalTo(email)
+            .equalTo(email.toLowerCase())
             .once('value');
           return snapshot.exists();
         } catch (error) {
@@ -1228,82 +1331,87 @@
       }
 
       async registerUser(userData) {
-        try {
-          // Check if Firebase is available
-          if (!database) {
-            return this.registerUserLocal(userData);
-          }
-
-          // Check if email exists
-          const emailExists = await this.checkEmailExists(userData.email);
-          if (emailExists) {
-            throw new Error('Email already registered');
-          }
-
-          // Check if username exists
-          const usernameExists = await this.checkUsernameExists(userData.username);
-          if (usernameExists) {
-            throw new Error('Username already taken');
-          }
-
-          // Create user in Firebase
-          const userId = 'user_' + Date.now();
-          const userRef = database.ref(`users/${userId}`);
-          
-          const userRecord = {
-            userId,
-            username: userData.username,
-            email: userData.email.toLowerCase(),
-            password: this.hashPassword(userData.password),
-            createdAt: Date.now(),
-            verified: false,
-            tier: 'free'
-          };
-
-          await userRef.set(userRecord);
-          
-          console.log('User registered in Firebase:', userId);
-          return { 
-            success: true, 
-            userId, 
-            email: userData.email,
-            isLocal: false 
-          };
-
-        } catch (error) {
-          console.error('Firebase registration failed, using local storage:', error);
+        console.log('📝 Registering user:', userData.email);
+        
+        // Always allow registration (for demo)
+        const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        
+        // For demo users, skip Firebase
+        if (userData.email.includes('@demo.') || userData.email.includes('@test.')) {
           return this.registerUserLocal(userData);
         }
+
+        // Try Firebase if available
+        if (database) {
+          try {
+            const emailExists = await this.checkEmailExists(userData.email);
+            if (emailExists) {
+              throw new Error('Email already registered');
+            }
+
+            const usernameExists = await this.checkUsernameExists(userData.username);
+            if (usernameExists) {
+              throw new Error('Username already taken');
+            }
+
+            const userRef = database.ref(`users/${userId}`);
+            
+            const userRecord = {
+              userId,
+              username: userData.username,
+              email: userData.email.toLowerCase(),
+              password: this.hashPassword(userData.password),
+              createdAt: Date.now(),
+              verified: false,
+              tier: 'free',
+              source: 'firebase'
+            };
+
+            await userRef.set(userRecord);
+            
+            console.log('✅ User registered in Firebase:', userId);
+            return { 
+              success: true, 
+              userId, 
+              email: userData.email,
+              isLocal: false 
+            };
+
+          } catch (error) {
+            console.error('Firebase registration failed:', error);
+            // Fallback to local
+          }
+        }
+
+        // Fallback to local storage
+        return this.registerUserLocal(userData);
       }
 
       registerUserLocal(userData) {
         try {
-          // Get existing users
           const users = JSON.parse(localStorage.getItem('yanz_users') || '{}');
           const userId = 'local_' + Date.now();
           
-          // Check if email already exists locally
+          // Check if email exists locally
           const existingUser = Object.values(users).find(u => u.email === userData.email);
           if (existingUser) {
-            throw new Error('Email already registered locally');
+            throw new Error('Email already registered');
           }
 
-          // Create user record
           users[userId] = {
             userId,
             username: userData.username,
             email: userData.email,
             password: this.hashPassword(userData.password),
             createdAt: Date.now(),
-            verified: true, // Auto-verify for local users
+            verified: true,
             tier: 'free',
             isLocal: true
           };
 
-          // Save to localStorage
           localStorage.setItem('yanz_users', JSON.stringify(users));
           
-          console.log('User registered locally:', userId);
+          console.log('✅ User registered locally:', userId);
           return { 
             success: true, 
             userId, 
@@ -1318,22 +1426,34 @@
       }
 
       async loginUser(email, password) {
-        try {
-          // Try Firebase first
-          if (database) {
-            const firebaseResult = await this.loginUserFirebase(email, password);
-            if (firebaseResult.success) {
-              return firebaseResult;
-            }
-          }
-
-          // Fallback to local storage
-          return this.loginUserLocal(email, password);
-
-        } catch (error) {
-          console.error('Login failed:', error);
-          throw error;
+        console.log('🔐 Attempting login for:', email);
+        
+        // Demo account (for testing without Firebase)
+        if (email === 'demo@yanz.com' && password === 'yanz1234') {
+          return {
+            success: true,
+            userId: 'demo_user_001',
+            username: 'demo_user',
+            email: 'demo@yanz.com',
+            tier: 'premium',
+            isLocal: true
+          };
         }
+
+        // Try Firebase first
+        if (database) {
+          try {
+            const result = await this.loginUserFirebase(email, password);
+            if (result.success) {
+              return result;
+            }
+          } catch (firebaseError) {
+            console.log('Firebase login failed, trying local:', firebaseError.message);
+          }
+        }
+
+        // Try local storage
+        return this.loginUserLocal(email, password);
       }
 
       async loginUserFirebase(email, password) {
@@ -1341,7 +1461,6 @@
           throw new Error('Firebase not available');
         }
 
-        // Find user by email
         const snapshot = await database.ref('users')
           .orderByChild('email')
           .equalTo(email.toLowerCase())
@@ -1359,14 +1478,8 @@
           userId = child.key;
         });
 
-        // Verify password
         if (userData.password !== this.hashPassword(password)) {
           throw new Error('Invalid email or password');
-        }
-
-        // Check if verified
-        if (!userData.verified && !userData.isLocal) {
-          throw new Error('Please verify your email first');
         }
 
         return {
@@ -1374,7 +1487,7 @@
           userId,
           username: userData.username,
           email: userData.email,
-          tier: userData.tier,
+          tier: userData.tier || 'free',
           isLocal: userData.isLocal || false
         };
       }
@@ -1382,7 +1495,6 @@
       loginUserLocal(email, password) {
         const users = JSON.parse(localStorage.getItem('yanz_users') || '{}');
         
-        // Find user
         const user = Object.values(users).find(u => 
           u.email === email && u.password === this.hashPassword(password)
         );
@@ -1396,113 +1508,161 @@
           userId: user.userId,
           username: user.username,
           email: user.email,
-          tier: user.tier,
+          tier: user.tier || 'free',
           isLocal: true
         };
       }
 
       async sendOTP(email) {
+        console.log('📧 Sending OTP to:', email);
         this.currentOTP = this.generateOTP();
         this.currentEmail = email;
+        
+        // Always show OTP in console for testing
+        console.log(`🔑 OTP for ${email}: ${this.currentOTP}`);
+        
+        // Display OTP on screen for testing
+        this.showOTPOnScreen(email, this.currentOTP);
 
         // Try to send via EmailJS
         try {
           const templateParams = {
             to_email: email,
             otp_code: this.currentOTP,
-            app_name: 'YANZ'
+            app_name: 'YANZ Hub',
+            from_name: 'YANZ Verification',
+            reply_to: 'noreply@yanz.com',
+            current_year: new Date().getFullYear()
           };
 
-          await emailjs.send(
-            'service_pt8m9lp', // Service ID
-            'template_5fwmpvu', // Template ID
+          console.log('Sending email with params:', templateParams);
+          
+          const response = await emailjs.send(
+            'service_pt8m9lp',
+            'QRpj9mdUY5jURnFt7',
             templateParams
           );
 
-          console.log('OTP email sent to:', email);
-          return { success: true, message: 'OTP sent to email' };
-
-        } catch (emailError) {
-          console.log('EmailJS failed, showing OTP in console:', emailError);
-          
-          // Fallback: Store OTP and show in console
-          if (database) {
-            const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '')}`);
-            await otpRef.set({
-              otp: this.currentOTP,
-              email: email,
-              expiresAt: Date.now() + 5 * 60 * 1000 // 5 minutes
-            });
-          }
-
-          console.log(`OTP for ${email}: ${this.currentOTP}`);
+          console.log('✅ Email sent successfully! Status:', response.status);
           return { 
             success: true, 
-            message: 'Check console for OTP (email service unavailable)',
-            otp: this.currentOTP 
+            message: 'Verification code sent to your email',
+            emailSent: true
+          };
+
+        } catch (emailError) {
+          console.error('❌ EmailJS failed:', emailError);
+          
+          // Store OTP in Firebase as backup
+          if (database) {
+            try {
+              const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
+              await otpRef.set({
+                otp: this.currentOTP,
+                email: email,
+                createdAt: Date.now(),
+                expiresAt: Date.now() + 5 * 60 * 1000
+              });
+              console.log('OTP stored in Firebase as backup');
+            } catch (firebaseError) {
+              console.error('Failed to store OTP in Firebase:', firebaseError);
+            }
+          }
+          
+          return { 
+            success: true, 
+            message: `Email service temporarily unavailable. Your OTP is: ${this.currentOTP}`,
+            emailSent: false,
+            otp: this.currentOTP
           };
         }
       }
 
+      showOTPOnScreen(email, otp) {
+        // Remove existing OTP display
+        const existingDisplay = document.querySelector('.otp-display');
+        if (existingDisplay) existingDisplay.remove();
+        
+        // Create new OTP display
+        const otpDisplay = document.createElement('div');
+        otpDisplay.className = 'otp-display';
+        otpDisplay.innerHTML = `
+          <strong>🔐 TEST OTP</strong><br>
+          <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px;">${otp}</span><br>
+          <small>For: ${email}</small><br>
+          <small style="opacity: 0.8;">(This will auto-hide in 30 seconds)</small>
+        `;
+        
+        document.body.appendChild(otpDisplay);
+        
+        // Auto remove after 30 seconds
+        setTimeout(() => {
+          if (otpDisplay.parentNode) {
+            otpDisplay.remove();
+          }
+        }, 30000);
+      }
+
       async verifyOTP(email, otp) {
-        // For demo/local users, auto-verify
-        if (email.includes('@demo.') || email.includes('@local.')) {
-          return { success: true, isLocal: true };
+        console.log('🔍 Verifying OTP for:', email);
+        
+        // For demo/testing purposes
+        if (email.includes('@demo.') || email.includes('@test.')) {
+          if (otp === this.currentOTP && email === this.currentEmail) {
+            return { success: true, isLocal: true };
+          }
         }
 
-        // Check Firebase OTP
+        // Check Firebase OTP storage
         if (database) {
           try {
-            const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '')}`);
+            const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
             const snapshot = await otpRef.once('value');
             
-            if (!snapshot.exists()) {
-              throw new Error('OTP expired or invalid');
-            }
+            if (snapshot.exists()) {
+              const otpData = snapshot.val();
+              
+              if (Date.now() > otpData.expiresAt) {
+                await otpRef.remove();
+                throw new Error('OTP expired');
+              }
 
-            const otpData = snapshot.val();
-            
-            if (Date.now() > otpData.expiresAt) {
-              await otpRef.remove();
-              throw new Error('OTP expired');
-            }
+              if (otpData.otp === otp) {
+                // Remove used OTP
+                await otpRef.remove();
+                
+                // Mark user as verified in Firebase
+                const userSnapshot = await database.ref('users')
+                  .orderByChild('email')
+                  .equalTo(email)
+                  .once('value');
 
-            if (otpData.otp !== otp) {
-              throw new Error('Invalid OTP');
-            }
+                if (userSnapshot.exists()) {
+                  let userId = null;
+                  userSnapshot.forEach((child) => {
+                    userId = child.key;
+                  });
 
-            // Remove used OTP
-            await otpRef.remove();
-            
-            // Mark user as verified in Firebase
-            const userSnapshot = await database.ref('users')
-              .orderByChild('email')
-              .equalTo(email)
-              .once('value');
-
-            if (userSnapshot.exists()) {
-              let userId = null;
-              userSnapshot.forEach((child) => {
-                userId = child.key;
-              });
-
-              if (userId) {
-                await database.ref(`users/${userId}/verified`).set(true);
-                return { success: true, userId };
+                  if (userId) {
+                    await database.ref(`users/${userId}/verified`).set(true);
+                    console.log('✅ User verified in Firebase');
+                    return { success: true, userId };
+                  }
+                }
               }
             }
-
           } catch (error) {
-            console.error('OTP verification error:', error);
+            console.error('Firebase OTP verification error:', error);
           }
         }
 
         // Fallback: Check against current OTP
         if (this.currentOTP === otp && this.currentEmail === email) {
+          console.log('✅ OTP verified successfully');
           return { success: true };
         }
 
-        throw new Error('Invalid OTP');
+        throw new Error('Invalid OTP code');
       }
 
       createSession(userData) {
@@ -1515,21 +1675,23 @@
           tier: userData.tier || 'free',
           isLocal: userData.isLocal || false,
           createdAt: Date.now(),
-          expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+          expiresAt: Date.now() + (24 * 60 * 60 * 1000)
         };
 
-        // Store session
+        // Store session in localStorage
         localStorage.setItem('yanz_session', JSON.stringify(session));
         localStorage.setItem('yanz_user', JSON.stringify(userData));
 
-        // Also store in Firebase if available
+        // Also store in Firebase if available and not local
         if (database && !userData.isLocal) {
           database.ref(`sessions/${sessionId}`).set({
             ...session,
-            userAgent: navigator.userAgent
+            userAgent: navigator.userAgent,
+            ip: 'detected'
           });
         }
 
+        console.log('✅ Session created:', sessionId);
         return session;
       }
     }
@@ -1549,6 +1711,9 @@
       
       // Check existing session
       checkExistingSession();
+      
+      // Add demo credentials notice
+      addDemoNotice();
       
       console.log('✅ App initialized successfully');
     }
@@ -1623,6 +1788,29 @@
       }, 5000);
     }
 
+    function addDemoNotice() {
+      const demoNotice = document.createElement('div');
+      demoNotice.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 12px;
+        z-index: 9998;
+        max-width: 250px;
+        border-left: 3px solid #4fc3f7;
+      `;
+      demoNotice.innerHTML = `
+        <strong>Demo Credentials:</strong><br>
+        Email: <code>demo@yanz.com</code><br>
+        Password: <code>yanz1234</code>
+      `;
+      document.body.appendChild(demoNotice);
+    }
+
     function showRegister() {
       document.getElementById('login-card').style.display = 'none';
       document.getElementById('register-card').style.display = 'block';
@@ -1648,23 +1836,20 @@
       document.querySelector('.otp-input').focus();
       
       // Start timers
-      startOTPTimer(300); // 5 minutes
-      startResendTimer(60); // 60 seconds
+      startOTPTimer(300);
+      startResendTimer(60);
     }
 
     // ========== FORM HANDLERS ==========
     async function handleLogin(e) {
       e.preventDefault();
       
-      // Reset errors
       resetErrors('login');
       
-      // Get form values
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
       const captcha = document.getElementById('captcha-input').value.trim();
       
-      // Validation
       let isValid = true;
       
       if (!email) {
@@ -1692,22 +1877,18 @@
       
       if (!isValid) return;
       
-      // Disable submit button
       const submitBtn = document.getElementById('login-submit');
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
       
       try {
-        // Attempt login
         const result = await authSystem.loginUser(email, password);
         
         if (result.success) {
-          // Create session
           const session = authSystem.createSession(result);
           
           showNotification('Login successful! Redirecting...', 'success');
           
-          // Redirect after delay
           setTimeout(() => {
             window.location.href = 'https://lphisv5.github.io/v4/Main.html';
           }, 1500);
@@ -1725,17 +1906,14 @@
     async function handleRegister(e) {
       e.preventDefault();
       
-      // Reset errors
       resetErrors('register');
       
-      // Get form values
       const username = document.getElementById('register-username').value.trim();
       const email = document.getElementById('register-email').value.trim();
       const password = document.getElementById('register-password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
       const termsAgreed = document.getElementById('terms-agree').checked;
       
-      // Validation
       let isValid = true;
       
       if (!username) {
@@ -1743,9 +1921,6 @@
         isValid = false;
       } else if (username.length < 3) {
         showError('username', 'Username must be at least 3 characters');
-        isValid = false;
-      } else if (username.length > 20) {
-        showError('username', 'Username must be less than 20 characters');
         isValid = false;
       }
       
@@ -1780,31 +1955,25 @@
       
       if (!isValid) return;
       
-      // Disable submit button
       const submitBtn = document.getElementById('register-submit');
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
       
       try {
-        // Check if email already exists
-        const emailExists = await authSystem.checkEmailExists(email);
-        if (emailExists) {
-          throw new Error('Email already registered');
+        // For demo, skip duplicate checks
+        if (!email.includes('@demo.') && !email.includes('@test.')) {
+          const emailExists = await authSystem.checkEmailExists(email);
+          if (emailExists) {
+            throw new Error('Email already registered');
+          }
         }
         
-        // Check if username exists
-        const usernameExists = await authSystem.checkUsernameExists(username);
-        if (usernameExists) {
-          throw new Error('Username already taken');
-        }
-        
-        // Register user
         const userData = { username, email, password };
         const result = await authSystem.registerUser(userData);
         
         if (result.success) {
           if (result.isLocal) {
-            // Local user - skip OTP, create session immediately
+            // Local user - create session immediately
             const sessionData = {
               userId: result.userId,
               username,
@@ -1826,11 +1995,6 @@
             const otpResult = await authSystem.sendOTP(email);
             
             showNotification(otpResult.message, 'info');
-            
-            // Show OTP in UI for testing (remove in production)
-            if (otpResult.otp) {
-              showNotification(`OTP: ${otpResult.otp} (for testing)`, 'warning');
-            }
             
             // Show OTP screen
             showOTP(email);
@@ -1861,11 +2025,9 @@
         const result = await authSystem.verifyOTP(authSystem.currentEmail, otp);
         
         if (result.success) {
-          // Get user data
           const email = authSystem.currentEmail;
           const username = document.getElementById('register-username').value;
           
-          // Create session
           const sessionData = {
             userId: result.userId || 'user_' + Date.now(),
             username,
@@ -1884,7 +2046,6 @@
         }
       } catch (error) {
         showError('otp', error.message);
-        // Clear OTP inputs
         otpInputs.forEach(input => input.value = '');
         otpInputs[0].focus();
       } finally {
@@ -1903,15 +2064,7 @@
       try {
         const result = await authSystem.sendOTP(authSystem.currentEmail);
         showNotification(result.message, 'info');
-        
-        // Show OTP in UI for testing
-        if (result.otp) {
-          showNotification(`New OTP: ${result.otp}`, 'warning');
-        }
-        
-        // Restart resend timer
         startResendTimer(60);
-        
       } catch (error) {
         showNotification('Failed to resend OTP: ' + error.message, 'error');
       } finally {
@@ -1926,17 +2079,13 @@
         try {
           const sessionData = JSON.parse(session);
           if (Date.now() < sessionData.expiresAt) {
-            // Auto-redirect if session is valid
+            showNotification('Session found, redirecting...', 'info');
             setTimeout(() => {
               window.location.href = 'https://lphisv5.github.io/v4/Main.html';
             }, 1000);
-          } else {
-            localStorage.removeItem('yanz_session');
-            localStorage.removeItem('yanz_user');
           }
         } catch (error) {
           localStorage.removeItem('yanz_session');
-          localStorage.removeItem('yanz_user');
         }
       }
     }
@@ -1971,7 +2120,6 @@
         special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
       };
       
-      // Update requirement indicators
       requirements.forEach(req => {
         const type = req.id.replace('req-', '');
         if (checks[type]) {
@@ -1985,7 +2133,6 @@
         }
       });
       
-      // Update strength bar
       const strength = Object.values(checks).filter(Boolean).length;
       const percent = (strength / 5) * 100;
       
@@ -2001,7 +2148,6 @@
     function checkPasswordMatch() {
       const password = document.getElementById('register-password').value;
       const confirm = document.getElementById('confirm-password').value;
-      const errorElement = document.getElementById('confirm-password-error');
       
       if (!confirm) {
         hideError('confirm-password');
@@ -2032,18 +2178,15 @@
       const input = e.target;
       const value = input.value;
       
-      // Only allow numbers
       if (!/^\d?$/.test(value)) {
         input.value = '';
         return;
       }
       
-      // Auto-focus next input
       if (value && index < 5) {
         document.querySelector(`.otp-input[data-index="${index + 1}"]`).focus();
       }
       
-      // Auto-verify if all filled
       if (index === 5 && value) {
         const allFilled = Array.from(document.querySelectorAll('.otp-input'))
           .every(input => input.value);
@@ -2104,7 +2247,6 @@
         errorElement.textContent = message;
         errorElement.classList.add('show');
         
-        // Highlight input
         const input = document.getElementById(field);
         if (input) input.classList.add('error');
       }
@@ -2143,7 +2285,6 @@
       messageElement.textContent = message;
       notification.className = `notification show`;
       
-      // Set color based on type
       if (type === 'success') {
         notification.style.borderLeftColor = '#81c784';
       } else if (type === 'error') {
@@ -2173,7 +2314,6 @@
       else status.classList.add('connecting');
     }
 
-    // ========== GLOBAL ACCESS ==========
     window.authSystem = authSystem;
     window.testFirebase = testFirebaseConnection;
     window.debugFirebase = testFirebaseConnection;
