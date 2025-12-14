@@ -72,51 +72,6 @@
       --font-size-4xl: 2.25rem;
     }
 
-    body.theme-light {
-      --primary-bg: #f8fafc;
-      --secondary-bg: #e2e8f0;
-      --text-primary: #1a202c;
-      --text-secondary: #4a5568;
-      --text-muted: #718096;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --card-hover-bg: rgba(255, 255, 255, 1);
-      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      --winter-blue: #3182ce;
-      --winter-light-blue: #bee3f8;
-      --winter-white: #ffffff;
-      --winter-silver: #edf2f7;
-    }
-
-    body.theme-blue {
-      --primary-bg: #0c1b33;
-      --secondary-bg: #1e40af;
-      --text-primary: #f1f5f9;
-      --text-secondary: #cbd5e1;
-      --text-muted: #94a3b8;
-      --card-bg: rgba(30, 64, 175, 0.8);
-      --card-hover-bg: rgba(59, 130, 246, 0.9);
-      --winter-blue: #60a5fa;
-      --winter-light-blue: #bfdbfe;
-      --winter-white: #f8fafc;
-      --winter-silver: #e2e8f0;
-    }
-
-    body.theme-matrix {
-      --primary-bg: #001100;
-      --secondary-bg: #003300;
-      --text-primary: #00ff00;
-      --text-secondary: #00cc00;
-      --text-muted: #008800;
-      --card-bg: rgba(0, 51, 0, 0.8);
-      --card-hover-bg: rgba(0, 102, 0, 0.9);
-      --winter-blue: #00ff00;
-      --winter-light-blue: #00cc00;
-      --winter-white: #00ff00;
-      --winter-silver: #006600;
-      --success-color: #00ff00;
-    }
-
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
@@ -329,6 +284,96 @@
       animation: winter-text 3s infinite;
     }
 
+    /* New Email Display Container */
+    .email-display-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-md);
+      margin: var(--space-lg) auto var(--space-md);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      box-shadow: var(--card-shadow);
+      max-width: 800px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .email-display-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue), var(--winter-white));
+      border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    }
+
+    .email-display-container:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-hover-shadow);
+      animation: winter-glow 2s infinite;
+    }
+
+    .email-display-content {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .email-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0c1b33;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .email-details {
+      flex: 1;
+    }
+
+    .email-label {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .email-value {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+      word-break: break-all;
+    }
+
+    .email-status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      background: rgba(79, 195, 247, 0.1);
+      border-radius: var(--border-radius);
+      font-size: var(--font-size-xs);
+      color: var(--winter-blue);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success-color);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
     .user-profile {
       display: flex;
       align-items: center;
@@ -375,14 +420,6 @@
       display: flex;
       align-items: center;
       gap: 4px;
-    }
-
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--success-color);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
     }
 
     .nav-controls {
@@ -465,49 +502,6 @@
       color: var(--winter-blue);
       border-color: var(--winter-blue);
     }
-
-    .theme-selector {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: var(--secondary-bg);
-      border-radius: var(--border-radius);
-      padding: var(--space-sm);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      display: none;
-      z-index: 101;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-xs);
-      margin-top: var(--space-xs);
-      border: 1px solid rgba(79, 195, 247, 0.3);
-    }
-
-    .theme-selector.show {
-      display: grid;
-    }
-
-    .theme-option {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: var(--transition);
-    }
-
-    .theme-option:hover {
-      transform: scale(1.1);
-    }
-
-    .theme-option.active {
-      border-color: var(--winter-blue);
-      transform: scale(1.1);
-    }
-
-    .theme-dark-btn { background: linear-gradient(135deg, #0c1b33, #1e3a5f); }
-    .theme-light-btn { background: linear-gradient(135deg, #f8fafc, #e2e8f0); }
-    .theme-blue-btn { background: linear-gradient(135deg, #0c1b33, #1e40af); }
-    .theme-matrix-btn { background: linear-gradient(135deg, #001100, #003300); }
 
     .hero {
       padding: var(--space-xl) 0;
@@ -703,14 +697,6 @@
     .online-user-email {
       font-size: var(--font-size-xs);
       color: var(--text-muted);
-    }
-
-    .online-user-status {
-      width: 8px;
-      height: 8px;
-      background: var(--success-color);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
     }
 
     .tools-section {
@@ -1134,6 +1120,7 @@
       transform: translateY(-5px);
     }
 
+    /* Mobile Responsiveness */
     @media (max-width: 768px) {
       .header-content {
         flex-direction: column;
@@ -1143,10 +1130,22 @@
       .nav-controls {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
       }
 
       .search-input {
-        width: 200px;
+        width: 100%;
+        max-width: 200px;
+      }
+
+      .email-display-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-sm);
+      }
+
+      .email-status {
+        justify-content: center;
       }
 
       .user-welcome {
@@ -1161,6 +1160,7 @@
       .user-stats {
         width: 100%;
         justify-content: space-around;
+        flex-wrap: wrap;
       }
 
       .hero h1 {
@@ -1181,6 +1181,7 @@
         width: 100%;
         overflow-x: auto;
         padding-bottom: var(--space-xs);
+        flex-wrap: wrap;
       }
 
       .tools-grid {
@@ -1189,12 +1190,27 @@
 
       .modal {
         padding: var(--space-lg);
+        margin: var(--space-md);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
+      }
+
+      .stat-card {
+        padding: var(--space-md);
+      }
+
+      .feature-card {
+        padding: var(--space-md);
       }
     }
 
     @media (max-width: 480px) {
       .search-input {
-        width: 150px;
+        width: 100%;
+        max-width: 180px;
       }
 
       .stats-grid {
@@ -1212,10 +1228,69 @@
       .security-badges {
         display: none;
       }
+
+      .user-profile .user-info {
+        display: none;
+      }
+
+      .email-display-container {
+        margin: var(--space-md) auto var(--space-sm);
+        padding: var(--space-sm);
+      }
+
+      .email-value {
+        font-size: var(--font-size-base);
+      }
+
+      .control-buttons .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: var(--font-size-xs);
+      }
+
+      .notification {
+        left: var(--space-sm);
+        right: var(--space-sm);
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .logo-text {
+        font-size: var(--font-size-lg);
+      }
+
+      .hero h1 {
+        font-size: var(--font-size-2xl);
+      }
+
+      .search-input {
+        max-width: 140px;
+      }
+
+      .email-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+    }
+
+    /* Tablet Optimization */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
   </style>
 </head>
-<body class="theme-dark">
+<body>
   <div class="winter-bg" id="winter-bg">
   </div>
 
@@ -1261,22 +1336,29 @@
           </div>
           
           <div class="control-buttons">
-            <div class="theme-selector-container" style="position: relative;">
-              <button class="btn btn-secondary" id="theme-toggle">
-                <i class="fas fa-palette"></i> Theme
-              </button>
-              <div class="theme-selector" id="theme-selector">
-                <div class="theme-option theme-dark-btn active" data-theme="dark"></div>
-                <div class="theme-option theme-light-btn" data-theme="light"></div>
-                <div class="theme-option theme-blue-btn" data-theme="blue"></div>
-                <div class="theme-option theme-matrix-btn" data-theme="matrix"></div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </header>
+
+  <section class="container">
+    <div class="email-display-container" id="email-display">
+      <div class="email-display-content">
+        <div class="email-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="email-details">
+          <span class="email-label">Logged in as</span>
+          <span class="email-value" id="email-value">Loading...</span>
+        </div>
+        <div class="email-status">
+          <span class="status-dot"></span>
+          <span>Verified Account</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section class="hero">
     <div class="container">
@@ -1298,7 +1380,7 @@
       <div class="welcome-content">
         <div class="welcome-text">
           <h2 id="welcome-message">Welcome back!</h2>
-          <p id="user-email">Loading user information...</p>
+          <p>Access your personalized tools and statistics below</p>
         </div>
         <div class="user-stats">
           <div class="user-stat">
@@ -1421,7 +1503,7 @@
               <i class="fas fa-palette"></i>
             </div>
             <h3 class="feature-title">Customizable</h3>
-            <p class="feature-description">Choose from multiple themes and layouts to personalize your experience.</p>
+            <p class="feature-description">Choose from multiple layouts to personalize your experience.</p>
           </div>
         </div>
       </div>
@@ -1703,9 +1785,6 @@
       winterBg: document.getElementById('winter-bg'),
       toolsGrid: document.getElementById('tools-grid'),
       searchInput: document.getElementById('search-input'),
-      themeToggle: document.getElementById('theme-toggle'),
-      themeSelector: document.getElementById('theme-selector'),
-      filterButtons: document.querySelectorAll('.filter-btn'),
       confirmModal: document.getElementById('confirm-modal'),
       confirmTitle: document.getElementById('confirm-title'),
       confirmDescription: document.getElementById('confirm-description'),
@@ -1722,8 +1801,8 @@
       userProfile: document.getElementById('user-profile'),
       userAvatar: document.getElementById('user-avatar'),
       userName: document.getElementById('user-name'),
+      emailValue: document.getElementById('email-value'),
       welcomeMessage: document.getElementById('welcome-message'),
-      userEmail: document.getElementById('user-email'),
       userToolClicks: document.getElementById('user-tool-clicks'),
       userSessionTime: document.getElementById('user-session-time'),
       userTier: document.getElementById('user-tier'),
@@ -1899,8 +1978,8 @@
       
       elements.userAvatar.textContent = avatarLetter;
       elements.userName.textContent = currentUser.username || 'User';
+      elements.emailValue.textContent = currentUser.email || 'No email provided';
       elements.welcomeMessage.textContent = `Welcome back, ${currentUser.username}!`;
-      elements.userEmail.textContent = currentUser.email || 'No email provided';
       elements.userToolClicks.textContent = appState.userToolClicks;
       elements.userTier.textContent = currentUser.tier || 'Free';
       
@@ -2051,26 +2130,11 @@
     function setupEventListeners() {
       elements.searchInput.addEventListener('input', debounce(handleSearch, 300));
       
-      elements.filterButtons.forEach(btn => {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const filter = e.target.dataset.filter;
           handleFilter(filter);
         });
-      });
-      
-      elements.themeToggle.addEventListener('click', toggleThemeSelector);
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.addEventListener('click', (e) => {
-          const theme = e.target.dataset.theme;
-          changeTheme(theme);
-          elements.themeSelector.classList.remove('show');
-        });
-      });
-      
-      document.addEventListener('click', (e) => {
-        if (!elements.themeToggle.contains(e.target) && !elements.themeSelector.contains(e.target)) {
-          elements.themeSelector.classList.remove('show');
-        }
       });
       
       elements.confirmCancel.addEventListener('click', hideConfirmModal);
@@ -2095,7 +2159,6 @@
       window.addEventListener('scroll', handleScroll);
       
       renderToolsGrid();
-      loadUserPreferences();
     }
 
     function handleSearch(e) {
@@ -2118,7 +2181,7 @@
     function handleFilter(filter) {
       appState.currentFilter = filter;
       
-      elements.filterButtons.forEach(btn => {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.filter === filter);
       });
       
@@ -2139,28 +2202,6 @@
     function hideConfirmModal() {
       elements.confirmModal.classList.remove('active');
       appState.pendingTool = null;
-    }
-
-    function toggleThemeSelector() {
-      elements.themeSelector.classList.toggle('show');
-    }
-
-    function changeTheme(theme) {
-      document.body.className = `theme-${theme}`;
-      
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.toggle('active', option.dataset.theme === theme);
-      });
-      
-      localStorage.setItem('theme', theme);
-      showNotification(`Theme changed to ${theme}`, 'info');
-    }
-
-    function loadUserPreferences() {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        changeTheme(savedTheme);
-      }
     }
 
     function showNotification(message, type = 'info') {
