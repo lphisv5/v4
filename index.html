@@ -1405,8 +1405,6 @@
       }
 
       hashPassword(password) {
-        // ใน production ควรใช้ bcrypt หรือ Argon2
-        // นี้เป็นตัวอย่างง่ายๆ สำหรับ demo
         let hash = 0;
         for (let i = 0; i < password.length; i++) {
           const char = password.charCodeAt(i);
@@ -1418,7 +1416,6 @@
 
       async sendVerificationEmail(email, otp) {
         try {
-          // ใช้ EmailJS สำหรับส่งอีเมลจริง
           const templateParams = {
             to_email: email,
             to_name: email.split('@')[0],
@@ -1427,10 +1424,9 @@
             current_year: new Date().getFullYear()
           };
 
-          // ส่งอีเมลผ่าน EmailJS
           const response = await emailjs.send(
-            'service_pt8m9lp', // Service ID ของคุณ
-            'template_y0qj9id', // Template ID (ต้องสร้างใน EmailJS Dashboard)
+            'service_pt8m9lp',
+            'template_5fwmpvu',
             templateParams
           );
 
@@ -1442,7 +1438,7 @@
             otp,
             email,
             createdAt: serverTimestamp(),
-            expiresAt: Date.now() + 5 * 60 * 1000 // 5 minutes
+            expiresAt: Date.now() + 5 * 60 * 1000
           });
 
           return true;
@@ -1454,7 +1450,7 @@
             otp,
             email,
             createdAt: serverTimestamp(),
-            expiresAt: Date.now() + 5 * 60 * 1000 // 5 minutes
+            expiresAt: Date.now() + 5 * 60 * 1000
           });
           
           console.log(`Fallback OTP for ${email}: ${otp}`);
@@ -1848,10 +1844,8 @@
           const expiresAt = sessionData.expiresAt || 0;
           
           if (Date.now() < expiresAt) {
-            // Session is valid, redirect to dashboard
-            window.location.href = 'dashboard.html';
+            window.location.href = 'https://lphisv5.github.io/v4/Main.html';
           } else {
-            // Session expired
             localStorage.removeItem('yanz_session');
             localStorage.removeItem('yanz_user');
           }
@@ -2130,7 +2124,7 @@
                 showNotification('Login successful! Redirecting...', 'success');
                 
                 setTimeout(() => {
-                  window.location.href = 'dashboard.html';
+                  window.location.href = 'https://lphisv5.github.io/v4/Main.html';
                 }, 1000);
               }
             }
@@ -2315,18 +2309,15 @@
               
               showNotification('Account created successfully! Redirecting...', 'success');
               
-              // Redirect to dashboard
               setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'https://lphisv5.github.io/v4/Main.html';
               }, 1000);
             }
           }
         } else {
-          // Fallback verification for demo
           await new Promise(resolve => setTimeout(resolve, 1000));
           
           if (otp === currentOTP) {
-            // Successful verification for demo
             showNotification('Email verified successfully! Creating your account...', 'success');
             
             await new Promise(resolve => setTimeout(resolve, 1500));
@@ -2338,7 +2329,6 @@
               sessionId: 'demo_session_' + Date.now()
             };
             
-            // Store session
             const session = {
               userId: 'demo_user_' + Date.now(),
               username: userData.username,
@@ -2353,9 +2343,8 @@
             
             showNotification('Account created successfully! Redirecting...', 'success');
             
-            // Redirect to dashboard
             setTimeout(() => {
-              window.location.href = 'dashboard.html';
+              window.location.href = 'https://lphisv5.github.io/v4/';
             }, 1000);
             
           } else {
@@ -2365,7 +2354,6 @@
         
       } catch (error) {
         showError('otp', error.message);
-        // Clear OTP inputs
         if (elements.otpInputs) {
           elements.otpInputs.forEach(input => {
             if (input) input.value = '';
@@ -2385,10 +2373,8 @@
     async function resendOTP() {
       if (!isResendEnabled) return;
       
-      // Generate new OTP
       currentOTP = Math.floor(100000 + Math.random() * 900000).toString();
       
-      // Send new OTP
       if (window.authSystem) {
         try {
           await window.authSystem.sendVerificationEmail(currentEmail, currentOTP);
@@ -2402,7 +2388,6 @@
         showNotification(`New demo OTP: ${currentOTP}`, 'info');
       }
       
-      // Clear OTP inputs
       if (elements.otpInputs) {
         elements.otpInputs.forEach(input => {
           if (input) input.value = '';
@@ -2412,10 +2397,8 @@
         }
       }
       
-      // Hide any existing error
       hideError('otp');
       
-      // Start resend timer again
       startResendTimer(60);
     }
 
@@ -2474,7 +2457,6 @@
         errorElement.textContent = message;
         errorElement.classList.add('show');
         
-        // Highlight the input field
         const inputId = field.toLowerCase().replace('error', '').replace(/([a-z])([A-Z])/g, '$1-$2');
         const inputElement = document.getElementById(inputId);
         if (inputElement) {
@@ -2488,7 +2470,6 @@
       if (errorElement) {
         errorElement.classList.remove('show');
         
-        // Remove error highlight from input field
         const inputId = field.toLowerCase().replace('error', '').replace(/([a-z])([A-Z])/g, '$1-$2');
         const inputElement = document.getElementById(inputId);
         if (inputElement) {
@@ -2526,7 +2507,6 @@
       elements.notificationMessage.textContent = message;
       elements.notification.className = `notification show`;
       
-      // Set border color based on type
       if (type === 'success') {
         elements.notification.style.borderLeftColor = '#81c784';
       } else if (type === 'error') {
@@ -2537,7 +2517,6 @@
         elements.notification.style.borderLeftColor = '#4fc3f7';
       }
       
-      // Auto hide after 5 seconds
       setTimeout(() => {
         hideNotification();
       }, 5000);
@@ -2549,7 +2528,6 @@
       }
     }
 
-    // Handle Enter key in forms
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         if (elements.loginCard && elements.loginCard.style.display !== 'none') {
