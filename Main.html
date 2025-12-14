@@ -16,26 +16,22 @@
   <link rel="apple-touch-icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg">
   <link rel="manifest" href="manifest.json">
   <meta name="author" content="YANZ" />
-  <title>YANZ</title>
-  <meta name="description" content="YANZ Winter Edition - Tools collection with a beautiful winter interface." />
+  <title>YANZ - Dashboard</title>
+  <meta name="description" content="YANZ Winter Edition - Secure tools collection with user tracking and real-time online system." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" />
   <meta property="og:url" content="https://lphisv5.github.io/v4" />
-  <meta property="og:title" content="YANZ Hub - Winter Edition" />
-  <meta property="og:description" content="YANZ Winter Edition - Tools collection with a beautiful winter interface." />
+  <meta property="og:title" content="YANZ - Dashboard" />
+  <meta property="og:description" content="YANZ Winter Edition - Tools collection with real-time user tracking." />
   <meta property="og:image" content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif" alt="YANZ preview image" />
   <meta name="twitter:card" content="summary_large_image" />
   
-  <!-- Preload critical resources -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
-  
   <style>
-    /* ===== CSS VARIABLES ===== */
     :root {
-      /* Winter Colors */
       --primary-bg: #0c1b33;
       --secondary-bg: #1e3a5f;
       --accent-color: #4fc3f7;
@@ -59,14 +55,12 @@
       --border-radius-lg: 16px;
       --border-radius-xl: 24px;
       
-      /* Spacing */
       --space-xs: 0.5rem;
       --space-sm: 1rem;
       --space-md: 1.5rem;
       --space-lg: 2rem;
       --space-xl: 3rem;
       
-      /* Typography */
       --font-size-xs: 0.75rem;
       --font-size-sm: 0.875rem;
       --font-size-base: 1rem;
@@ -77,7 +71,6 @@
       --font-size-4xl: 2.25rem;
     }
 
-    /* Light Theme */
     body.theme-light {
       --primary-bg: #f8fafc;
       --secondary-bg: #e2e8f0;
@@ -94,7 +87,6 @@
       --winter-silver: #edf2f7;
     }
 
-    /* Blue Theme */
     body.theme-blue {
       --primary-bg: #0c1b33;
       --secondary-bg: #1e40af;
@@ -109,7 +101,6 @@
       --winter-silver: #e2e8f0;
     }
 
-    /* Matrix Theme */
     body.theme-matrix {
       --primary-bg: #001100;
       --secondary-bg: #003300;
@@ -125,7 +116,6 @@
       --success-color: #00ff00;
     }
 
-    /* ===== WINTER ANIMATIONS ===== */
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
@@ -163,7 +153,11 @@
       50% { opacity: 0.5; }
     }
 
-    /* ===== BASE STYLES ===== */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     *, *::before, *::after {
       margin: 0;
       padding: 0;
@@ -188,7 +182,6 @@
       position: relative;
     }
 
-    /* Winter Background Elements */
     .winter-bg {
       position: fixed;
       top: 0;
@@ -210,18 +203,6 @@
       user-select: none;
     }
 
-    .snowflake:nth-child(2n) {
-      animation-duration: 12s;
-    }
-
-    .snowflake:nth-child(3n) {
-      animation-duration: 8s;
-    }
-
-    .snowflake:nth-child(4n) {
-      animation-duration: 14s;
-    }
-
     .ice-crystal {
       position: absolute;
       font-size: 30px;
@@ -231,7 +212,66 @@
       opacity: 0.5;
     }
 
-    /* ===== LAYOUT COMPONENTS ===== */
+    .security-badges {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      display: flex;
+      gap: 5px;
+    }
+
+    .security-badge {
+      background: rgba(30, 58, 95, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: var(--winter-blue);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-content {
+      text-align: center;
+    }
+
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(79, 195, 247, 0.3);
+      border-top: 4px solid var(--winter-blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto var(--space-md);
+    }
+
+    .loader-text {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
     .container {
       width: 100%;
       max-width: 1200px;
@@ -239,7 +279,6 @@
       padding: 0 var(--space-md);
     }
 
-    /* ===== HEADER STYLES ===== */
     header {
       position: sticky;
       top: 0;
@@ -287,6 +326,62 @@
       background-clip: text;
       color: transparent;
       animation: winter-text 3s infinite;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      transition: var(--transition);
+    }
+
+    .user-profile:hover {
+      background: var(--card-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0c1b33;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .user-status {
+      font-size: var(--font-size-xs);
+      color: var(--success-color);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--success-color);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
     }
 
     .nav-controls {
@@ -413,7 +508,6 @@
     .theme-blue-btn { background: linear-gradient(135deg, #0c1b33, #1e40af); }
     .theme-matrix-btn { background: linear-gradient(135deg, #001100, #003300); }
 
-    /* ===== HERO SECTION ===== */
     .hero {
       padding: var(--space-xl) 0;
       text-align: center;
@@ -454,7 +548,51 @@
       margin: 0 auto var(--space-lg);
     }
 
-    /* ===== STATS SECTION ===== */
+    .user-welcome {
+      padding: var(--space-md) 0;
+      background: var(--card-bg);
+      border-radius: var(--border-radius-lg);
+      margin-bottom: var(--space-lg);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+    }
+
+    .welcome-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .welcome-text h2 {
+      font-size: var(--font-size-xl);
+      margin-bottom: var(--space-xs);
+      color: var(--text-primary);
+    }
+
+    .welcome-text p {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .user-stats {
+      display: flex;
+      gap: var(--space-lg);
+    }
+
+    .user-stat {
+      text-align: center;
+    }
+
+    .user-stat-value {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      color: var(--winter-blue);
+    }
+
+    .user-stat-label {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+    }
+
     .stats {
       padding: var(--space-lg) 0;
     }
@@ -502,7 +640,78 @@
       font-size: var(--font-size-sm);
     }
 
-    /* ===== TOOLS GRID ===== */
+    .online-users-container {
+      position: relative;
+    }
+
+    .online-users-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--secondary-bg);
+      border-radius: var(--border-radius);
+      padding: var(--space-md);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      display: none;
+      z-index: 10;
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      margin-top: var(--space-xs);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .online-users-container:hover .online-users-dropdown {
+      display: block;
+    }
+
+    .online-user-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid rgba(79, 195, 247, 0.1);
+    }
+
+    .online-user-item:last-child {
+      border-bottom: none;
+    }
+
+    .online-user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0c1b33;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+    }
+
+    .online-user-info {
+      flex: 1;
+    }
+
+    .online-user-name {
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+    }
+
+    .online-user-email {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+    }
+
+    .online-user-status {
+      width: 8px;
+      height: 8px;
+      background: var(--success-color);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
     .tools-section {
       padding: var(--space-xl) 0;
     }
@@ -570,7 +779,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      pointer-events: auto; /* แก้ปัญหาคลิกไม่ได้ */
+      pointer-events: auto;
     }
 
     .tool-card::before {
@@ -642,7 +851,6 @@
       gap: 0.25rem;
     }
 
-    /* ===== ABOUT SECTION ===== */
     .about-section {
       padding: var(--space-xl) 0;
       background: var(--secondary-bg);
@@ -742,7 +950,6 @@
       font-size: var(--font-size-sm);
     }
 
-    /* ===== FOOTER ===== */
     footer {
       background: var(--secondary-bg);
       padding: var(--space-xl) 0;
@@ -784,7 +991,6 @@
       animation: winter-glow 2s infinite;
     }
 
-    /* ===== MODALS & OVERLAYS ===== */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -855,47 +1061,6 @@
       font-size: var(--font-size-sm);
     }
 
-    .modal-body {
-      margin-bottom: var(--space-lg);
-    }
-
-    .form-group {
-      margin-bottom: var(--space-md);
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: var(--space-xs);
-      color: var(--text-secondary);
-      font-size: var(--font-size-sm);
-      font-weight: 500;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: var(--card-bg);
-      border: 1px solid rgba(79, 195, 247, 0.3);
-      border-radius: var(--border-radius);
-      color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      transition: var(--transition);
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--winter-blue);
-      box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3);
-      animation: winter-glow 2s infinite;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: var(--space-sm);
-      justify-content: flex-end;
-    }
-
-    /* ===== NOTIFICATION ===== */
     .notification {
       position: fixed;
       bottom: var(--space-lg);
@@ -935,51 +1100,6 @@
       color: var(--text-primary);
     }
 
-    /* ===== LOADER ===== */
-    .loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--primary-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease;
-    }
-
-    .loader.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .loader-content {
-      text-align: center;
-    }
-
-    .loader-spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(79, 195, 247, 0.3);
-      border-top: 4px solid var(--winter-blue);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto var(--space-md);
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .loader-text {
-      color: var(--text-secondary);
-      font-size: var(--font-size-sm);
-    }
-
-    /* ===== BACK TO TOP ===== */
     .back-to-top {
       position: fixed;
       bottom: var(--space-lg);
@@ -1013,38 +1133,6 @@
       transform: translateY(-5px);
     }
 
-    /* ===== REAL-TIME COUNTER STYLES ===== */
-    .real-time-indicator {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: var(--success-color);
-      border-radius: 50%;
-      margin-left: 5px;
-      animation: pulse 2s infinite;
-    }
-
-    .online-users-list {
-      margin-top: 10px;
-      font-size: var(--font-size-sm);
-      color: var(--text-secondary);
-    }
-
-    .user-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 0;
-    }
-
-    .user-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--success-color);
-      border-radius: 50%;
-    }
-
-    /* ===== RESPONSIVE STYLES ===== */
     @media (max-width: 768px) {
       .header-content {
         flex-direction: column;
@@ -1058,6 +1146,20 @@
 
       .search-input {
         width: 200px;
+      }
+
+      .user-welcome {
+        text-align: center;
+      }
+
+      .welcome-content {
+        flex-direction: column;
+        gap: var(--space-md);
+      }
+
+      .user-stats {
+        width: 100%;
+        justify-content: space-around;
       }
 
       .hero h1 {
@@ -1087,10 +1189,6 @@
       .modal {
         padding: var(--space-lg);
       }
-
-      .form-actions {
-        flex-direction: column;
-      }
     }
 
     @media (max-width: 480px) {
@@ -1109,24 +1207,33 @@
       .hero {
         padding: var(--space-lg) 0;
       }
+
+      .security-badges {
+        display: none;
+      }
     }
   </style>
 </head>
 <body class="theme-dark">
-  <!-- Winter Background Elements -->
   <div class="winter-bg" id="winter-bg">
-    <!-- Snowflakes and ice crystals will be added dynamically -->
   </div>
 
-  <!-- Loader -->
-  <div class="loader" id="loader">
-    <div class="loader-content">
-      <div class="loader-spinner"></div>
-      <div class="loader-text">Loading Winter YANZ...</div>
+  <div class="security-badges">
+    <div class="security-badge">
+      <i class="fas fa-shield-alt"></i> SSL Secured
+    </div>
+    <div class="security-badge">
+      <i class="fas fa-users"></i> <span id="online-count">0</span> Online
     </div>
   </div>
 
-  <!-- Header -->
+  <div class="loader" id="loader">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Loading Dashboard...</div>
+    </div>
+  </div>
+
   <header>
     <div class="container">
       <div class="header-content">
@@ -1139,6 +1246,17 @@
           <div class="search-container">
             <i class="fas fa-search search-icon"></i>
             <input type="text" class="search-input" id="search-input" placeholder="Search tools...">
+          </div>
+          
+          <div class="user-profile" id="user-profile">
+            <div class="user-avatar" id="user-avatar">U</div>
+            <div class="user-info">
+              <div class="user-name" id="user-name">Loading...</div>
+              <div class="user-status">
+                <span class="status-dot"></span>
+                <span>Online</span>
+              </div>
+            </div>
           </div>
           
           <div class="control-buttons">
@@ -1159,23 +1277,46 @@
     </div>
   </header>
 
-  <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <h1>Winter Web Tools Collection</h1>
-      <p>Access all your essential tools, scripts, and systems in one beautifully designed winter platform for productivity.</p>
+      <h1>Welcome to YANZ Hub</h1>
+      <p>Your personalized dashboard with access to all essential tools and real-time user tracking.</p>
       <div class="control-buttons">
         <button class="btn btn-primary" id="explore-btn">
-          <i class="fas fa-snowflake"></i> Explore Tools
+          <i class="fas fa-rocket"></i> Explore Tools
         </button>
-        <button class="btn btn-secondary" id="about-btn">
-          <i class="fas fa-info-circle"></i> Learn More
+        <button class="btn btn-secondary" id="stats-btn">
+          <i class="fas fa-chart-line"></i> View Stats
         </button>
       </div>
     </div>
   </section>
 
-  <!-- Stats Section -->
+  <section class="container">
+    <div class="user-welcome">
+      <div class="welcome-content">
+        <div class="welcome-text">
+          <h2 id="welcome-message">Welcome back!</h2>
+          <p id="user-email">Loading user information...</p>
+        </div>
+        <div class="user-stats">
+          <div class="user-stat">
+            <div class="user-stat-value" id="user-tool-clicks">0</div>
+            <div class="user-stat-label">Tool Clicks</div>
+          </div>
+          <div class="user-stat">
+            <div class="user-stat-value" id="user-session-time">0m</div>
+            <div class="user-stat-label">Session Time</div>
+          </div>
+          <div class="user-stat">
+            <div class="user-stat-value" id="user-tier">Free</div>
+            <div class="user-stat-label">Account Tier</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="stats">
     <div class="container">
       <div class="stats-grid">
@@ -1184,7 +1325,7 @@
             <i class="fas fa-link"></i>
           </div>
           <div class="stat-value" id="total-tools">0</div>
-          <div class="stat-label">Winter Tools</div>
+          <div class="stat-label">Available Tools</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">
@@ -1193,33 +1334,41 @@
           <div class="stat-value" id="total-clicks">0</div>
           <div class="stat-label">Total Clicks</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card online-users-container">
           <div class="stat-icon">
-            <i class="fas fa-user"></i>
+            <i class="fas fa-users"></i>
           </div>
           <div class="stat-value" id="active-users">1</div>
           <div class="stat-label">
             Active Users 
-            <span class="real-time-indicator"></span>
+            <span class="status-dot"></span>
           </div>
-          <div class="online-users-list" id="online-users-list"></div>
+          <div class="online-users-dropdown" id="online-users-list">
+            <div class="online-user-item">
+              <div class="online-user-avatar">U</div>
+              <div class="online-user-info">
+                <div class="online-user-name">Loading...</div>
+                <div class="online-user-email">users@yanz.com</div>
+              </div>
+              <div class="online-user-status"></div>
+            </div>
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">
             <i class="fas fa-bolt"></i>
           </div>
           <div class="stat-value">100%</div>
-          <div class="stat-label">Uptime</div>
+          <div class="stat-label">System Uptime</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Tools Section -->
   <section class="tools-section">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Winter Tools</h2>
+        <h2 class="section-title">Available Tools</h2>
         <div class="tools-filter">
           <button class="filter-btn active" data-filter="all">All</button>
           <button class="filter-btn" data-filter="development">Development</button>
@@ -1229,23 +1378,29 @@
       </div>
       
       <div class="tools-grid" id="tools-grid">
-        <!-- Tools will be dynamically inserted here -->
       </div>
     </div>
   </section>
 
-  <!-- About Section -->
   <section class="about-section">
     <div class="container">
       <div class="about-content">
-        <h2 class="about-title">About YANZ</h2>
+        <h2 class="about-title">About YANZ Hub</h2>
         <p class="about-text">
-          YANZ Winter Edition brings you the ultimate gateway combining essential tools, scripts, and systems in a fast, sleek platform with a winter theme. 
-          Our mission is to provide a centralized location for all your web tool needs, streamlining your workflow 
-          and boosting productivity with a beautifully designed interface.
+          YANZ Hub brings you the ultimate gateway combining essential tools, scripts, and systems in a fast, 
+          secure platform with real-time user tracking. Our mission is to provide a centralized location for 
+          all your web tool needs, streamlining your workflow and boosting productivity with a beautifully 
+          designed interface.
         </p>
         
         <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <h3 class="feature-title">User Tracking</h3>
+            <p class="feature-description">Real-time tracking of online users and personalized dashboards for each user.</p>
+          </div>
           <div class="feature-card">
             <div class="feature-icon">
               <i class="fas fa-bolt"></i>
@@ -1267,19 +1422,11 @@
             <h3 class="feature-title">Customizable</h3>
             <p class="feature-description">Choose from multiple themes and layouts to personalize your experience.</p>
           </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-mobile-alt"></i>
-            </div>
-            <h3 class="feature-title">Responsive</h3>
-            <p class="feature-description">Works seamlessly on all devices from desktop to mobile with optimized interfaces.</p>
-          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
   <footer>
     <div class="container">
       <div class="footer-content">
@@ -1291,33 +1438,6 @@
     </div>
   </footer>
 
-  <!-- Login Modal -->
-  <div class="modal-overlay" id="login-modal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 class="modal-title">Welcome to Winter YANZ</h3>
-        <p class="modal-subtitle">Sign in to access your personalized dashboard</p>
-      </div>
-      <div class="modal-body">
-        <form id="login-form">
-          <div class="form-group">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" id="username" class="form-input" placeholder="Enter your username" required>
-          </div>
-          <div class="form-group">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn btn-secondary" id="login-cancel">Cancel</button>
-            <button type="submit" class="btn btn-primary">Sign In</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Confirm Modal -->
   <div class="modal-overlay" id="confirm-modal">
     <div class="modal">
       <div class="modal-header">
@@ -1333,7 +1453,6 @@
     </div>
   </div>
 
-  <!-- Notification -->
   <div class="notification" id="notification">
     <i class="fas fa-info-circle"></i>
     <span id="notification-message">This is a notification</span>
@@ -1342,107 +1461,34 @@
     </button>
   </div>
 
-  <!-- Back to Top -->
   <div class="back-to-top" id="back-to-top">
     <i class="fas fa-arrow-up"></i>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getDatabase, ref, set, onValue, onDisconnect, remove, serverTimestamp, runTransaction } 
-        from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
-
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
-        authDomain: "yanzz-6e06c.firebaseapp.com",
-        databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "yanzz-6e06c",
-        storageBucket: "yanzz-6e06c.firebasestorage.app",
-        messagingSenderId: "951083749698",
-        appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
-        measurementId: "G-YV2G95Z9HE"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    const userId = 'user_' + Math.random().toString(36).substr(2, 9);
-    let currentToolClicks = 0;
-
-    const userRef = ref(database, 'onlineUsers/' + userId);
-    const onlineUsersRef = ref(database, 'onlineUsers');
-    const clicksRef = ref(database, 'totalClicks');
-    const connectedRef = ref(database, '.info/connected');
-
-    onValue(connectedRef, (snap) => {
-        if (snap.val() === true) {
-            console.log('✅ Connected to Firebase');
-            
-            set(userRef, {
-                name: 'User-' + userId.substr(5, 4),
-                timestamp: serverTimestamp(),
-                userAgent: navigator.userAgent.substring(0, 50),
-                lastSeen: serverTimestamp()
-            });
-
-            onDisconnect(userRef).remove();
-        }
-    });
-
-    onValue(onlineUsersRef, (snapshot) => {
-        const users = snapshot.val();
-        const userCount = users ? Object.keys(users).length : 0;
-        document.getElementById('active-users').textContent = userCount;
-        
-        updateOnlineUsersList(users);
-    });
-
-    onValue(clicksRef, (snapshot) => {
-        const clicks = snapshot.val() || 0;
-        currentToolClicks = clicks;
-        document.getElementById('total-clicks').textContent = clicks.toLocaleString();
-    });
-
-    function updateOnlineUsersList(users) {
-        const usersList = document.getElementById('online-users-list');
-        
-        if (!users || Object.keys(users).length === 0) {
-            usersList.innerHTML = '<div class="user-item">No active users</div>';
-            return;
-        }
-        
-        let usersHTML = '';
-        Object.keys(users).forEach(userId => {
-            const user = users[userId];
-            usersHTML += `
-                <div class="user-item">
-                    <div class="user-dot"></div>
-                    <span>${user.name || 'Anonymous User'}</span>
-                </div>
-            `;
-        });
-        
-        usersList.innerHTML = usersHTML;
-    }
-
-    window.addClickToCounter = async function() {
-        try {
-            await runTransaction(clicksRef, (currentCount) => {
-                return (currentCount || 0) + 1;
-            });
-        } catch (error) {
-            console.error('Error adding click:', error);
-        }
-    };
-
-    console.log('🔥 Firebase Real-time Counter initialized!');
-    console.log('User ID:', userId);
-  </script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
+      authDomain: "yanzz-6e06c.firebaseapp.com",
+      databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "yanzz-6e06c",
+      storageBucket: "yanzz-6e06c.firebasestorage.app",
+      messagingSenderId: "951083749698",
+      appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
+      measurementId: "G-YV2G95Z9HE"
+    };
+
+    let firebaseApp, database;
+    
+    let currentUser = null;
+    let userSessionId = null;
+    let onlineUsersRef = null;
+    let userSessionRef = null;
+    let userActivityRef = null;
+    let currentToolClicks = 0;
+    
     const toolsData = [
       {
         id: "genkey",
@@ -1644,13 +1690,11 @@
       }
     ];
 
-    let appState = {
-      currentUser: null,
+    const appState = {
       currentFilter: 'all',
-      currentSort: 'name',
       pendingTool: null,
-      sessionTimeout: null,
-      INACTIVITY_TIMEOUT: 10 * 60 * 1000 // 10 minutes
+      sessionStartTime: null,
+      userToolClicks: 0
     };
 
     const elements = {
@@ -1661,52 +1705,224 @@
       themeToggle: document.getElementById('theme-toggle'),
       themeSelector: document.getElementById('theme-selector'),
       filterButtons: document.querySelectorAll('.filter-btn'),
-      loginModal: document.getElementById('login-modal'),
       confirmModal: document.getElementById('confirm-modal'),
       confirmTitle: document.getElementById('confirm-title'),
       confirmDescription: document.getElementById('confirm-description'),
       confirmCancel: document.getElementById('confirm-cancel'),
       confirmOk: document.getElementById('confirm-ok'),
-      loginForm: document.getElementById('login-form'),
-      loginCancel: document.getElementById('login-cancel'),
       logoutBtn: document.getElementById('logout-btn'),
       notification: document.getElementById('notification'),
       notificationMessage: document.getElementById('notification-message'),
       notificationClose: document.getElementById('notification-close'),
       backToTop: document.getElementById('back-to-top'),
       exploreBtn: document.getElementById('explore-btn'),
-      aboutBtn: document.getElementById('about-btn'),
-      stats: {
-        totalTools: document.getElementById('total-tools'),
-        totalClicks: document.getElementById('total-clicks'),
-        activeUsers: document.getElementById('active-users')
-      }
+      statsBtn: document.getElementById('stats-btn'),
+      
+      userProfile: document.getElementById('user-profile'),
+      userAvatar: document.getElementById('user-avatar'),
+      userName: document.getElementById('user-name'),
+      welcomeMessage: document.getElementById('welcome-message'),
+      userEmail: document.getElementById('user-email'),
+      userToolClicks: document.getElementById('user-tool-clicks'),
+      userSessionTime: document.getElementById('user-session-time'),
+      userTier: document.getElementById('user-tier'),
+      onlineUsersList: document.getElementById('online-users-list'),
+      onlineCount: document.getElementById('online-count'),
+      
+      totalTools: document.getElementById('total-tools'),
+      totalClicks: document.getElementById('total-clicks'),
+      activeUsers: document.getElementById('active-users')
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      initializeApp();
-    });
-
-    function initializeApp() {
-      loadUserPreferences();
-      
-      createWinterElements();
-      
-      renderToolsGrid();
-      
-      setupEventListeners();
-      
-      updateStatistics();
+      console.log('YANZ Hub Dashboard Initializing...');
       
       checkAuthentication();
+      createWinterElements();
+      initializeFirebase();
+      setupEventListeners();
       
       setTimeout(() => {
         elements.loader.classList.add('hidden');
-      }, 1000);
+      }, 1500);
+    });
+
+    function checkAuthentication() {
+      const session = localStorage.getItem('yanz_session');
+      const user = localStorage.getItem('yanz_user');
+      
+      if (!session || !user) {
+        window.location.href = 'https://lphisv5.github.io/v4/';
+        return;
+      }
+      
+      try {
+        const sessionData = JSON.parse(session);
+        const userData = JSON.parse(user);
+        
+        if (Date.now() > sessionData.expiresAt) {
+          localStorage.removeItem('yanz_session');
+          localStorage.removeItem('yanz_user');
+          window.location.href = 'https://lphisv5.github.io/v4/';
+          return;
+        }
+        
+        currentUser = userData;
+        appState.sessionStartTime = Date.now();
+        appState.userToolClicks = parseInt(localStorage.getItem('user_tool_clicks') || '0', 10);
+        
+        updateUserUI();
+        updateSessionTimer();
+        
+      } catch (error) {
+        console.error('Error parsing session data:', error);
+        window.location.href = 'https://lphisv5.github.io/v4/';
+      }
     }
 
+    function initializeFirebase() {
+      try {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        console.log('✅ Firebase initialized successfully');
+        
+        initializeUserSession();
+        
+        setupRealtimeListeners();
+        
+      } catch (error) {
+        console.error('❌ Firebase initialization failed:', error);
+      }
+    }
+
+    function initializeUserSession() {
+      if (!database || !currentUser) return;
+      
+      userSessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      
+      userSessionRef = database.ref(`userSessions/${userSessionId}`);
+      userActivityRef = database.ref(`userActivity/${currentUser.userId}`);
+      onlineUsersRef = database.ref('onlineUsers');
+      
+      const sessionData = {
+        userId: currentUser.userId,
+        username: currentUser.username,
+        email: currentUser.email,
+        userAgent: navigator.userAgent.substring(0, 100),
+        ip: 'detecting...',
+        loginTime: Date.now(),
+        lastActivity: Date.now()
+      };
+      
+      userSessionRef.set(sessionData);
+      
+      const onlineStatus = {
+        userId: currentUser.userId,
+        username: currentUser.username,
+        email: currentUser.email,
+        sessionId: userSessionId,
+        lastSeen: Date.now(),
+        status: 'online'
+      };
+      
+      onlineUsersRef.child(currentUser.userId).set(onlineStatus);
+      
+      database.ref('.info/connected').on('value', (snap) => {
+        if (snap.val() === true) {
+          onlineUsersRef.child(currentUser.userId).onDisconnect().remove();
+          userSessionRef.onDisconnect().remove();
+        }
+      });
+      
+      setInterval(() => {
+        if (userSessionRef) {
+          userSessionRef.update({ lastActivity: Date.now() });
+        }
+        if (userActivityRef) {
+          userActivityRef.update({ lastActive: Date.now() });
+        }
+      }, 30000);
+    }
+
+    function setupRealtimeListeners() {
+      if (!database) return;
+      
+      database.ref('totalClicks').on('value', (snapshot) => {
+        const clicks = snapshot.val() || 0;
+        currentToolClicks = clicks;
+        elements.totalClicks.textContent = clicks.toLocaleString();
+      });
+      
+      onlineUsersRef.on('value', (snapshot) => {
+        const users = snapshot.val();
+        const userCount = users ? Object.keys(users).length : 0;
+        elements.activeUsers.textContent = userCount;
+        elements.onlineCount.textContent = userCount;
+        
+        updateOnlineUsersList(users);
+      });
+    }
+
+    function updateOnlineUsersList(users) {
+      const usersList = elements.onlineUsersList;
+      
+      if (!users || Object.keys(users).length === 0) {
+        usersList.innerHTML = '<div class="online-user-item"><div class="online-user-info">No active users</div></div>';
+        return;
+      }
+      
+      let usersHTML = '';
+      Object.keys(users).forEach(userId => {
+        const user = users[userId];
+        const avatarLetter = user.username ? user.username.charAt(0).toUpperCase() : 'U';
+        
+        usersHTML += `
+          <div class="online-user-item">
+            <div class="online-user-avatar">${avatarLetter}</div>
+            <div class="online-user-info">
+              <div class="online-user-name">${user.username || 'Anonymous User'}</div>
+              <div class="online-user-email">${user.email || 'No email'}</div>
+            </div>
+            <div class="online-user-status"></div>
+          </div>
+        `;
+      });
+      
+      usersList.innerHTML = usersHTML;
+    }
+
+    function updateUserUI() {
+      if (!currentUser) return;
+      
+      const avatarLetter = currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U';
+      
+      elements.userAvatar.textContent = avatarLetter;
+      elements.userName.textContent = currentUser.username || 'User';
+      elements.welcomeMessage.textContent = `Welcome back, ${currentUser.username}!`;
+      elements.userEmail.textContent = currentUser.email || 'No email provided';
+      elements.userToolClicks.textContent = appState.userToolClicks;
+      elements.userTier.textContent = currentUser.tier || 'Free';
+      
+      elements.totalTools.textContent = toolsData.length;
+    }
+
+    function updateSessionTimer() {
+      if (!appState.sessionStartTime) return;
+      
+      setInterval(() => {
+        const elapsed = Date.now() - appState.sessionStartTime;
+        const minutes = Math.floor(elapsed / 60000);
+        const hours = Math.floor(minutes / 60);
+        
+        if (hours > 0) {
+          elements.userSessionTime.textContent = `${hours}h ${minutes % 60}m`;
+        } else {
+          elements.userSessionTime.textContent = `${minutes}m`;
+        }
+      }, 60000);
+    }
+    
     function createWinterElements() {
-      // Create snowflakes
       const snowflakeSymbols = ['❄', '❅', '❆'];
       for (let i = 0; i < 30; i++) {
         const snowflake = document.createElement('div');
@@ -1717,7 +1933,6 @@
         elements.winterBg.appendChild(snowflake);
       }
       
-      // Create ice crystals
       for (let i = 0; i < 8; i++) {
         const crystal = document.createElement('div');
         crystal.className = 'ice-crystal';
@@ -1740,7 +1955,7 @@
         toolCard.className = 'tool-card';
         toolCard.dataset.id = tool.id;
         toolCard.dataset.category = tool.category;
-        toolCard.tabIndex = 0; // สำหรับ keyboard navigation
+        toolCard.tabIndex = 0;
         
         toolCard.innerHTML = `
           <div class="tool-header">
@@ -1759,13 +1974,7 @@
           </div>
         `;
         
-        // Event listener สำหรับคลิก - แก้ให้ชัดเจน
-        toolCard.addEventListener('click', (e) => {
-          if (e.target.closest('i') || e.target.closest('.tool-icon')) return; // ละเว้น icon ถ้าต้องการ
-          handleToolClick(tool);
-        });
-        
-        // Keyboard support
+        toolCard.addEventListener('click', () => handleToolClick(tool));
         toolCard.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -1777,17 +1986,69 @@
       });
     }
 
-    function formatCategory(category) {
-      const categoryMap = {
-        'development': 'Development',
-        'entertainment': 'Entertainment',
-        'utility': 'Utility'
-      };
-      return categoryMap[category] || category;
+    function handleToolClick(tool) {
+      appState.pendingTool = tool;
+      showConfirmModal(tool);
+    }
+
+    async function handleConfirmVisit() {
+      if (appState.pendingTool) {
+        const tool = appState.pendingTool;
+        
+        const clickCount = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10) + 1;
+        localStorage.setItem(`clicks_${tool.id}`, clickCount.toString());
+        
+        appState.userToolClicks++;
+        localStorage.setItem('user_tool_clicks', appState.userToolClicks.toString());
+        elements.userToolClicks.textContent = appState.userToolClicks;
+        
+        if (database) {
+          try {
+            const clicksRef = database.ref('totalClicks');
+            clicksRef.transaction((current) => {
+              return (current || 0) + 1;
+            });
+            
+            if (userActivityRef) {
+              const activityData = {
+                toolId: tool.id,
+                toolName: tool.name,
+                timestamp: Date.now(),
+                totalClicks: appState.userToolClicks
+              };
+              
+              database.ref(`userActivity/${currentUser.userId}/toolUsage`).push(activityData);
+            }
+            
+          } catch (error) {
+            console.error('Error updating Firebase:', error);
+          }
+        }
+        
+        window.open(tool.url, '_blank', 'noopener,noreferrer');
+        
+        showNotification(`Opening ${tool.name}`, 'success');
+        hideConfirmModal();
+      }
+    }
+
+    function handleLogout() {
+      if (onlineUsersRef && currentUser) {
+        onlineUsersRef.child(currentUser.userId).remove();
+      }
+      
+      if (userSessionRef) {
+        userSessionRef.remove();
+      }
+      
+      localStorage.removeItem('yanz_session');
+      localStorage.removeItem('yanz_user');
+      
+      window.location.href = 'https://lphisv5.github.io/v4/';
     }
 
     function setupEventListeners() {
-      elements.searchInput.addEventListener('input', handleSearch);
+      elements.searchInput.addEventListener('input', debounce(handleSearch, 300));
       
       elements.filterButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -1813,30 +2074,27 @@
       
       elements.confirmCancel.addEventListener('click', hideConfirmModal);
       elements.confirmOk.addEventListener('click', handleConfirmVisit);
-      elements.loginCancel.addEventListener('click', hideLoginModal);
-      elements.loginForm.addEventListener('submit', handleLogin);
-      
+
       elements.logoutBtn.addEventListener('click', handleLogout);
-      
+
       elements.exploreBtn.addEventListener('click', () => {
         document.querySelector('.tools-section').scrollIntoView({ behavior: 'smooth' });
       });
       
-      elements.aboutBtn.addEventListener('click', () => {
-        document.querySelector('.about-section').scrollIntoView({ behavior: 'smooth' });
+      elements.statsBtn.addEventListener('click', () => {
+        document.querySelector('.stats').scrollIntoView({ behavior: 'smooth' });
       });
-      
+
       elements.notificationClose.addEventListener('click', hideNotification);
-      
+
       elements.backToTop.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
       
       window.addEventListener('scroll', handleScroll);
       
-      document.addEventListener('mousemove', resetSessionTimeout);
-      document.addEventListener('keypress', resetSessionTimeout);
-      document.addEventListener('click', resetSessionTimeout);
+      renderToolsGrid();
+      loadUserPreferences();
     }
 
     function handleSearch(e) {
@@ -1855,7 +2113,7 @@
       
       renderToolsGrid(filteredTools);
     }
-
+    
     function handleFilter(filter) {
       appState.currentFilter = filter;
       
@@ -1871,90 +2129,15 @@
       }
     }
 
-    function handleToolClick(tool) {
-      appState.pendingTool = tool;
-      showConfirmModal(tool);
+    function showConfirmModal(tool) {
+      elements.confirmTitle.textContent = `Visit ${tool.name}?`;
+      elements.confirmDescription.textContent = `You're about to visit "${tool.description}" in a new tab.`;
+      elements.confirmModal.classList.add('active');
     }
 
-    function handleConfirmVisit() {
-      if (appState.pendingTool) {
-        const tool = appState.pendingTool;
-        
-        const clickCount = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10) + 1;
-        localStorage.setItem(`clicks_${tool.id}`, clickCount.toString());
-        
-        if (typeof window.addClickToCounter === 'function') {
-          window.addClickToCounter();
-        }
-        
-        updateStatistics();
-        
-        // แก้ลิงค์ให้เปิดได้ - เพิ่ม noopener สำหรับ security
-        window.open(tool.url, '_blank', 'noopener,noreferrer');
-        
-        showNotification(`Opening ${tool.name}`, 'success');
-        
-        hideConfirmModal();
-      }
-    }
-
-    function checkAuthentication() {
-      const storedUser = localStorage.getItem('currentUser');
-      
-      if (storedUser) {
-        appState.currentUser = JSON.parse(storedUser);
-        resetSessionTimeout();
-      } else {
-        showLoginModal();
-      }
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      
-      if (username && password) {
-        appState.currentUser = { username, loginTime: new Date().toISOString() };
-        localStorage.setItem('currentUser', JSON.stringify(appState.currentUser));
-        
-        hideLoginModal();
-        showNotification(`Welcome to the winter wonderland, ${username}!`, 'success');
-        resetSessionTimeout();
-        
-        updateStatistics();
-      } else {
-        showNotification('Please enter both username and password', 'error');
-      }
-    }
-
-    function handleLogout() {
-      appState.currentUser = null;
-      localStorage.removeItem('currentUser');
-      
-      if (appState.sessionTimeout) {
-        clearTimeout(appState.sessionTimeout);
-        appState.sessionTimeout = null;
-      }
-      
-      showNotification('You have been logged out', 'info');
-      showLoginModal();
-      
-      updateStatistics();
-    }
-
-    function resetSessionTimeout() {
-      if (appState.sessionTimeout) {
-        clearTimeout(appState.sessionTimeout);
-      }
-      
-      if (appState.currentUser) {
-        appState.sessionTimeout = setTimeout(() => {
-          showNotification('Session expired due to inactivity', 'warning');
-          handleLogout();
-        }, appState.INACTIVITY_TIMEOUT);
-      }
+    function hideConfirmModal() {
+      elements.confirmModal.classList.remove('active');
+      appState.pendingTool = null;
     }
 
     function toggleThemeSelector() {
@@ -1969,7 +2152,6 @@
       });
       
       localStorage.setItem('theme', theme);
-      
       showNotification(`Theme changed to ${theme}`, 'info');
     }
 
@@ -1978,27 +2160,6 @@
       if (savedTheme) {
         changeTheme(savedTheme);
       }
-    }
-
-    function showLoginModal() {
-      elements.loginModal.classList.add('active');
-    }
-
-    function hideLoginModal() {
-      elements.loginModal.classList.remove('active');
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
-    }
-
-    function showConfirmModal(tool) {
-      elements.confirmTitle.textContent = `Visit ${tool.name}?`;
-      elements.confirmDescription.textContent = `You're about to visit "${tool.description}" in a new tab.`;
-      elements.confirmModal.classList.add('active');
-    }
-
-    function hideConfirmModal() {
-      elements.confirmModal.classList.remove('active');
-      appState.pendingTool = null;
     }
 
     function showNotification(message, type = 'info') {
@@ -2015,16 +2176,21 @@
       elements.notification.classList.remove('show');
     }
 
-    function updateStatistics() {
-      elements.stats.totalTools.textContent = toolsData.length;
-    }
-
     function handleScroll() {
       if (window.scrollY > 300) {
         elements.backToTop.classList.add('visible');
       } else {
         elements.backToTop.classList.remove('visible');
       }
+    }
+
+    function formatCategory(category) {
+      const categoryMap = {
+        'development': 'Development',
+        'entertainment': 'Entertainment',
+        'utility': 'Utility'
+      };
+      return categoryMap[category] || category;
     }
 
     function debounce(func, wait) {
@@ -2038,8 +2204,6 @@
         timeout = setTimeout(later, wait);
       };
     }
-
-    elements.searchInput.addEventListener('input', debounce(handleSearch, 300));
   </script>
 </body>
 </html>
