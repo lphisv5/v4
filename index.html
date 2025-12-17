@@ -1066,263 +1066,180 @@
       }
     }
 
-    class AuthSystem {
-      constructor() {
-        this.currentCaptcha = this.generateCaptcha();
-        this.currentOTP = '';
-        this.currentEmail = '';
-        this.otpTimer = null;
-        this.resendTimer = null;
-        this.currentUser = null;
+// ในไฟล์ index.html แก้ไขส่วน hashPassword ให้ตรงกัน
+class AuthSystem {
+  constructor() {
+    this.currentCaptcha = this.generateCaptcha();
+    this.currentOTP = '';
+    this.currentEmail = '';
+    this.otpTimer = null;
+    this.resendTimer = null;
+    this.currentUser = null;
+  }
+
+  // แก้ไข hashPassword ให้เป็นแบบเดียวกัน
+  hashPassword(password) {
+    // ใช้ hash function แบบเดียวกันทุกที่
+    let hash = 0;
+    if (password.length === 0) return hash.toString(36);
+    
+    for (let i = 0; i < password.length; i++) {
+      const char = password.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    
+    // ใช้ format เดียวกัน: hash + password length
+    return hash.toString(36) + '_' + password.length;
+  }
+
+  async loginUser(email, password) {
+    if (!database) {
+      throw new Error('Database connection failed');
+    }
+
+    try {
+      console.log('🔍 Attempting login for:', email);
+      
+      // Get all users
+      const snapshot = await database.ref('users').once('value');
+      
+      if (!snapshot.exists()) {
+        console.log('❌ No users found in database');
+        throw new Error('Invalid email or password');
       }
 
-      generateCaptcha() {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-        let captcha = '';
-        for (let i = 0; i < 6; i++) {
-          captcha += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return captcha;
-      }
+      let userData = null;
+      let userId = null;
 
-      generateOTP() {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-      }
-
-      hashPassword(password) {
-        let hash = 0;
-        for (let i = 0; i < password.length; i++) {
-          const char = password.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash = hash & hash;
-        }
-        return hash.toString(36) + password.length;
-      }
-
-      async checkEmailExists(email) {
-        if (!database) {
-          console.error('Database not available');
-          return { exists: false, userId: null };
-        }
+      // Find user by email
+      snapshot.forEach((child) => {
+        const user = child.val();
+        console.log('🔍 Checking user:', user.email, 'against:', email);
         
-        try {
-          const snapshot = await database.ref('users').once('value');
-          if (!snapshot.exists()) return { exists: false, userId: null };
-
-          let exists = false;
-          let userId = null;
-          
-          snapshot.forEach((child) => {
-            const user = child.val();
-            if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
-              exists = true;
-              userId = child.key;
-            }
-          });
-
-          return { exists, userId };
-        } catch (error) {
-          console.error('Error checking email:', error);
-          return { exists: false, userId: null };
+        if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
+          userData = user;
+          userId = child.key;
+          console.log('✅ Found user:', userId);
         }
+      });
+
+      if (!userData) {
+        console.log('❌ User not found for email:', email);
+        throw new Error('Invalid email or password');
       }
 
-      async checkUsernameExists(username) {
-        if (!database) {
-          console.error('Database not available');
-          return false;
-        }
-        
-        try {
-          const snapshot = await database.ref('users').once('value');
-          if (!snapshot.exists()) return false;
+      // Debug: Show stored hash vs computed hash
+      const inputHash = this.hashPassword(password);
+      console.log('🔍 Password check:');
+      console.log('  Input password:', password);
+      console.log('  Stored hash:', userData.password);
+      console.log('  Computed hash:', inputHash);
+      console.log('  Match?', userData.password === inputHash);
 
-          let exists = false;
-          snapshot.forEach((child) => {
-            const user = child.val();
-            if (user.username && user.username.toLowerCase() === username.toLowerCase()) {
-              exists = true;
-            }
-          });
-
-          return exists;
-        } catch (error) {
-          console.error('Error checking username:', error);
-          return false;
-        }
+      // Verify password
+      if (userData.password !== inputHash) {
+        console.log('❌ Password mismatch');
+        throw new Error('Invalid email or password');
       }
 
-      async registerUser(userData) {
-        if (!database) {
-          throw new Error('Database connection failed');
-        }
+      // Check if verified
+      if (!userData.verified) {
+        console.log('⚠️ User not verified');
+        throw new Error('Please verify your email first');
+      }
 
+      console.log('✅ Login successful for user:', userId);
+      return {
+        success: true,
+        userId,
+        username: userData.username,
+        email: userData.email,
+        tier: userData.tier || 'free'
+      };
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  }
+
+  async sendOTP(email) {
+    this.currentOTP = this.generateOTP();
+    this.currentEmail = email;
+
+    try {
+      console.log('📧 Attempting to send OTP to:', email);
+      
+      // Prepare email parameters - FIXED TEMPLATE ID
+      const templateParams = {
+        to_email: email,
+        otp_code: this.currentOTP,
+        app_name: 'YANZ Hub',
+        from_name: 'YANZ Verification',
+        expiry_minutes: 5
+      };
+
+      console.log('📧 Using template params:', templateParams);
+
+      // Send email using EmailJS - FIXED TEMPLATE ID
+      const response = await emailjs.send(
+        'service_wxwtcsh',           // Service ID
+        'template_80ptwc6',          // FIXED: Correct Template ID
+        templateParams,
+        'QRpj9mdUY5jURnFt7'         // Public Key
+      );
+
+      console.log('✅ Email sent successfully:', response.status);
+      console.log('📧 OTP sent:', this.currentOTP);
+      
+      // Also store in Firebase for backup
+      if (database) {
+        const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
+        await otpRef.set({
+          otp: this.currentOTP,
+          email: email,
+          createdAt: Date.now(),
+          expiresAt: Date.now() + 5 * 60 * 1000
+        });
+        console.log('✅ OTP saved to Firebase');
+      }
+      
+      return { 
+        success: true, 
+        message: 'Verification code sent to your email'
+      };
+
+    } catch (emailError) {
+      console.error('❌ EmailJS failed:', emailError);
+      
+      // Fallback to Firebase only
+      if (database) {
         try {
-          // Check if email already exists
-          const emailCheck = await this.checkEmailExists(userData.email);
-          if (emailCheck.exists) {
-            throw new Error('Email already registered');
-          }
-
-          // Check if username already exists
-          const usernameExists = await this.checkUsernameExists(userData.username);
-          if (usernameExists) {
-            throw new Error('Username already taken');
-          }
-
-          // Create user ID
-          const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-          const userRef = database.ref(`users/${userId}`);
-          
-          // Prepare user record
-          const userRecord = {
-            userId,
-            username: userData.username,
-            email: userData.email.toLowerCase(),
-            password: this.hashPassword(userData.password),
+          const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
+          await otpRef.set({
+            otp: this.currentOTP,
+            email: email,
             createdAt: Date.now(),
-            verified: false,
-            tier: 'free',
-            lastLogin: null
-          };
-
-          // Save to database
-          await userRef.set(userRecord);
-          
-          console.log('✅ User registered:', userId);
-          return { 
-            success: true, 
-            userId, 
-            email: userData.email
-          };
-
-        } catch (error) {
-          console.error('Registration error:', error);
-          throw error;
-        }
-      }
-
-      async loginUser(email, password) {
-        if (!database) {
-          throw new Error('Database connection failed');
-        }
-
-        try {
-          // Get all users and filter in client-side
-          const snapshot = await database.ref('users').once('value');
-          
-          if (!snapshot.exists()) {
-            throw new Error('Invalid email or password');
-          }
-
-          let userData = null;
-          let userId = null;
-
-          // Find user by email
-          snapshot.forEach((child) => {
-            const user = child.val();
-            if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
-              userData = user;
-              userId = child.key;
-            }
+            expiresAt: Date.now() + 5 * 60 * 1000
           });
-
-          if (!userData) {
-            throw new Error('Invalid email or password');
-          }
-
-          // Verify password
-          if (userData.password !== this.hashPassword(password)) {
-            throw new Error('Invalid email or password');
-          }
-
-          // Check if verified
-          if (!userData.verified) {
-            throw new Error('Please verify your email first');
-          }
-
-          // Update last login
-          await database.ref(`users/${userId}/lastLogin`).set(Date.now());
-
-          return {
-            success: true,
-            userId,
-            username: userData.username,
-            email: userData.email,
-            tier: userData.tier || 'free'
-          };
-        } catch (error) {
-          console.error('Login error:', error);
-          throw error;
-        }
-      }
-
-      async sendOTP(email) {
-        this.currentOTP = this.generateOTP();
-        this.currentEmail = email;
-
-        try {
-          // Prepare email parameters
-          const templateParams = {
-            to_email: email,
-            otp_code: this.currentOTP,
-            app_name: 'YANZ Hub',
-            from_name: 'YANZ Verification',
-            expiry_minutes: 5
-          };
-
-          // Send email using EmailJS
-          const response = await emailjs.send(
-            'service_wxwtcsh',
-            'template_otp',
-            templateParams
-          );
-
-          console.log('✅ Email sent successfully:', response.status);
           
-          // Also store in Firebase for backup
-          if (database) {
-            const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
-            await otpRef.set({
-              otp: this.currentOTP,
-              email: email,
-              createdAt: Date.now(),
-              expiresAt: Date.now() + 5 * 60 * 1000
-            });
-          }
+          console.log('✅ OTP saved to Firebase as fallback');
+          console.log('📧 OTP for debugging:', this.currentOTP);
           
           return { 
             success: true, 
-            message: 'Verification code sent to your email'
+            message: 'Verification code generated. Please check Firebase console for OTP.',
+            otp: this.currentOTP // For debugging
           };
-
-        } catch (emailError) {
-          console.error('EmailJS failed:', emailError);
-          
-          // Fallback to Firebase only
-          if (database) {
-            try {
-              const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
-              await otpRef.set({
-                otp: this.currentOTP,
-                email: email,
-                createdAt: Date.now(),
-                expiresAt: Date.now() + 5 * 60 * 1000
-              });
-              
-              console.log('✅ OTP saved to Firebase as fallback');
-              return { 
-                success: true, 
-                message: 'Verification code generated'
-              };
-            } catch (error) {
-              console.error('Failed to store OTP in Firebase:', error);
-            }
-          }
-          
-          throw new Error('Failed to send verification. Please try again.');
+        } catch (error) {
+          console.error('❌ Failed to store OTP in Firebase:', error);
         }
       }
+      
+      throw new Error('Failed to send verification. Please try again later.');
+    }
+  }
+}
 
       async verifyOTP(email, otp) {
         // First check memory OTP
