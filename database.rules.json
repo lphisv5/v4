@@ -1,0 +1,35 @@
+{
+  "rules": {
+    // ข้อมูลผู้ใช้
+    "users": {
+      "$uid": {
+        // อ่าน/เขียนได้เฉพาะเจ้าของบัญชี
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+
+        // โครงสร้างข้อมูลพื้นฐาน (กันข้อมูลมั่ว)
+        "email": {
+          ".validate": "newData.isString() && newData.val().length <= 255"
+        },
+        "verified": {
+          ".validate": "newData.isBoolean()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+
+    // OTP (ห้าม frontend แตะ)
+    "otps": {
+      "$hash": {
+        ".read": false,
+        ".write": false
+      }
+    },
+
+    // ปิดทุก path ที่ไม่ได้ประกาศ
+    ".read": false,
+    ".write": false
+  }
+}
