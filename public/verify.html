@@ -1,1 +1,28 @@
-b
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Verify OTP</title></head>
+<body>
+<h2>Verify OTP</h2>
+
+<input id="otp" placeholder="6-digit OTP">
+<button id="verify">Verify</button>
+
+<script type="module">
+import { verifyOtp } from "./js/otp.js";
+import { auth, db } from "./js/firebase.js";
+import { ref, update } from
+"https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+verify.onclick = async () => {
+  const email = sessionStorage.getItem("email");
+  await verifyOtp(email, otp.value);
+
+  await update(ref(db, "users/" + auth.currentUser.uid), {
+    verified: true
+  });
+
+  location.href = "main.html";
+};
+</script>
+</body>
+</html>
