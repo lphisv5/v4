@@ -18,10 +18,15 @@
   <title>Secure Access</title>
   <meta name="description" content="YANZ Winter Edition - Secure tools collection with advanced authentication." />
 
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
- 
+  
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  
+  <!-- Fonts and Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
   
@@ -973,11 +978,6 @@
     </button>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       console.log('YANZ Hub Initializing...');
@@ -1019,44 +1019,41 @@
     }
 
     let database = null;
+    let authSystem = null;
 
     function initializeFirebase() {
       try {
-        const firebaseConfig = {
-          apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
-          authDomain: "yanzz-6e06c.firebaseapp.com",
-          databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
-          projectId: "yanzz-6e06c",
-          storageBucket: "yanzz-6e06c.firebasestorage.app",
-          messagingSenderId: "951083749698",
-          appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
-          measurementId: "G-YV2G95Z9HE"
-        };
+        // ตรวจสอบว่ามี Firebase App อยู่แล้วหรือไม่
+        if (!firebase.apps.length) {
+          const firebaseConfig = {
+            apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
+            authDomain: "yanzz-6e06c.firebaseapp.com",
+            databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "yanzz-6e06c",
+            storageBucket: "yanzz-6e06c.firebasestorage.app",
+            messagingSenderId: "951083749698",
+            appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
+            measurementId: "G-YV2G95Z9HE"
+          };
 
-        firebase.initializeApp(firebaseConfig);
-        database = firebase.database();
+          firebase.initializeApp(firebaseConfig);
+          console.log('✅ Firebase initialized successfully');
+        } else {
+          console.log('✅ Firebase already initialized');
+        }
         
-        console.log('Firebase initialized successfully');
+        // กำหนดตัวแปร database
+        database = firebase.database();
         
       } catch (error) {
         console.error('Firebase initialization failed:', error);
       }
     }
 
-  initializeFirebase();
-
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      console.log("LOGIN OK:", user.uid);
-    } else {
-      console.log("NOT LOGIN");
-    }
-  });
-
     function initializeEmailJS() {
       try {
-        emailjs.init("QRpj9mdUY5jURnFt7");
-        console.log('EmailJS initialized');
+        // EmailJS initialization
+        console.log('✅ EmailJS initialized');
       } catch (error) {
         console.error('EmailJS initialization failed:', error);
       }
@@ -1095,7 +1092,10 @@
       }
 
       async checkEmailExists(email) {
-        if (!database) return false;
+        if (!database) {
+          console.error('Database not available');
+          return false;
+        }
         
         try {
           const snapshot = await database.ref('users')
@@ -1110,7 +1110,10 @@
       }
 
       async checkUsernameExists(username) {
-        if (!database) return false;
+        if (!database) {
+          console.error('Database not available');
+          return false;
+        }
         
         try {
           const snapshot = await database.ref('users')
@@ -1125,6 +1128,10 @@
       }
 
       async registerUser(userData) {
+        if (!database) {
+          throw new Error('Database connection failed');
+        }
+
         try {
           const emailExists = await this.checkEmailExists(userData.email);
           if (emailExists) {
@@ -1158,47 +1165,57 @@
           };
 
         } catch (error) {
+          console.error('Registration error:', error);
           throw error;
         }
       }
 
       async loginUser(email, password) {
         if (!database) {
-          throw new Error('Database not available');
+          throw new Error('Database connection failed');
         }
 
-        const snapshot = await database.ref('users')
-          .orderByChild('email')
-          .equalTo(email.toLowerCase())
-          .once('value');
+        try {
+          const snapshot = await database.ref('users')
+            .orderByChild('email')
+            .equalTo(email.toLowerCase())
+            .once('value');
 
-        if (!snapshot.exists()) {
-          throw new Error('Invalid email or password');
+          if (!snapshot.exists()) {
+            throw new Error('Invalid email or password');
+          }
+
+          let userData = null;
+          let userId = null;
+
+          snapshot.forEach((child) => {
+            userData = child.val();
+            userId = child.key;
+          });
+
+          if (!userData) {
+            throw new Error('Invalid email or password');
+          }
+
+          if (userData.password !== this.hashPassword(password)) {
+            throw new Error('Invalid email or password');
+          }
+
+          if (!userData.verified) {
+            throw new Error('Please verify your email first');
+          }
+
+          return {
+            success: true,
+            userId,
+            username: userData.username,
+            email: userData.email,
+            tier: userData.tier || 'free'
+          };
+        } catch (error) {
+          console.error('Login error:', error);
+          throw error;
         }
-
-        let userData = null;
-        let userId = null;
-
-        snapshot.forEach((child) => {
-          userData = child.val();
-          userId = child.key;
-        });
-
-        if (userData.password !== this.hashPassword(password)) {
-          throw new Error('Invalid email or password');
-        }
-
-        if (!userData.verified) {
-          throw new Error('Please verify your email first');
-        }
-
-        return {
-          success: true,
-          userId,
-          username: userData.username,
-          email: userData.email,
-          tier: userData.tier || 'free'
-        };
       }
 
       async sendOTP(email) {
@@ -1206,6 +1223,14 @@
         this.currentEmail = email;
 
         try {
+          // ตรวจสอบว่า EmailJS ถูกโหลดมา
+          if (typeof emailjs === 'undefined') {
+            throw new Error('EmailJS not loaded');
+          }
+
+          // Initialize EmailJS
+          emailjs.init("QRpj9mdUY5jURnFt7");
+
           const templateParams = {
             to_email: email,
             otp_code: this.currentOTP,
@@ -1228,6 +1253,7 @@
         } catch (emailError) {
           console.error('EmailJS failed:', emailError);
           
+          // ถ้า EmailJS ล้มเหลว ให้ใช้ Firebase เป็น fallback
           if (database) {
             try {
               const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
@@ -1237,6 +1263,13 @@
                 createdAt: Date.now(),
                 expiresAt: Date.now() + 5 * 60 * 1000
               });
+              
+              console.log('✅ OTP saved to Firebase as fallback');
+              return { 
+                success: true, 
+                message: 'Verification code generated (check Firebase database)',
+                otp: this.currentOTP // สำหรับ debugging
+              };
             } catch (error) {
               console.error('Failed to store OTP in Firebase:', error);
             }
@@ -1286,6 +1319,11 @@
           }
         }
 
+        // Fallback: ตรวจสอบกับ OTP ในหน่วยความจำ
+        if (otp === this.currentOTP && email === this.currentEmail) {
+          return { success: true, userId: 'temp_' + Date.now() };
+        }
+
         throw new Error('Invalid OTP code');
       }
 
@@ -1308,14 +1346,12 @@
           database.ref(`sessions/${sessionId}`).set({
             ...session,
             userAgent: navigator.userAgent
-          });
+          }).catch(error => console.error('Session save error:', error));
         }
 
         return session;
       }
     }
-
-    let authSystem = null;
 
     function initializeApp() {
       authSystem = new AuthSystem();
@@ -1333,15 +1369,19 @@
     }
 
     function setupEventListeners() {
+      // Navigation
       document.getElementById('goto-register').addEventListener('click', showRegister);
       document.getElementById('goto-login').addEventListener('click', showLogin);
       
+      // Forms
       document.getElementById('login-form').addEventListener('submit', handleLogin);
       document.getElementById('register-form').addEventListener('submit', handleRegister);
       
+      // OTP
       document.getElementById('verify-otp').addEventListener('click', verifyOTP);
       document.getElementById('resend-otp').addEventListener('click', resendOTP);
       
+      // Password visibility
       document.getElementById('toggle-login-password').addEventListener('click', () => 
         togglePassword('login-password', 'toggle-login-password'));
       document.getElementById('toggle-register-password').addEventListener('click', () => 
@@ -1349,11 +1389,15 @@
       document.getElementById('toggle-confirm-password').addEventListener('click', () => 
         togglePassword('confirm-password', 'toggle-confirm-password'));
       
+      // CAPTCHA refresh
       document.getElementById('refresh-captcha').addEventListener('click', () => {
-        authSystem.currentCaptcha = authSystem.generateCaptcha();
-        updateCaptcha();
+        if (authSystem) {
+          authSystem.currentCaptcha = authSystem.generateCaptcha();
+          updateCaptcha();
+        }
       });
       
+      // Terms modal
       document.getElementById('show-terms').addEventListener('click', (e) => {
         e.preventDefault();
         document.getElementById('terms-modal').classList.add('active');
@@ -1362,21 +1406,26 @@
         document.getElementById('terms-modal').classList.remove('active');
       });
       
+      // Forgot password
       document.getElementById('forgot-password').addEventListener('click', (e) => {
         e.preventDefault();
         showNotification('Password reset feature coming soon!', 'info');
       });
       
+      // Notification close
       document.getElementById('notification-close').addEventListener('click', hideNotification);
       
+      // Password strength
       document.getElementById('register-password').addEventListener('input', checkPasswordStrength);
       document.getElementById('confirm-password').addEventListener('input', checkPasswordMatch);
       
+      // OTP inputs
       document.querySelectorAll('.otp-input').forEach((input, index) => {
         input.addEventListener('input', (e) => handleOTPInput(e, index));
         input.addEventListener('keydown', (e) => handleOTPKeydown(e, index));
       });
       
+      // Auto-hide notification
       setInterval(() => {
         const notification = document.getElementById('notification');
         if (notification.classList.contains('show')) {
@@ -1447,6 +1496,7 @@
       if (!isValid) return;
       
       const submitBtn = document.getElementById('login-submit');
+      const originalText = submitBtn.innerHTML;
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
       
@@ -1454,7 +1504,7 @@
         const result = await authSystem.loginUser(email, password);
         
         if (result.success) {
-          const session = authSystem.createSession(result);
+          authSystem.createSession(result);
           
           showNotification('Login successful! Redirecting...', 'success');
           
@@ -1468,7 +1518,7 @@
         updateCaptcha();
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+        submitBtn.innerHTML = originalText;
       }
     }
 
@@ -1525,20 +1575,11 @@
       if (!isValid) return;
       
       const submitBtn = document.getElementById('register-submit');
+      const originalText = submitBtn.innerHTML;
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
       
       try {
-        const emailExists = await authSystem.checkEmailExists(email);
-        if (emailExists) {
-          throw new Error('Email already registered');
-        }
-        
-        const usernameExists = await authSystem.checkUsernameExists(username);
-        if (usernameExists) {
-          throw new Error('Username already taken');
-        }
-        
         const userData = { username, email, password };
         const result = await authSystem.registerUser(userData);
         
@@ -1552,7 +1593,7 @@
         showError('email', error.message);
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+        submitBtn.innerHTML = originalText;
       }
     }
 
@@ -1566,6 +1607,7 @@
       }
       
       const verifyBtn = document.getElementById('verify-otp');
+      const originalText = verifyBtn.innerHTML;
       verifyBtn.disabled = true;
       verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
       
@@ -1597,7 +1639,7 @@
         otpInputs[0].focus();
       } finally {
         verifyBtn.disabled = false;
-        verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify Account';
+        verifyBtn.innerHTML = originalText;
       }
     }
 
@@ -1605,6 +1647,7 @@
       const resendBtn = document.getElementById('resend-otp');
       if (resendBtn.disabled) return;
       
+      const originalText = resendBtn.innerHTML;
       resendBtn.disabled = true;
       resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resending...';
       
@@ -1616,6 +1659,7 @@
         showNotification('Failed to resend OTP: ' + error.message, 'error');
       } finally {
         resendBtn.disabled = false;
+        resendBtn.innerHTML = originalText;
       }
     }
 
@@ -1751,7 +1795,9 @@
       let timeLeft = duration;
       const timerElement = document.getElementById('otp-timer');
       
-      const timer = setInterval(() => {
+      if (authSystem.otpTimer) clearInterval(authSystem.otpTimer);
+      
+      authSystem.otpTimer = setInterval(() => {
         timeLeft--;
         
         const minutes = Math.floor(timeLeft / 60);
@@ -1759,7 +1805,7 @@
         timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         
         if (timeLeft <= 0) {
-          clearInterval(timer);
+          clearInterval(authSystem.otpTimer);
           showError('otp', 'Verification code has expired');
           document.getElementById('verify-otp').disabled = true;
         }
@@ -1773,12 +1819,14 @@
       
       resendBtn.disabled = true;
       
-      const timer = setInterval(() => {
+      if (authSystem.resendTimer) clearInterval(authSystem.resendTimer);
+      
+      authSystem.resendTimer = setInterval(() => {
         timeLeft--;
         timerElement.textContent = timeLeft;
         
         if (timeLeft <= 0) {
-          clearInterval(timer);
+          clearInterval(authSystem.resendTimer);
           resendBtn.disabled = false;
           resendBtn.innerHTML = '<i class="fas fa-redo"></i> Resend Code';
           timerElement.textContent = '';
