@@ -979,12 +979,17 @@
   </div>
 
   <script>
+    // Initialize EmailJS first
+    (function() {
+      emailjs.init("QRpj9mdUY5jURnFt7");
+      console.log('✅ EmailJS initialized');
+    })();
+
     document.addEventListener('DOMContentLoaded', function() {
       console.log('YANZ Hub Initializing...');
       
       createWinterElements();
       initializeFirebase();
-      initializeEmailJS();
       initializeApp();
       
       setTimeout(() => {
@@ -1021,44 +1026,41 @@
     let database = null;
     let authSystem = null;
 
-function initializeFirebase() {
-  try {
-    if (!firebase.apps.length) {
-      const firebaseConfig = {
-        apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
-        authDomain: "yanzz-6e06c.firebaseapp.com",
-        databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "yanzz-6e06c",
-        storageBucket: "yanzz-6e06c.firebasestorage.app",
-        messagingSenderId: "951083749698",
-        appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
-        measurementId: "G-YV2G95Z9HE"
-      };
-
-      firebase.initializeApp(firebaseConfig);
-      console.log('✅ Firebase initialized successfully');
-    }
-    
-    database = firebase.database();
-    
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        console.log('User logged in:', user.email);
-      } else {
-        console.log('No user logged in');
-      }
-    });
-    
-  } catch (error) {
-    console.error('Firebase initialization failed:', error);
-  }
-}
-
-    function initializeEmailJS() {
+    function initializeFirebase() {
       try {
-        console.log('✅ EmailJS initialized');
+        // Check if Firebase is already initialized
+        if (!firebase.apps.length) {
+          const firebaseConfig = {
+            apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
+            authDomain: "yanzz-6e06c.firebaseapp.com",
+            databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "yanzz-6e06c",
+            storageBucket: "yanzz-6e06c.firebasestorage.app",
+            messagingSenderId: "951083749698",
+            appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
+            measurementId: "G-YV2G95Z9HE"
+          };
+
+          firebase.initializeApp(firebaseConfig);
+          console.log('✅ Firebase initialized successfully');
+        } else {
+          console.log('✅ Firebase already initialized');
+        }
+        
+        // Set up database reference
+        database = firebase.database();
+        
+        // Test database connection
+        database.ref('.info/connected').on('value', (snap) => {
+          if (snap.val() === true) {
+            console.log('✅ Database connected');
+          } else {
+            console.log('❌ Database disconnected');
+          }
+        });
+        
       } catch (error) {
-        console.error('EmailJS initialization failed:', error);
+        console.error('Firebase initialization failed:', error);
       }
     }
 
@@ -1069,6 +1071,7 @@ function initializeFirebase() {
         this.currentEmail = '';
         this.otpTimer = null;
         this.resendTimer = null;
+        this.currentUser = null;
       }
 
       generateCaptcha() {
@@ -1085,13 +1088,14 @@ function initializeFirebase() {
       }
 
       hashPassword(password) {
+        // Simple hash function for demo (use bcrypt in production)
         let hash = 0;
         for (let i = 0; i < password.length; i++) {
           const char = password.charCodeAt(i);
           hash = ((hash << 5) - hash) + char;
           hash = hash & hash;
         }
-        return hash.toString(36);
+        return hash.toString(36) + password.length;
       }
 
       async checkEmailExists(email) {
@@ -1101,11 +1105,18 @@ function initializeFirebase() {
         }
         
         try {
-          const snapshot = await database.ref('users')
-            .orderByChild('email')
-            .equalTo(email.toLowerCase())
-            .once('value');
-          return snapshot.exists();
+          const snapshot = await database.ref('users').once('value');
+          if (!snapshot.exists()) return false;
+
+          let exists = false;
+          snapshot.forEach((child) => {
+            const user = child.val();
+            if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
+              exists = true;
+            }
+          });
+
+          return exists;
         } catch (error) {
           console.error('Error checking email:', error);
           return false;
@@ -1119,11 +1130,18 @@ function initializeFirebase() {
         }
         
         try {
-          const snapshot = await database.ref('users')
-            .orderByChild('username')
-            .equalTo(username)
-            .once('value');
-          return snapshot.exists();
+          const snapshot = await database.ref('users').once('value');
+          if (!snapshot.exists()) return false;
+
+          let exists = false;
+          snapshot.forEach((child) => {
+            const user = child.val();
+            if (user.username && user.username.toLowerCase() === username.toLowerCase()) {
+              exists = true;
+            }
+          });
+
+          return exists;
         } catch (error) {
           console.error('Error checking username:', error);
           return false;
@@ -1136,19 +1154,23 @@ function initializeFirebase() {
         }
 
         try {
+          // Check if email already exists
           const emailExists = await this.checkEmailExists(userData.email);
           if (emailExists) {
             throw new Error('Email already registered');
           }
 
+          // Check if username already exists
           const usernameExists = await this.checkUsernameExists(userData.username);
           if (usernameExists) {
             throw new Error('Username already taken');
           }
 
+          // Create user ID
           const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
           const userRef = database.ref(`users/${userId}`);
           
+          // Prepare user record
           const userRecord = {
             userId,
             username: userData.username,
@@ -1156,11 +1178,14 @@ function initializeFirebase() {
             password: this.hashPassword(userData.password),
             createdAt: Date.now(),
             verified: false,
-            tier: 'free'
+            tier: 'free',
+            lastLogin: null
           };
 
+          // Save to database
           await userRef.set(userRecord);
           
+          console.log('✅ User registered:', userId);
           return { 
             success: true, 
             userId, 
@@ -1179,11 +1204,9 @@ function initializeFirebase() {
         }
 
         try {
-          const snapshot = await database.ref('users')
-            .orderByChild('email')
-            .equalTo(email.toLowerCase())
-            .once('value');
-
+          // Get all users and filter in client-side
+          const snapshot = await database.ref('users').once('value');
+          
           if (!snapshot.exists()) {
             throw new Error('Invalid email or password');
           }
@@ -1191,22 +1214,31 @@ function initializeFirebase() {
           let userData = null;
           let userId = null;
 
+          // Find user by email
           snapshot.forEach((child) => {
-            userData = child.val();
-            userId = child.key;
+            const user = child.val();
+            if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
+              userData = user;
+              userId = child.key;
+            }
           });
 
           if (!userData) {
             throw new Error('Invalid email or password');
           }
 
+          // Verify password
           if (userData.password !== this.hashPassword(password)) {
             throw new Error('Invalid email or password');
           }
 
+          // Check if verified
           if (!userData.verified) {
             throw new Error('Please verify your email first');
           }
+
+          // Update last login
+          await database.ref(`users/${userId}/lastLogin`).set(Date.now());
 
           return {
             success: true,
@@ -1226,37 +1258,45 @@ function initializeFirebase() {
         this.currentEmail = email;
 
         try {
-          // ตรวจสอบว่า EmailJS ถูกโหลดมา
-          if (typeof emailjs === 'undefined') {
-            throw new Error('EmailJS not loaded');
-          }
-
-          // Initialize EmailJS
-          emailjs.init("QRpj9mdUY5jURnFt7");
-
+          // Prepare email parameters
           const templateParams = {
             to_email: email,
             otp_code: this.currentOTP,
             app_name: 'YANZ Hub',
-            from_name: 'YANZ Verification'
+            from_name: 'YANZ Verification',
+            expiry_minutes: 5
           };
 
+          // Send email using EmailJS
           const response = await emailjs.send(
             'service_wxwtcsh',
-            'QRpj9mdUY5jURnFt7',
+            'template_otp',
             templateParams
           );
 
           console.log('✅ Email sent successfully:', response.status);
+          
+          // Also store in Firebase for backup
+          if (database) {
+            const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
+            await otpRef.set({
+              otp: this.currentOTP,
+              email: email,
+              createdAt: Date.now(),
+              expiresAt: Date.now() + 5 * 60 * 1000
+            });
+          }
+          
           return { 
             success: true, 
-            message: 'Verification code sent to your email'
+            message: 'Verification code sent to your email',
+            otp: this.currentOTP // For debugging only
           };
 
         } catch (emailError) {
           console.error('EmailJS failed:', emailError);
           
-          // ถ้า EmailJS ล้มเหลว ให้ใช้ Firebase เป็น fallback
+          // Fallback to Firebase only
           if (database) {
             try {
               const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
@@ -1270,19 +1310,36 @@ function initializeFirebase() {
               console.log('✅ OTP saved to Firebase as fallback');
               return { 
                 success: true, 
-                message: 'Verification code generated (check Firebase database)',
-                otp: this.currentOTP // สำหรับ debugging
+                message: 'Verification code generated',
+                otp: this.currentOTP
               };
             } catch (error) {
               console.error('Failed to store OTP in Firebase:', error);
             }
           }
           
-          throw new Error('Failed to send verification email. Please try again.');
+          throw new Error('Failed to send verification. Please try again.');
         }
       }
 
       async verifyOTP(email, otp) {
+        // First check memory OTP
+        if (otp === this.currentOTP && email === this.currentEmail) {
+          // Update user verification status
+          if (database) {
+            const snapshot = await database.ref('users').once('value');
+            snapshot.forEach((child) => {
+              const user = child.val();
+              if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
+                database.ref(`users/${child.key}/verified`).set(true);
+                return { success: true, userId: child.key };
+              }
+            });
+          }
+          return { success: true, userId: 'temp_' + Date.now() };
+        }
+
+        // Check Firebase OTP
         if (database) {
           try {
             const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
@@ -1291,40 +1348,36 @@ function initializeFirebase() {
             if (snapshot.exists()) {
               const otpData = snapshot.val();
               
+              // Check expiration
               if (Date.now() > otpData.expiresAt) {
                 await otpRef.remove();
                 throw new Error('OTP expired');
               }
 
+              // Verify OTP
               if (otpData.otp === otp) {
                 await otpRef.remove();
                 
-                const userSnapshot = await database.ref('users')
-                  .orderByChild('email')
-                  .equalTo(email)
-                  .once('value');
-
-                if (userSnapshot.exists()) {
-                  let userId = null;
-                  userSnapshot.forEach((child) => {
+                // Find and verify user
+                const userSnapshot = await database.ref('users').once('value');
+                let userId = null;
+                
+                userSnapshot.forEach((child) => {
+                  const user = child.val();
+                  if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
                     userId = child.key;
-                  });
-
-                  if (userId) {
-                    await database.ref(`users/${userId}/verified`).set(true);
-                    return { success: true, userId };
                   }
+                });
+
+                if (userId) {
+                  await database.ref(`users/${userId}/verified`).set(true);
+                  return { success: true, userId };
                 }
               }
             }
           } catch (error) {
             console.error('Firebase OTP verification error:', error);
           }
-        }
-
-        // Fallback: ตรวจสอบกับ OTP ในหน่วยความจำ
-        if (otp === this.currentOTP && email === this.currentEmail) {
-          return { success: true, userId: 'temp_' + Date.now() };
         }
 
         throw new Error('Invalid OTP code');
@@ -1342,9 +1395,11 @@ function initializeFirebase() {
           expiresAt: Date.now() + (24 * 60 * 60 * 1000)
         };
 
+        // Store in localStorage
         localStorage.setItem('yanz_session', JSON.stringify(session));
         localStorage.setItem('yanz_user', JSON.stringify(userData));
 
+        // Store in Firebase if available
         if (database) {
           database.ref(`sessions/${sessionId}`).set({
             ...session,
@@ -1352,7 +1407,14 @@ function initializeFirebase() {
           }).catch(error => console.error('Session save error:', error));
         }
 
+        this.currentUser = userData;
         return session;
+      }
+
+      logout() {
+        localStorage.removeItem('yanz_session');
+        localStorage.removeItem('yanz_user');
+        this.currentUser = null;
       }
     }
 
@@ -1397,6 +1459,7 @@ function initializeFirebase() {
         if (authSystem) {
           authSystem.currentCaptcha = authSystem.generateCaptcha();
           updateCaptcha();
+          document.getElementById('captcha-input').value = '';
         }
       });
       
@@ -1455,6 +1518,7 @@ function initializeFirebase() {
       document.getElementById('register-card').style.display = 'none';
       document.getElementById('otp-card').style.display = 'block';
       
+      // Clear OTP inputs
       document.querySelectorAll('.otp-input').forEach(input => input.value = '');
       document.querySelector('.otp-input').focus();
       
@@ -1473,6 +1537,7 @@ function initializeFirebase() {
       
       let isValid = true;
       
+      // Validate email
       if (!email) {
         showError('login-email', 'Email is required');
         isValid = false;
@@ -1481,11 +1546,13 @@ function initializeFirebase() {
         isValid = false;
       }
       
+      // Validate password
       if (!password) {
         showError('login-password', 'Password is required');
         isValid = false;
       }
       
+      // Validate CAPTCHA
       if (!captcha) {
         showError('captcha', 'CAPTCHA is required');
         isValid = false;
@@ -1538,14 +1605,19 @@ function initializeFirebase() {
       
       let isValid = true;
       
+      // Validate username
       if (!username) {
         showError('username', 'Username is required');
         isValid = false;
       } else if (username.length < 3) {
         showError('username', 'Username must be at least 3 characters');
         isValid = false;
+      } else if (username.length > 20) {
+        showError('username', 'Username must be less than 20 characters');
+        isValid = false;
       }
       
+      // Validate email
       if (!email) {
         showError('email', 'Email is required');
         isValid = false;
@@ -1554,14 +1626,16 @@ function initializeFirebase() {
         isValid = false;
       }
       
+      // Validate password
       if (!password) {
         showError('password', 'Password is required');
         isValid = false;
       } else if (!isStrongPassword(password)) {
-        showError('password', 'Password is too weak');
+        showError('password', 'Password must be at least 8 characters with uppercase, lowercase, and number');
         isValid = false;
       }
       
+      // Validate confirm password
       if (!confirmPassword) {
         showError('confirm-password', 'Please confirm your password');
         isValid = false;
@@ -1570,6 +1644,7 @@ function initializeFirebase() {
         isValid = false;
       }
       
+      // Validate terms
       if (!termsAgreed) {
         showError('terms', 'You must agree to the terms and conditions');
         isValid = false;
@@ -1675,9 +1750,14 @@ function initializeFirebase() {
             setTimeout(() => {
               window.location.href = 'https://lphisv5.github.io/v4/Main.html';
             }, 1000);
+          } else {
+            // Session expired
+            localStorage.removeItem('yanz_session');
+            localStorage.removeItem('yanz_user');
           }
         } catch (error) {
           localStorage.removeItem('yanz_session');
+          localStorage.removeItem('yanz_user');
         }
       }
     }
@@ -1692,8 +1772,7 @@ function initializeFirebase() {
         length: password.length >= 8,
         uppercase: /[A-Z]/.test(password),
         lowercase: /[a-z]/.test(password),
-        number: /\d/.test(password),
-        special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+        number: /\d/.test(password)
       };
       
       return Object.values(requirements).filter(Boolean).length >= 3;
@@ -1770,15 +1849,18 @@ function initializeFirebase() {
       const input = e.target;
       const value = input.value;
       
+      // Only allow numbers
       if (!/^\d?$/.test(value)) {
         input.value = '';
         return;
       }
       
+      // Auto-focus next input
       if (value && index < 5) {
         document.querySelector(`.otp-input[data-index="${index + 1}"]`).focus();
       }
       
+      // Auto-submit when all fields are filled
       if (index === 5 && value) {
         const allFilled = Array.from(document.querySelectorAll('.otp-input'))
           .every(input => input.value);
@@ -1789,6 +1871,7 @@ function initializeFirebase() {
     }
 
     function handleOTPKeydown(e, index) {
+      // Move to previous input on backspace
       if (e.key === 'Backspace' && !e.target.value && index > 0) {
         document.querySelector(`.otp-input[data-index="${index - 1}"]`).focus();
       }
@@ -1798,6 +1881,7 @@ function initializeFirebase() {
       let timeLeft = duration;
       const timerElement = document.getElementById('otp-timer');
       
+      // Clear existing timer
       if (authSystem.otpTimer) clearInterval(authSystem.otpTimer);
       
       authSystem.otpTimer = setInterval(() => {
@@ -1822,6 +1906,7 @@ function initializeFirebase() {
       
       resendBtn.disabled = true;
       
+      // Clear existing timer
       if (authSystem.resendTimer) clearInterval(authSystem.resendTimer);
       
       authSystem.resendTimer = setInterval(() => {
@@ -1881,6 +1966,7 @@ function initializeFirebase() {
       messageElement.textContent = message;
       notification.className = `notification show`;
       
+      // Set color based on type
       if (type === 'success') {
         notification.style.borderLeftColor = '#81c784';
       } else if (type === 'error') {
