@@ -1021,38 +1021,41 @@
     let database = null;
     let authSystem = null;
 
-    function initializeFirebase() {
-      try {
-        // ตรวจสอบว่ามี Firebase App อยู่แล้วหรือไม่
-        if (!firebase.apps.length) {
-          const firebaseConfig = {
-            apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
-            authDomain: "yanzz-6e06c.firebaseapp.com",
-            databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "yanzz-6e06c",
-            storageBucket: "yanzz-6e06c.firebasestorage.app",
-            messagingSenderId: "951083749698",
-            appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
-            measurementId: "G-YV2G95Z9HE"
-          };
+function initializeFirebase() {
+  try {
+    if (!firebase.apps.length) {
+      const firebaseConfig = {
+        apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
+        authDomain: "yanzz-6e06c.firebaseapp.com",
+        databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "yanzz-6e06c",
+        storageBucket: "yanzz-6e06c.firebasestorage.app",
+        messagingSenderId: "951083749698",
+        appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
+        measurementId: "G-YV2G95Z9HE"
+      };
 
-          firebase.initializeApp(firebaseConfig);
-          console.log('✅ Firebase initialized successfully');
-        } else {
-          console.log('✅ Firebase already initialized');
-        }
-        
-        // กำหนดตัวแปร database
-        database = firebase.database();
-        
-      } catch (error) {
-        console.error('Firebase initialization failed:', error);
-      }
+      firebase.initializeApp(firebaseConfig);
+      console.log('✅ Firebase initialized successfully');
     }
+    
+    database = firebase.database();
+    
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log('User logged in:', user.email);
+      } else {
+        console.log('No user logged in');
+      }
+    });
+    
+  } catch (error) {
+    console.error('Firebase initialization failed:', error);
+  }
+}
 
     function initializeEmailJS() {
       try {
-        // EmailJS initialization
         console.log('✅ EmailJS initialized');
       } catch (error) {
         console.error('EmailJS initialization failed:', error);
