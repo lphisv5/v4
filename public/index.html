@@ -14,9 +14,13 @@
   <link rel="icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" type="image/png" alt="YANZ favicon" />
   <link rel="apple-touch-icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg">
   <meta name="author" content="YANZ" />
-  <title>YANZ - Secure Access</title>
+  <title>Secure Access</title>
   <meta name="description" content="YANZ Winter Edition - Secure tools collection with advanced authentication." />
-  
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+ 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
   
@@ -1037,6 +1041,16 @@
         console.error('Firebase initialization failed:', error);
       }
     }
+
+  initializeFirebase();
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      console.log("LOGIN OK:", user.uid);
+    } else {
+      console.log("NOT LOGIN");
+    }
+  });
 
     function initializeEmailJS() {
       try {
