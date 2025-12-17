@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="keywords" content="YANZ, lphisv5, tools, scripts, systems, web hub, productivity tools">
-  <meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0" />
+  <meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0">
   <meta name="theme-color" content="#0c1b33">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="YANZ">
   
-  
   <link rel="canonical" href="https://lphisv5.github.io/v4/">
-  <link rel="icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" type="image/png" alt="YANZ favicon" />
+  <link rel="icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" type="image/png">
   <link rel="apple-touch-icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg">
-  <meta name="author" content="YANZ" />
-  <title>Secure Access</title>
-  <meta name="description" content="YANZ Winter Edition - Secure tools collection with advanced authentication." />
+  <meta name="author" content="YANZ">
+  <title>Secure Access - YANZ</title>
+  <meta name="description" content="YANZ Winter Edition - Secure tools collection with advanced authentication.">
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -27,8 +26,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   
   <!-- Fonts and Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
   
   <style>
     :root {
@@ -744,6 +743,7 @@
   </div>
 
   <div class="auth-container" id="auth-container">
+    <!-- Login Card -->
     <div class="auth-card" id="login-card">
       <div class="auth-header">
         <a href="#" class="auth-logo">
@@ -794,7 +794,7 @@
       </form>
 
       <div class="auth-links">
-        <a href="public/forgot-password.html" class="auth-link" id="forgot-password">Forgot Password?</a>
+        <a href="forgot-password.html" class="auth-link" id="forgot-password">Forgot Password?</a>
       </div>
 
       <div class="security-info">
@@ -810,13 +810,14 @@
       </div>
     </div>
 
+    <!-- Register Card -->
     <div class="auth-card" id="register-card" style="display: none;">
       <div class="auth-header">
         <a href="#" class="auth-logo">
           <img src="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="YANZ Logo">
           <span class="auth-logo-text">YANZ</span>
         </a>
-        <h1 class="auth-title">Create Account</h1>
+        <h2 class="auth-title">Create Account</h2>
         <p class="auth-subtitle">Join YANZ for access to premium tools</p>
       </div>
 
@@ -902,13 +903,14 @@
       </div>
     </div>
 
+    <!-- OTP Card -->
     <div class="auth-card" id="otp-card" style="display: none;">
       <div class="auth-header">
         <a href="#" class="auth-logo">
           <img src="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="YANZ Logo">
           <span class="auth-logo-text">YANZ</span>
         </a>
-        <h1 class="auth-title">Verify Email</h1>
+        <h2 class="auth-title">Verify Email</h2>
         <p class="auth-subtitle">Enter the 6-digit code sent to your email</p>
       </div>
 
@@ -940,6 +942,7 @@
     </div>
   </div>
 
+  <!-- Terms Modal -->
   <div class="modal-overlay" id="terms-modal">
     <div class="modal">
       <div class="modal-header">
@@ -970,6 +973,7 @@
     </div>
   </div>
 
+  <!-- Notification -->
   <div class="notification" id="notification">
     <i class="fas fa-info-circle"></i>
     <span id="notification-message">This is a notification</span>
@@ -979,7 +983,7 @@
   </div>
 
   <script>
-    // Initialize EmailJS first
+    // Initialize EmailJS
     (function() {
       emailjs.init("QRpj9mdUY5jURnFt7");
       console.log('✅ EmailJS initialized');
@@ -1088,7 +1092,6 @@
       }
 
       hashPassword(password) {
-        // Simple hash function for demo (use bcrypt in production)
         let hash = 0;
         for (let i = 0; i < password.length; i++) {
           const char = password.charCodeAt(i);
@@ -1101,25 +1104,28 @@
       async checkEmailExists(email) {
         if (!database) {
           console.error('Database not available');
-          return false;
+          return { exists: false, userId: null };
         }
         
         try {
           const snapshot = await database.ref('users').once('value');
-          if (!snapshot.exists()) return false;
+          if (!snapshot.exists()) return { exists: false, userId: null };
 
           let exists = false;
+          let userId = null;
+          
           snapshot.forEach((child) => {
             const user = child.val();
             if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
               exists = true;
+              userId = child.key;
             }
           });
 
-          return exists;
+          return { exists, userId };
         } catch (error) {
           console.error('Error checking email:', error);
-          return false;
+          return { exists: false, userId: null };
         }
       }
 
@@ -1155,8 +1161,8 @@
 
         try {
           // Check if email already exists
-          const emailExists = await this.checkEmailExists(userData.email);
-          if (emailExists) {
+          const emailCheck = await this.checkEmailExists(userData.email);
+          if (emailCheck.exists) {
             throw new Error('Email already registered');
           }
 
@@ -1289,8 +1295,7 @@
           
           return { 
             success: true, 
-            message: 'Verification code sent to your email',
-            otp: this.currentOTP // For debugging only
+            message: 'Verification code sent to your email'
           };
 
         } catch (emailError) {
@@ -1310,8 +1315,7 @@
               console.log('✅ OTP saved to Firebase as fallback');
               return { 
                 success: true, 
-                message: 'Verification code generated',
-                otp: this.currentOTP
+                message: 'Verification code generated'
               };
             } catch (error) {
               console.error('Failed to store OTP in Firebase:', error);
@@ -1470,12 +1474,6 @@
       });
       document.getElementById('close-terms').addEventListener('click', () => {
         document.getElementById('terms-modal').classList.remove('active');
-      });
-      
-      // Forgot password
-      document.getElementById('forgot-password').addEventListener('click', (e) => {
-        e.preventDefault();
-        showNotification('Password reset feature coming soon!', 'info');
       });
       
       // Notification close
