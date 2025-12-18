@@ -88,16 +88,15 @@
                     No UUIDs generated yet
                 </div>
             </div>
-                
-                <a href="https://discord.com/invite/mNGeUVcjKB" 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   class="flex items-center justify-center gap-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white py-3 px-6 rounded-lg hover:from-gray-900 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                   aria-label="Join our Discord community">
-                    <i class="fab fa-discord text-xl"></i>
-                    <span>Join Discord Community</span>
-                </a>
-            </div>
+            
+            <a href="https://discord.com/invite/mNGeUVcjKB" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="flex items-center justify-center gap-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white py-3 px-6 rounded-lg hover:from-gray-900 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+               aria-label="Join our Discord community">
+                <i class="fab fa-discord text-xl"></i>
+                <span>Join Discord Community</span>
+            </a>
         </div>
     </div>
 
@@ -132,7 +131,6 @@
             const copyBtn = document.getElementById('copyBtn');
             const lastUUIDDisplay = document.getElementById('lastUUID');
 
-            // Reset UI
             generateBtn.disabled = true;
             loading.classList.remove('hidden');
             uuidContainer.classList.add('hidden');
@@ -141,22 +139,17 @@
             copyBtn.classList.remove('copy-success');
 
             try {
-                // Generate UUID using crypto API (modern browsers)
                 const uuid = crypto.randomUUID();
                 currentUUID = uuid;
 
-                // Display the new UUID
                 uuidText.textContent = uuid;
                 uuidContainer.classList.remove('hidden');
                 
-                // Store in localStorage
                 localStorage.setItem('lastUUID', uuid);
                 
-                // Update last UUID display
                 lastUUIDDisplay.textContent = uuid;
                 lastUUIDDisplay.classList.add('select-all');
                 
-                // Make UUID text clickable for copying
                 uuidText.onclick = () => {
                     copyToClipboard(uuid);
                     highlightCopied();
@@ -165,7 +158,6 @@
             } catch (err) {
                 console.error('UUID generation error:', err);
                 
-                // Fallback UUID generation if crypto.randomUUID is not available
                 try {
                     const fallbackUUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                         const r = Math.random() * 16 | 0;
@@ -201,7 +193,6 @@
             return navigator.clipboard.writeText(text).then(() => {
                 return true;
             }).catch(err => {
-                // Fallback for older browsers
                 try {
                     const textArea = document.createElement('textarea');
                     textArea.value = text;
@@ -226,13 +217,11 @@
             copyBtn.innerHTML = '<i class="fas fa-check"></i><span>Copied!</span>';
             copyBtn.classList.add('copy-success');
             
-            // Visual feedback on the UUID text
             uuidText.style.color = '#10b981';
             setTimeout(() => {
                 uuidText.style.color = '';
             }, 1000);
             
-            // Reset button after 2 seconds
             setTimeout(() => {
                 copyBtn.innerHTML = '<i class="far fa-copy"></i><span>Copy</span>';
                 copyBtn.classList.remove('copy-success');
@@ -251,27 +240,19 @@
             });
         }
 
-        // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
-            // Load the last generated UUID
             loadLastUUID();
             
-            // Set up event listeners
             document.getElementById('generateBtn').addEventListener('click', generateUUID);
             document.getElementById('copyBtn').addEventListener('click', copyUUID);
-            document.getElementById('newBtn').addEventListener('click', generateUUID);
             
-            // Generate first UUID on page load
             generateUUID();
             
-            // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
-                // Space or Enter to generate new UUID
                 if ((e.code === 'Space' || e.code === 'Enter') && !isGenerating) {
                     e.preventDefault();
                     generateUUID();
                 }
-                // Ctrl/Cmd + C to copy when UUID is displayed
                 if ((e.ctrlKey || e.metaKey) && e.code === 'KeyC' && currentUUID) {
                     e.preventDefault();
                     copyUUID();
