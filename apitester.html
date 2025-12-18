@@ -85,6 +85,10 @@
     cursor: pointer;
     transition: all 0.2s ease;
     font-weight: 600;
+    border-right: 1px solid #0078d4;
+  }
+  .method-option:last-child {
+    border-right: none;
   }
   .method-option:hover {
     background: #d9ecff;
@@ -107,7 +111,7 @@
     font-size: 1.2rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgb(0 120 212 / 0.4);
+    box-shadow: 0 4px 10px rgba(0, 120, 212, 0.4);
     transition: all 0.3s ease;
     flex: 1;
     display: flex;
@@ -117,7 +121,7 @@
   }
   button:hover {
     background: #005a9e;
-    box-shadow: 0 6px 16px rgb(0 90 158 / 0.5);
+    box-shadow: 0 6px 16px rgba(0, 90, 158, 0.5);
     transform: translateY(-2px);
   }
   button:active {
@@ -126,13 +130,13 @@
   }
   button.secondary {
     background: #6c757d;
-    box-shadow: 0 4px 10px rgb(108 117 125 / 0.4);
+    box-shadow: 0 4px 10px rgba(108, 117, 125, 0.4);
     flex: 0 0 auto;
     padding: 14px 20px;
   }
   button.secondary:hover {
     background: #5a6268;
-    box-shadow: 0 6px 16px rgb(90 98 104 / 0.5);
+    box-shadow: 0 6px 16px rgba(90, 98, 104, 0.5);
   }
   .history-btn {
     position: relative;
@@ -242,6 +246,7 @@
     height: 60px;
     animation: spin 0.85s linear infinite;
     margin: 60px auto 0 auto;
+    display: none;
   }
   @keyframes spin {
     0% {transform: rotate(0deg);}
@@ -260,6 +265,7 @@
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
     line-height: 1.5;
     max-height: 50vh;
+    display: none;
   }
   .status-bar {
     margin-top: 20px;
@@ -691,8 +697,7 @@
   let selectedMethod = 'GET';
 
   updateHistoryCount();
-  renderHistory();
-  renderHistoryPage();
+  renderHistoryPanel();
   setupMethodSelector();
 
   btn.addEventListener('click', testApi);
@@ -700,7 +705,6 @@
   historyBtn.addEventListener('click', toggleHistoryPanel);
   backButton.addEventListener('click', closeHistoryPage);
   window.addEventListener('keydown', handleKeydown);
-  tabs.forEach(tab => tab.addEventListener('click', switchTab));
   input.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') testApi();
   });
@@ -734,22 +738,14 @@
   }
 
   function updateStats(text, size, time) {
-    if (!text) {
-      linesCount.textContent = 'Lines: 0';
-      charsCount.textContent = 'Characters: 0';
-      sizeEl.textContent = 'Size: 0 KB';
-      timeEl.textContent = 'Time: 0 ms';
-      return;
-    }
-    
-    const lines = text.split(/\r\n|\r|\n/).length;
-    const chars = text.length;
-    const sizeKB = (size / 1024).toFixed(2);
+    const lines = text ? text.split(/\r\n|\r|\n/).length : 0;
+    const chars = text ? text.length : 0;
+    const sizeKB = size ? (size / 1024).toFixed(2) : '0.00';
     
     linesCount.textContent = `Lines: ${lines}`;
     charsCount.textContent = `Characters: ${chars}`;
     sizeEl.textContent = `Size: ${sizeKB} KB`;
-    timeEl.textContent = `Time: ${time} ms`;
+    timeEl.textContent = `Time: ${time || 0} ms`;
   }
 
   function syntaxHighlight(json) {
@@ -798,17 +794,26 @@
     mainWrapper.classList.add('hidden');
     overlay.classList.add('active');
     loader.style.display = 'block';
+    statsBar.style.display = 'flex';
+    
+    tabContents.forEach(content => content.classList.remove('active'));
+    document.querySelector('.tab[data-tab="response"]').classList.add('active');
+    document.getElementById('response-tab').classList.add('active');
+    
     responseFull.style.display = 'none';
     headersFull.style.display = 'none';
     detailsFull.style.display = 'none';
-    statusCodeEl.parentElement.style.display = 'none';
+    statusCodeEl.parentElement.style.display = 'flex';
     updateStats('', 0, 0);
 
     try {
       const start = performance.now();
       const res = await fetchWithTimeout(url, { 
         method,
-        timeout: 15000 
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json'
+        }
       });
       const end = performance.now();
       const ping = Math.round(end - start);
@@ -821,12 +826,20 @@
       } else if (res.status >= 500) {
         statusColor = '#f59e0b'; // Orange for server errors
       }
-      statusCodeEl.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 17L15 12L10 7" stroke="${statusColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Status: <span style="color: ${statusColor}">${res.status}</span>`;
       
-      pingTimeEl.textContent = `Ping: ${ping} ms`;
+      statusCodeEl.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 17L15 12L10 7" stroke="${statusColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Status: <span style="color: ${statusColor}">${res.status} ${res.statusText || ''}</span>
+      `;
+      
+      pingTimeEl.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Ping: ${ping} ms
+      `;
 
       const headers = [];
       res.headers.forEach((value, name) => {
@@ -839,9 +852,14 @@
       let size = 0;
       
       if (contentType.includes('application/json')) {
-        const json = await res.json();
-        text = JSON.stringify(json, null, 2);
-        responseFull.innerHTML = syntaxHighlight(json);
+        try {
+          const json = await res.json();
+          text = JSON.stringify(json, null, 2);
+          responseFull.innerHTML = syntaxHighlight(json);
+        } catch (e) {
+          text = await res.text();
+          responseFull.textContent = text;
+        }
       } else {
         text = await res.text();
         responseFull.textContent = text;
@@ -861,7 +879,6 @@
 
       loader.style.display = 'none';
       responseFull.style.display = 'block';
-      statusCodeEl.parentElement.style.display = 'flex';
       updateStats(text, size, ping);
 
       currentResponse = { text, headers: headers.join('\n'), details: JSON.stringify(details, null, 2) };
@@ -870,12 +887,13 @@
       loader.style.display = 'none';
       responseFull.textContent = '❌ Error: ' + (err.name === 'AbortError' ? 'Request timed out after 15 seconds.' : err.message);
       responseFull.style.display = 'block';
-      statusCodeEl.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 17L15 12L10 7" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Status: <span style="color: #ef4444">ERROR</span>`;
+      statusCodeEl.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 17L15 12L10 7" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Status: <span style="color: #ef4444">ERROR</span>
+      `;
       pingTimeEl.textContent = 'Ping: -- ms';
-      statusCodeEl.parentElement.style.display = 'flex';
       updateStats('', 0, 0);
       
       currentResponse = { 
@@ -898,7 +916,7 @@
   }
 
   function addToHistory(url, method) {
-    apiHistory = apiHistory.filter(item => item.url !== url || item.method !== method);
+    apiHistory = apiHistory.filter(item => !(item.url === url && item.method === method));
     
     apiHistory.unshift({ 
       url, 
@@ -914,7 +932,7 @@
     localStorage.setItem('apiHistory', JSON.stringify(apiHistory));
     
     updateHistoryCount();
-    renderHistory();
+    renderHistoryPanel();
     renderHistoryPage();
   }
 
@@ -922,7 +940,7 @@
     historyCount.textContent = apiHistory.length;
   }
 
-  function renderHistory() {
+  function renderHistoryPanel() {
     if (apiHistory.length === 0) {
       historyPanel.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No history yet</div>';
       return;
@@ -1022,7 +1040,7 @@
       apiHistory = [];
       localStorage.removeItem('apiHistory');
       updateHistoryCount();
-      renderHistory();
+      renderHistoryPanel();
       renderHistoryPage();
       historyPanel.classList.remove('active');
     }
@@ -1034,7 +1052,7 @@
       return;
     }
     
-    renderHistory();
+    renderHistoryPanel();
     historyPanel.classList.add('active');
   }
 
@@ -1042,38 +1060,39 @@
     mainWrapper.classList.add('hidden');
     historyPage.classList.add('active');
     historyPanel.classList.remove('active');
+    renderHistoryPage();
   }
 
   function closeHistoryPage() {
     historyPage.classList.remove('active');
     mainWrapper.classList.remove('hidden');
   }
-
-  function switchTab(e) {
-    const tabName = e.target.dataset.tab;
-    
-    tabs.forEach(tab => tab.classList.remove('active'));
-    e.target.classList.add('active');
-    
-    tabContents.forEach(content => content.classList.remove('active'));
-    document.getElementById(`${tabName}-tab`).classList.add('active');
-    
-    if (currentResponse) {
-      if (tabName === 'response') {
-        responseFull.style.display = 'block';
-        headersFull.style.display = 'none';
-        detailsFull.style.display = 'none';
-      } else if (tabName === 'headers') {
-        headersFull.style.display = 'block';
-        responseFull.style.display = 'none';
-        detailsFull.style.display = 'none';
-      } else if (tabName === 'details') {
-        detailsFull.style.display = 'block';
-        responseFull.style.display = 'none';
-        headersFull.style.display = 'none';
+ 
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabName = this.dataset.tab;
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      
+      tabContents.forEach(content => {
+        content.classList.remove('active');
+        content.style.display = 'none';
+      });
+      
+      const activeTab = document.getElementById(`${tabName}-tab`);
+      activeTab.classList.add('active');
+      activeTab.style.display = 'block';
+      
+      if (currentResponse) {
+        if (tabName === 'headers') {
+          headersFull.textContent = currentResponse.headers;
+        } else if (tabName === 'details') {
+          detailsFull.innerHTML = syntaxHighlight(JSON.parse(currentResponse.details));
+        }
       }
-    }
-  }
+    });
+  });
 </script>
 </body>
 </html>
