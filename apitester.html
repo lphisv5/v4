@@ -136,18 +136,6 @@
     flex: 0 0 auto;
     padding: 14px 20px;
   }
-  .proxy-toggle {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1rem;
-    color: #555;
-    margin-top: 8px;
-  }
-  .proxy-toggle input[type="checkbox"] {
-    transform: scale(1.3);
-    cursor: pointer;
-  }
   .overlay {
     position: fixed;
     top: 0; left: 0;
@@ -300,7 +288,7 @@
 
 <div class="wrapper" id="main-wrapper">
   <h1 class="app-title">YANZ API Tester</h1>
-  <p class="app-description">Test your APIs with ease – now with CORS bypass, body & headers support</p>
+  <p class="app-description">Test your APIs with request body and custom headers support</p>
   
   <div class="method-selector" id="method-selector">
     <div class="method-option active" data-method="GET">GET</div>
@@ -317,11 +305,6 @@
   <textarea id="request-body" placeholder="Request Body (JSON for POST/PUT/PATCH)" style="display:none;"></textarea>
   
   <textarea id="custom-headers" placeholder="Custom Headers (one per line, e.g. Authorization: Bearer token)" style="display:none;"></textarea>
-
-  <div class="proxy-toggle">
-    <input type="checkbox" id="use-proxy" checked />
-    <label for="use-proxy">Use CORS Proxy (recommended – fixes most CORS errors)</label>
-  </div>
   
   <div class="button-group">
     <button id="test-api">
@@ -378,7 +361,6 @@
   const apiUrlInput = document.getElementById('api-url');
   const requestBody = document.getElementById('request-body');
   const customHeaders = document.getElementById('custom-headers');
-  const useProxy = document.getElementById('use-proxy');
   const testBtn = document.getElementById('test-api');
   const clearBtn = document.getElementById('clear-fields');
   const methodOptions = document.querySelectorAll('.method-option');
@@ -423,7 +405,7 @@
     customHeaders.value = '';
   });
 
-  // Test API
+  // Test API button and Enter key
   testBtn.addEventListener('click', testApi);
   apiUrlInput.addEventListener('keypress', e => {
     if (e.key === 'Enter') testApi();
@@ -494,10 +476,8 @@
       return alert('Please enter a valid URL');
     }
 
-    // Apply proxy if enabled
-    if (useProxy.checked) {
-      url = 'https://corsproxy.io/?' + encodeURIComponent(url);
-    }
+    // Always use CORS proxy to avoid most CORS issues
+    url = 'https://corsproxy.io/?' + encodeURIComponent(url);
 
     const method = selectedMethod;
     const hasBody = ['POST', 'PUT', 'PATCH'].includes(method);
@@ -547,7 +527,6 @@
       const end = performance.now();
       const ping = Math.round(end - start);
 
-      // Status color
       let statusColor = res.ok ? '#10b981' : (res.status >= 500 ? '#f59e0b' : '#ef4444');
 
       statusCodeEl.innerHTML = `
@@ -606,7 +585,7 @@
 
     } catch (err) {
       loader.style.display = 'none';
-      responseFull.textContent = 'Error: ' + (err.name === 'TypeError' ? 'Network error or CORS issue (try toggling proxy)' : err.message);
+      responseFull.textContent = 'Error: ' + err.message;
       responseFull.style.display = 'block';
       statusCodeEl.innerHTML = `Status: <span style="color:#ef4444">ERROR</span>`;
       updateStats('', 0, 0);
