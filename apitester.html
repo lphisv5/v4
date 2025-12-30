@@ -20,7 +20,7 @@
   }
   .wrapper {
     width: 100%;
-    max-width: 600px;
+    max-width: 680px;
     background: #fff;
     padding: 2.5rem 2.8rem 3.2rem 2.8rem;
     border-radius: 16px;
@@ -54,21 +54,27 @@
     position: relative;
     margin-bottom: 0.5rem;
   }
-  input[type="text"] {
+  input[type="text"], textarea {
     font-size: 1.1rem;
     padding: 14px 18px;
     border: 2px solid #0078d4;
     border-radius: 10px;
-    outline-offset: 2px;
+    outline: none;
     transition: all 0.3s ease;
     width: 100%;
     font-weight: 600;
     color: #222;
     background: #fff;
+    font-family: inherit;
   }
-  input[type="text"]:focus {
+  input[type="text"]:focus, textarea:focus {
     border-color: #004a9f;
     box-shadow: 0 0 8px #004a9f66;
+  }
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+    margin-top: 12px;
   }
   .method-selector {
     display: flex;
@@ -124,56 +130,23 @@
     box-shadow: 0 6px 16px rgba(0, 90, 158, 0.5);
     transform: translateY(-2px);
   }
-  button:active {
-    background: #004173;
-    transform: translateY(0);
-  }
   button.secondary {
     background: #6c757d;
     box-shadow: 0 4px 10px rgba(108, 117, 125, 0.4);
     flex: 0 0 auto;
     padding: 14px 20px;
   }
-  button.secondary:hover {
-    background: #5a6268;
-    box-shadow: 0 6px 16px rgba(90, 98, 104, 0.5);
-  }
-  .history-btn {
-    position: relative;
-  }
-  .history-count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #ff5722;
-    color: white;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    font-size: 0.75rem;
+  .proxy-toggle {
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-weight: bold;
+    gap: 10px;
+    font-size: 1rem;
+    color: #555;
+    margin-top: 8px;
   }
-  .discord-link {
-    margin-top: 0.8rem;
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.15rem;
-    color: #5865f2;
+  .proxy-toggle input[type="checkbox"] {
+    transform: scale(1.3);
     cursor: pointer;
-    text-decoration: none;
-    user-select: none;
-    transition: all 0.25s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-  }
-  .discord-link:hover {
-    color: #4752c4;
-    transform: translateY(-2px);
   }
   .overlay {
     position: fixed;
@@ -207,8 +180,6 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    user-select: none;
-    transition: color 0.3s ease;
     z-index: 10000;
     width: 50px;
     height: 50px;
@@ -219,24 +190,7 @@
     background: rgba(255,255,255,0.1);
   }
   .close-btn:hover {
-    color: #bbb;
     background: rgba(255,255,255,0.15);
-  }
-  .stats-bar {
-    margin-bottom: 15px;
-    font-size: 1.05rem;
-    color: #eee;
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    font-family: monospace;
-    padding: 10px 15px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 8px;
-  }
-  .stats-section {
-    display: flex;
-    gap: 20px;
   }
   .loader {
     border: 5px solid rgba(238, 238, 238, 0.2);
@@ -286,79 +240,6 @@
     align-items: center;
     gap: 8px;
   }
-  .history-panel {
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 0;
-    width: 320px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    padding: 15px;
-    z-index: 100;
-    display: none;
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  .history-panel.active {
-    display: block;
-  }
-  .history-item {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background 0.2s;
-    border-radius: 6px;
-  }
-  .history-item:hover {
-    background: #f0f7ff;
-  }
-  .history-method {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    margin-right: 8px;
-    color: white;
-  }
-  .method-get {
-    background: #10b981;
-  }
-  .method-post {
-    background: #f59e0b;
-  }
-  .method-put {
-    background: #3b82f6;
-  }
-  .method-delete {
-    background: #ef4444;
-  }
-  .method-patch {
-    background: #8b5cf6;
-  }
-  .method-auto {
-    background: #0078d4;
-  }
-  .history-url {
-    font-size: 0.9rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .clear-history {
-    text-align: center;
-    padding: 10px;
-    color: #ff5722;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    border-top: 1px solid #eee;
-    margin-top: 5px;
-  }
-  .clear-history:hover {
-    color: #e64a19;
-  }
   .tab-container {
     display: flex;
     margin-bottom: 15px;
@@ -385,182 +266,41 @@
   .tab-content.active {
     display: block;
   }
-  .json-key {
-    color: #9cdcfe;
-  }
-  .json-string {
-    color: #ce9178;
-  }
-  .json-number {
-    color: #b5cea8;
-  }
-  .json-boolean {
-    color: #569cd6;
-  }
-  .json-null {
-    color: #569cd6;
-  }
-  
-  .history-page {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    z-index: 10000;
-    padding: 20px;
-    overflow-y: auto;
-    display: none;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-  }
-  .history-page.active {
-    display: block;
-    transform: translateX(0);
-  }
-  .history-header {
+  .stats-bar {
+    margin-bottom: 15px;
+    font-size: 1.05rem;
+    color: #eee;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #eee;
-  }
-  .history-title {
-    font-size: 1.8rem;
-    color: #0078d4;
-    margin: 0;
-  }
-  .back-button {
-    padding: 10px 20px;
-    background: #6c757d;
-    color: white;
-    border: none;
+    gap: 20px;
+    font-family: monospace;
+    padding: 10px 15px;
+    background: rgba(255,255,255,0.1);
     border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
+  }
+  .stats-section {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    gap: 20px;
   }
-  .back-button:hover {
-    background: #5a6268;
-  }
-  .history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  .history-card {
-    background: #f9f9f9;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-  }
-  .history-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  }
-  .history-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .history-card-method {
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-weight: 700;
-    color: white;
-  }
-  .history-card-url {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #333;
-    word-break: break-all;
-  }
-  .history-card-timestamp {
-    color: #666;
-    font-size: 0.9rem;
-  }
-  .history-card-details {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    color: #666;
-    font-size: 0.9rem;
-  }
-  .empty-history {
-    text-align: center;
-    padding: 40px;
-    color: #666;
-    font-size: 1.1rem;
-  }
-  
+  .json-key { color: #9cdcfe; }
+  .json-string { color: #ce9178; }
+  .json-number { color: #b5cea8; }
+  .json-boolean { color: #569cd6; }
+  .json-null { color: #569cd6; }
+
   @media (max-width: 600px) {
-    .wrapper {
-      padding: 1.8rem 2rem 2.5rem 2rem;
-      margin: 20px;
-      border-radius: 12px;
-    }
-    button {
-      font-size: 1.05rem;
-      padding: 12px 20px;
-    }
-    input[type="text"] {
-      font-size: 1rem;
-      padding: 12px 16px;
-    }
-    .close-btn {
-      font-size: 28px;
-      top: 15px;
-      right: 15px;
-      width: 45px;
-      height: 45px;
-    }
-    .discord-link {
-      font-size: 1.05rem;
-    }
-    .app-title {
-      font-size: 1.6rem;
-    }
-    .history-panel {
-      width: 280px;
-    }
-    .button-group {
-      flex-direction: column;
-    }
-    button.secondary {
-      flex: 1;
-    }
-    .history-page {
-      padding: 15px;
-    }
-    .history-title {
-      font-size: 1.5rem;
-    }
-    .response-content {
-      max-height: 40vh;
-    }
-    .stats-bar {
-      flex-direction: column;
-      gap: 10px;
-    }
-    .stats-section {
-      justify-content: space-between;
-    }
+    .wrapper { padding: 1.8rem 2rem; margin: 20px; }
+    .button-group { flex-direction: column; }
+    button.secondary { flex: 1; }
+    .response-content { max-height: 40vh; }
   }
 </style>
 </head>
 <body>
 
 <div class="wrapper" id="main-wrapper">
-  <h1 class="app-title">YANZ API Tester (Beta)</h1>
-  <p class="app-description">Test your APIs with ease and precision</p>
+  <h1 class="app-title">YANZ API Tester</h1>
+  <p class="app-description">Test your APIs with ease – now with CORS bypass, body & headers support</p>
   
   <div class="method-selector" id="method-selector">
     <div class="method-option active" data-method="GET">GET</div>
@@ -571,36 +311,31 @@
   </div>
   
   <div class="input-group">
-    <input id="api-url" type="text" placeholder="Enter API URL here..." autocomplete="off" spellcheck="false" aria-label="API URL input" />
+    <input id="api-url" type="text" placeholder="Enter API URL here..." autocomplete="off" spellcheck="false" />
+  </div>
+
+  <textarea id="request-body" placeholder="Request Body (JSON for POST/PUT/PATCH)" style="display:none;"></textarea>
+  
+  <textarea id="custom-headers" placeholder="Custom Headers (one per line, e.g. Authorization: Bearer token)" style="display:none;"></textarea>
+
+  <div class="proxy-toggle">
+    <input type="checkbox" id="use-proxy" checked />
+    <label for="use-proxy">Use CORS Proxy (recommended – fixes most CORS errors)</label>
   </div>
   
   <div class="button-group">
-    <button id="test-api" aria-label="Test API Button">
+    <button id="test-api">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
       </svg>
-      Test
+      Test API
     </button>
-    <button id="history-btn" class="secondary history-btn" aria-label="View API call history">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      History
-      <span class="history-count" id="history-count">0</span>
-    </button>
-    <div id="history-panel" class="history-panel"></div>
+    <button id="clear-fields" class="secondary">Clear Fields</button>
   </div>
-  
-  <a href="https://discord.com/invite/mNGeUVcjKB" target="_blank" rel="noopener" class="discord-link" aria-label="Join Discord Server">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4C14.83 4.3 14.63 4.67 14.46 5C12.55 4.62 10.65 4.62 8.78 5C8.61 4.67 8.41 4.3 8.24 4C6.74 4.26 5.3 4.71 3.97 5.33C0.79 9.7 0.07 13.96 0.33 18.17C2.18 19.47 4.11 20.3 6.07 20.83C6.55 20.17 6.97 19.47 7.33 18.74C6.63 18.41 5.97 18 5.35 17.5C5.49 17.37 5.63 17.24 5.76 17.11C7.73 18.41 10.04 19.14 12.41 19.14C14.78 19.14 17.09 18.41 19.06 17.11C19.19 17.24 19.33 17.37 19.47 17.5C18.85 18 18.19 18.41 17.49 18.74C17.85 19.47 18.27 20.17 18.75 20.83C20.71 20.3 22.64 19.47 24.49 18.17C24.83 13.3 23.5 9.1 19.27 5.33ZM8.22 15.33C7.25 15.33 6.44 14.38 6.44 13.24C6.44 12.1 7.22 11.15 8.22 11.15C9.22 11.15 10.02 12.1 10 13.24C10 14.38 9.22 15.33 8.22 15.33ZM15.78 15.33C14.81 15.33 14 14.38 14 13.24C14 12.1 14.78 11.15 15.78 11.15C16.78 11.15 17.58 12.1 17.56 13.24C17.56 14.38 16.78 15.33 15.78 15.33Z"/>
-    </svg>
-    Join our Discord
-  </a>
 </div>
 
-<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="overlayTitle" aria-describedby="overlayDesc">
-  <button class="close-btn" title="Close Overlay" aria-label="Close overlay">&times;</button>
+<div id="overlay" class="overlay">
+  <button class="close-btn" aria-label="Close">&times;</button>
 
   <div class="tab-container">
     <div class="tab active" data-tab="response">Response</div>
@@ -619,150 +354,115 @@
     </div>
   </div>
 
-  <div id="loader" class="loader" aria-hidden="true"></div>
+  <div id="loader" class="loader"></div>
   
   <div id="response-tab" class="tab-content active">
-    <pre class="response-content" id="response-full" tabindex="0" aria-live="polite" aria-atomic="true"></pre>
+    <pre class="response-content" id="response-full"></pre>
   </div>
   
   <div id="headers-tab" class="tab-content">
-    <pre class="response-content" id="headers-full" tabindex="0" aria-live="polite" aria-atomic="true"></pre>
+    <pre class="response-content" id="headers-full"></pre>
   </div>
   
   <div id="details-tab" class="tab-content">
-    <pre class="response-content" id="details-full" tabindex="0" aria-live="polite" aria-atomic="true"></pre>
+    <pre class="response-content" id="details-full"></pre>
   </div>
 
-  <div class="status-bar" aria-live="polite">
-    <div class="status-code" id="status-code">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 17L15 12L10 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Status: --
-    </div>
-    <div class="ping" id="ping-time">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Ping: -- ms
-    </div>
-  </div>
-</div>
-
-<div id="history-page" class="history-page">
-  <div class="history-header">
-    <h2 class="history-title">API Call History</h2>
-    <button class="back-button" id="back-button">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Back
-    </button>
-  </div>
-  
-  <div id="history-list" class="history-list">
+  <div class="status-bar">
+    <div class="status-code" id="status-code">Status: --</div>
+    <div class="ping" id="ping-time">Ping: -- ms</div>
   </div>
 </div>
 
 <script>
-  const btn = document.getElementById('test-api');
-  const input = document.getElementById('api-url');
-  const mainWrapper = document.getElementById('main-wrapper');
+  const apiUrlInput = document.getElementById('api-url');
+  const requestBody = document.getElementById('request-body');
+  const customHeaders = document.getElementById('custom-headers');
+  const useProxy = document.getElementById('use-proxy');
+  const testBtn = document.getElementById('test-api');
+  const clearBtn = document.getElementById('clear-fields');
+  const methodOptions = document.querySelectorAll('.method-option');
   const overlay = document.getElementById('overlay');
-  const closeBtn = overlay.querySelector('.close-btn');
+  const mainWrapper = document.getElementById('main-wrapper');
+  const loader = document.getElementById('loader');
   const responseFull = document.getElementById('response-full');
   const headersFull = document.getElementById('headers-full');
   const detailsFull = document.getElementById('details-full');
   const statusCodeEl = document.getElementById('status-code');
   const pingTimeEl = document.getElementById('ping-time');
-  const loader = document.getElementById('loader');
-  const statsBar = document.getElementById('stats-bar');
   const linesCount = document.getElementById('lines-count');
   const charsCount = document.getElementById('chars-count');
   const sizeEl = document.getElementById('size');
   const timeEl = document.getElementById('time');
-  const historyBtn = document.getElementById('history-btn');
-  const historyPanel = document.getElementById('history-panel');
-  const historyCount = document.getElementById('history-count');
   const tabs = document.querySelectorAll('.tab');
   const tabContents = document.querySelectorAll('.tab-content');
-  const historyPage = document.getElementById('history-page');
-  const backButton = document.getElementById('back-button');
-  const historyList = document.getElementById('history-list');
-  const methodOptions = document.querySelectorAll('.method-option');
-  const methodSelector = document.getElementById('method-selector');
 
-  let apiHistory = JSON.parse(localStorage.getItem('apiHistory')) || [];
-  let currentResponse = null;
   let selectedMethod = 'GET';
+  let currentResponse = null;
 
-  updateHistoryCount();
-  renderHistoryPanel();
-  setupMethodSelector();
+  // Method selector
+  methodOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      methodOptions.forEach(opt => opt.classList.remove('active'));
+      option.classList.add('active');
+      selectedMethod = option.dataset.method;
 
-  btn.addEventListener('click', testApi);
-  closeBtn.addEventListener('click', closeOverlay);
-  historyBtn.addEventListener('click', toggleHistoryPanel);
-  backButton.addEventListener('click', closeHistoryPage);
-  window.addEventListener('keydown', handleKeydown);
-  input.addEventListener('keypress', (e) => {
+      if (['POST', 'PUT', 'PATCH'].includes(selectedMethod)) {
+        requestBody.style.display = 'block';
+        customHeaders.style.display = 'block';
+      } else {
+        requestBody.style.display = 'none';
+        customHeaders.style.display = 'none';
+      }
+    });
+  });
+
+  // Clear fields
+  clearBtn.addEventListener('click', () => {
+    requestBody.value = '';
+    customHeaders.value = '';
+  });
+
+  // Test API
+  testBtn.addEventListener('click', testApi);
+  apiUrlInput.addEventListener('keypress', e => {
     if (e.key === 'Enter') testApi();
   });
 
-  document.addEventListener('click', (e) => {
-    if (historyPanel.classList.contains('active') && 
-        !historyBtn.contains(e.target) && 
-        !historyPanel.contains(e.target)) {
-      historyPanel.classList.remove('active');
-    }
+  // Tab switching
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabName = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      tabContents.forEach(c => c.classList.remove('active'));
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+
+      if (currentResponse && tabName === 'headers') {
+        headersFull.textContent = currentResponse.headers;
+      }
+      if (currentResponse && tabName === 'details') {
+        detailsFull.innerHTML = syntaxHighlight(JSON.parse(currentResponse.details));
+      }
+    });
   });
 
-  function setupMethodSelector() {
-    methodOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        methodOptions.forEach(opt => opt.classList.remove('active'));
-        option.classList.add('active');
-        selectedMethod = option.dataset.method;
-      });
-    });
-  }
+  // Close overlay
+  overlay.querySelector('.close-btn').addEventListener('click', () => {
+    overlay.classList.remove('active');
+    mainWrapper.classList.remove('hidden');
+  });
 
-  function fetchWithTimeout(resource, options = {}) {
-    const { timeout = 15000 } = options;
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    return fetch(resource, {
-      ...options,
-      signal: controller.signal
-    }).finally(() => clearTimeout(id));
-  }
-
-  function updateStats(text, size, time) {
-    const lines = text ? text.split(/\r\n|\r|\n/).length : 0;
-    const chars = text ? text.length : 0;
-    const sizeKB = size ? (size / 1024).toFixed(2) : '0.00';
-    
-    linesCount.textContent = `Lines: ${lines}`;
-    charsCount.textContent = `Characters: ${chars}`;
-    sizeEl.textContent = `Size: ${sizeKB} KB`;
-    timeEl.textContent = `Time: ${time || 0} ms`;
-  }
-
+  // Syntax highlight
   function syntaxHighlight(json) {
     if (typeof json !== 'string') {
       json = JSON.stringify(json, undefined, 2);
     }
-    
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
       let cls = 'json-number';
       if (/^"/.test(match)) {
-        if (/:$/.test(match)) {
-          cls = 'json-key';
-        } else {
-          cls = 'json-string';
-        }
+        cls = /:$/.test(match) ? 'json-key' : 'json-string';
       } else if (/true|false/.test(match)) {
         cls = 'json-boolean';
       } else if (/null/.test(match)) {
@@ -772,107 +472,125 @@
     });
   }
 
+  // Update stats
+  function updateStats(text, size, time) {
+    const lines = text ? text.split(/\r\n|\r|\n/).length : 0;
+    const chars = text ? text.length : 0;
+    const sizeKB = size ? (size / 1024).toFixed(2) : '0.00';
+    linesCount.textContent = `Lines: ${lines}`;
+    charsCount.textContent = `Characters: ${chars}`;
+    sizeEl.textContent = `Size: ${sizeKB} KB`;
+    timeEl.textContent = `Time: ${time} ms`;
+  }
+
+  // Main test function
   async function testApi() {
-    const url = input.value.trim();
-    
-    if (!url) {
-      alert('⚠️ Please enter a valid API URL.');
-      return;
-    }
-    
+    let url = apiUrlInput.value.trim();
+    if (!url) return alert('Please enter an API URL');
+
     try {
       new URL(url);
-    } catch (e) {
-      alert('⚠️ Please enter a valid URL format (e.g., https://api.example.com/data).');
-      return;
+    } catch {
+      return alert('Please enter a valid URL');
     }
-    
+
+    // Apply proxy if enabled
+    if (useProxy.checked) {
+      url = 'https://corsproxy.io/?' + encodeURIComponent(url);
+    }
+
     const method = selectedMethod;
-    
-    addToHistory(url, method);
-    
+    const hasBody = ['POST', 'PUT', 'PATCH'].includes(method);
+
+    let headers = { 'Accept': 'application/json' };
+    let body = null;
+
+    // Parse custom headers
+    if (customHeaders.value.trim()) {
+      customHeaders.value.trim().split('\n').forEach(line => {
+        const [key, ...valueParts] = line.split(':');
+        if (key && valueParts.length) {
+          headers[key.trim()] = valueParts.join(':').trim();
+        }
+      });
+    }
+
+    // Parse body
+    if (hasBody && requestBody.value.trim()) {
+      try {
+        body = JSON.parse(requestBody.value);
+        headers['Content-Type'] = 'application/json';
+      } catch (e) {
+        return alert('Invalid JSON in request body');
+      }
+    }
+
+    // Show overlay
     mainWrapper.classList.add('hidden');
     overlay.classList.add('active');
     loader.style.display = 'block';
-    statsBar.style.display = 'flex';
-    
-    tabContents.forEach(content => content.classList.remove('active'));
-    document.querySelector('.tab[data-tab="response"]').classList.add('active');
-    document.getElementById('response-tab').classList.add('active');
-    
     responseFull.style.display = 'none';
     headersFull.style.display = 'none';
     detailsFull.style.display = 'none';
-    statusCodeEl.parentElement.style.display = 'flex';
+
+    statusCodeEl.innerHTML = 'Status: --';
+    pingTimeEl.innerHTML = 'Ping: -- ms';
     updateStats('', 0, 0);
 
     try {
       const start = performance.now();
-      const res = await fetchWithTimeout(url, { 
+      const res = await fetch(url, {
         method,
-        mode: 'cors',
-        headers: {
-          'Accept': 'application/json'
-        }
+        headers,
+        body: hasBody ? JSON.stringify(body) : null
       });
       const end = performance.now();
       const ping = Math.round(end - start);
 
-      let statusColor = '#0078d4'; // Default blue
-      if (res.status >= 200 && res.status < 300) {
-        statusColor = '#10b981'; // Green for success
-      } else if (res.status >= 400 && res.status < 500) {
-        statusColor = '#ef4444'; // Red for client errors
-      } else if (res.status >= 500) {
-        statusColor = '#f59e0b'; // Orange for server errors
-      }
-      
+      // Status color
+      let statusColor = res.ok ? '#10b981' : (res.status >= 500 ? '#f59e0b' : '#ef4444');
+
       statusCodeEl.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 17L15 12L10 7" stroke="${statusColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Status: <span style="color: ${statusColor}">${res.status} ${res.statusText || ''}</span>
+        Status: <span style="color:\( {statusColor}"> \){res.status} ${res.statusText}</span>
       `;
-      
-      pingTimeEl.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Ping: ${ping} ms
-      `;
+      pingTimeEl.innerHTML = `Ping: ${ping} ms`;
 
-      const headers = [];
-      res.headers.forEach((value, name) => {
-        headers.push(`${name}: ${value}`);
-      });
-      headersFull.textContent = headers.join('\n');
+      // Headers
+      const headerLines = [];
+      res.headers.forEach((value, name) => headerLines.push(`${name}: ${value}`));
+      headersFull.textContent = headerLines.join('\n');
 
+      // Response body
+      let text = '';
+      let parsedJson = null;
       const contentType = res.headers.get('content-type') || '';
-      let text;
-      let size = 0;
-      
+
       if (contentType.includes('application/json')) {
         try {
-          const json = await res.json();
-          text = JSON.stringify(json, null, 2);
-          responseFull.innerHTML = syntaxHighlight(json);
-        } catch (e) {
+          parsedJson = await res.json();
+          text = JSON.stringify(parsedJson, null, 2);
+        } catch {
           text = await res.text();
-          responseFull.textContent = text;
         }
       } else {
         text = await res.text();
+      }
+
+      const size = new TextEncoder().encode(text).byteLength;
+
+      if (parsedJson !== null) {
+        responseFull.innerHTML = syntaxHighlight(parsedJson);
+      } else {
         responseFull.textContent = text;
       }
-      
-      size = new TextEncoder().encode(text).length;
 
+      // Details tab
       const details = {
         url: res.url,
         status: res.status,
         statusText: res.statusText,
-        type: res.type,
         redirected: res.redirected,
+        type: res.type,
         headers: Object.fromEntries(res.headers.entries())
       };
       detailsFull.innerHTML = syntaxHighlight(details);
@@ -881,218 +599,19 @@
       responseFull.style.display = 'block';
       updateStats(text, size, ping);
 
-      currentResponse = { text, headers: headers.join('\n'), details: JSON.stringify(details, null, 2) };
+      currentResponse = {
+        headers: headerLines.join('\n'),
+        details: JSON.stringify(details, null, 2)
+      };
 
     } catch (err) {
       loader.style.display = 'none';
-      responseFull.textContent = '❌ Error: ' + (err.name === 'AbortError' ? 'Request timed out after 15 seconds.' : err.message);
+      responseFull.textContent = 'Error: ' + (err.name === 'TypeError' ? 'Network error or CORS issue (try toggling proxy)' : err.message);
       responseFull.style.display = 'block';
-      statusCodeEl.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 17L15 12L10 7" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Status: <span style="color: #ef4444">ERROR</span>
-      `;
-      pingTimeEl.textContent = 'Ping: -- ms';
+      statusCodeEl.innerHTML = `Status: <span style="color:#ef4444">ERROR</span>`;
       updateStats('', 0, 0);
-      
-      currentResponse = { 
-        text: '❌ Error: ' + err.message, 
-        headers: '', 
-        details: JSON.stringify({ error: err.message }, null, 2) 
-      };
     }
   }
-
-  function closeOverlay() {
-    overlay.classList.remove('active');
-    mainWrapper.classList.remove('hidden');
-  }
-
-  function handleKeydown(e) {
-    if (e.key === 'Escape' && overlay.classList.contains('active')) {
-      closeOverlay();
-    }
-  }
-
-  function addToHistory(url, method) {
-    apiHistory = apiHistory.filter(item => !(item.url === url && item.method === method));
-    
-    apiHistory.unshift({ 
-      url, 
-      method, 
-      timestamp: new Date().toISOString(),
-      id: Date.now() 
-    });
-    
-    if (apiHistory.length > 20) {
-      apiHistory = apiHistory.slice(0, 20);
-    }
-    
-    localStorage.setItem('apiHistory', JSON.stringify(apiHistory));
-    
-    updateHistoryCount();
-    renderHistoryPanel();
-    renderHistoryPage();
-  }
-
-  function updateHistoryCount() {
-    historyCount.textContent = apiHistory.length;
-  }
-
-  function renderHistoryPanel() {
-    if (apiHistory.length === 0) {
-      historyPanel.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No history yet</div>';
-      return;
-    }
-    
-    historyPanel.innerHTML = '';
-    
-    apiHistory.forEach((item) => {
-      const historyItem = document.createElement('div');
-      historyItem.className = 'history-item';
-      historyItem.innerHTML = `
-        <span class="history-method method-${item.method.toLowerCase()}">${item.method}</span>
-        <span class="history-url">${item.url}</span>
-      `;
-      
-      historyItem.addEventListener('click', () => {
-        input.value = item.url;
-        methodOptions.forEach(opt => {
-          opt.classList.remove('active');
-          if (opt.dataset.method === item.method) {
-            opt.classList.add('active');
-            selectedMethod = item.method;
-          }
-        });
-        historyPanel.classList.remove('active');
-      });
-      
-      historyPanel.appendChild(historyItem);
-    });
-    
-    const clearButton = document.createElement('div');
-    clearButton.className = 'clear-history';
-    clearButton.textContent = 'Clear History';
-    clearButton.addEventListener('click', clearHistory);
-    
-    historyPanel.appendChild(clearButton);
-    
-    const viewAllButton = document.createElement('div');
-    viewAllButton.className = 'clear-history';
-    viewAllButton.textContent = 'View Full History';
-    viewAllButton.addEventListener('click', openHistoryPage);
-    
-    historyPanel.appendChild(viewAllButton);
-  }
-
-  function renderHistoryPage() {
-    if (apiHistory.length === 0) {
-      historyList.innerHTML = `
-        <div class="empty-history">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 8v4l2 2m4-4a8 8 0 11-16 0 8 8 0 0116 0z" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <p>No API call history yet</p>
-        </div>
-      `;
-      return;
-    }
-    
-    historyList.innerHTML = '';
-    
-    apiHistory.forEach(item => {
-      const historyCard = document.createElement('div');
-      historyCard.className = 'history-card';
-      
-      const date = new Date(item.timestamp);
-      const formattedDate = date.toLocaleString();
-      
-      historyCard.innerHTML = `
-        <div class="history-card-header">
-          <span class="history-card-method method-${item.method.toLowerCase()}">${item.method}</span>
-          <span class="history-card-timestamp">${formattedDate}</span>
-        </div>
-        <div class="history-card-url">${item.url}</div>
-        <div class="history-card-details">
-          <span>Click to use this URL</span>
-        </div>
-      `;
-      
-      historyCard.addEventListener('click', () => {
-        input.value = item.url;
-        methodOptions.forEach(opt => {
-          opt.classList.remove('active');
-          if (opt.dataset.method === item.method) {
-            opt.classList.add('active');
-            selectedMethod = item.method;
-          }
-        });
-        closeHistoryPage();
-      });
-      
-      historyList.appendChild(historyCard);
-    });
-  }
-
-  function clearHistory() {
-    if (confirm('Are you sure you want to clear all history?')) {
-      apiHistory = [];
-      localStorage.removeItem('apiHistory');
-      updateHistoryCount();
-      renderHistoryPanel();
-      renderHistoryPage();
-      historyPanel.classList.remove('active');
-    }
-  }
-
-  function toggleHistoryPanel() {
-    if (historyPanel.classList.contains('active')) {
-      historyPanel.classList.remove('active');
-      return;
-    }
-    
-    renderHistoryPanel();
-    historyPanel.classList.add('active');
-  }
-
-  function openHistoryPage() {
-    mainWrapper.classList.add('hidden');
-    historyPage.classList.add('active');
-    historyPanel.classList.remove('active');
-    renderHistoryPage();
-  }
-
-  function closeHistoryPage() {
-    historyPage.classList.remove('active');
-    mainWrapper.classList.remove('hidden');
-  }
- 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      const tabName = this.dataset.tab;
-      
-      tabs.forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-      
-      tabContents.forEach(content => {
-        content.classList.remove('active');
-        content.style.display = 'none';
-      });
-      
-      const activeTab = document.getElementById(`${tabName}-tab`);
-      activeTab.classList.add('active');
-      activeTab.style.display = 'block';
-      
-      if (currentResponse) {
-        if (tabName === 'headers') {
-          headersFull.textContent = currentResponse.headers;
-        } else if (tabName === 'details') {
-          detailsFull.innerHTML = syntaxHighlight(JSON.parse(currentResponse.details));
-        }
-      }
-    });
-  });
 </script>
 </body>
 </html>
