@@ -28,7 +28,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: all 0.3s ease;
     position: relative;
     z-index: 10;
   }
@@ -49,10 +49,6 @@
     margin: 0 0 1.5rem 0;
     color: #666;
     font-size: 1rem;
-  }
-  .input-group {
-    position: relative;
-    margin-bottom: 0.5rem;
   }
   input[type="text"], textarea {
     font-size: 1.1rem;
@@ -106,7 +102,6 @@
   .button-group {
     display: flex;
     gap: 12px;
-    position: relative;
   }
   button {
     padding: 14px 26px;
@@ -127,12 +122,10 @@
   }
   button:hover {
     background: #005a9e;
-    box-shadow: 0 6px 16px rgba(0, 90, 158, 0.5);
     transform: translateY(-2px);
   }
   button.secondary {
     background: #6c757d;
-    box-shadow: 0 4px 10px rgba(108, 117, 125, 0.4);
     flex: 0 0 auto;
     padding: 14px 20px;
   }
@@ -147,8 +140,6 @@
     padding: 70px 35px 35px 35px;
     box-sizing: border-box;
     z-index: 9999;
-    justify-content: flex-start;
-    align-items: stretch;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease;
@@ -165,17 +156,16 @@
     font-size: 32px;
     font-weight: 900;
     color: #fff;
-    background: transparent;
+    background: rgba(255,255,255,0.1);
     border: none;
     cursor: pointer;
-    z-index: 10000;
     width: 50px;
     height: 50px;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
+    z-index: 10000;
   }
   .close-btn:hover {
     background: rgba(255,255,255,0.15);
@@ -204,7 +194,7 @@
     color: #d4d4d4;
     overflow-y: auto;
     white-space: pre-wrap;
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
     line-height: 1.5;
     max-height: 50vh;
     display: none;
@@ -215,18 +205,16 @@
     justify-content: space-between;
     font-weight: 700;
     font-size: 1.1rem;
+    gap: 15px;
   }
   .status-code, .ping {
     background: rgba(219, 238, 255, 0.9);
-    padding: 10px 18px;
+    padding: 12px 20px;
     border-radius: 10px;
     box-shadow: 0 0 12px rgba(166, 200, 255, 0.5);
-    min-width: 90px;
+    min-width: 120px;
     text-align: center;
     color: #004a9f;
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
   .tab-container {
     display: flex;
@@ -280,6 +268,7 @@
     .wrapper { padding: 1.8rem 2rem; margin: 20px; }
     .button-group { flex-direction: column; }
     button.secondary { flex: 1; }
+    .status-bar { flex-direction: column; gap: 10px; }
     .response-content { max-height: 40vh; }
   }
 </style>
@@ -298,13 +287,11 @@
     <div class="method-option" data-method="PATCH">PATCH</div>
   </div>
   
-  <div class="input-group">
-    <input id="api-url" type="text" placeholder="Enter API URL here..." autocomplete="off" spellcheck="false" />
-  </div>
-
+  <input id="api-url" type="text" placeholder="Enter API URL here..." autocomplete="off" spellcheck="false" />
+  
   <textarea id="request-body" placeholder="Request Body (JSON for POST/PUT/PATCH)" style="display:none;"></textarea>
   
-  <textarea id="custom-headers" placeholder="Custom Headers (one per line, e.g. Authorization: Bearer token)" style="display:none;"></textarea>
+  <textarea id="custom-headers" placeholder="Custom Headers (one per line, e.g. Authorization: Bearer xyz)" style="display:none;"></textarea>
   
   <div class="button-group">
     <button id="test-api">
@@ -326,7 +313,7 @@
     <div class="tab" data-tab="details">Details</div>
   </div>
 
-  <div class="stats-bar" id="stats-bar">
+  <div class="stats-bar">
     <div class="stats-section">
       <span id="lines-count">Lines: 0</span>
       <span id="chars-count">Characters: 0</span>
@@ -382,7 +369,6 @@
   let selectedMethod = 'GET';
   let currentResponse = null;
 
-  // Method selector
   methodOptions.forEach(option => {
     option.addEventListener('click', () => {
       methodOptions.forEach(opt => opt.classList.remove('active'));
@@ -399,19 +385,16 @@
     });
   });
 
-  // Clear fields
   clearBtn.addEventListener('click', () => {
     requestBody.value = '';
     customHeaders.value = '';
   });
 
-  // Test API button and Enter key
   testBtn.addEventListener('click', testApi);
   apiUrlInput.addEventListener('keypress', e => {
     if (e.key === 'Enter') testApi();
   });
 
-  // Tab switching
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const tabName = tab.dataset.tab;
@@ -429,32 +412,23 @@
     });
   });
 
-  // Close overlay
   overlay.querySelector('.close-btn').addEventListener('click', () => {
     overlay.classList.remove('active');
     mainWrapper.classList.remove('hidden');
   });
 
-  // Syntax highlight
   function syntaxHighlight(json) {
-    if (typeof json !== 'string') {
-      json = JSON.stringify(json, undefined, 2);
-    }
+    if (typeof json !== 'string') json = JSON.stringify(json, undefined, 2);
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
       let cls = 'json-number';
-      if (/^"/.test(match)) {
-        cls = /:$/.test(match) ? 'json-key' : 'json-string';
-      } else if (/true|false/.test(match)) {
-        cls = 'json-boolean';
-      } else if (/null/.test(match)) {
-        cls = 'json-null';
-      }
+      if (/^"/.test(match)) cls = /:$/.test(match) ? 'json-key' : 'json-string';
+      else if (/true|false/.test(match)) cls = 'json-boolean';
+      else if (/null/.test(match)) cls = 'json-null';
       return '<span class="' + cls + '">' + match + '</span>';
     });
   }
 
-  // Update stats
   function updateStats(text, size, time) {
     const lines = text ? text.split(/\r\n|\r|\n/).length : 0;
     const chars = text ? text.length : 0;
@@ -465,18 +439,13 @@
     timeEl.textContent = `Time: ${time} ms`;
   }
 
-  // Main test function
   async function testApi() {
     let url = apiUrlInput.value.trim();
     if (!url) return alert('Please enter an API URL');
 
-    try {
-      new URL(url);
-    } catch {
-      return alert('Please enter a valid URL');
-    }
+    try { new URL(url); } catch { return alert('Invalid URL format'); }
 
-    // Always use CORS proxy to avoid most CORS issues
+    // ใช้ Proxy อัตโนมัติเพื่อหลีกเลี่ยง CORS
     url = 'https://corsproxy.io/?' + encodeURIComponent(url);
 
     const method = selectedMethod;
@@ -485,17 +454,13 @@
     let headers = { 'Accept': 'application/json' };
     let body = null;
 
-    // Parse custom headers
     if (customHeaders.value.trim()) {
       customHeaders.value.trim().split('\n').forEach(line => {
-        const [key, ...valueParts] = line.split(':');
-        if (key && valueParts.length) {
-          headers[key.trim()] = valueParts.join(':').trim();
-        }
+        const [key, ...val] = line.split(':');
+        if (key && val.length) headers[key.trim()] = val.join(':').trim();
       });
     }
 
-    // Parse body
     if (hasBody && requestBody.value.trim()) {
       try {
         body = JSON.parse(requestBody.value);
@@ -505,72 +470,60 @@
       }
     }
 
-    // Show overlay
     mainWrapper.classList.add('hidden');
     overlay.classList.add('active');
     loader.style.display = 'block';
     responseFull.style.display = 'none';
-    headersFull.style.display = 'none';
-    detailsFull.style.display = 'none';
-
-    statusCodeEl.innerHTML = 'Status: --';
-    pingTimeEl.innerHTML = 'Ping: -- ms';
+    statusCodeEl.textContent = 'Status: --';
+    pingTimeEl.textContent = 'Ping: -- ms';
     updateStats('', 0, 0);
 
     try {
       const start = performance.now();
-      const res = await fetch(url, {
-        method,
-        headers,
-        body: hasBody ? JSON.stringify(body) : null
-      });
+      const res = await fetch(url, { method, headers, body: hasBody ? JSON.stringify(body) : null });
       const end = performance.now();
       const ping = Math.round(end - start);
 
-      let statusColor = res.ok ? '#10b981' : (res.status >= 500 ? '#f59e0b' : '#ef4444');
+      // กำหนดสีตามสถานะ
+      let statusColor = '#10b981'; // เขียวสำหรับ 2xx
+      if (res.status >= 400 && res.status < 500) statusColor = '#ef4444'; // แดงสำหรับ 4xx
+      if (res.status >= 500) statusColor = '#f59e0b'; // ส้มสำหรับ 5xx
 
-      statusCodeEl.innerHTML = `
-        Status: <span style="color:\( {statusColor}"> \){res.status} ${res.statusText}</span>
-      `;
-      pingTimeEl.innerHTML = `Ping: ${ping} ms`;
+      // แสดง Status ที่ถูกต้องและชัดเจน
+      statusCodeEl.innerHTML = `Status: <span style="color:\( {statusColor}; font-weight:800;"> \){res.status} ${res.statusText || 'Unknown'}</span>`;
+      pingTimeEl.textContent = `Ping: ${ping} ms`;
 
       // Headers
       const headerLines = [];
-      res.headers.forEach((value, name) => headerLines.push(`${name}: ${value}`));
+      res.headers.forEach((v, n) => headerLines.push(`${n}: ${v}`));
       headersFull.textContent = headerLines.join('\n');
 
-      // Response body
+      // Response
       let text = '';
-      let parsedJson = null;
-      const contentType = res.headers.get('content-type') || '';
-
-      if (contentType.includes('application/json')) {
-        try {
-          parsedJson = await res.json();
-          text = JSON.stringify(parsedJson, null, 2);
-        } catch {
-          text = await res.text();
-        }
-      } else {
+      let json = null;
+      try {
+        json = await res.json();
+        text = JSON.stringify(json, null, 2);
+      } catch {
         text = await res.text();
       }
 
       const size = new TextEncoder().encode(text).byteLength;
 
-      if (parsedJson !== null) {
-        responseFull.innerHTML = syntaxHighlight(parsedJson);
+      if (json !== null) {
+        responseFull.innerHTML = syntaxHighlight(json);
       } else {
         responseFull.textContent = text;
       }
 
-      // Details tab
+      // Details
       const details = {
         url: res.url,
         status: res.status,
         statusText: res.statusText,
         redirected: res.redirected,
         type: res.type,
-        headers: Object.fromEntries(res.headers.entries())
+        headers: Object.fromEntries(res.headers)
       };
       detailsFull.innerHTML = syntaxHighlight(details);
 
@@ -578,16 +531,13 @@
       responseFull.style.display = 'block';
       updateStats(text, size, ping);
 
-      currentResponse = {
-        headers: headerLines.join('\n'),
-        details: JSON.stringify(details, null, 2)
-      };
+      currentResponse = { headers: headerLines.join('\n'), details: JSON.stringify(details, null, 2) };
 
     } catch (err) {
       loader.style.display = 'none';
       responseFull.textContent = 'Error: ' + err.message;
       responseFull.style.display = 'block';
-      statusCodeEl.innerHTML = `Status: <span style="color:#ef4444">ERROR</span>`;
+      statusCodeEl.innerHTML = `Status: <span style="color:#ef4444; font-weight:800;">ERROR</span>`;
       updateStats('', 0, 0);
     }
   }
