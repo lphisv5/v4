@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>about YANZ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: #000000;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Roboto Mono', monospace;
+            position: relative;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        #matrix-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            opacity: 0.3;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            animation: grid-move 40s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes grid-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0),
+                rgba(0, 0, 0, 0) 2px,
+                rgba(0, 255, 255, 0.02) 2px,
+                rgba(0, 255, 255, 0.02) 4px
+            );
+            pointer-events: none;
+            animation: scanline 12s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            max-width: 800px;
+            width: 100%;
+            z-index: 1;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes holographic-appear {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) rotateX(-20deg) scale(0.8);
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .animate-entrance {
+            opacity: 0;
+            animation: holographic-appear 1.2s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+        }
+
+        .avatar { animation-delay: 0.4s; }
+        .name { animation-delay: 0.8s; }
+        .glitch { animation-delay: 1.2s; }
+        .description { animation-delay: 1.6s; }
+        .links { animation-delay: 2.0s; }
+
+        .avatar-wrapper {
+            position: relative;
+            margin-bottom: 40px;
+            transform-style: preserve-3d;
+        }
+
+        .avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            background: 
+                linear-gradient(#000, #000) padding-box,
+                linear-gradient(45deg, #00ffff, #ff00ff, #00ff41, #00ffff) border-box;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.8),
+                0 0 60px rgba(255, 0, 255, 0.5),
+                inset 0 0 30px rgba(0, 255, 255, 0.3);
+            animation: 
+                holographic-glow 6s ease-in-out infinite alternate,
+                float 8s ease-in-out infinite;
+            transition: all 0.5s ease;
+        }
+
+        @keyframes holographic-glow {
+            0% { 
+                box-shadow: 
+                    0 0 30px rgba(0, 255, 255, 0.8),
+                    0 0 80px rgba(255, 0, 255, 0.4);
+                filter: hue-rotate(0deg) brightness(1);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 50px rgba(0, 255, 255, 1),
+                    0 0 100px rgba(255, 0, 255, 0.7);
+                filter: hue-rotate(180deg) brightness(1.2);
+            }
+            100% { 
+                box-shadow: 
+                    0 0 30px rgba(0, 255, 255, 0.8),
+                    0 0 80px rgba(0, 255, 65, 0.5);
+                filter: hue-rotate(360deg) brightness(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(0); }
+            50% { transform: translateY(-20px) rotateX(10deg); }
+        }
+
+        .avatar:hover {
+            transform: scale(1.2) rotateY(15deg);
+            box-shadow: 
+                0 0 80px rgba(0, 255, 255, 1),
+                0 0 120px rgba(255, 0, 255, 0.9);
+        }
+
+        .glitch {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5.5rem;
+            font-weight: 700;
+            position: relative;
+            color: transparent;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ff41);
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            animation: 
+                holographic-shift 8s linear infinite,
+                glitch-pulse 4s infinite;
+        }
+
+        @keyframes holographic-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes glitch-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; text-shadow: 0 0 40px #00ffff; }
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: 'YANZ V4';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: inherit;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .glitch::before {
+            animation: glitch-1 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        }
+
+        .glitch::after {
+            animation: glitch-2 2.5s infinite linear alternate-reverse;
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        }
+
+        @keyframes glitch-1 {
+            0% { transform: translate(0); }
+            20% { transform: translate(-4px, 4px); }
+            60% { transform: translate(4px, -4px); }
+        }
+
+        @keyframes glitch-2 {
+            0% { transform: translate(0); }
+            40% { transform: translate(6px, -6px); }
+            80% { transform: translate(-6px, 6px); }
+        }
+
+        .name {
+            font-size: 2.6rem;
+            margin: 10px 0;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: neon-flicker 5s infinite alternate;
+        }
+
+        @keyframes neon-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        .description {
+            max-width: 700px;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.9;
+            margin: 40px 0;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+            opacity: 0.9;
+            animation: tracking-in-expand 1.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+            animation-delay: 1.6s;
+        }
+
+        @keyframes tracking-in-expand {
+            0% { letter-spacing: -0.3em; opacity: 0; filter: blur(8px); }
+            40% { opacity: 0.7; }
+            100% { letter-spacing: normal; opacity: 0.9; filter: blur(0); }
+        }
+
+        .links {
+            margin-top: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 35px;
+            justify-content: center;
+        }
+
+        .links a {
+            position: relative;
+            color: #00ffff;
+            text-decoration: none;
+            font-size: 1.3rem;
+            padding: 15px 35px;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            background: 
+                linear-gradient(#000, #000) padding-box,
+                linear-gradient(45deg, #00ffff, #ff00ff) border-box;
+            text-shadow: 0 0 15px #00ffff;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+            transition: all 0.5s ease;
+            overflow: hidden;
+        }
+
+        .links a:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 
+                0 0 50px rgba(0, 255, 255, 1),
+                0 0 80px rgba(255, 0, 255, 0.7);
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+        }
+
+        .links a::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.7s;
+        }
+
+        .links a:hover::before {
+            left: 100%;
+        }
+
+        /* Particles ลดลงอีกนิด */
+        #particles {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .glitch { font-size: 3.8rem; }
+            .name { font-size: 2.2rem; }
+            .avatar { width: 160px; height: 160px; }
+            .description { font-size: 1.1rem; padding: 0 20px; }
+            .links a { padding: 12px 25px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-canvas"></canvas>
+    <canvas id="particles"></canvas>
+
+    <div class="container">
+        <div class="avatar-wrapper animate-entrance">
+            <img src="https://i.postimg.cc/ydM6cMhZ/73e8e557f8d8840773c00922f8b17686.jpg" alt="Arzuz Yanz Avatar" class="avatar">
+        </div>
+
+        <div class="name animate-entrance">! Arzuz Yanz</div>
+
+        <h1 class="glitch animate-entrance">YANZ V4</h1>
+
+        <div class="description animate-entrance">
+            My job is simply to follow my feelings or endless free time.<br>
+            Updates are frequent, but might be slow if I'm feeling energetic or have nothing to do;<br>
+            I'll update quietly without prior notice.
+        </div>
+
+        <div class="links animate-entrance">
+            <a href="https://discord.gg/mNGeUVcjKB" target="_blank">Server Main</a>
+            <a href="https://discord.gg/xppGk6fAFY" target="_blank">Server Script</a>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain (opacity ต่ำลง)
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        const mCtx = matrixCanvas.getContext('2d');
+        matrixCanvas.width = window.innerWidth;
+        matrixCanvas.height = window.innerHeight;
+
+        const fontSize = 14;
+        const columns = Math.floor(matrixCanvas.width / fontSize);
+        const drops = new Array(columns).fill(1);
+        const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+
+        function drawMatrix() {
+            mCtx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+            mCtx.fillStyle = '#00ff41';
+            mCtx.font = `${fontSize}px monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                mCtx.fillText(char, x, y);
+
+                if (y > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 40);
+
+        // Particles (เบาลง)
+        const particlesCanvas = document.getElementById('particles');
+        const pCtx = particlesCanvas.getContext('2d');
+        particlesCanvas.width = window.innerWidth;
+        particlesCanvas.height = window.innerHeight;
+
+        const particles = [];
+        const numParticles = 20;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * particlesCanvas.width;
+                this.y = Math.random() * particlesCanvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.6 - 0.3;
+                this.speedY = Math.random() * 0.6 - 0.3;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, 0.5)' : 'rgba(255, 0, 255, 0.5)';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > particlesCanvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > particlesCanvas.height || this.y < 0) this.speedY *= -1;
+            }
+            draw() {
+                pCtx.fillStyle = this.color;
+                pCtx.beginPath();
+                pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                pCtx.fill();
+            }
+        }
+
+        for (let i = 0; i < numParticles; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            pCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            pCtx.fillRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            matrixCanvas.width = particlesCanvas.width = window.innerWidth;
+            matrixCanvas.height = particlesCanvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
