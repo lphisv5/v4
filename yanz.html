@@ -348,87 +348,154 @@
             <a href="https://discord.gg/xppGk6fAFY" target="_blank">Server Script</a>
         </div>
     </div>
+<script>
+/* =========================
+   Canvas Utilities (เสถียร)
+========================= */
+const DPR = window.devicePixelRatio || 1;
 
-    <script>
-        // Matrix Rain (opacity ต่ำลง)
-        const matrixCanvas = document.getElementById('matrix-canvas');
-        const mCtx = matrixCanvas.getContext('2d');
-        matrixCanvas.width = window.innerWidth;
-        matrixCanvas.height = window.innerHeight;
+function resizeCanvas(canvas, ctx) {
+    const { innerWidth, innerHeight } = window;
+    canvas.width = innerWidth * DPR;
+    canvas.height = innerHeight * DPR;
+    canvas.style.width = innerWidth + 'px';
+    canvas.style.height = innerHeight + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
 
-        const fontSize = 14;
-        const columns = Math.floor(matrixCanvas.width / fontSize);
-        const drops = new Array(columns).fill(1);
-        const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+/* =========================
+   Matrix Rain (Fix resize + DPI)
+========================= */
+const matrixCanvas = document.getElementById('matrix-canvas');
+const mCtx = matrixCanvas.getContext('2d');
 
-        function drawMatrix() {
-            mCtx.fillStyle = 'rgba(0, 0, 0, 0.04)';
-            mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+let fontSize = 14;
+let columns = 0;
+let drops = [];
+const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
 
-            mCtx.fillStyle = '#00ff41';
-            mCtx.font = `${fontSize}px monospace`;
+function initMatrix() {
+    resizeCanvas(matrixCanvas, mCtx);
+    columns = Math.floor(matrixCanvas.width / DPR / fontSize);
+    drops = new Array(columns).fill(1);
+}
 
-            for (let i = 0; i < drops.length; i++) {
-                const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                const x = i * fontSize;
-                const y = drops[i] * fontSize;
+function drawMatrix() {
+    mCtx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+    mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
 
-                mCtx.fillText(char, x, y);
+    mCtx.fillStyle = '#00ff41';
+    mCtx.font = `${fontSize}px monospace`;
 
-                if (y > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            }
+    for (let i = 0; i < drops.length; i++) {
+        const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+
+        mCtx.fillText(char, x, y);
+
+        if (y > matrixCanvas.height / DPR && Math.random() > 0.975) {
+            drops[i] = 0;
         }
+        drops[i]++;
+    }
+}
 
-        setInterval(drawMatrix, 40);
+let matrixTimer = null;
+function startMatrix() {
+    if (!matrixTimer) {
+        matrixTimer = setInterval(drawMatrix, 40);
+    }
+}
+function stopMatrix() {
+    clearInterval(matrixTimer);
+    matrixTimer = null;
+}
 
-        // Particles (เบาลง)
-        const particlesCanvas = document.getElementById('particles');
-        const pCtx = particlesCanvas.getContext('2d');
-        particlesCanvas.width = window.innerWidth;
-        particlesCanvas.height = window.innerHeight;
+initMatrix();
+startMatrix();
 
-        const particles = [];
-        const numParticles = 20;
+/* =========================
+   Particles (DPI + visibility safe)
+========================= */
+const particlesCanvas = document.getElementById('particles');
+const pCtx = particlesCanvas.getContext('2d');
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * particlesCanvas.width;
-                this.y = Math.random() * particlesCanvas.height;
-                this.size = Math.random() * 1.5 + 0.5;
-                this.speedX = Math.random() * 0.6 - 0.3;
-                this.speedY = Math.random() * 0.6 - 0.3;
-                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, 0.5)' : 'rgba(255, 0, 255, 0.5)';
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.x > particlesCanvas.width || this.x < 0) this.speedX *= -1;
-                if (this.y > particlesCanvas.height || this.y < 0) this.speedY *= -1;
-            }
-            draw() {
-                pCtx.fillStyle = this.color;
-                pCtx.beginPath();
-                pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                pCtx.fill();
-            }
-        }
+resizeCanvas(particlesCanvas, pCtx);
 
-        for (let i = 0; i < numParticles; i++) particles.push(new Particle());
+const particles = [];
+const numParticles = 20;
+let particlesRunning = true;
 
-        function animateParticles() {
-            pCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            pCtx.fillRect(0, 0, particlesCanvas.width, particlesCanvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
+class Particle {
+    constructor() {
+        this.reset();
+    }
+    reset() {
+        this.x = Math.random() * particlesCanvas.width / DPR;
+        this.y = Math.random() * particlesCanvas.height / DPR;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = Math.random() * 0.6 - 0.3;
+        this.speedY = Math.random() * 0.6 - 0.3;
+        this.color = Math.random() > 0.5
+            ? 'rgba(0, 255, 255, 0.5)'
+            : 'rgba(255, 0, 255, 0.5)';
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > particlesCanvas.width / DPR) this.speedX *= -1;
+        if (this.y < 0 || this.y > particlesCanvas.height / DPR) this.speedY *= -1;
+    }
+    draw() {
+        pCtx.fillStyle = this.color;
+        pCtx.beginPath();
+        pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        pCtx.fill();
+    }
+}
 
+for (let i = 0; i < numParticles; i++) {
+    particles.push(new Particle());
+}
+
+function animateParticles() {
+    if (!particlesRunning) return;
+
+    pCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    pCtx.fillRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    requestAnimationFrame(animateParticles);
+}
+
+animateParticles();
+
+/* =========================
+   Visibility API (กันกินทรัพยากร)
+========================= */
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        stopMatrix();
+        particlesRunning = false;
+    } else {
+        startMatrix();
+        particlesRunning = true;
         animateParticles();
+    }
+});
 
-        window.addEventListener('resize', () => {
-            matrixCanvas.width = particlesCanvas.width = window.innerWidth;
-            matrixCanvas.height = particlesCanvas.height = window.innerHeight;
-        });
-    </script>
+/* =========================
+   Resize (ไม่พัง layout)
+========================= */
+window.addEventListener('resize', () => {
+    initMatrix();
+    resizeCanvas(particlesCanvas, pCtx);
+});
+</script>
 </body>
 </html>
