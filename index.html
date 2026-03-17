@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
   <meta name="keywords" content="YANZ, lphisv5, tools, scripts, systems, web hub, productivity tools">
-  <meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0">
+  <meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0" />
+  <meta name="google-site-verification" content="ctalwY44kcnXVpIVYysi59z66XwVqQqhN-LME8GssAQ" />
   <meta name="theme-color" content="#0c1b33">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="YANZ">
-  
-  <link rel="canonical" href="https://lphisv5.github.io/v4/">
-  <link rel="icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" type="image/png">
-  <link rel="apple-touch-icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg">
-  <meta name="author" content="YANZ">
-  <title>Secure Access - YANZ</title>
-  <meta name="description" content="YANZ Winter Edition - Secure tools collection with advanced authentication.">
+  <meta name="apple-mobile-web-app-title" content="YANZ Hub">
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <link rel="canonical" href="https://lphisv5.github.io/v4/">
+  <link rel="icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" type="image/png" alt="YANZ favicon" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="author" content="YANZ" />
+  <title>YANZ Hub - Dashboard</title>
+  <meta name="description" content="YANZ Winter Edition - Tools collection with real-time tracking system." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" />
+  <meta property="og:url" content="https://lphisv5.github.io/v4" />
+  <meta property="og:title" content="YANZ - Dashboard" />
+  <meta property="og:description" content="YANZ Winter Edition - Tools collection with real-time tracking." />
+  <meta property="og:image" content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif" alt="YANZ preview image" />
+  <meta name="twitter:card" content="summary_large_image" />
   
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  
-  <!-- Fonts and Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
-  
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
   <style>
     :root {
       --primary-bg: #0c1b33;
@@ -80,6 +82,11 @@
       50% { box-shadow: 0 0 15px var(--winter-blue), 0 0 30px var(--winter-blue); }
     }
 
+    @keyframes winter-text {
+      0%, 100% { text-shadow: 0 0 5px var(--winter-blue), 0 0 10px var(--winter-blue); }
+      50% { text-shadow: 0 0 10px var(--winter-blue), 0 0 20px var(--winter-blue), 0 0 30px var(--winter-blue); }
+    }
+
     @keyframes snow-fall {
       0% { transform: translateY(-100px) translateX(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(100vh) translateX(20px) rotate(360deg); opacity: 0; }
@@ -90,6 +97,11 @@
       25% { transform: translateY(-10px) translateX(10px); opacity: 0.9; }
       50% { transform: translateY(-5px) translateX(-10px); opacity: 0.8; }
       75% { transform: translateY(-8px) translateX(5px); opacity: 0.9; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
     @keyframes spin {
@@ -117,6 +129,7 @@
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      transition: var(--transition);
       position: relative;
     }
 
@@ -150,7 +163,7 @@
       opacity: 0.5;
     }
 
-    .security-badges {
+    .stats-badge {
       position: fixed;
       top: 10px;
       right: 10px;
@@ -159,7 +172,7 @@
       gap: 5px;
     }
 
-    .security-badge {
+    .stats-badge-item {
       background: rgba(30, 58, 95, 0.8);
       backdrop-filter: blur(10px);
       padding: 5px 10px;
@@ -191,6 +204,10 @@
       pointer-events: none;
     }
 
+    .loader-content {
+      text-align: center;
+    }
+
     .loader-spinner {
       width: 60px;
       height: 60px;
@@ -198,7 +215,7 @@
       border-top: 4px solid var(--winter-blue);
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin-bottom: var(--space-md);
+      margin: 0 auto var(--space-md);
     }
 
     .loader-text {
@@ -206,28 +223,77 @@
       font-size: var(--font-size-sm);
     }
 
-    .auth-container {
-      min-height: 100vh;
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(12, 27, 51, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(79, 195, 247, 0.3);
+      transition: var(--transition);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) 0;
+    }
+
+    .logo {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: var(--space-xl) var(--space-md);
+      gap: var(--space-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: var(--transition);
     }
 
-    .auth-card {
+    .logo:hover {
+      transform: translateY(-2px);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      transition: var(--transition);
+      border: 2px solid var(--winter-blue);
+      animation: winter-glow 3s infinite;
+    }
+
+    .logo-text {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: winter-text 3s infinite;
+    }
+    
+    .welcome-banner {
       background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border-radius: var(--border-radius-xl);
-      padding: var(--space-xl);
-      width: 100%;
-      max-width: 500px;
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-md);
+      margin: var(--space-lg) auto var(--space-md);
       border: 1px solid rgba(79, 195, 247, 0.3);
-      box-shadow: var(--card-hover-shadow);
+      box-shadow: var(--card-shadow);
+      max-width: 800px;
       position: relative;
       overflow: hidden;
+      transition: var(--transition);
     }
 
-    .auth-card::before {
+    .welcome-banner::before {
       content: '';
       position: absolute;
       top: 0;
@@ -235,265 +301,143 @@
       right: 0;
       height: 4px;
       background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue), var(--winter-white));
+      border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
     }
 
-    .auth-header {
-      text-align: center;
-      margin-bottom: var(--space-xl);
+    .welcome-banner:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-hover-shadow);
+      animation: winter-glow 2s infinite;
     }
 
-    .auth-logo {
+    .welcome-content {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: var(--space-sm);
-      margin-bottom: var(--space-lg);
-      text-decoration: none;
-    }
-
-    .auth-logo img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: 2px solid var(--winter-blue);
-      animation: winter-glow 3s infinite;
-    }
-
-    .auth-logo-text {
-      font-size: var(--font-size-2xl);
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .auth-title {
-      font-size: var(--font-size-2xl);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--space-xs);
-    }
-
-    .auth-subtitle {
-      color: var(--text-secondary);
-      font-size: var(--font-size-base);
-    }
-
-    .auth-form {
-      display: flex;
-      flex-direction: column;
       gap: var(--space-md);
     }
 
-    .form-group {
+    .welcome-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0c1b33;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .welcome-details {
+      flex: 1;
+    }
+
+    .welcome-label {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .welcome-value {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .welcome-status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      background: rgba(79, 195, 247, 0.1);
+      border-radius: var(--border-radius);
+      font-size: var(--font-size-xs);
+      color: var(--winter-blue);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success-color);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .search-container {
       position: relative;
     }
 
-    .form-label {
-      display: block;
-      margin-bottom: var(--space-xs);
-      color: var(--text-secondary);
-      font-size: var(--font-size-sm);
-      font-weight: 500;
-    }
-
-    .form-label.required::after {
-      content: ' *';
-      color: var(--error-color);
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      background: rgba(30, 58, 95, 0.5);
+    .search-input {
+      padding: var(--space-xs) var(--space-sm) var(--space-xs) 2.5rem;
+      background: var(--card-bg);
       border: 1px solid rgba(79, 195, 247, 0.3);
       border-radius: var(--border-radius);
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
+      width: 280px;
       transition: var(--transition);
-      font-size: var(--font-size-base);
+      font-size: var(--font-size-sm);
     }
 
-    .form-input:focus {
+    .search-input:focus {
       outline: none;
       border-color: var(--winter-blue);
       box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3);
+      animation: winter-glow 2s infinite;
     }
 
-    .form-input.error {
-      border-color: var(--error-color);
-    }
-
-    .input-with-icon {
-      position: relative;
-    }
-
-    .input-icon {
+    .search-icon {
       position: absolute;
-      right: 1rem;
+      left: 0.8rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-
-    .error-message {
-      color: var(--error-color);
-      font-size: var(--font-size-xs);
-      margin-top: 0.25rem;
-      display: none;
-    }
-
-    .error-message.show {
-      display: block;
-    }
-
-    .password-strength {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-      margin-top: 0.25rem;
-      overflow: hidden;
-    }
-
-    .password-strength-bar {
-      height: 100%;
-      width: 0%;
-      transition: var(--transition);
-      border-radius: 2px;
-    }
-
-    .strength-weak { background: var(--error-color); }
-    .strength-fair { background: var(--warning-color); }
-    .strength-good { background: #ffd166; }
-    .strength-strong { background: var(--success-color); }
-
-    .password-requirements {
-      margin-top: 0.5rem;
-      font-size: var(--font-size-xs);
-      color: var(--text-muted);
-    }
-
-    .requirement {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      margin-bottom: 0.125rem;
-    }
-
-    .requirement.valid {
-      color: var(--success-color);
-    }
-
-    .requirement.invalid {
-      color: var(--text-muted);
-    }
-
-    .captcha-container {
-      background: rgba(30, 58, 95, 0.5);
-      border-radius: var(--border-radius);
-      padding: var(--space-sm);
-      border: 1px solid rgba(79, 195, 247, 0.3);
-    }
-
-    .captcha-text {
-      font-family: monospace;
-      font-size: 1.5rem;
-      letter-spacing: 5px;
-      text-align: center;
-      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      padding: 0.5rem;
-      margin-bottom: var(--space-sm);
-      user-select: none;
-    }
-
-    .captcha-refresh {
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
       color: var(--winter-blue);
-      cursor: pointer;
-      transition: var(--transition);
     }
 
-    .captcha-refresh:hover {
-      color: var(--winter-light-blue);
-    }
-
-    .terms-container {
+    .control-buttons {
       display: flex;
-      align-items: flex-start;
       gap: var(--space-xs);
-      margin: var(--space-md) 0;
-    }
-
-    .terms-checkbox {
-      margin-top: 0.25rem;
-    }
-
-    .terms-label {
-      font-size: var(--font-size-sm);
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .terms-link {
-      color: var(--winter-blue);
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    .terms-link:hover {
-      text-decoration: underline;
-    }
-
-    .auth-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-sm);
-      margin-top: var(--space-lg);
     }
 
     .btn {
-      padding: 0.875rem 1.5rem;
+      padding: 0.5rem 1rem;
       border-radius: var(--border-radius);
       border: none;
       font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: var(--font-size-base);
+      font-weight: 500;
+      font-size: var(--font-size-sm);
       cursor: pointer;
       transition: var(--transition);
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 0.5rem;
     }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
       color: #0c1b33;
-      box-shadow: 0 4px 12px rgba(79, 195, 247, 0.4);
+      box-shadow: 0 4px 6px rgba(79, 195, 247, 0.3);
+      font-weight: 600;
     }
 
-    .btn-primary:hover:not(:disabled) {
+    .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(79, 195, 247, 0.6);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+      box-shadow: 0 6px 12px rgba(79, 195, 247, 0.4);
+      animation: winter-glow 2s infinite;
     }
 
     .btn-secondary {
-      background: transparent;
+      background: var(--card-bg);
       color: var(--text-secondary);
       border: 1px solid rgba(79, 195, 247, 0.3);
     }
@@ -504,105 +448,408 @@
       border-color: var(--winter-blue);
     }
 
-    .auth-links {
+    .hero {
+      padding: var(--space-xl) 0;
       text-align: center;
-      margin-top: var(--space-lg);
-      font-size: var(--font-size-sm);
+      background: linear-gradient(135deg, rgba(12, 27, 51, 0.9), rgba(30, 58, 95, 0.7));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(79, 195, 247, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(179, 229, 252, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(225, 245, 254, 0.1) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    .hero h1 {
+      font-size: var(--font-size-4xl);
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue), var(--winter-white));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: winter-text 3s infinite;
+    }
+
+    .hero p {
+      font-size: var(--font-size-lg);
       color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto var(--space-lg);
     }
 
-    .auth-link {
-      color: var(--winter-blue);
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
+    .stats {
+      padding: var(--space-lg) 0;
     }
 
-    .auth-link:hover {
-      text-decoration: underline;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
     }
 
-    .otp-container {
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      padding: var(--space-lg);
+      border-radius: var(--border-radius-lg);
       text-align: center;
-    }
-
-    .otp-inputs {
-      display: flex;
-      gap: var(--space-sm);
-      justify-content: center;
-      margin: var(--space-lg) 0;
-    }
-
-    .otp-input {
-      width: 50px;
-      height: 60px;
-      text-align: center;
-      font-size: var(--font-size-2xl);
-      background: rgba(30, 58, 95, 0.5);
       border: 1px solid rgba(79, 195, 247, 0.3);
-      border-radius: var(--border-radius);
-      color: var(--text-primary);
       transition: var(--transition);
+      position: relative;
+      overflow: hidden;
     }
 
-    .otp-input:focus {
-      outline: none;
-      border-color: var(--winter-blue);
-      box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3);
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--card-hover-shadow);
+      animation: winter-glow 2s infinite;
     }
 
-    .otp-timer {
-      color: var(--text-muted);
-      font-size: var(--font-size-sm);
-      margin-top: var(--space-sm);
-    }
-
-    .otp-resend {
-      background: none;
-      border: none;
+    .stat-icon {
+      font-size: 2.5rem;
       color: var(--winter-blue);
-      cursor: pointer;
-      font-size: var(--font-size-sm);
-      transition: var(--transition);
+      margin-bottom: var(--space-sm);
+      animation: float 3s ease-in-out infinite;
     }
 
-    .otp-resend:hover:not(:disabled) {
-      text-decoration: underline;
-    }
-
-    .otp-resend:disabled {
-      color: var(--text-muted);
-      cursor: not-allowed;
-    }
-
-    .security-info {
-      background: rgba(30, 58, 95, 0.3);
-      border-radius: var(--border-radius);
-      padding: var(--space-md);
-      margin-top: var(--space-lg);
-      border: 1px solid rgba(79, 195, 247, 0.2);
-    }
-
-    .security-title {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    .stat-value {
+      font-size: var(--font-size-3xl);
+      font-weight: 700;
       color: var(--text-primary);
-      font-size: var(--font-size-sm);
       margin-bottom: var(--space-xs);
     }
 
-    .security-list {
-      list-style: none;
-      font-size: var(--font-size-xs);
+    .stat-label {
       color: var(--text-secondary);
+      font-size: var(--font-size-sm);
     }
 
-    .security-list li {
+    .online-users-container {
+      position: relative;
+    }
+
+    .online-users-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--secondary-bg);
+      border-radius: var(--border-radius);
+      padding: var(--space-md);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      display: none;
+      z-index: 10;
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      margin-top: var(--space-xs);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .online-users-container:hover .online-users-dropdown {
+      display: block;
+    }
+
+    .online-user-item {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.25rem;
+      gap: var(--space-sm);
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid rgba(79, 195, 247, 0.1);
+    }
+
+    .online-user-item:last-child {
+      border-bottom: none;
+    }
+
+    .online-user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0c1b33;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+    }
+
+    .online-user-info {
+      flex: 1;
+    }
+
+    .online-user-name {
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+    }
+
+    .tools-section {
+      padding: var(--space-xl) 0;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .section-title {
+      font-size: var(--font-size-2xl);
+      font-weight: 600;
+      color: var(--text-primary);
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue));
+      border-radius: 2px;
+    }
+
+    .tools-filter {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      background: var(--card-bg);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      border-radius: var(--border-radius);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: var(--font-size-sm);
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--winter-blue);
+      color: #0c1b33;
+      font-weight: 600;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .tool-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      pointer-events: auto;
+    }
+
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue), var(--winter-white));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--card-hover-shadow);
+      animation: winter-glow 2s infinite;
+    }
+
+    .tool-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .tool-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .tool-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--border-radius);
+      background: linear-gradient(135deg, var(--winter-blue), var(--winter-light-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0c1b33;
+      font-size: 1.25rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .tool-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .tool-description {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-md);
+      line-height: 1.5;
+    }
+
+    .tool-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+    }
+
+    .tool-clicks {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .about-section {
+      padding: var(--space-xl) 0;
+      background: var(--secondary-bg);
+      margin-top: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(79, 195, 247, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(225, 245, 254, 0.05) 0%, transparent 50%);
+      z-index: 0;
+    }
+
+    .about-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .about-title {
+      font-size: var(--font-size-2xl);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+
+    .about-title::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue));
+      border-radius: 2px;
+    }
+
+    .about-text {
+      color: var(--text-secondary);
+      font-size: var(--font-size-base);
+      line-height: 1.7;
+      margin-bottom: var(--space-lg);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      padding: var(--space-lg);
+      border-radius: var(--border-radius-lg);
+      text-align: center;
+      transition: var(--transition);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--card-hover-shadow);
+      animation: winter-glow 2s infinite;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--winter-blue);
+      margin-bottom: var(--space-sm);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .feature-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    footer {
+      background: var(--secondary-bg);
+      padding: var(--space-xl) 0;
+      border-top: 1px solid rgba(79, 195, 247, 0.3);
+      position: relative;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-lg);
+    }
+
+    .footer-text {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      text-align: center;
     }
 
     .modal-overlay {
@@ -616,7 +863,7 @@
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 2000;
+      z-index: 1000;
       padding: var(--space-md);
     }
 
@@ -632,7 +879,30 @@
       width: 100%;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(79, 195, 247, 0.3);
+      animation: modalSlideIn 0.3s ease-out;
       position: relative;
+    }
+
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--winter-blue), var(--winter-light-blue), var(--winter-white));
+      border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .modal-header {
@@ -650,6 +920,12 @@
     .modal-subtitle {
       color: var(--text-secondary);
       font-size: var(--font-size-sm);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: var(--space-sm);
+      justify-content: center;
     }
 
     .notification {
@@ -670,6 +946,7 @@
       transition: var(--transition);
       max-width: 400px;
       border-left: 4px solid var(--winter-blue);
+      animation: winter-glow 2s infinite;
     }
 
     .notification.show {
@@ -690,35 +967,185 @@
       color: var(--text-primary);
     }
 
+    .back-to-top {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--winter-blue);
+      color: #0c1b33;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: var(--transition);
+      z-index: 99;
+      box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+      animation: winter-glow 3s infinite;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+      background: var(--winter-light-blue);
+      transform: translateY(-5px);
+    }
+
+    /* Mobile Responsiveness */
     @media (max-width: 768px) {
-      .auth-card {
+      .header-content {
+        flex-direction: column;
+        gap: var(--space-md);
+      }
+
+      .nav-controls {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .search-input {
+        width: 100%;
+        max-width: 200px;
+      }
+
+      .welcome-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-sm);
+      }
+
+      .welcome-status {
+        justify-content: center;
+      }
+
+      .hero h1 {
+        font-size: var(--font-size-3xl);
+      }
+
+      .hero p {
+        font-size: var(--font-size-base);
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+      }
+
+      .tools-filter {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: var(--space-xs);
+        flex-wrap: wrap;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal {
         padding: var(--space-lg);
+        margin: var(--space-md);
       }
-      
-      .otp-input {
-        width: 45px;
-        height: 55px;
-        font-size: var(--font-size-xl);
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
       }
-      
-      .security-badges {
-        display: none;
+
+      .stat-card {
+        padding: var(--space-md);
+      }
+
+      .feature-card {
+        padding: var(--space-md);
       }
     }
 
     @media (max-width: 480px) {
-      .auth-card {
-        padding: var(--space-md);
+      .search-input {
+        width: 100%;
+        max-width: 180px;
       }
-      
-      .otp-inputs {
-        gap: var(--space-xs);
+
+      .stats-grid {
+        grid-template-columns: 1fr;
       }
-      
-      .otp-input {
-        width: 40px;
-        height: 50px;
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: var(--space-lg) 0;
+      }
+
+      .stats-badge {
+        display: none;
+      }
+
+      .welcome-banner {
+        margin: var(--space-md) auto var(--space-sm);
+        padding: var(--space-sm);
+      }
+
+      .welcome-value {
+        font-size: var(--font-size-base);
+      }
+
+      .control-buttons .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: var(--font-size-xs);
+      }
+
+      .notification {
+        left: var(--space-sm);
+        right: var(--space-sm);
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .logo-text {
         font-size: var(--font-size-lg);
+      }
+
+      .hero h1 {
+        font-size: var(--font-size-2xl);
+      }
+
+      .search-input {
+        max-width: 140px;
+      }
+
+      .welcome-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
@@ -726,1222 +1153,789 @@
 <body>
   <div class="winter-bg" id="winter-bg"></div>
 
-  <div class="security-badges">
-    <div class="security-badge">
-      <i class="fas fa-shield-alt"></i> SSL Secured
+  <div class="stats-badge">
+    <div class="stats-badge-item">
+      <i class="fas fa-users"></i> <span id="online-count">0</span> Online
     </div>
-    <div class="security-badge">
-      <i class="fas fa-lock"></i> AES-256
+    <div class="stats-badge-item">
+      <i class="fas fa-mouse-pointer"></i> <span id="total-click-badge">0</span> Clicks
     </div>
   </div>
 
   <div class="loader" id="loader">
-    <div style="text-align: center;">
+    <div class="loader-content">
       <div class="loader-spinner"></div>
-      <div class="loader-text">Initializing Security Systems...</div>
+      <div class="loader-text">Loading YANZ Hub...</div>
     </div>
   </div>
 
-  <div class="auth-container" id="auth-container">
-    <!-- Login Card -->
-    <div class="auth-card" id="login-card">
-      <div class="auth-header">
-        <a href="#" class="auth-logo">
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo">
           <img src="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="YANZ Logo">
-          <span class="auth-logo-text">YANZ</span>
+          <span class="logo-text">YANZ</span>
         </a>
-        <h1 class="auth-title">Welcome Back</h1>
-        <p class="auth-subtitle">Sign in to access your tools dashboard</p>
-      </div>
-
-      <form class="auth-form" id="login-form">
-        <div class="form-group">
-          <label for="login-email" class="form-label required">Email Address</label>
-          <input type="email" id="login-email" class="form-input" placeholder="Enter your email" required>
-          <div class="error-message" id="login-email-error"></div>
-        </div>
-
-        <div class="form-group">
-          <label for="login-password" class="form-label required">Password</label>
-          <div class="input-with-icon">
-            <input type="password" id="login-password" class="form-input" placeholder="Enter your password" required>
-            <i class="fas fa-eye input-icon" id="toggle-login-password"></i>
+        
+        <div class="nav-controls">
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Search tools...">
           </div>
-          <div class="error-message" id="login-password-error"></div>
-        </div>
-
-        <div class="form-group">
-          <div class="captcha-container">
-            <div class="captcha-text" id="captcha-text">ABC123</div>
-            <div class="input-with-icon">
-              <input type="text" id="captcha-input" class="form-input" placeholder="Enter the code above" required>
-              <button type="button" class="captcha-refresh" id="refresh-captcha">
-                <i class="fas fa-redo"></i>
-              </button>
-            </div>
+          
+          <div class="control-buttons">
+            <button class="btn btn-primary" id="refresh-stats-btn">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
           </div>
-          <div class="error-message" id="captcha-error"></div>
-        </div>
-
-        <div class="auth-buttons">
-          <button type="submit" class="btn btn-primary" id="login-submit">
-            <i class="fas fa-sign-in-alt"></i> Sign In
-          </button>
-          <button type="button" class="btn btn-secondary" id="goto-register">
-            <i class="fas fa-user-plus"></i> Create Account
-          </button>
-        </div>
-      </form>
-
-      <div class="auth-links">
-        <a href="public/forgot-password.html" class="auth-link" id="forgot-password">Forgot Password?</a>
-      </div>
-
-      <div class="security-info">
-        <div class="security-title">
-          <i class="fas fa-shield-alt"></i>
-          <span>Security Information</span>
-        </div>
-        <ul class="security-list">
-          <li><i class="fas fa-check-circle"></i> All connections are encrypted with AES-256</li>
-          <li><i class="fas fa-check-circle"></i> Rate limiting protects against brute force attacks</li>
-          <li><i class="fas fa-check-circle"></i> Suspicious activity monitoring enabled</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Register Card -->
-    <div class="auth-card" id="register-card" style="display: none;">
-      <div class="auth-header">
-        <a href="#" class="auth-logo">
-          <img src="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="YANZ Logo">
-          <span class="auth-logo-text">YANZ</span>
-        </a>
-        <h2 class="auth-title">Create Account</h2>
-        <p class="auth-subtitle">Join YANZ for access to premium tools</p>
-      </div>
-
-      <form class="auth-form" id="register-form">
-        <div class="form-group">
-          <label for="register-username" class="form-label required">Username</label>
-          <input type="text" id="register-username" class="form-input" placeholder="Choose a username" required>
-          <div class="error-message" id="username-error"></div>
-        </div>
-
-        <div class="form-group">
-          <label for="register-email" class="form-label required">Email Address</label>
-          <input type="email" id="register-email" class="form-input" placeholder="Enter your email" required>
-          <div class="error-message" id="email-error"></div>
-        </div>
-
-        <div class="form-group">
-          <label for="register-password" class="form-label required">Password</label>
-          <div class="input-with-icon">
-            <input type="password" id="register-password" class="form-input" placeholder="Create a strong password" required>
-            <i class="fas fa-eye input-icon" id="toggle-register-password"></i>
-          </div>
-          <div class="password-strength">
-            <div class="password-strength-bar" id="password-strength-bar"></div>
-          </div>
-          <div class="password-requirements" id="password-requirements">
-            <div class="requirement invalid" id="req-length">
-              <i class="fas fa-circle"></i> At least 8 characters
-            </div>
-            <div class="requirement invalid" id="req-uppercase">
-              <i class="fas fa-circle"></i> One uppercase letter
-            </div>
-            <div class="requirement invalid" id="req-lowercase">
-              <i class="fas fa-circle"></i> One lowercase letter
-            </div>
-            <div class="requirement invalid" id="req-number">
-              <i class="fas fa-circle"></i> One number
-            </div>
-            <div class="requirement invalid" id="req-special">
-              <i class="fas fa-circle"></i> One special character
-            </div>
-          </div>
-          <div class="error-message" id="password-error"></div>
-        </div>
-
-        <div class="form-group">
-          <label for="confirm-password" class="form-label required">Confirm Password</label>
-          <div class="input-with-icon">
-            <input type="password" id="confirm-password" class="form-input" placeholder="Confirm your password" required>
-            <i class="fas fa-eye input-icon" id="toggle-confirm-password"></i>
-          </div>
-          <div class="error-message" id="confirm-password-error"></div>
-        </div>
-
-        <div class="terms-container">
-          <input type="checkbox" id="terms-agree" class="terms-checkbox" required>
-          <label for="terms-agree" class="terms-label">
-            I agree to the <a href="#" class="terms-link" id="show-terms">Terms of Service</a> and <a href="#" class="terms-link" id="show-privacy">Privacy Policy</a>.
-          </label>
-        </div>
-        <div class="error-message" id="terms-error"></div>
-
-        <div class="auth-buttons">
-          <button type="submit" class="btn btn-primary" id="register-submit">
-            <i class="fas fa-user-plus"></i> Create Account
-          </button>
-          <button type="button" class="btn btn-secondary" id="goto-login">
-            <i class="fas fa-sign-in-alt"></i> Back to Login
-          </button>
-        </div>
-      </form>
-
-      <div class="security-info">
-        <div class="security-title">
-          <i class="fas fa-user-shield"></i>
-          <span>Account Security</span>
-        </div>
-        <ul class="security-list">
-          <li><i class="fas fa-check-circle"></i> Email verification required</li>
-          <li><i class="fas fa-check-circle"></i> Strong password enforcement</li>
-          <li><i class="fas fa-check-circle"></i> Account activity monitoring</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- OTP Card -->
-    <div class="auth-card" id="otp-card" style="display: none;">
-      <div class="auth-header">
-        <a href="#" class="auth-logo">
-          <img src="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="YANZ Logo">
-          <span class="auth-logo-text">YANZ</span>
-        </a>
-        <h2 class="auth-title">Verify Email</h2>
-        <p class="auth-subtitle">Enter the 6-digit code sent to your email</p>
-      </div>
-
-      <div class="otp-container">
-        <div class="otp-inputs" id="otp-inputs">
-          <input type="text" class="otp-input" maxlength="1" data-index="0">
-          <input type="text" class="otp-input" maxlength="1" data-index="1">
-          <input type="text" class="otp-input" maxlength="1" data-index="2">
-          <input type="text" class="otp-input" maxlength="1" data-index="3">
-          <input type="text" class="otp-input" maxlength="1" data-index="4">
-          <input type="text" class="otp-input" maxlength="1" data-index="5">
-        </div>
-
-        <div class="error-message" id="otp-error"></div>
-
-        <div class="otp-timer">
-          Code expires in: <span id="otp-timer">05:00</span>
-        </div>
-
-        <div class="auth-buttons">
-          <button type="button" class="btn btn-primary" id="verify-otp">
-            <i class="fas fa-check-circle"></i> Verify Account
-          </button>
-          <button type="button" class="btn btn-secondary" id="resend-otp" disabled>
-            <i class="fas fa-redo"></i> Resend Code (<span id="resend-timer">60</span>s)
-          </button>
         </div>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- Terms Modal -->
-  <div class="modal-overlay" id="terms-modal">
+  <section class="container">
+    <div class="welcome-banner">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <i class="fas fa-hand-peace"></i>
+        </div>
+        <div class="welcome-details">
+          <span class="welcome-label">Welcome to YANZ Hub</span>
+          <span class="welcome-value" id="welcome-message">Free Access - No Login Required</span>
+        </div>
+        <div class="welcome-status">
+          <span class="status-dot"></span>
+          <span>Public Access</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero">
+    <div class="container">
+      <h1>YANZ Tools Collection</h1>
+      <p>Access all tools instantly - No registration, no login, just click and use!</p>
+      <div class="control-buttons">
+        <button class="btn btn-primary" id="explore-btn">
+          <i class="fas fa-rocket"></i> Explore Tools
+        </button>
+        <button class="btn btn-secondary" id="stats-btn">
+          <i class="fas fa-chart-line"></i> View Stats
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-link"></i>
+          </div>
+          <div class="stat-value" id="total-tools">0</div>
+          <div class="stat-label">Available Tools</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-mouse-pointer"></i>
+          </div>
+          <div class="stat-value" id="total-clicks">0</div>
+          <div class="stat-label">Total Clicks</div>
+        </div>
+        <div class="stat-card online-users-container">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-value" id="active-users">1</div>
+          <div class="stat-label">
+            Active Users 
+            <span class="status-dot"></span>
+          </div>
+          <div class="online-users-dropdown" id="online-users-list">
+            <div class="online-user-item">
+              <div class="online-user-avatar">G</div>
+              <div class="online-user-info">
+                <div class="online-user-name">Guest User</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Free Access</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Available Tools</h2>
+        <div class="tools-filter">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="development">Development</button>
+          <button class="filter-btn" data-filter="entertainment">Entertainment</button>
+          <button class="filter-btn" data-filter="utility">Utility</button>
+        </div>
+      </div>
+      
+      <div class="tools-grid" id="tools-grid"></div>
+    </div>
+  </section>
+
+  <section class="about-section">
+    <div class="container">
+      <div class="about-content">
+        <h2 class="about-title">About YANZ</h2>
+        <p class="about-text">
+          YANZ Hub brings you the ultimate collection of free tools, scripts, and utilities in a fast, 
+          secure platform. No login required, no registration needed - just instant access to all tools.
+          Our mission is to provide a centralized location for all your web tool needs.
+        </p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <h3 class="feature-title">No Login Required</h3>
+            <p class="feature-description">Access all tools instantly without any registration or login.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <h3 class="feature-title">Fast & Reliable</h3>
+            <p class="feature-description">Quick access to all your tools with minimal loading times.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+            <h3 class="feature-title">Secure</h3>
+            <p class="feature-description">All tools are safe to use with privacy protection.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-palette"></i>
+            </div>
+            <h3 class="feature-title">Free Forever</h3>
+            <p class="feature-description">All tools are completely free to use, no hidden costs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-text">© 2025 YANZ Hub - All Tools Free Access | No Login Required</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="confirm-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3 class="modal-title">Terms of Service</h3>
-        <p class="modal-subtitle">Last Updated: 2025</p>
+        <h3 class="modal-title" id="confirm-title">Open Tool?</h3>
+        <p class="modal-subtitle" id="confirm-description">This tool will open in a new tab</p>
       </div>
       <div class="modal-body">
-        <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
-          <h4>1. Acceptance of Terms</h4>
-          <p>By accessing and using YANZ services, you agree to be bound by these Terms of Service.</p>
-          
-          <h4>2. User Accounts</h4>
-          <p>You must provide accurate and complete information when creating an account.</p>
-          
-          <h4>3. Acceptable Use</h4>
-          <p>You agree not to use the service for any illegal or unauthorized purpose.</p>
-          
-          <h4>4. Privacy Policy</h4>
-          <p>Your privacy is important to us. We collect minimal data for authentication only.</p>
-          
-          <h4>5. Service Modifications</h4>
-          <p>We reserve the right to modify or discontinue the service at any time.</p>
-        </div>
-        <div style="margin-top: 20px; text-align: center;">
-          <button type="button" class="btn btn-primary" id="close-terms">I Understand</button>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirm-ok">Open Tool</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Notification -->
   <div class="notification" id="notification">
     <i class="fas fa-info-circle"></i>
-    <span id="notification-message">This is a notification</span>
+    <span id="notification-message">Tool opened successfully</span>
     <button class="notification-close" id="notification-close">
       <i class="fas fa-times"></i>
     </button>
   </div>
 
-  <script>
-    (function() {
-      emailjs.init("QRpj9mdUY5jURnFt7");
-      console.log('✅ EmailJS initialized');
-    })();
+  <div class="back-to-top" id="back-to-top">
+    <i class="fas fa-arrow-up"></i>
+  </div>
 
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('YANZ Hub Initializing...');
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
+      authDomain: "yanzz-6e06c.firebaseapp.com",
+      databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "yanzz-6e06c",
+      storageBucket: "yanzz-6e06c.firebasestorage.app",
+      messagingSenderId: "951083749698",
+      appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
+      measurementId: "G-YV2G95Z9HE"
+    };
+
+    let firebaseApp, database;
+    let sessionId = null;
+    let currentToolClicks = 0;
+    
+    const toolsData = [
+      {
+        id: "genkey",
+        name: "GEN KEY",
+        url: "https://lphisv5.github.io/v4/genkey",
+        icon: "fas fa-key",
+        description: "Generate secure keys and tokens for your projects and applications",
+        category: "development",
+        popularity: 4.5
+      },
+      {
+        id: "addapi",
+        name: "ADD API",
+        url: "https://lphisv5.github.io/v4/addapi",
+        icon: "fas fa-plus",
+        description: "Integrate and manage APIs in your applications with ease",
+        category: "development",
+        popularity: 4.2
+      },
+      {
+        id: "gardenpet",
+        name: "GROW A GARDEN PET",
+        url: "https://lphisv5.github.io/v4/growagarden-pet",
+        icon: "fas fa-dog",
+        description: "Raise and care for virtual pets in your digital garden",
+        category: "entertainment",
+        popularity: 4.1
+      },
+      {
+        id: "gardenstock",
+        name: "GROW A GARDEN STOCK",
+        url: "https://lphisv5.github.io/v4/growagarden-stock",
+        icon: "fas fa-seedling",
+        description: "Manage your garden inventory and track plant growth",
+        category: "entertainment",
+        popularity: 3.9
+      },
+      {
+        id: "gardenweather",
+        name: "GROW A GARDEN WEATHER",
+        url: "https://lphisv5.github.io/v4/weather",
+        icon: "fas fa-cloud-sun",
+        description: "Check weather conditions optimal for your garden plants",
+        category: "utility",
+        popularity: 3.7
+      },
+      {
+        id: "executors",
+        name: "EXECUTORS",
+        url: "https://executors.samrat.lol/",
+        icon: "fas fa-bolt",
+        description: "Run and manage script executors for development and testing",
+        category: "development",
+        popularity: 4.7
+      },
+      {
+        id: "uuid",
+        name: "UUID",
+        url: "https://lphisv5.github.io/v4/uuid",
+        icon: "fas fa-id-card",
+        description: "Generate and validate Universally Unique Identifiers (UUIDs)",
+        category: "development",
+        popularity: 4.0
+      },
+      {
+        id: "apitester",
+        name: "API TESTER",
+        url: "https://lphisv5.github.io/v4/apitester",
+        icon: "fas fa-terminal",
+        description: "Test and debug your APIs with a comprehensive testing suite",
+        category: "development",
+        popularity: 4.6
+      },
+      {
+        id: "anime",
+        name: "ANIME",
+        url: "https://lphisv5.github.io/v4/anime",
+        icon: "fas fa-hippo",
+        description: "Discover and vote for your favorite anime series and characters",
+        category: "entertainment",
+        popularity: 4.2
+      },
+      {
+        id: "script",
+        name: "SEARCH SCRIPT",
+        url: "https://lphisv5.github.io/v4/script",
+        icon: "fas fa-code",
+        description: "Find trending scripts and code snippets for various platforms",
+        category: "development",
+        popularity: 4.5
+      },
+      {
+        id: "coin",
+        name: "COIN",
+        url: "https://lphisv5.github.io/v4/coin",
+        icon: "fas fa-coins",
+        description: "Track cryptocurrency prices and market data in real-time",
+        category: "utility",
+        popularity: 4.1
+      },
+      {
+        id: "binance",
+        name: "BINANCE",
+        url: "https://lphisv5.github.io/v4/binance",
+        icon: "fas fa-dollar-sign",
+        description: "Monitor Binance exchange data and trading information",
+        category: "utility",
+        popularity: 4.3
+      },
+      {
+        id: "deck",
+        name: "DECK",
+        url: "https://lphisv5.github.io/v4/deck",
+        icon: "fas fa-heart",
+        description: "Create and manage digital card decks for games and activities",
+        category: "entertainment",
+        popularity: 3.8
+      },
+      {
+        id: "ip",
+        name: "IP",
+        url: "https://lphisv5.github.io/v4/ip",
+        icon: "fas fa-network-wired",
+        description: "Check your current IP address and network information",
+        category: "utility",
+        popularity: 4.0
+      },
+      {
+        id: "btc",
+        name: "BTC",
+        url: "https://lphisv5.github.io/v4/BTC",
+        icon: "fab fa-bitcoin",
+        description: "Monitor Bitcoin price movements and blockchain statistics",
+        category: "utility",
+        popularity: 4.4
+      },
+      {
+        id: "neko",
+        name: "Neko",
+        url: "https://lphisv5.github.io/v4/neko",
+        icon: "fas fa-cat",
+        description: "Browse adorable cat images and Neko-themed content",
+        category: "entertainment",
+        popularity: 4.2
+      },
+      {
+        id: "fortnite",
+        name: "Fortnite Shop",
+        url: "https://lphisv5.github.io/v4/fortniteshop",
+        icon: "fas fa-shopping-basket",
+        description: "Browse the latest Fortnite item shop and cosmetic offerings",
+        category: "entertainment",
+        popularity: 4.1
+      },
+      {
+        id: "bobs-burgers",
+        name: "Bob's Burgers",
+        url: "https://lphisv5.github.io/v4/Bob's.Burgers",
+        icon: "fas fa-hamburger",
+        description: "Explore detailed information about Bob's Burgers characters and episodes",
+        category: "entertainment",
+        popularity: 3.9
+      }
+    ];
+
+    const appState = {
+      currentFilter: 'all',
+      pendingTool: null
+    };
+
+    const elements = {
+      loader: document.getElementById('loader'),
+      winterBg: document.getElementById('winter-bg'),
+      toolsGrid: document.getElementById('tools-grid'),
+      searchInput: document.getElementById('search-input'),
+      confirmModal: document.getElementById('confirm-modal'),
+      confirmTitle: document.getElementById('confirm-title'),
+      confirmDescription: document.getElementById('confirm-description'),
+      confirmCancel: document.getElementById('confirm-cancel'),
+      confirmOk: document.getElementById('confirm-ok'),
+      notification: document.getElementById('notification'),
+      notificationMessage: document.getElementById('notification-message'),
+      notificationClose: document.getElementById('notification-close'),
+      backToTop: document.getElementById('back-to-top'),
+      exploreBtn: document.getElementById('explore-btn'),
+      statsBtn: document.getElementById('stats-btn'),
+      refreshStatsBtn: document.getElementById('refresh-stats-btn'),
       
+      welcomeMessage: document.getElementById('welcome-message'),
+      onlineUsersList: document.getElementById('online-users-list'),
+      onlineCount: document.getElementById('online-count'),
+      totalClickBadge: document.getElementById('total-click-badge'),
+      
+      totalTools: document.getElementById('total-tools'),
+      totalClicks: document.getElementById('total-clicks'),
+      activeUsers: document.getElementById('active-users')
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('YANZ Hub - No Login Version Initializing...');
+      
+      initializeSession();
       createWinterElements();
       initializeFirebase();
-      initializeApp();
+      setupEventListeners();
+      loadStoredClicks();
       
       setTimeout(() => {
-        document.getElementById('loader').classList.add('hidden');
-      }, 1500);
+        elements.loader.classList.add('hidden');
+      }, 1000);
     });
 
-    function createWinterElements() {
-      const winterBg = document.getElementById('winter-bg');
-      const snowflakeSymbols = ['❄', '❅', '❆'];
+    function initializeSession() {
+      sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
       
-      for (let i = 0; i < 15; i++) {
+      elements.welcomeMessage.textContent = 'Guest Access - Free Tools';
+      elements.totalTools.textContent = toolsData.length;
+    }
+
+    function loadStoredClicks() {
+      let totalClicks = 0;
+      toolsData.forEach(tool => {
+        const clicks = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10);
+        totalClicks += clicks;
+      });
+      
+      currentToolClicks = totalClicks;
+      elements.totalClicks.textContent = totalClicks.toLocaleString();
+      elements.totalClickBadge.textContent = totalClicks.toLocaleString();
+    }
+
+    function initializeFirebase() {
+      try {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        console.log('✅ Firebase initialized successfully');
+        
+        trackVisitor();
+        setupRealtimeListeners();
+        
+      } catch (error) {
+        console.error('❌ Firebase initialization failed:', error);
+      }
+    }
+
+    function trackVisitor() {
+      if (!database) return;
+      
+      const visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const visitorsRef = database.ref('onlineUsers');
+      
+      const visitorData = {
+        id: visitorId,
+        type: 'guest',
+        timestamp: Date.now(),
+        lastActive: Date.now(),
+        userAgent: navigator.userAgent.substring(0, 100)
+      };
+      
+      visitorsRef.child(visitorId).set(visitorData);
+      
+      database.ref('.info/connected').on('value', (snap) => {
+        if (snap.val() === true) {
+          visitorsRef.child(visitorId).onDisconnect().remove();
+        }
+      });
+      
+      setInterval(() => {
+        visitorsRef.child(visitorId).update({ lastActive: Date.now() });
+      }, 30000);
+    }
+
+    function setupRealtimeListeners() {
+      if (!database) return;
+      
+      database.ref('totalClicks').on('value', (snapshot) => {
+        const clicks = snapshot.val() || 0;
+        elements.totalClicks.textContent = clicks.toLocaleString();
+        elements.totalClickBadge.textContent = clicks.toLocaleString();
+      });
+      
+      database.ref('onlineUsers').on('value', (snapshot) => {
+        const users = snapshot.val();
+        const userCount = users ? Object.keys(users).length : 1;
+        elements.activeUsers.textContent = userCount;
+        elements.onlineCount.textContent = userCount;
+        
+        updateOnlineUsersList(users);
+      });
+    }
+
+    function updateOnlineUsersList(users) {
+      const usersList = elements.onlineUsersList;
+      
+      if (!users || Object.keys(users).length === 0) {
+        usersList.innerHTML = '<div class="online-user-item"><div class="online-user-info">No active users</div></div>';
+        return;
+      }
+      
+      let usersHTML = '';
+      Object.keys(users).slice(0, 10).forEach(userId => {
+        const user = users[userId];
+        
+        usersHTML += `
+          <div class="online-user-item">
+            <div class="online-user-avatar">G</div>
+            <div class="online-user-info">
+              <div class="online-user-name">Guest User</div>
+            </div>
+          </div>
+        `;
+      });
+      
+      if (Object.keys(users).length > 10) {
+        usersHTML += `<div class="online-user-item">+${Object.keys(users).length - 10} more</div>`;
+      }
+      
+      usersList.innerHTML = usersHTML;
+    }
+    
+    function createWinterElements() {
+      const snowflakeSymbols = ['❄', '❅', '❆'];
+      for (let i = 0; i < 30; i++) {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
         snowflake.innerHTML = snowflakeSymbols[Math.floor(Math.random() * snowflakeSymbols.length)];
         snowflake.style.left = `${Math.random() * 100}%`;
         snowflake.style.animationDelay = `${Math.random() * 10}s`;
-        snowflake.style.fontSize = `${Math.random() * 10 + 15}px`;
-        winterBg.appendChild(snowflake);
+        elements.winterBg.appendChild(snowflake);
       }
       
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 8; i++) {
         const crystal = document.createElement('div');
         crystal.className = 'ice-crystal';
         crystal.innerHTML = '✦';
         crystal.style.left = `${Math.random() * 90}%`;
         crystal.style.top = `${Math.random() * 90}%`;
         crystal.style.animationDelay = `${Math.random() * 8}s`;
-        crystal.style.fontSize = `${Math.random() * 10 + 25}px`;
-        winterBg.appendChild(crystal);
+        elements.winterBg.appendChild(crystal);
       }
     }
 
-    let database = null;
-    let authSystem = null;
-
-    function initializeFirebase() {
-      try {
-        if (!firebase.apps.length) {
-          const firebaseConfig = {
-            apiKey: "AIzaSyA_sh9fh7h1gGOurALEWJAq3Y-o7vSeaCM",
-            authDomain: "yanzz-6e06c.firebaseapp.com",
-            databaseURL: "https://yanzz-6e06c-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "yanzz-6e06c",
-            storageBucket: "yanzz-6e06c.firebasestorage.app",
-            messagingSenderId: "951083749698",
-            appId: "1:951083749698:web:3e279cd0dc9a9be39bf8db",
-            measurementId: "G-YV2G95Z9HE"
-          };
-
-          firebase.initializeApp(firebaseConfig);
-          console.log('✅ Firebase initialized successfully');
-        } else {
-          console.log('✅ Firebase already initialized');
-        }
+    function renderToolsGrid(filteredTools = null) {
+      const toolsToRender = filteredTools || toolsData;
+      elements.toolsGrid.innerHTML = '';
+      
+      toolsToRender.forEach(tool => {
+        const clickCount = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10);
         
-        // Set up database reference
-        database = firebase.database();
+        const toolCard = document.createElement('div');
+        toolCard.className = 'tool-card';
+        toolCard.dataset.id = tool.id;
+        toolCard.dataset.category = tool.category;
+        toolCard.tabIndex = 0;
         
-        // Test database connection
-        database.ref('.info/connected').on('value', (snap) => {
-          if (snap.val() === true) {
-            console.log('✅ Database connected');
-          } else {
-            console.log('❌ Database disconnected');
+        toolCard.innerHTML = `
+          <div class="tool-header">
+            <div class="tool-icon">
+              <i class="${tool.icon}"></i>
+            </div>
+            <h3 class="tool-title">${tool.name}</h3>
+          </div>
+          <p class="tool-description">${tool.description}</p>
+          <div class="tool-meta">
+            <span class="tool-category">${formatCategory(tool.category)}</span>
+            <div class="tool-clicks">
+              <i class="fas fa-mouse-pointer"></i>
+              <span>${clickCount}</span>
+            </div>
+          </div>
+        `;
+        
+        toolCard.addEventListener('click', () => handleToolClick(tool));
+        toolCard.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleToolClick(tool);
           }
         });
         
-      } catch (error) {
-        console.error('Firebase initialization failed:', error);
-      }
+        elements.toolsGrid.appendChild(toolCard);
+      });
     }
 
-    class AuthSystem {
-      constructor() {
-        this.currentCaptcha = this.generateCaptcha();
-        this.currentOTP = '';
-        this.currentEmail = '';
-        this.otpTimer = null;
-        this.resendTimer = null;
-        this.currentUser = null;
-      }
+    function handleToolClick(tool) {
+      appState.pendingTool = tool;
+      showConfirmModal(tool);
+    }
 
-      generateCaptcha() {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-        let captcha = '';
-        for (let i = 0; i < 6; i++) {
-          captcha += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return captcha;
-      }
-
-      generateOTP() {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-      }
-
-      hashPassword(password) {
-        // FIXED: Consistent hash function
-        let hash = 0;
-        if (password.length === 0) return '0_0';
+    function handleConfirmVisit() {
+      if (appState.pendingTool) {
+        const tool = appState.pendingTool;
         
-        for (let i = 0; i < password.length; i++) {
-          const char = password.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash = hash & hash;
-        }
+        const clickCount = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10) + 1;
+        localStorage.setItem(`clicks_${tool.id}`, clickCount.toString());
         
-        return hash.toString(36) + '_' + password.length;
-      }
-
-      async checkEmailExists(email) {
-        if (!database) {
-          console.error('Database not available');
-          return { exists: false, userId: null };
-        }
-        
-        try {
-          const snapshot = await database.ref('users').once('value');
-          if (!snapshot.exists()) return { exists: false, userId: null };
-
-          let exists = false;
-          let userId = null;
-          
-          snapshot.forEach((child) => {
-            const user = child.val();
-            if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
-              exists = true;
-              userId = child.key;
-            }
-          });
-
-          return { exists, userId };
-        } catch (error) {
-          console.error('Error checking email:', error);
-          return { exists: false, userId: null };
-        }
-      }
-
-      async registerUser(userData) {
-        if (!database) {
-          throw new Error('Database connection failed');
-        }
-
-        try {
-          console.log('📝 Registering user:', userData.email);
-          
-          // Check if email already exists
-          const emailCheck = await this.checkEmailExists(userData.email);
-          if (emailCheck.exists) {
-            throw new Error('Email already registered');
-          }
-
-          // Create user ID
-          const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-          const userRef = database.ref(`users/${userId}`);
-          
-          // Prepare user record with consistent hash
-          const hashedPassword = this.hashPassword(userData.password);
-          console.log('🔑 Password hash:', hashedPassword);
-          
-          const userRecord = {
-            userId,
-            username: userData.username,
-            email: userData.email.toLowerCase(),
-            password: hashedPassword, // Consistent hash
-            createdAt: Date.now(),
-            verified: false,
-            tier: 'free',
-            lastLogin: null
-          };
-
-          // Save to database
-          await userRef.set(userRecord);
-          
-          console.log('✅ User registered:', userId);
-          return { 
-            success: true, 
-            userId, 
-            email: userData.email
-          };
-
-        } catch (error) {
-          console.error('Registration error:', error);
-          throw error;
-        }
-      }
-
-      async loginUser(email, password) {
-        if (!database) {
-          throw new Error('Database connection failed');
-        }
-
-        try {
-          console.log('🔐 Attempting login for:', email);
-          
-          // Get all users
-          const snapshot = await database.ref('users').once('value');
-          
-          if (!snapshot.exists()) {
-            console.log('❌ No users found');
-            throw new Error('Invalid email or password');
-          }
-
-          let userData = null;
-          let userId = null;
-
-          // Find user by email
-          snapshot.forEach((child) => {
-            const user = child.val();
-            if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
-              userData = user;
-              userId = child.key;
-            }
-          });
-
-          if (!userData) {
-            console.log('❌ User not found');
-            throw new Error('Invalid email or password');
-          }
-
-          // Verify password with consistent hash
-          const inputHash = this.hashPassword(password);
-          console.log('🔑 Password verification:');
-          console.log('  Stored:', userData.password);
-          console.log('  Input:', inputHash);
-          
-          if (userData.password !== inputHash) {
-            console.log('❌ Password mismatch');
-            throw new Error('Invalid email or password');
-          }
-
-          // Check if verified
-          if (!userData.verified) {
-            console.log('⚠️ User not verified');
-            throw new Error('Please verify your email first');
-          }
-
-          console.log('✅ Login successful:', userId);
-          return {
-            success: true,
-            userId,
-            username: userData.username,
-            email: userData.email,
-            tier: userData.tier || 'free'
-          };
-        } catch (error) {
-          console.error('Login error:', error);
-          throw error;
-        }
-      }
-
-      async sendOTP(email) {
-        this.currentOTP = this.generateOTP();
-        this.currentEmail = email;
-
-        try {
-          console.log('📧 Sending OTP to:', email);
-          
-          // Use correct template ID
-          const templateParams = {
-            to_email: email,
-            otp_code: this.currentOTP,
-            app_name: 'YANZ Hub',
-            from_name: 'YANZ Verification',
-            expiry_minutes: 5
-          };
-
-          // FIXED: Correct Service ID and Template ID
-          const response = await emailjs.send(
-            'service_wxwtcsh',      // Service ID
-            'template_80ptwc6',     // Template ID (check in EmailJS dashboard)
-            templateParams,
-            'QRpj9mdUY5jURnFt7'    // Public Key
-          );
-
-          console.log('✅ Email sent:', response.status);
-          
-          // Backup to Firebase
-          if (database) {
-            const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
-            await otpRef.set({
-              otp: this.currentOTP,
-              email: email,
-              createdAt: Date.now(),
-              expiresAt: Date.now() + 5 * 60 * 1000
-            });
-            console.log('✅ OTP saved to Firebase:', this.currentOTP);
-          }
-          
-          return { 
-            success: true, 
-            message: 'Verification code sent to your email'
-          };
-
-        } catch (emailError) {
-          console.error('❌ EmailJS failed:', emailError);
-          
-          // Fallback: Save to Firebase and show OTP for debugging
-          if (database) {
-            try {
-              const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
-              await otpRef.set({
-                otp: this.currentOTP,
-                email: email,
-                createdAt: Date.now(),
-                expiresAt: Date.now() + 5 * 60 * 1000
-              });
-              
-              console.log('✅ OTP saved to Firebase as fallback:', this.currentOTP);
-              
-              // For debugging, show OTP in console
-              console.log('🔑 DEBUG OTP:', this.currentOTP);
-              
-              return { 
-                success: true, 
-                message: 'OTP generated. Check Firebase console for OTP.',
-                otp: this.currentOTP
-              };
-            } catch (error) {
-              console.error('❌ Failed to store OTP:', error);
-            }
-          }
-          
-          throw new Error('Failed to send verification. Please try again.');
-        }
-      }
-
-      async verifyOTP(email, otp) {
-        if (otp === this.currentOTP && email === this.currentEmail) {
-          if (database) {
-            const snapshot = await database.ref('users').once('value');
-            snapshot.forEach((child) => {
-              const user = child.val();
-              if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
-                database.ref(`users/${child.key}/verified`).set(true);
-                return { success: true, userId: child.key };
-              }
-            });
-          }
-          return { success: true, userId: 'temp_' + Date.now() };
-        }
         if (database) {
           try {
-            const otpRef = database.ref(`otps/${email.replace(/[^a-z0-9]/gi, '_')}`);
-            const snapshot = await otpRef.once('value');
+            const clicksRef = database.ref('totalClicks');
+            clicksRef.transaction((current) => {
+              return (current || 0) + 1;
+            });
             
-            if (snapshot.exists()) {
-              const otpData = snapshot.val();
-
-              if (Date.now() > otpData.expiresAt) {
-                await otpRef.remove();
-                throw new Error('OTP expired');
-              }
-
-              if (otpData.otp === otp) {
-                await otpRef.remove();
-                
-                const userSnapshot = await database.ref('users').once('value');
-                let userId = null;
-                
-                userSnapshot.forEach((child) => {
-                  const user = child.val();
-                  if (user.email && user.email.toLowerCase() === email.toLowerCase()) {
-                    userId = child.key;
-                  }
-                });
-
-                if (userId) {
-                  await database.ref(`users/${userId}/verified`).set(true);
-                  return { success: true, userId };
-                }
-              }
-            }
           } catch (error) {
-            console.error('Firebase OTP verification error:', error);
+            console.error('Error updating Firebase:', error);
           }
         }
-
-        throw new Error('Invalid OTP code');
+        
+        updateToolCardClickCount(tool.id, clickCount);
+        loadStoredClicks();
+        
+        window.open(tool.url, '_blank', 'noopener,noreferrer');
+        
+        showNotification(`Opening ${tool.name}`, 'success');
+        hideConfirmModal();
       }
+    }
 
-      createSession(userData) {
-        const sessionId = 'session_' + Date.now();
-        const session = {
-          sessionId,
-          userId: userData.userId,
-          username: userData.username,
-          email: userData.email,
-          tier: userData.tier || 'free',
-          createdAt: Date.now(),
-          expiresAt: Date.now() + (24 * 60 * 60 * 1000)
-        };
-
-        localStorage.setItem('yanz_session', JSON.stringify(session));
-        localStorage.setItem('yanz_user', JSON.stringify(userData));
-
-        if (database) {
-          database.ref(`sessions/${sessionId}`).set({
-            ...session,
-            userAgent: navigator.userAgent
-          }).catch(error => console.error('Session save error:', error));
+    function updateToolCardClickCount(toolId, newCount) {
+      const toolCards = document.querySelectorAll('.tool-card');
+      toolCards.forEach(card => {
+        if (card.dataset.id === toolId) {
+          const clickSpan = card.querySelector('.tool-clicks span');
+          if (clickSpan) {
+            clickSpan.textContent = newCount;
+          }
         }
-
-        this.currentUser = userData;
-        return session;
-      }
-
-      logout() {
-        localStorage.removeItem('yanz_session');
-        localStorage.removeItem('yanz_user');
-        this.currentUser = null;
-      }
-    }
-
-    function initializeApp() {
-      authSystem = new AuthSystem();
-      updateCaptcha();
-      setupEventListeners();
-      checkExistingSession();
-      
-      console.log('✅ App initialized successfully');
-    }
-
-    function updateCaptcha() {
-      if (authSystem && document.getElementById('captcha-text')) {
-        document.getElementById('captcha-text').textContent = authSystem.currentCaptcha;
-      }
+      });
     }
 
     function setupEventListeners() {
-      document.getElementById('goto-register').addEventListener('click', showRegister);
-      document.getElementById('goto-login').addEventListener('click', showLogin);
+      elements.searchInput.addEventListener('input', debounce(handleSearch, 300));
       
-      document.getElementById('login-form').addEventListener('submit', handleLogin);
-      document.getElementById('register-form').addEventListener('submit', handleRegister);
-      
-      document.getElementById('verify-otp').addEventListener('click', verifyOTP);
-      document.getElementById('resend-otp').addEventListener('click', resendOTP);
-
-      document.getElementById('toggle-login-password').addEventListener('click', () => 
-        togglePassword('login-password', 'toggle-login-password'));
-      document.getElementById('toggle-register-password').addEventListener('click', () => 
-        togglePassword('register-password', 'toggle-register-password'));
-      document.getElementById('toggle-confirm-password').addEventListener('click', () => 
-        togglePassword('confirm-password', 'toggle-confirm-password'));
-
-      document.getElementById('refresh-captcha').addEventListener('click', () => {
-        if (authSystem) {
-          authSystem.currentCaptcha = authSystem.generateCaptcha();
-          updateCaptcha();
-          document.getElementById('captcha-input').value = '';
-        }
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const filter = e.target.dataset.filter;
+          handleFilter(filter);
+        });
       });
       
-      document.getElementById('show-terms').addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById('terms-modal').classList.add('active');
+      elements.confirmCancel.addEventListener('click', hideConfirmModal);
+      elements.confirmOk.addEventListener('click', handleConfirmVisit);
+
+      elements.exploreBtn.addEventListener('click', () => {
+        document.querySelector('.tools-section').scrollIntoView({ behavior: 'smooth' });
       });
-      document.getElementById('close-terms').addEventListener('click', () => {
-        document.getElementById('terms-modal').classList.remove('active');
-      });
-
-      document.getElementById('notification-close').addEventListener('click', hideNotification);
-
-      document.getElementById('register-password').addEventListener('input', checkPasswordStrength);
-      document.getElementById('confirm-password').addEventListener('input', checkPasswordMatch);
-
-      document.querySelectorAll('.otp-input').forEach((input, index) => {
-        input.addEventListener('input', (e) => handleOTPInput(e, index));
-        input.addEventListener('keydown', (e) => handleOTPKeydown(e, index));
+      
+      elements.statsBtn.addEventListener('click', () => {
+        document.querySelector('.stats').scrollIntoView({ behavior: 'smooth' });
       });
 
-      setInterval(() => {
-        const notification = document.getElementById('notification');
-        if (notification.classList.contains('show')) {
-          hideNotification();
-        }
-      }, 5000);
+      elements.refreshStatsBtn.addEventListener('click', () => {
+        loadStoredClicks();
+        showNotification('Statistics refreshed', 'info');
+      });
+
+      elements.notificationClose.addEventListener('click', hideNotification);
+
+      elements.backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      
+      window.addEventListener('scroll', handleScroll);
+      
+      renderToolsGrid();
     }
 
-    function showRegister() {
-      document.getElementById('login-card').style.display = 'none';
-      document.getElementById('register-card').style.display = 'block';
-      resetErrors('login');
-    }
-
-    function showLogin() {
-      document.getElementById('register-card').style.display = 'none';
-      document.getElementById('otp-card').style.display = 'none';
-      document.getElementById('login-card').style.display = 'block';
-      resetErrors('register');
-      resetErrors('otp');
-    }
-
-    function showOTP(email) {
-      document.getElementById('register-card').style.display = 'none';
-      document.getElementById('otp-card').style.display = 'block';
-      document.querySelectorAll('.otp-input').forEach(input => input.value = '');
-      document.querySelector('.otp-input').focus();
+    function handleSearch(e) {
+      const searchTerm = e.target.value.toLowerCase().trim();
       
-      startOTPTimer(300);
-      startResendTimer(60);
-    }
-
-    async function handleLogin(e) {
-      e.preventDefault();
-      
-      resetErrors('login');
-      
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
-      const captcha = document.getElementById('captcha-input').value.trim();
-      
-      let isValid = true;
-      
-      if (!email) {
-        showError('login-email', 'Email is required');
-        isValid = false;
-      } else if (!isValidEmail(email)) {
-        showError('login-email', 'Please enter a valid email');
-        isValid = false;
-      }
-      
-      if (!password) {
-        showError('login-password', 'Password is required');
-        isValid = false;
-      }
-      
-      if (!captcha) {
-        showError('captcha', 'CAPTCHA is required');
-        isValid = false;
-      } else if (captcha !== authSystem.currentCaptcha) {
-        showError('captcha', 'Incorrect CAPTCHA');
-        authSystem.currentCaptcha = authSystem.generateCaptcha();
-        updateCaptcha();
-        isValid = false;
-      }
-      
-      if (!isValid) return;
-      
-      const submitBtn = document.getElementById('login-submit');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
-      
-      try {
-        const result = await authSystem.loginUser(email, password);
-        
-        if (result.success) {
-          authSystem.createSession(result);
-          
-          showNotification('Login successful! Redirecting...', 'success');
-          
-          setTimeout(() => {
-            window.location.href = 'https://lphisv5.github.io/v4/public/main.html';
-          }, 1500);
-        }
-      } catch (error) {
-        showError('login-password', error.message);
-        authSystem.currentCaptcha = authSystem.generateCaptcha();
-        updateCaptcha();
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-      }
-    }
-
-    async function handleRegister(e) {
-      e.preventDefault();
-      
-      resetErrors('register');
-      
-      const username = document.getElementById('register-username').value.trim();
-      const email = document.getElementById('register-email').value.trim();
-      const password = document.getElementById('register-password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-      const termsAgreed = document.getElementById('terms-agree').checked;
-      
-      let isValid = true;
-      
-      if (!username) {
-        showError('username', 'Username is required');
-        isValid = false;
-      } else if (username.length < 3) {
-        showError('username', 'Username must be at least 3 characters');
-        isValid = false;
-      } else if (username.length > 20) {
-        showError('username', 'Username must be less than 20 characters');
-        isValid = false;
-      }
-      
-      if (!email) {
-        showError('email', 'Email is required');
-        isValid = false;
-      } else if (!isValidEmail(email)) {
-        showError('email', 'Please enter a valid email');
-        isValid = false;
-      }
-      
-      if (!password) {
-        showError('password', 'Password is required');
-        isValid = false;
-      } else if (!isStrongPassword(password)) {
-        showError('password', 'Password must be at least 8 characters with uppercase, lowercase, and number');
-        isValid = false;
-      }
-      
-      if (!confirmPassword) {
-        showError('confirm-password', 'Please confirm your password');
-        isValid = false;
-      } else if (password !== confirmPassword) {
-        showError('confirm-password', 'Passwords do not match');
-        isValid = false;
-      }
-      
-      if (!termsAgreed) {
-        showError('terms', 'You must agree to the terms and conditions');
-        isValid = false;
-      }
-      
-      if (!isValid) return;
-      
-      const submitBtn = document.getElementById('register-submit');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
-      
-      try {
-        const userData = { username, email, password };
-        const result = await authSystem.registerUser(userData);
-        
-        if (result.success) {
-          const otpResult = await authSystem.sendOTP(email);
-          
-          showNotification(otpResult.message, 'info');
-          showOTP(email);
-        }
-      } catch (error) {
-        showError('email', error.message);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-      }
-    }
-
-    async function verifyOTP() {
-      const otpInputs = document.querySelectorAll('.otp-input');
-      const otp = Array.from(otpInputs).map(input => input.value).join('');
-      
-      if (otp.length !== 6) {
-        showError('otp', 'Please enter the complete 6-digit code');
+      if (searchTerm === '') {
+        renderToolsGrid();
         return;
       }
       
-      const verifyBtn = document.getElementById('verify-otp');
-      const originalText = verifyBtn.innerHTML;
-      verifyBtn.disabled = true;
-      verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+      const filteredTools = toolsData.filter(tool => 
+        tool.name.toLowerCase().includes(searchTerm) || 
+        tool.description.toLowerCase().includes(searchTerm) ||
+        tool.category.toLowerCase().includes(searchTerm)
+      );
       
-      try {
-        const result = await authSystem.verifyOTP(authSystem.currentEmail, otp);
-        
-        if (result.success) {
-          const email = authSystem.currentEmail;
-          const username = document.getElementById('register-username').value;
-          
-          const sessionData = {
-            userId: result.userId,
-            username,
-            email,
-            tier: 'free'
-          };
-          
-          authSystem.createSession(sessionData);
-          
-          showNotification('Account verified successfully! Redirecting...', 'success');
-          
-          setTimeout(() => {
-            window.location.href = 'https://lphisv5.github.io/v4/public/main.html';
-          }, 1500);
-        }
-      } catch (error) {
-        showError('otp', error.message);
-        otpInputs.forEach(input => input.value = '');
-        otpInputs[0].focus();
-      } finally {
-        verifyBtn.disabled = false;
-        verifyBtn.innerHTML = originalText;
-      }
+      renderToolsGrid(filteredTools);
     }
-
-    async function resendOTP() {
-      const resendBtn = document.getElementById('resend-otp');
-      if (resendBtn.disabled) return;
+    
+    function handleFilter(filter) {
+      appState.currentFilter = filter;
       
-      const originalText = resendBtn.innerHTML;
-      resendBtn.disabled = true;
-      resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resending...';
-      
-      try {
-        const result = await authSystem.sendOTP(authSystem.currentEmail);
-        showNotification(result.message, 'info');
-        startResendTimer(60);
-      } catch (error) {
-        showNotification('Failed to resend OTP: ' + error.message, 'error');
-      } finally {
-        resendBtn.disabled = false;
-        resendBtn.innerHTML = originalText;
-      }
-    }
-
-    function checkExistingSession() {
-      const session = localStorage.getItem('yanz_session');
-      if (session) {
-        try {
-          const sessionData = JSON.parse(session);
-          if (Date.now() < sessionData.expiresAt) {
-            setTimeout(() => {
-              window.location.href = 'https://lphisv5.github.io/v4/public/main.html';
-            }, 1000);
-          } else {
-            localStorage.removeItem('yanz_session');
-            localStorage.removeItem('yanz_user');
-          }
-        } catch (error) {
-          localStorage.removeItem('yanz_session');
-          localStorage.removeItem('yanz_user');
-        }
-      }
-    }
-
-    function isValidEmail(email) {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
-    }
-
-    function isStrongPassword(password) {
-      const requirements = {
-        length: password.length >= 8,
-        uppercase: /[A-Z]/.test(password),
-        lowercase: /[a-z]/.test(password),
-        number: /\d/.test(password)
-      };
-      
-      return Object.values(requirements).filter(Boolean).length >= 3;
-    }
-
-    function checkPasswordStrength() {
-      const password = document.getElementById('register-password').value;
-      const strengthBar = document.getElementById('password-strength-bar');
-      const requirements = document.querySelectorAll('.requirement');
-      
-      const checks = {
-        length: password.length >= 8,
-        uppercase: /[A-Z]/.test(password),
-        lowercase: /[a-z]/.test(password),
-        number: /\d/.test(password),
-        special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
-      };
-      
-      requirements.forEach(req => {
-        const type = req.id.replace('req-', '');
-        if (checks[type]) {
-          req.classList.add('valid');
-          req.classList.remove('invalid');
-          req.innerHTML = `<i class="fas fa-check-circle"></i> ${req.textContent.replace('●', '').trim()}`;
-        } else {
-          req.classList.remove('valid');
-          req.classList.add('invalid');
-          req.innerHTML = `<i class="fas fa-circle"></i> ${req.textContent.replace('✓', '').trim()}`;
-        }
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
       });
       
-      const strength = Object.values(checks).filter(Boolean).length;
-      const percent = (strength / 5) * 100;
-      
-      strengthBar.style.width = `${percent}%`;
-      strengthBar.className = 'password-strength-bar';
-      
-      if (percent <= 20) strengthBar.classList.add('strength-weak');
-      else if (percent <= 40) strengthBar.classList.add('strength-fair');
-      else if (percent <= 60) strengthBar.classList.add('strength-good');
-      else strengthBar.classList.add('strength-strong');
-    }
-
-    function checkPasswordMatch() {
-      const password = document.getElementById('register-password').value;
-      const confirm = document.getElementById('confirm-password').value;
-      
-      if (!confirm) {
-        hideError('confirm-password');
-        return;
-      }
-      
-      if (password !== confirm) {
-        showError('confirm-password', 'Passwords do not match');
+      if (filter === 'all') {
+        renderToolsGrid();
       } else {
-        hideError('confirm-password');
+        const filteredTools = toolsData.filter(tool => tool.category === filter);
+        renderToolsGrid(filteredTools);
       }
     }
 
-    function togglePassword(passwordId, toggleId) {
-      const passwordInput = document.getElementById(passwordId);
-      const toggleIcon = document.getElementById(toggleId);
-      
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.className = 'fas fa-eye-slash input-icon';
-      } else {
-        passwordInput.type = 'password';
-        toggleIcon.className = 'fas fa-eye input-icon';
-      }
+    function showConfirmModal(tool) {
+      elements.confirmTitle.textContent = `Open ${tool.name}?`;
+      elements.confirmDescription.textContent = `"${tool.description}" will open in a new tab.`;
+      elements.confirmModal.classList.add('active');
     }
 
-    function handleOTPInput(e, index) {
-      const input = e.target;
-      const value = input.value;
-      
-      // Only allow numbers
-      if (!/^\d?$/.test(value)) {
-        input.value = '';
-        return;
-      }
-      
-      // Auto-focus next input
-      if (value && index < 5) {
-        document.querySelector(`.otp-input[data-index="${index + 1}"]`).focus();
-      }
-      
-      // Auto-submit when all fields are filled
-      if (index === 5 && value) {
-        const allFilled = Array.from(document.querySelectorAll('.otp-input'))
-          .every(input => input.value);
-        if (allFilled) {
-          setTimeout(verifyOTP, 100);
-        }
-      }
-    }
-
-    function handleOTPKeydown(e, index) {
-      // Move to previous input on backspace
-      if (e.key === 'Backspace' && !e.target.value && index > 0) {
-        document.querySelector(`.otp-input[data-index="${index - 1}"]`).focus();
-      }
-    }
-
-    function startOTPTimer(duration) {
-      let timeLeft = duration;
-      const timerElement = document.getElementById('otp-timer');
-      
-      // Clear existing timer
-      if (authSystem.otpTimer) clearInterval(authSystem.otpTimer);
-      
-      authSystem.otpTimer = setInterval(() => {
-        timeLeft--;
-        
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
-        if (timeLeft <= 0) {
-          clearInterval(authSystem.otpTimer);
-          showError('otp', 'Verification code has expired');
-          document.getElementById('verify-otp').disabled = true;
-        }
-      }, 1000);
-    }
-
-    function startResendTimer(duration) {
-      let timeLeft = duration;
-      const resendBtn = document.getElementById('resend-otp');
-      const timerElement = document.getElementById('resend-timer');
-      
-      resendBtn.disabled = true;
-      
-      // Clear existing timer
-      if (authSystem.resendTimer) clearInterval(authSystem.resendTimer);
-      
-      authSystem.resendTimer = setInterval(() => {
-        timeLeft--;
-        timerElement.textContent = timeLeft;
-        
-        if (timeLeft <= 0) {
-          clearInterval(authSystem.resendTimer);
-          resendBtn.disabled = false;
-          resendBtn.innerHTML = '<i class="fas fa-redo"></i> Resend Code';
-          timerElement.textContent = '';
-        }
-      }, 1000);
-    }
-
-    function showError(field, message) {
-      const errorElement = document.getElementById(`${field}-error`);
-      if (errorElement) {
-        errorElement.textContent = message;
-        errorElement.classList.add('show');
-        
-        const input = document.getElementById(field);
-        if (input) input.classList.add('error');
-      }
-    }
-
-    function hideError(field) {
-      const errorElement = document.getElementById(`${field}-error`);
-      if (errorElement) {
-        errorElement.classList.remove('show');
-        
-        const input = document.getElementById(field);
-        if (input) input.classList.remove('error');
-      }
-    }
-
-    function resetErrors(form) {
-      if (form === 'login') {
-        hideError('login-email');
-        hideError('login-password');
-        hideError('captcha');
-      } else if (form === 'register') {
-        hideError('username');
-        hideError('email');
-        hideError('password');
-        hideError('confirm-password');
-        hideError('terms');
-      } else if (form === 'otp') {
-        hideError('otp');
-      }
+    function hideConfirmModal() {
+      elements.confirmModal.classList.remove('active');
+      appState.pendingTool = null;
     }
 
     function showNotification(message, type = 'info') {
-      const notification = document.getElementById('notification');
-      const messageElement = document.getElementById('notification-message');
+      elements.notificationMessage.textContent = message;
+      elements.notification.className = `notification show`;
       
-      messageElement.textContent = message;
-      notification.className = `notification show`;
-      
-      // Set color based on type
-      if (type === 'success') {
-        notification.style.borderLeftColor = '#81c784';
-      } else if (type === 'error') {
-        notification.style.borderLeftColor = '#e57373';
-      } else if (type === 'warning') {
-        notification.style.borderLeftColor = '#ffb74d';
-      } else {
-        notification.style.borderLeftColor = '#4fc3f7';
-      }
+      setTimeout(() => {
+        hideNotification();
+      }, 3000);
     }
 
     function hideNotification() {
-      document.getElementById('notification').classList.remove('show');
+      elements.notification.classList.remove('show');
+    }
+
+    function handleScroll() {
+      if (window.scrollY > 300) {
+        elements.backToTop.classList.add('visible');
+      } else {
+        elements.backToTop.classList.remove('visible');
+      }
+    }
+
+    function formatCategory(category) {
+      const categoryMap = {
+        'development': 'Development',
+        'entertainment': 'Entertainment',
+        'utility': 'Utility'
+      };
+      return categoryMap[category] || category;
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
     }
   </script>
 </body>
