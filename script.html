@@ -3,1063 +3,803 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="YANZ Script Hub — Discover, search, and copy verified Roblox scripts. Live API integration.">
-  <meta name="theme-color" content="#0c0f15">
-  <title>YANZ Script Hub</title>
+  <title>YANZ Script Hub Official</title>
   
-  <!-- External Resources (CDN) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
   <style>
-    /* ===== CSS Reset & Base ===== */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    /* =========================================
+       Design System & Variables
+       ========================================= */
+    :root {
+      /* Neutral, professional dark theme (Tailwind Slate/Zinc inspired) */
+      --bg-body: #09090b;
+      --bg-surface: #121214;
+      --bg-card: #18181b;
+      --bg-hover: #27272a;
+      --bg-input: #09090b;
+      
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-placeholder: #52525b;
+      
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --patched: #71717a;
+      
+      --border-subtle: #27272a;
+      --border-focus: #3f3f46;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+      
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    /* =========================================
+       Reset & Base Styles
+       ========================================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
-      background: var(--bg-dark);
+      background-color: var(--bg-body);
       color: var(--text-main);
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       line-height: 1.5;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
-    :focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      border-radius: 4px;
+
+    button, input, select, textarea {
+      font-family: inherit;
     }
-    :focus:not(:focus-visible) { outline: none; }
-    img { max-width: 100%; display: block; }
-    button, input, select, textarea { font: inherit; color: inherit; }
-    button { cursor: pointer; border: none; background: none; }
-    textarea { resize: vertical; min-height: 2.5rem; }
-    
-    /* ===== Design Tokens ===== */
-    :root {
-      /* Colors */
-      --bg-dark: #0c0f15;
-      --bg-card: #141a24;
-      --bg-surface: #1e2632;
-      --bg-hover: #28303f;
-      --bg-elevated: #232c3a;
-      
-      --text-main: #eef2f8;      --text-muted: #98a6bf;
-      --text-disabled: #6b7a94;
-      
-      --accent: #377dff;
-      --accent-hover: #2b6be2;
-      --accent-glow: rgba(55, 125, 255, 0.25);
-      --accent-soft: rgba(55, 125, 255, 0.12);
-      
-      --success: #23b26d;
-      --success-bg: rgba(35, 178, 109, 0.15);
-      --warning: #f1b44c;
-      --warning-bg: rgba(241, 180, 76, 0.15);
-      --danger: #f56b6b;
-      --danger-bg: rgba(245, 107, 107, 0.15);
-      
-      --border: rgba(255, 255, 255, 0.06);
-      --border-light: rgba(255, 255, 255, 0.12);
-      --border-focus: rgba(55, 125, 255, 0.5);
-      
-      /* Effects */
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.45);
-      --shadow-glow: 0 0 0 3px var(--accent-glow);
-      
-      --blur-sm: blur(6px);
-      --blur-md: blur(12px);
-      
-      /* Dimensions */
-      --radius-sm: 10px;
-      --radius: 16px;
-      --radius-lg: 24px;
-      --radius-full: 9999px;
-      
-      --header-height: 72px;
-      --spacing-xs: 0.4rem;
-      --spacing-sm: 0.75rem;
-      --spacing: 1.25rem;
-      --spacing-lg: 2rem;
-      --spacing-xl: 3rem;
-      
-      /* Transitions */
-      --transition-fast: 120ms ease;
-      --transition: 200ms ease;
-      --transition-slow: 300ms cubic-bezier(0.2, 0.9, 0.3, 1);
-      
-      /* Z-index layers */
-      --z-sticky: 100;
-      --z-overlay: 199;
-      --z-panel: 200;      --z-modal: 400;
-      --z-toast: 300;
-    }
-    
-    /* ===== Layout ===== */
+
+    /* =========================================
+       Header & Navigation
+       ========================================= */
     .header {
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 var(--spacing-lg);
+      background-color: rgba(18, 18, 20, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
-      z-index: var(--z-sticky);
-      backdrop-filter: var(--blur-sm);
-      height: var(--header-height);
-      display: flex;
-      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
+
     .header-container {
       max-width: 1440px;
-      width: 100%;
       margin: 0 auto;
+      padding: 1rem 1.5rem;
       display: flex;
       align-items: center;
-      gap: var(--spacing-lg);
+      gap: 2rem;
       flex-wrap: wrap;
     }
-    
+
     .logo-area {
       display: flex;
       align-items: center;
-      gap: var(--spacing-sm);
-      font-weight: 600;
-      font-size: 1.1rem;
-      white-space: nowrap;
+      gap: 0.75rem;
+      text-decoration: none;
     }
+
     .logo-icon {
-      background: linear-gradient(145deg, var(--accent), #5f7dff);
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      font-size: 1.2rem;
-      color: white;
-      box-shadow: 0 6px 16px -4px rgba(31, 58, 122, 0.6);
-      flex-shrink: 0;
+      background-color: var(--text-main);
+      color: var(--bg-body);
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
     }
+
     .logo-text {
-      background: linear-gradient(130deg, #ffffff, #c6d6ff);
-      -webkit-background-clip: text;      background-clip: text;
-      color: transparent;
-      letter-spacing: -0.3px;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-main);
+      letter-spacing: -0.025em;
     }
-    
+
     .search-wrapper {
       flex: 1;
-      max-width: 560px;
-      min-width: 200px;
+      max-width: 540px;
       display: flex;
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-full);
-      padding: 0.25rem 0.25rem 0.25rem 1.2rem;
-      align-items: center;
-      transition: border-color var(--transition), box-shadow var(--transition);
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color 0.2s;
     }
+
     .search-wrapper:focus-within {
-      border-color: var(--accent);
-      box-shadow: var(--shadow-glow);
+      border-color: var(--border-focus);
     }
+
+    .search-icon {
+      padding: 0 0.75rem 0 1rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+    }
+
     .search-wrapper input {
       flex: 1;
       background: transparent;
       border: none;
-      padding: 0.7rem 0.5rem;
+      padding: 0.6rem 0;
       color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
-      min-width: 0;
     }
-    .search-wrapper input::placeholder { color: var(--text-muted); }
+
+    .search-wrapper input::placeholder { color: var(--text-placeholder); }
+
     .search-wrapper button {
-      background: var(--accent);
-      color: white;
-      border-radius: var(--radius-full);
-      padding: 0.6rem 1.6rem;
+      background: var(--bg-hover);
+      border: none;
+      border-left: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0 1.25rem;
       font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background var(--transition-fast), transform var(--transition-fast);
-      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.15s;
     }
-    .search-wrapper button:hover { background: var(--accent-hover); }
-    .search-wrapper button:active { transform: translateY(1px); }
-    
+
+    .search-wrapper button:hover { background: var(--border-subtle); }
+
     .header-actions {
       display: flex;
-      gap: 0.5rem;      margin-left: auto;
+      gap: 0.5rem;
+      margin-left: auto;
     }
+
     .icon-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
+      background: transparent;
+      border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 1.1rem;
-      display: grid;
-      place-items: center;
-      transition: all var(--transition);
-      position: relative;
+      cursor: pointer;
+      transition: all 0.2s;
     }
+
     .icon-btn:hover {
       background: var(--bg-hover);
       color: var(--text-main);
-      border-color: var(--accent);
-      transform: translateY(-1px);
+      border-color: var(--border-focus);
     }
-    .icon-btn:active { transform: translateY(0); }
-    .icon-btn i { pointer-events: none; }
-    
-    /* Stats Bar */
+
+    /* =========================================
+       Stats Bar
+       ========================================= */
     .stats {
-      background: var(--bg-surface);
-      padding: 0.5rem var(--spacing-lg);
-      border-bottom: 1px solid var(--border);
+      background-color: var(--bg-body);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.6rem 1.5rem;
       font-size: 0.85rem;
-      position: sticky;
-      top: var(--header-height);
-      z-index: calc(var(--z-sticky) - 1);
-      backdrop-filter: var(--blur-sm);
     }
+
     .stats-container {
       max-width: 1440px;
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
+      gap: 1.5rem;
       color: var(--text-muted);
-      flex-wrap: wrap;
-      gap: 0.5rem;
     }
-    .stats span i { margin-right: 0.35rem; color: var(--accent); width: 16px; text-align: center; }
-    
-    /* Main Content */
-    main { flex: 1; padding-bottom: var(--spacing-xl); }
-    
-    .scripts-grid {      max-width: 1440px;
-      margin: var(--spacing-lg) auto;
-      padding: 0 var(--spacing-lg);
+
+    .stats span { color: var(--text-main); font-weight: 500; }
+    .stats i { color: var(--text-muted); margin-right: 0.25rem; }
+
+    /* =========================================
+       Grid & Cards
+       ========================================= */
+    .main-content {
+      flex: 1;
+      padding: 2rem 1.5rem;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .scripts-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: var(--spacing-lg);
+      gap: 1.5rem;
+      align-items: start;
     }
-    
-    /* Script Card */
+
     .script-card {
       background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
       display: flex;
       flex-direction: column;
-      height: 100%;
+      transition: border-color 0.2s, transform 0.2s;
     }
+
     .script-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
     }
-    .script-card:focus-within {
-      border-color: var(--accent);
-      box-shadow: var(--shadow-glow);
-    }
-    
+
     .card-image {
       aspect-ratio: 16/9;
       background: var(--bg-surface);
       position: relative;
-      overflow: hidden;
+      border-bottom: 1px solid var(--border-subtle);
     }
+
     .card-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform var(--transition-slow);
       display: block;
     }
-    .script-card:hover .card-image img { transform: scale(1.03); }
-    
-    .img-badges {
+
+    .badges-top {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 0.75rem;
+      right: 0.75rem;
       display: flex;
-      gap: 5px;      flex-wrap: wrap;
+      gap: 0.35rem;
+      flex-wrap: wrap;
       justify-content: flex-end;
-      z-index: 2;
     }
+
     .badge {
-      padding: 0.2rem 0.65rem;
-      border-radius: var(--radius-full);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
       font-size: 0.7rem;
       font-weight: 600;
-      background: rgba(20, 26, 36, 0.85);
-      backdrop-filter: var(--blur-sm);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(24, 24, 27, 0.9);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
     }
-    .badge i { font-size: 0.65rem; }
-    .badge-verified { background: var(--success); color: white; border: none; }
-    .badge-key { background: var(--warning); color: #1a1a1a; border: none; }
-    .badge-paid { background: var(--danger); color: white; border: none; }
-    .badge-universal { background: var(--accent); color: white; border: none; }
-    .badge-patched { background: var(--text-disabled); color: white; border: none; }
-    
+
+    .badge-verified { color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+    .badge-key { color: var(--warning); border-color: rgba(245, 158, 11, 0.3); }
+    .badge-paid { color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+    .badge-universal { color: var(--accent); border-color: rgba(59, 130, 246, 0.3); }
+    .badge-patched { color: var(--text-muted); text-decoration: line-through; }
+
     .views-badge {
       position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(20, 26, 36, 0.85);
-      backdrop-filter: var(--blur-sm);
-      padding: 0.25rem 0.8rem;
-      border-radius: var(--radius-full);
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      z-index: 2;
+      bottom: 0.75rem;
+      left: 0.75rem;
+      background: rgba(24, 24, 27, 0.9);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
     }
-    
+
     .card-content {
-      padding: var(--spacing);
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
-      flex: 1;
+      gap: 0.75rem;
     }
-    
+
     .card-title {
       font-weight: 600;
-      font-size: 1.05rem;      line-height: 1.4;
+      font-size: 1rem;
+      line-height: 1.4;
+      color: var(--text-main);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    
-    .game-line {
+
+    .card-game {
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
-    .game-line i { color: var(--accent); width: 18px; text-align: center; flex-shrink: 0; }
-    
-    .meta-row {
+
+    .card-meta {
       display: flex;
-      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
       font-size: 0.8rem;
       color: var(--text-muted);
-      flex-wrap: wrap;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.75rem;
+      margin-top: 0.25rem;
     }
-    .meta-row i { margin-right: 0.3rem; width: 14px; text-align: center; }
-    
-    .like-dislike {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.85rem;
-      border-top: 1px solid var(--border);
-      padding-top: 0.7rem;
-      margin-top: auto;
-    }
-    .like-dislike span {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-    .like-dislike .likes i { color: var(--success); }
-    .like-dislike .dislikes i { color: var(--danger); }
-    
+
+    .meta-dates { display: flex; gap: 1rem; }
+    .meta-votes { display: flex; gap: 0.75rem; }
+    .vote-up { color: var(--success); }
+    .vote-down { color: var(--danger); }
+
     .script-box {
       position: relative;
-      background: var(--bg-surface);
-      border-radius: var(--radius-sm);
-      margin-top: 0.3rem;
-      border: 1px solid var(--border);
+      margin-top: 0.5rem;
     }
+
     .script-box textarea {
-      width: 100%;      background: transparent;
-      border: none;
-      padding: 0.8rem 2.8rem 0.8rem 0.9rem;
-      color: #cbd5e8;
-      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.75rem;
-      line-height: 1.5;
-      overflow-y: auto;
-      min-height: 2.8rem;
-      max-height: 6rem;
       resize: none;
-      cursor: text;
+      height: 44px;
+      overflow: hidden;
+      white-space: pre;
+      transition: border-color 0.2s;
     }
-    .script-box textarea::-webkit-scrollbar { width: 6px; }
-    .script-box textarea::-webkit-scrollbar-track { background: transparent; }
-    .script-box textarea::-webkit-scrollbar-thumb {
-      background: var(--border-light);
-      border-radius: 3px;
+
+    .script-box textarea:focus {
+      border-color: var(--border-focus);
+      color: var(--text-main);
+      outline: none;
     }
+
     .copy-btn {
       position: absolute;
-      bottom: 6px;
+      top: 50%;
       right: 6px;
+      transform: translateY(-50%);
       background: var(--bg-hover);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      width: 28px;
-      height: 28px;
-      border-radius: var(--radius-sm);
-      display: grid;
-      place-items: center;
-      transition: all var(--transition-fast);
-      font-size: 0.85rem;
-    }
-    .copy-btn:hover {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-    .copy-btn.copied {
-      background: var(--success);
-      color: white;
-      border-color: var(--success);
-    }
-    
-    /* Skeleton Loading */
-    .skeleton-card {
-      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-hover) 50%, var(--bg-card) 75%);
-      background-size: 200% 100%;
-      animation: pulse 1.4s infinite ease-in-out;      border-radius: var(--radius);
-      height: 360px;
-      border: 1px solid var(--border);
-    }
-    @keyframes pulse {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    
-    /* Load More Section */
-    .load-more {
-      grid-column: 1 / -1;
-      text-align: center;
-      margin: var(--spacing) 0 var(--spacing-xl);
-      padding: 0 var(--spacing-lg);
-    }
-    .load-more-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 0.85rem 2.4rem;
-      border-radius: var(--radius-full);
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      transition: all var(--transition);
-    }
-    .load-more-btn:hover {
-      background: var(--bg-hover);
-      border-color: var(--accent);
-      transform: translateY(-1px);
-    }
-    .load-more-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .end-message {
-      color: var(--text-muted);
-      text-align: center;
-      padding: var(--spacing-lg);
-      font-size: 0.95rem;
-    }
-    .hidden { display: none !important; }
-    
-    /* Filter Panel */
-    .filter-overlay {
-      position: fixed;
-      inset: 0;      background: rgba(8, 11, 16, 0.82);
-      backdrop-filter: var(--blur-md);
-      z-index: var(--z-overlay);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity var(--transition), visibility var(--transition);
-    }
-    .filter-overlay.active { opacity: 1; visibility: visible; }
-    
-    .filter-panel {
-      position: fixed;
-      top: 0;
-      right: -380px;
-      width: 340px;
-      max-width: 90vw;
-      height: 100vh;
-      background: var(--bg-surface);
-      border-left: 1px solid var(--border);
-      padding: var(--spacing-lg);
-      z-index: var(--z-panel);
-      transition: right var(--transition-slow);
-      overflow-y: auto;
-      box-shadow: var(--shadow-lg);
-      display: flex;
-      flex-direction: column;
-    }
-    .filter-panel.active { right: 0; }
-    
-    .filter-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--spacing-lg);
-      padding-bottom: var(--spacing);
-      border-bottom: 1px solid var(--border);
-    }
-    .filter-header h3 { font-weight: 600; font-size: 1.2rem; }
-    .close-panel {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.6rem;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      transition: all var(--transition-fast);
-    }
-    .close-panel:hover {      background: var(--bg-hover);
-      color: var(--text-main);
-    }
-    
-    .filter-group { margin-bottom: var(--spacing-lg); }
-    .filter-label {
-      display: block;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: var(--text-muted);
-      margin-bottom: var(--spacing-xs);
-      font-weight: 500;
-    }
-    .filter-select {
-      width: 100%;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-sm);
-      color: var(--text-main);
-      font-size: 0.95rem;
-      appearance: none;
-      background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2398a6bf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.8rem center;
-      background-size: 14px;
-      padding-right: 2.2rem;
-      transition: border-color var(--transition);
-    }
-    .filter-select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: var(--shadow-glow);
-    }
-    
-    .toggle-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--bg-card);
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-sm);
-      margin-bottom: 0.5rem;
-      border: 1px solid transparent;
-      transition: border-color var(--transition-fast);
-    }
-    .toggle-item:hover { border-color: var(--border-light); }
-    .toggle-label { font-size: 0.92rem; }
-        .toggle-switch {
-      width: 42px;
-      height: 24px;
-      background: #3a4055;
-      border-radius: 40px;
-      position: relative;
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
       cursor: pointer;
-      transition: background var(--transition-fast);
-      flex-shrink: 0;
-    }
-    .toggle-switch.active { background: var(--accent); }
-    .toggle-switch::after {
-      content: '';
-      width: 18px;
-      height: 18px;
-      background: white;
-      border-radius: 50%;
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      transition: left var(--transition-fast);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .toggle-switch.active::after { left: 21px; }
-    .toggle-switch:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-    
-    .filter-actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: auto;
-      padding-top: var(--spacing);
-      border-top: 1px solid var(--border);
-    }
-    .filter-actions button {
-      flex: 1;
-      padding: 0.8rem;
-      border-radius: var(--radius-full);
-      font-weight: 500;
-      transition: all var(--transition-fast);
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-    }
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-secondary {
-      background: var(--bg-card);      color: var(--text-main);
-      border: 1px solid var(--border);
-    }
-    .btn-secondary:hover {
-      background: var(--bg-hover);
-      border-color: var(--border-light);
-    }
-    
-    .filter-footer {
-      font-size: 0.75rem;
-      color: var(--text-disabled);
-      margin-top: var(--spacing);
-      text-align: center;
-      padding-top: var(--spacing);
-      border-top: 1px dashed var(--border);
-    }
-    
-    /* Quick Load Modal */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(8, 11, 16, 0.88);
-      backdrop-filter: var(--blur-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: var(--z-modal);
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--text-main);
+      color: var(--bg-body);
+      border-color: var(--text-main);
+    }
+
+    /* =========================================
+       Load More & States
+       ========================================= */
+    .load-more {
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.75rem 2rem;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-focus);
+    }
+
+    .end-message {
+      color: var(--text-placeholder);
+      font-size: 0.9rem;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Skeleton Loader */
+    .skeleton-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      height: 360px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .skeleton-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* =========================================
+       Filter Sidebar
+       ========================================= */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 199;
       opacity: 0;
       visibility: hidden;
-      transition: opacity var(--transition), visibility var(--transition);
-      padding: var(--spacing-lg);
+      transition: 0.2s ease;
+    }
+    .overlay.active { opacity: 1; visibility: visible; }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -360px;
+      width: 100%;
+      max-width: 360px;
+      height: 100vh;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      padding: 1.5rem;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-modal);
+    }
+    .sidebar.active { right: 0; }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-header h3 { font-size: 1.1rem; font-weight: 500; }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    .close-btn:hover { color: var(--text-main); }
+
+    .filter-content {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-right: 0.5rem;
+    }
+
+    .filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .filter-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .form-select {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a1a1aa'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+    }
+    .form-select:focus { border-color: var(--border-focus); }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+    }
+
+    .toggle-row span { font-size: 0.9rem; }
+
+    .switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      background: var(--border-subtle);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .switch.active { background: var(--text-main); }
+    .switch::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 16px; height: 16px;
+      background: var(--bg-body);
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+    .switch.active::after { left: 18px; }
+
+    .sidebar-footer {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .btn-primary {
+      background: var(--text-main);
+      color: var(--bg-body);
+      border: none;
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+
+    .btn-secondary {
+      background: var(--bg-hover);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { background: var(--border-focus); }
+
+    /* =========================================
+       Toast & Modal
+       ========================================= */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-modal);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 300;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--success); }
+    .toast.error i { color: var(--danger); }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 400;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.2s;
     }
     .modal.active { opacity: 1; visibility: visible; }
     
     .modal-content {
       background: var(--bg-surface);
-      padding: 2rem;
+      padding: 2.5rem;
       border-radius: var(--radius-lg);
-      max-width: 420px;
       width: 100%;
+      max-width: 380px;
       text-align: center;
-      border: 1px solid var(--border-light);
-      box-shadow: var(--shadow-lg);
-      animation: modalSlide 0.25s ease-out;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-modal);
     }
-    @keyframes modalSlide {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-        .modal-icon {
-      font-size: 3rem;
-      color: var(--accent);
-      margin-bottom: 1rem;
-      display: block;
-    }
-    .modal h3 {
-      font-weight: 600;
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
-    }
-    .modal p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .progress-bar {
+
+    .progress-track {
       height: 6px;
-      background: #2a3240;
-      border-radius: 10px;
-      margin: 1.2rem 0;
+      background: var(--bg-input);
+      border-radius: 6px;
+      margin: 1.5rem 0 0.75rem;
       overflow: hidden;
-      border: 1px solid var(--border);
     }
     .progress-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--accent), #5f7dff);
-      transition: width 0.25s ease;
-      border-radius: 10px;
+      background: var(--text-main);
+      transition: width 0.2s ease;
     }
-    
-    .modal-actions {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: center;
-      margin-top: 1rem;
-    }
-    .modal-btn {
-      padding: 0.7rem 1.8rem;
-      border-radius: var(--radius-full);
-      font-weight: 500;
-      transition: all var(--transition-fast);
-    }
-    .modal-cancel {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-    }    .modal-cancel:hover {
-      background: var(--bg-hover);
-      border-color: var(--border-light);
-    }
-    
-    /* Toast Notifications */
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--bg-surface);
-      border-left: 4px solid var(--success);
-      padding: 0.85rem 1.8rem;
-      border-radius: var(--radius-full);
-      box-shadow: var(--shadow-lg);
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      z-index: var(--z-toast);
-      opacity: 0;
-      transition: transform var(--transition-slow), opacity var(--transition);
-      max-width: 90vw;
-      text-align: left;
-    }
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-    .toast.error {
-      border-left-color: var(--danger);
-      background: var(--bg-elevated);
-    }
-    .toast.warning {
-      border-left-color: var(--warning);
-      background: var(--bg-elevated);
-    }
-    .toast i { font-size: 1.1rem; flex-shrink: 0; }
-    .toast-message { font-size: 0.92rem; line-height: 1.4; }
-    
-    /* Empty State */
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: var(--spacing-xl) var(--spacing-lg);
-      color: var(--text-muted);
-    }
-    .empty-state i {
-      font-size: 3rem;
-      color: var(--text-disabled);      margin-bottom: var(--spacing);
-      display: block;
-    }
-    .empty-state p {
-      max-width: 400px;
-      margin: 0 auto var(--spacing);
-      line-height: 1.5;
-    }
-    
+
     /* Responsive */
     @media (max-width: 768px) {
-      .header { padding: 0 var(--spacing); }
-      .header-container { gap: var(--spacing); }
-      .search-wrapper { max-width: 100%; min-width: 0; }
-      .header-actions { margin-left: 0; }
-      
-      .stats { padding: 0.5rem var(--spacing); top: var(--header-height); }
-      .scripts-grid { 
-        grid-template-columns: 1fr; 
-        margin: var(--spacing) auto;
-        padding: 0 var(--spacing);
-      }
-      .load-more { padding: 0 var(--spacing); }
-      
-      .filter-panel { width: 100%; max-width: 100vw; right: -100%; }
-      .filter-panel.active { right: 0; }
-      
-      .modal { padding: var(--spacing); }
-      .modal-content { padding: 1.75rem; }
-    }
-    
-    @media (max-width: 480px) {
-      .logo-text { display: none; }
-      .search-wrapper button span { display: none; }
-      .search-wrapper button { padding: 0.6rem 1.2rem; }
-      .stats-container { justify-content: center; text-align: center; }
-      .meta-row { flex-direction: column; gap: 0.3rem; }
-      .like-dislike { gap: 0.8rem; }
-    }
-    
-    /* Reduced Motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-      html { scroll-behavior: auto; }
-    }
-        /* Print Styles */
-    @media print {
-      .header, .stats, .filter-overlay, .filter-panel, .modal, .toast, .load-more {
-        display: none !important;
-      }
-      .scripts-grid { 
-        grid-template-columns: 1fr !important; 
-        padding: 0 !important;
-        margin: 0 !important;
-      }
-      .script-card { 
-        break-inside: avoid; 
-        border: 1px solid #333 !important;
-        box-shadow: none !important;
-      }
-      .script-box textarea { 
-        max-height: none !important; 
-        height: auto !important;
-      }
+      .header-container { flex-direction: column; align-items: stretch; gap: 1rem; }
+      .search-wrapper { max-width: 100%; }
+      .header-actions { margin-left: 0; justify-content: flex-end; }
+      .stats-container { flex-direction: column; gap: 0.5rem; text-align: center; }
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header" role="banner">
+
+  <header class="header">
     <div class="header-container">
-      <div class="logo-area">
-        <div class="logo-icon" aria-hidden="true">
-          <i class="fa-solid fa-scroll"></i>
-        </div>
-        <span class="logo-text">YANZ Hub Scriptsx</span>
-      </div>
+      <a href="#" class="logo-area" aria-label="Home">
+        <div class="logo-icon"><i class="fa-solid fa-code"></i></div>
+        <div class="logo-text">YANZ Hub</div>
+      </a>
       
-      <form class="search-wrapper" role="search" id="searchForm">
-        <label for="searchInput" class="visually-hidden">Search scripts</label>
-        <input 
-          type="search" 
-          id="searchInput" 
-          name="q" 
-          placeholder="search scripts (Blox Fruits, Adopt Me...)" 
-          value="free" 
-          autocomplete="off"
-          aria-label="Search scripts"
-        >
-        <button type="submit" id="searchBtn" aria-label="Search">
-          <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
-          <span>Search</span>
-        </button>
-      </form>
-            <div class="header-actions">
-        <button class="icon-btn" id="filterToggle" aria-label="Open filters" title="Filters">
-          <i class="fas fa-sliders" aria-hidden="true"></i>
-        </button>
-        <button class="icon-btn" id="quickLoadBtn" aria-label="Quick load multiple pages" title="Quick load">
-          <i class="fas fa-bolt" aria-hidden="true"></i>
-        </button>
+      <div class="search-wrapper">
+        <div class="search-icon"><i class="fas fa-search"></i></div>
+        <input type="text" id="searchInput" placeholder="Search for Blox Fruits, Murder Mystery..." value="free" autocomplete="off" spellcheck="false">
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="filterToggle" title="Filters"><i class="fas fa-sliders-h"></i></button>
+        <button class="icon-btn" id="quickLoadBtn" title="Deep Scan (Load 5 pages)"><i class="fas fa-bolt"></i></button>
       </div>
     </div>
   </header>
 
-  <!-- Stats Bar -->
-  <div class="stats" role="status" aria-live="polite">
+  <div class="stats">
     <div class="stats-container">
-      <div><i class="fas fa-database" aria-hidden="true"></i> total: <span id="totalCount">0</span></div>
-      <div><i class="fas fa-file-code" aria-hidden="true"></i> showing: <span id="showingCount">0</span></div>
-      <div><i class="fas fa-layer-group" aria-hidden="true"></i> page <span id="currentPageSpan">1</span> of <span id="totalPagesSpan">1</span></div>
+      <div><i class="fas fa-database"></i> Total Items: <span id="totalCount">0</span></div>
+      <div><i class="fas fa-layer-group"></i> Page: <span id="currentPageSpan">1</span></div>
     </div>
   </div>
 
-  <!-- Main Content -->
-  <main id="mainContent" role="main">
-    <div class="scripts-grid" id="resultsGrid" aria-live="polite" aria-busy="false">
-      <!-- Scripts will be injected here -->
-    </div>
+  <main class="main-content">
+    <div class="scripts-grid" id="resultsGrid">
+      </div>
     
     <div class="load-more" id="loadMoreSection">
-      <button class="load-more-btn" id="loadMoreBtn" aria-label="Load more scripts">
-        <i class="fas fa-chevron-down" aria-hidden="true"></i> 
-        <span>Load more</span>
-      </button>
-      <div class="end-message hidden" id="endMsg" role="status">
-        <i class="fas fa-check-circle" aria-hidden="true" style="margin-right:0.4rem;color:var(--success)"></i>
-        All scripts loaded
-      </div>
+      <button class="btn-outline" id="loadMoreBtn">Load More Scripts</button>
+      <div class="end-message hidden" id="endMsg">You've reached the end of the results.</div>
     </div>
   </main>
 
-  <!-- Filter Panel -->
-  <div class="filter-overlay" id="filterOverlay" aria-hidden="true"></div>
-  <aside class="filter-panel" id="filterPanel" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
-    <div class="filter-header">
-      <h3 id="filterTitle">Filters & Sorting</h3>
-      <button class="close-panel" id="closeFilter" aria-label="Close filters">
-        <i class="fas fa-times" aria-hidden="true"></i>
-      </button>
+  <div class="overlay" id="filterOverlay"></div>
+  <aside class="sidebar" id="filterPanel">
+    <div class="sidebar-header">
+      <h3>Refine Search</h3>
+      <button class="close-btn" id="closeFilter"><i class="fas fa-times"></i></button>
     </div>
 
-    <div class="filter-group">
-      <label class="filter-label" for="modeSelect">Script Type</label>      <select class="filter-select" id="modeSelect" aria-label="Filter by script type">
-        <option value="">All types</option>
-        <option value="free">Free only</option>
-        <option value="paid">Premium only</option>
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label class="filter-label" for="verifiedSelect">Verification</label>
-      <select class="filter-select" id="verifiedSelect" aria-label="Filter by verification status">
-        <option value="">Any status</option>
-        <option value="1">Verified only</option>
-        <option value="0">Unverified only</option>
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label class="filter-label" for="sortSelect">Sort By</label>
-      <select class="filter-select" id="sortSelect" aria-label="Sort results">
-        <option value="createdAt">Newest first</option>
-        <option value="views">Most viewed</option>
-        <option value="likeCount">Most liked</option>
-        <option value="lastBump">Recently updated</option>
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label class="filter-label" for="orderSelect">Order</label>
-      <select class="filter-select" id="orderSelect" aria-label="Sort order">
-        <option value="desc">Descending</option>
-        <option value="asc">Ascending</option>
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label class="filter-label">Quick Filters</label>
-      
-      <div class="toggle-item">
-        <span class="toggle-label">Requires key</span>
-        <div class="toggle-switch" id="keyToggle" role="switch" aria-checked="false" tabindex="0"></div>
+    <div class="filter-content">
+      <div class="filter-group">
+        <label class="filter-label">Access Type</label>
+        <select class="form-select" id="modeSelect">
+          <option value="">All Scripts</option>
+          <option value="free">Free Only</option>
+          <option value="paid">Paid Only</option>
+        </select>
       </div>
-      
-      <div class="toggle-item">
-        <span class="toggle-label">Universal scripts</span>
-        <div class="toggle-switch" id="universalToggle" role="switch" aria-checked="false" tabindex="0"></div>
+
+      <div class="filter-group">
+        <label class="filter-label">Verification</label>
+        <select class="form-select" id="verifiedSelect">
+          <option value="">Any Status</option>
+          <option value="1">Verified Only</option>
+          <option value="0">Unverified Only</option>
+        </select>
       </div>
-      
-      <div class="toggle-item">
-        <span class="toggle-label">Hide patched</span>
-        <div class="toggle-switch" id="patchedToggle" role="switch" aria-checked="false" tabindex="0"></div>      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Sort Order</label>
+        <select class="form-select" id="sortSelect">
+          <option value="createdAt">Newest First</option>
+          <option value="views">Most Viewed</option>
+          <option value="likeCount">Highest Rated</option>
+          <option value="lastBump">Recently Updated</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Direction</label>
+        <select class="form-select" id="orderSelect">
+          <option value="desc">Descending</option>
+          <option value="asc">Ascending</option>
+        </select>
+      </div>
+
+      <div class="filter-group" style="margin-top: 0.5rem;">
+        <label class="filter-label">Requirements & Compatibility</label>
+        <div class="toggle-row">
+          <span>Requires Key</span>
+          <div class="switch" id="keyToggle" data-filter="key"></div>
+        </div>
+        <div class="toggle-row">
+          <span>Universal Script</span>
+          <div class="switch" id="universalToggle" data-filter="universal"></div>
+        </div>
+        <div class="toggle-row">
+          <span>Hide Patched</span>
+          <div class="switch" id="patchedToggle" data-filter="hidePatched"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="filter-actions">
-      <button class="btn-secondary" id="resetFilters" type="button">Reset</button>
-      <button class="btn-primary" id="applyFilters" type="button">Apply</button>
-    </div>
-    
-    <div class="filter-footer">
-      <i class="fas fa-bolt" aria-hidden="true" style="color:var(--warning);margin-right:0.3rem"></i>
-      Live ScriptBlox API · March 2026
+    <div class="sidebar-footer">
+      <button class="btn-secondary" id="resetFilters">Reset</button>
+      <button class="btn-primary" id="applyFilters">Apply</button>
     </div>
   </aside>
 
-  <!-- Quick Load Modal -->
-  <div class="modal" id="quickModal" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle" aria-hidden="true">
+  <div class="modal" id="quickModal">
     <div class="modal-content">
-      <i class="fas fa-bolt modal-icon" aria-hidden="true"></i>
-      <h3 id="quickModalTitle">Quick Loading Scripts</h3>
-      <p id="quickStatus">Fetching pages...</p>
-      
-      <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-fill" id="quickProgress"></div>
-      </div>
-      
-      <div class="modal-actions">
-        <button class="modal-btn modal-cancel" id="cancelQuickLoad">Cancel</button>
-      </div>
+      <i class="fas fa-bolt" style="font-size: 2.5rem; color: var(--text-main); margin-bottom: 1rem;"></i>
+      <h3 style="font-weight: 500;">Deep Scan Running</h3>
+      <div class="progress-track"><div class="progress-fill" id="quickProgress"></div></div>
+      <div id="quickStatus" style="color: var(--text-muted); font-size: 0.85rem;">Initializing...</div>
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div class="toast" id="toast" role="status" aria-live="assertive" aria-atomic="true">
-    <i class="fas fa-circle-check" aria-hidden="true"></i>
-    <span class="toast-message" id="toastMsg">Action completed</span>
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle" id="toastIcon"></i>
+    <span id="toastMsg">Action completed successfully.</span>
   </div>
 
-  <!-- Visually Hidden Utility -->
-  <style>
-    .visually-hidden {
-      position: absolute !important;
-      width: 1px !important;
-      height: 1px !important;
-      padding: 0 !important;
-      margin: -1px !important;
-      overflow: hidden !important;
-      clip: rect(0, 0, 0, 0) !important;
-      white-space: nowrap !important;
-      border: 0 !important;
-    }  </style>
-
   <script>
-    /**
-     * YANZ Script Hub - Production Script
-     * Official release with bug fixes, accessibility, and robust API handling
-     * March 2026
-     */
-    (function() {
-      'use strict';
-      
-      // ===== Configuration =====
-      const CONFIG = {
-        API_BASE: 'https://scriptblox.com/api',
-        PROXY: 'https://api.allorigins.win/get?url=',
-        DEFAULT_QUERY: 'free',
-        RESULTS_PER_PAGE: 20,
-        QUICK_LOAD_PAGES: 5,
-        DEBOUNCE_MS: 300,
-        TOAST_DURATION: 2800,
-        MAX_SCRIPT_LENGTH: 200 // characters for preview
-      };
-      
-      // ===== State Management =====
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- Configuration ---
+      const API_BASE = 'https://scriptblox.com/api';
+      const PROXY = 'https://api.allorigins.win/get?url=';
+
+      // --- State Management ---
       const state = {
         scripts: [],
         currentPage: 1,
         totalPages: 1,
         hasMore: true,
         isLoading: false,
-        isQuickLoading: false,
-        abortController: null,
-        query: CONFIG.DEFAULT_QUERY,
+        query: 'free',
         filters: {
           mode: '',
           verified: '',
@@ -1068,771 +808,343 @@
           hidePatched: '',
           sortBy: 'createdAt',
           order: 'desc'
-        },
-        debounceTimer: null
+        }
       };
-      
-      // ===== DOM Elements (cached) =====
+
+      // --- DOM Elements ---
       const el = {
-        // Search
-        searchForm: document.getElementById('searchForm'),
-        searchInput: document.getElementById('searchInput'),        searchBtn: document.getElementById('searchBtn'),
-        
-        // Grid & Loading
+        searchInput: document.getElementById('searchInput'),
+        searchBtn: document.getElementById('searchBtn'),
         resultsGrid: document.getElementById('resultsGrid'),
         loadMoreBtn: document.getElementById('loadMoreBtn'),
         loadMoreSection: document.getElementById('loadMoreSection'),
         endMsg: document.getElementById('endMsg'),
-        
-        // Stats
         totalCount: document.getElementById('totalCount'),
-        showingCount: document.getElementById('showingCount'),
         currentPageSpan: document.getElementById('currentPageSpan'),
-        totalPagesSpan: document.getElementById('totalPagesSpan'),
         
-        // Filters
+        // Sidebar
         filterToggle: document.getElementById('filterToggle'),
         filterPanel: document.getElementById('filterPanel'),
         filterOverlay: document.getElementById('filterOverlay'),
         closeFilter: document.getElementById('closeFilter'),
+        resetFilters: document.getElementById('resetFilters'),
+        applyFilters: document.getElementById('applyFilters'),
+        
+        // Inputs
         modeSelect: document.getElementById('modeSelect'),
         verifiedSelect: document.getElementById('verifiedSelect'),
         sortSelect: document.getElementById('sortSelect'),
         orderSelect: document.getElementById('orderSelect'),
-        keyToggle: document.getElementById('keyToggle'),
-        universalToggle: document.getElementById('universalToggle'),
-        patchedToggle: document.getElementById('patchedToggle'),
-        resetFilters: document.getElementById('resetFilters'),
-        applyFilters: document.getElementById('applyFilters'),
+        switches: document.querySelectorAll('.switch'),
         
-        // Quick Load
+        // Quick Load & Toast
         quickBtn: document.getElementById('quickLoadBtn'),
         quickModal: document.getElementById('quickModal'),
         quickProgress: document.getElementById('quickProgress'),
         quickStatus: document.getElementById('quickStatus'),
-        cancelQuickLoad: document.getElementById('cancelQuickLoad'),
-        
-        // Toast
         toast: document.getElementById('toast'),
         toastMsg: document.getElementById('toastMsg'),
-        
-        // Main
-        mainContent: document.getElementById('mainContent')
+        toastIcon: document.getElementById('toastIcon')
       };
-      
-      // ===== Utilities =====
-      const sanitize = (str) => {
-        if (!str && str !== 0) return '';
-        const safe = String(str).trim();
-        return window.DOMPurify ? DOMPurify.sanitize(safe) : safe.replace(/[<>]/g, '');
-      };      
-      const formatNumber = (num) => {
-        if (num == null) return '0';
-        const n = Number(num);
-        if (isNaN(n)) return '0';
-        return n > 999999 ? (n/1000000).toFixed(1).replace(/\.0$/, '') + 'M'
-             : n > 999 ? (n/1000).toFixed(1).replace(/\.0$/, '') + 'k'
-             : n.toString();
-      };
-      
-      const formatDate = (dateStr) => {
-        try {
-          const date = new Date(dateStr);
-          if (isNaN(date.getTime())) return 'Unknown';
-          return date.toLocaleDateString(undefined, { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
-          });
-        } catch {
-          return 'Unknown';
-        }
-      };
-      
-      const debounce = (func, wait) => {
-        return function executedFunction(...args) {
-          const later = () => {
-            clearTimeout(state.debounceTimer);
-            func(...args);
-          };
-          clearTimeout(state.debounceTimer);
-          state.debounceTimer = setTimeout(later, wait);
-        };
-      };
-      
-      // ===== Toast System =====
-      function showToast(message, type = 'success') {
-        el.toastMsg.textContent = message;
-        el.toast.className = 'toast'; // reset classes
-        el.toast.classList.add(type);
+
+      // --- Utility Functions ---
+      const sanitize = (str) => typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(String(str || '')) : String(str || '').replace(/[<>]/g, '');
+      const formatNum = (n) => n > 999 ? (n/1000).toFixed(1) + 'k' : n;
+
+      function showToast(msg, isError = false) {
+        el.toastMsg.textContent = msg;
+        el.toast.classList.toggle('error', isError);
+        el.toastIcon.className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
         el.toast.classList.add('show');
-        
-        // Update icon based on type
-        const icon = el.toast.querySelector('i');
-        if (icon) {
-          icon.className = type === 'error' ? 'fas fa-circle-xmark' 
-                         : type === 'warning' ? 'fas fa-triangle-exclamation'
-                         : 'fas fa-circle-check';
-        }
-                // Auto-hide
-        setTimeout(() => {
-          el.toast.classList.remove('show');
-        }, CONFIG.TOAST_DURATION);
+        setTimeout(() => el.toast.classList.remove('show'), 3000);
       }
-      
-      // ===== Stats Updates =====
+
       function updateStats() {
-        el.totalCount.textContent = formatNumber(state.scripts.length);
-        el.showingCount.textContent = formatNumber(state.scripts.length);
-        el.currentPageSpan.textContent = state.currentPage;
-        el.totalPagesSpan.textContent = state.totalPages || 1;
-        
-        // Update aria-busy on grid
-        el.resultsGrid.setAttribute('aria-busy', state.isLoading ? 'true' : 'false');
+        el.totalCount.textContent = formatNum(state.scripts.length);
+        el.currentPageSpan.textContent = state.currentPage > 1 ? state.currentPage - 1 : 1;
       }
-      
-      // ===== Toggle Switches =====
-      function setupToggle(element, filterKey) {
-        const toggle = () => {
-          const isActive = element.classList.toggle('active');
-          element.setAttribute('aria-checked', isActive ? 'true' : 'false');
-          state.filters[filterKey] = isActive ? 'true' : '';
-        };
-        
-        element.addEventListener('click', toggle);
-        element.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggle();
-          }
-        });
-      }
-      
-      // ===== API Fetching with Fallback =====
-      async function fetchWithFallback(url, options = {}) {
-        // Abort previous request if exists
-        if (state.abortController) {
-          state.abortController.abort();
-        }
-        state.abortController = new AbortController();
-        
-        const config = {
-          ...options,
-          signal: state.abortController.signal,
-          headers: {
-            'Accept': 'application/json',
-            ...(options.headers || {})
-          }
-        };        
-        // Try direct fetch first
-        try {
-          const response = await fetch(url, config);
-          if (response.ok) {
-            return await response.json();
-          }
-        } catch (error) {
-          if (error.name === 'AbortError') throw error;
-          console.warn('Direct fetch failed, trying proxy:', error.message);
-        }
-        
-        // Fallback to proxy
-        try {
-          const proxyUrl = CONFIG.PROXY + encodeURIComponent(url);
-          const response = await fetch(proxyUrl, { 
-            ...config,
-            headers: { ...config.headers, 'X-Requested-With': 'XMLHttpRequest' }
-          });
-          
-          if (!response.ok) {
-            throw new Error(`Proxy error: ${response.status}`);
+
+      // --- API Integration ---
+      async function fetchAPI(url, retries = 1) {
+        for (let i = 0; i <= retries; i++) {
+          try {
+            // Attempt direct fetch first
+            const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+            if (res.ok) return await res.json();
+          } catch (e) {
+            // Direct failed, silently fall to proxy
           }
           
-          const data = await response.json();
-          // Handle allorigins response format
-          return data.contents ? JSON.parse(data.contents) : data;
-        } catch (error) {
-          if (error.name === 'AbortError') throw error;
-          console.error('All fetch attempts failed:', error);
-          throw new Error('Failed to fetch data. Please check your connection.');
+          try {
+            // Fallback to AllOrigins proxy
+            const proxyUrl = PROXY + encodeURIComponent(url);
+            const res = await fetch(proxyUrl);
+            if (!res.ok) throw new Error('Proxy failed');
+            const data = await res.json();
+            return data.contents ? JSON.parse(data.contents) : data;
+          } catch (err) {
+            if (i === retries) throw err;
+            await new Promise(r => setTimeout(r, 800)); // wait before retry
+          }
         }
       }
-      
-      // ===== URL Builder =====
-      function buildSearchURL(query, page) {
-        const params = new URLSearchParams();
-        const cleanQuery = (query && query.trim()) ? query.trim() : CONFIG.DEFAULT_QUERY;
+
+      function buildSearchUrl(page) {
+        const params = new URLSearchParams({ page: page, max: 20 });
+        if (state.query.trim()) params.set('q', state.query.trim());
         
-        params.set('q', cleanQuery);
-        params.set('page', page);
-        params.set('max', CONFIG.RESULTS_PER_PAGE);
-        
-        // Apply filters
         if (state.filters.mode) params.set('mode', state.filters.mode);
-        if (state.filters.verified !== '') params.set('verified', state.filters.verified);
-        if (state.filters.key) params.set('key', 'true');
-        if (state.filters.universal) params.set('universal', 'true');
-        if (state.filters.hidePatched) params.set('patched', 'false'); // Only show non-patched
-        if (state.filters.sortBy) params.set('sortBy', state.filters.sortBy);        if (state.filters.order) params.set('order', state.filters.order);
+        if (state.filters.verified) params.set('verified', state.filters.verified);
+        if (state.filters.key === 'true') params.set('key', 'true');
+        if (state.filters.universal === 'true') params.set('universal', 'true');
+        if (state.filters.hidePatched === 'true') params.set('patched', 'false'); // API logic: false hides patched
         
-        return `${CONFIG.API_BASE}/script/search?${params.toString()}`;
+        params.set('sortBy', state.filters.sortBy);
+        params.set('order', state.filters.order);
+        
+        return `${API_BASE}/script/search?${params.toString()}`;
       }
-      
-      // ===== Script Rendering =====
-      function createScriptCard(script) {
-        // Safe data extraction with fallbacks
-        const {
-          _id = '',
-          title = 'Untitled Script',
-          script: scriptCode = '',
-          views = 0,
-          likeCount = 0,
-          dislikeCount = 0,
-          verified = false,
-          key = false,
-          scriptType = 'free',
-          isUniversal = false,
-          isPatched = false,
-          createdAt = new Date().toISOString(),
-          lastBump = new Date().toISOString(),
-          game = {}
-        } = script || {};
-        
-        const gameName = game?.name || 'Universal';
-        const imageUrl = script.image || game?.imageUrl || `https://via.placeholder.com/480x270/1e2632/3a68c0?text=${encodeURIComponent(gameName)}`;
-        const safeTitle = sanitize(title);
-        const safeGame = sanitize(gameName);
-        const safeScript = sanitize(scriptCode).substring(0, CONFIG.MAX_SCRIPT_LENGTH) + 
-                          (scriptCode.length > CONFIG.MAX_SCRIPT_LENGTH ? '...' : '');
-        
-        // Build badge HTML
-        const badges = [];
-        if (verified) badges.push(`<span class="badge badge-verified"><i class="fas fa-check"></i> verified</span>`);
-        if (key) badges.push(`<span class="badge badge-key"><i class="fas fa-key"></i> key</span>`);
-        if (scriptType === 'paid') badges.push(`<span class="badge badge-paid"><i class="fas fa-star"></i> premium</span>`);
-        if (isUniversal) badges.push(`<span class="badge badge-universal"><i class="fas fa-globe"></i> universal</span>`);
-        if (isPatched) badges.push(`<span class="badge badge-patched"><i class="fas fa-wrench"></i> patched</span>`);
-        
-        // Format dates
-        const createdDate = formatDate(createdAt);
-        const bumpedDate = formatDate(lastBump);
-        
-        // Escape script for data attribute (safe copy)
-        const escapedScript = scriptCode
-          .replace(/\\/g, '\\\\')
-          .replace(/'/g, "\\'")
-          .replace(/\n/g, '\\n')
-          .replace(/\r/g, '\\r');        
-        return `
-          <article class="script-card" data-id="${sanitize(_id)}" tabindex="0">
-            <div class="card-image">
-              <img 
-                src="${sanitize(imageUrl)}" 
-                alt="${safeTitle} - ${safeGame}"
-                loading="lazy"
-                onerror="this.src='https://via.placeholder.com/480x270/1e2632/3a68c0?text=Script';this.onerror=null;"
-              >
-              <div class="img-badges">${badges.join('')}</div>
-              <div class="views-badge">
-                <i class="far fa-eye" aria-hidden="true"></i> 
-                <span class="visually-hidden">Views:</span> ${formatNumber(views)}
-              </div>
-            </div>
-            
-            <div class="card-content">
-              <h3 class="card-title">${safeTitle}</h3>
-              
-              <div class="game-line">
-                <i class="fas fa-gamepad" aria-hidden="true"></i>
-                <span>${safeGame}</span>
-              </div>
-              
-              <div class="meta-row">
-                <span><i class="far fa-calendar" aria-hidden="true"></i> ${createdDate}</span>
-                <span><i class="far fa-clock" aria-hidden="true"></i> Updated: ${bumpedDate}</span>
-              </div>
-              
-              <div class="like-dislike" aria-label="Community ratings">
-                <span class="likes">
-                  <i class="fas fa-thumbs-up" aria-hidden="true"></i>
-                  <span class="visually-hidden">Likes:</span> ${formatNumber(likeCount)}
-                </span>
-                <span class="dislikes">
-                  <i class="fas fa-thumbs-down" aria-hidden="true"></i>
-                  <span class="visually-hidden">Dislikes:</span> ${formatNumber(dislikeCount)}
-                </span>
-              </div>
-              
-              <div class="script-box">
-                <textarea 
-                  readonly 
-                  aria-label="Script code preview"
-                  title="Click copy button to copy full script"
-                >${safeScript}</textarea>
-                <button 
-                  class="copy-btn" 
-                  data-script="${escapedScript}"                  aria-label="Copy script to clipboard"
-                  title="Copy to clipboard"
-                >
-                  <i class="fas fa-copy" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-          </article>
-        `;
-      }
-      
-      function renderGrid(append = false) {
-        if (!append) {
-          el.resultsGrid.innerHTML = '';
-          el.resultsGrid.setAttribute('aria-busy', 'false');
-        }
-        
-        if (!state.scripts.length) {
-          if (!append) {
-            el.resultsGrid.innerHTML = `
-              <div class="empty-state">
-                <i class="fas fa-search" aria-hidden="true"></i>
-                <p>No scripts found. Try adjusting your search or filters.</p>
-                <button class="btn-secondary" id="clearFiltersBtn" style="margin-top:1rem">
-                  <i class="fas fa-undo" aria-hidden="true"></i> Reset filters
-                </button>
-              </div>
-            `;
-            document.getElementById('clearFiltersBtn')?.addEventListener('click', () => {
-              resetFilters();
-              loadScripts(true);
-            });
-          }
-          updateStats();
-          return;
-        }
-        
-        // Render new cards
-        const fragment = document.createDocumentFragment();
-        const tempDiv = document.createElement('div');
-        
-        state.scripts.forEach(script => {
-          tempDiv.innerHTML = createScriptCard(script);
-          fragment.appendChild(tempDiv.firstElementChild);
-        });
-        
-        if (append) {
-          el.resultsGrid.appendChild(fragment);
-        } else {
-          el.resultsGrid.innerHTML = '';          el.resultsGrid.appendChild(fragment);
-        }
-        
-        // Setup copy buttons
-        el.resultsGrid.querySelectorAll('.copy-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const script = btn.dataset.script;
-            copyToClipboard(script, btn);
-          });
-        });
-        
-        // Update stats and UI state
-        updateStats();
-        el.loadMoreSection.classList.toggle('hidden', !state.hasMore);
-        el.endMsg.classList.toggle('hidden', state.hasMore);
-        el.loadMoreBtn.disabled = state.isLoading || !state.hasMore;
-      }
-      
-      // ===== Clipboard Functionality =====
-      async function copyToClipboard(text, buttonEl) {
-        try {
-          // Decode escaped characters for actual copy
-          const cleanText = text
-            .replace(/\\n/g, '\n')
-            .replace(/\\r/g, '\r')
-            .replace(/\\'/g, "'")
-            .replace(/\\\\/g, '\\');
-            
-          await navigator.clipboard.writeText(cleanText);
-          
-          // Visual feedback
-          const originalIcon = buttonEl.innerHTML;
-          buttonEl.innerHTML = '<i class="fas fa-check"></i>';
-          buttonEl.classList.add('copied');
-          buttonEl.disabled = true;
-          
-          showToast('Script copied to clipboard!', 'success');
-          
-          // Reset after delay
-          setTimeout(() => {
-            buttonEl.innerHTML = originalIcon;
-            buttonEl.classList.remove('copied');
-            buttonEl.disabled = false;
-          }, 2000);
-        } catch (err) {
-          console.error('Copy failed:', err);
-          showToast('Failed to copy. Select text manually.', 'error');
-        }
-      }      
-      // ===== Loading States =====
-      function showSkeleton(count = 6) {
-        el.resultsGrid.setAttribute('aria-busy', 'true');
-        el.resultsGrid.innerHTML = Array(count).fill(`
-          <div class="skeleton-card" role="status" aria-label="Loading script"></div>
-        `).join('');
-      }
-      
-      // ===== Core Data Loading =====
-      async function loadScripts(reset = true) {
+
+      // --- Core Rendering ---
+      async function loadScripts(isReset = true) {
         if (state.isLoading) return;
-        if (!reset && !state.hasMore) return;
         
-        state.isLoading = true;
-        el.loadMoreBtn.disabled = true;
-        
-        if (reset) {
+        if (isReset) {
           state.scripts = [];
           state.currentPage = 1;
           state.hasMore = true;
-          showSkeleton();
+          el.resultsGrid.innerHTML = Array(8).fill('<div class="skeleton-card"></div>').join('');
+          el.loadMoreSection.classList.add('hidden');
         }
-        
-        const url = buildSearchURL(state.query, state.currentPage);
-        
+
+        if (!state.hasMore) return;
+        state.isLoading = true;
+
         try {
-          const data = await fetchWithFallback(url);
+          const url = buildSearchUrl(state.currentPage);
+          const data = await fetchAPI(url);
+          const newScripts = data?.result?.scripts || [];
           
-          // Validate response structure
-          const newScripts = Array.isArray(data?.result?.scripts) ? data.result.scripts : [];
-          const totalPages = Number(data?.result?.totalPages) || 1;
+          state.totalPages = data?.result?.totalPages || 1;
+          state.hasMore = state.currentPage < state.totalPages;
           
-          // Update state
-          if (reset) {
+          if (isReset) {
             state.scripts = newScripts;
           } else {
             state.scripts = [...state.scripts, ...newScripts];
           }
+
+          renderGrid(isReset);
           
-          state.totalPages = totalPages;
-          state.hasMore = state.currentPage < totalPages && newScripts.length === CONFIG.RESULTS_PER_PAGE;
-          
-          // Render and update
-          renderGrid(!reset);
-          
-          // User feedback
-          if (reset && newScripts.length) {
-            showToast(`Found ${formatNumber(newScripts.length)} scripts`, 'success');
-          } else if (!reset && newScripts.length) {            showToast(`Loaded ${formatNumber(newScripts.length)} more`, 'success');
-          } else if (reset && !newScripts.length) {
-            showToast('No results found', 'warning');
+          if (isReset && newScripts.length > 0) {
+            showToast(`Found ${data.result.total || newScripts.length} scripts`);
+          } else if (newScripts.length === 0 && isReset) {
+            el.resultsGrid.innerHTML = `<div class="end-message" style="grid-column: 1/-1; padding: 3rem 0; text-align: center;">No scripts found. Try adjusting your search or filters.</div>`;
           }
-          
-          // Advance page counter
+
           state.currentPage++;
-          
-        } catch (error) {
-          console.error('Load error:', error);
-          
-          if (error.name === 'AbortError') {
-            console.log('Request aborted');
-            return;
-          }
-          
-          // Fallback to demo data on error
-          if (reset) {
-            state.scripts = getFallbackScripts();
-            renderGrid(true);
-            showToast('Showing demo data (API unavailable)', 'warning');
-          } else {
-            showToast('Failed to load more scripts', 'error');
-          }
+        } catch (err) {
+          console.error("API Fetch Error:", err);
+          showToast('Failed to connect to API.', true);
+          if (isReset) el.resultsGrid.innerHTML = `<div class="end-message" style="grid-column: 1/-1; text-align: center;">API is currently unavailable.</div>`;
         } finally {
           state.isLoading = false;
-          el.loadMoreBtn.disabled = !state.hasMore;
-          updateStats();
         }
       }
-      
-      // ===== Fallback Data (Offline Mode) =====
-      function getFallbackScripts() {
-        return [
-          {
-            _id: 'demo-1',
-            title: 'Nova Hub · Universal',
-            script: 'loadstring(game:HttpGet("https://example.com/nova.lua"))()',
-            views: 24850,
-            likeCount: 892,
-            dislikeCount: 24,
-            verified: true,
-            key: false,
-            scriptType: 'free',
-            isUniversal: true,
-            isPatched: false,
-            createdAt: '2026-02-15T10:30:00Z',
-            lastBump: '2026-03-18T14:22:00Z',
-            game: { name: 'Universal', imageUrl: 'https://via.placeholder.com/480x270/2a3a5a/7da9ff?text=Universal' }
-          },          {
-            _id: 'demo-2',
-            title: 'Blox Fruits Auto Farm',
-            script: 'loadstring(game:HttpGet("https://example.com/bloxfruits.lua"))()',
-            views: 189300,
-            likeCount: 4210,
-            dislikeCount: 187,
-            verified: true,
-            key: true,
-            scriptType: 'free',
-            isUniversal: false,
-            isPatched: false,
-            createdAt: '2026-03-01T08:15:00Z',
-            lastBump: '2026-03-19T11:45:00Z',
-            game: { name: 'Blox Fruits', imageUrl: 'https://via.placeholder.com/480x270/3a2a5a/bd7dff?text=Blox+Fruits' }
-          },
-          {
-            _id: 'demo-3',
-            title: 'Adopt Me Trading Assistant',
-            script: 'loadstring(game:HttpGet("https://example.com/adoptme.lua"))()',
-            views: 76420,
-            likeCount: 1843,
-            dislikeCount: 92,
-            verified: false,
-            key: false,
-            scriptType: 'free',
-            isUniversal: false,
-            isPatched: true,
-            createdAt: '2026-01-20T16:40:00Z',
-            lastBump: '2026-03-10T09:12:00Z',
-            game: { name: 'Adopt Me!', imageUrl: 'https://via.placeholder.com/480x270/5a3a2a/ffbd7d?text=Adopt+Me' }
-          }
-        ];
-      }
-      
-      // ===== Quick Load (Multi-Page Fetch) =====
-      async function quickLoad() {
-        if (state.isQuickLoading) return;
+
+      function renderGrid(isReset) {
+        if (!state.scripts.length && isReset) return;
+
+        // Render HTML for the latest batch (or all if reset)
+        const scriptsToRender = isReset ? state.scripts : state.scripts.slice(-20);
         
-        state.isQuickLoading = true;
+        const html = scriptsToRender.map(s => {
+          const img = s.image || (s.game && s.game.imageUrl) ? (s.image || s.game.imageUrl) : 'https://via.placeholder.com/480x270/18181b/3f3f46?text=No+Image';
+          const gameName = s.game?.name || 'Universal / Unknown';
+          
+          const verified = s.verified ? `<span class="badge badge-verified"><i class="fas fa-check"></i> Verified</span>` : '';
+          const key = s.key ? `<span class="badge badge-key"><i class="fas fa-key"></i> Key</span>` : '';
+          const paid = s.scriptType === 'paid' ? `<span class="badge badge-paid">Paid</span>` : '';
+          const universal = s.isUniversal ? `<span class="badge badge-universal">Universal</span>` : '';
+          const patched = s.isPatched ? `<span class="badge badge-patched">Patched</span>` : '';
+
+          const rawScript = s.script || '';
+
+          return `
+            <article class="script-card">
+              <div class="card-image">
+                <img src="${sanitize(img)}" loading="lazy" alt="Script thumbnail" onerror="this.src='https://via.placeholder.com/480x270/18181b/3f3f46?text=Image+Failed'">
+                <div class="badges-top">${verified}${key}${paid}${universal}${patched}</div>
+                <div class="views-badge"><i class="far fa-eye"></i> ${formatNum(s.views || 0)}</div>
+              </div>
+              <div class="card-content">
+                <h3 class="card-title" title="${sanitize(s.title)}">${sanitize(s.title || 'Untitled Script')}</h3>
+                <div class="card-game"><i class="fas fa-gamepad"></i> ${sanitize(gameName)}</div>
+                
+                <div class="card-meta">
+                  <div class="meta-dates">
+                    <span title="Created"><i class="far fa-calendar"></i> ${new Date(s.createdAt).toLocaleDateString(undefined, {month:'short', day:'numeric'})}</span>
+                  </div>
+                  <div class="meta-votes">
+                    <span class="vote-up"><i class="fas fa-arrow-up"></i> ${formatNum(s.likeCount || 0)}</span>
+                    <span class="vote-down"><i class="fas fa-arrow-down"></i> ${formatNum(s.dislikeCount || 0)}</span>
+                  </div>
+                </div>
+
+                <div class="script-box">
+                  <textarea readonly spellcheck="false">${sanitize(rawScript)}</textarea>
+                  <button class="copy-btn" title="Copy Script" aria-label="Copy">
+                    <i class="far fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        if (isReset) {
+          el.resultsGrid.innerHTML = html;
+        } else {
+          el.resultsGrid.insertAdjacentHTML('beforeend', html);
+        }
+
+        updateStats();
+        el.loadMoreSection.classList.remove('hidden');
+        el.loadMoreBtn.classList.toggle('hidden', !state.hasMore);
+        el.endMsg.classList.toggle('hidden', state.hasMore);
+      }
+
+      // --- Deep Scan (Quick Load) ---
+      async function runDeepScan() {
+        if (state.isLoading) return;
+        state.isLoading = true;
+        
         el.quickModal.classList.add('active');
-        el.quickModal.setAttribute('aria-hidden', 'false');
         el.quickProgress.style.width = '0%';
-        el.quickStatus.textContent = 'Initializing...';
-        el.cancelQuickLoad.disabled = false;
         
-        const maxPages = Math.min(CONFIG.QUICK_LOAD_PAGES, state.totalPages || CONFIG.QUICK_LOAD_PAGES);
-        let allScripts = [];
-        let currentPage = 1;
-        let cancelled = false;        
-        // Cancel handler
-        const cancelHandler = () => {
-          cancelled = true;
-          if (state.abortController) state.abortController.abort();
-          el.quickStatus.textContent = 'Cancelled';
-          el.cancelQuickLoad.disabled = true;
-        };
-        
-        el.cancelQuickLoad.onclick = cancelHandler;
-        
-        try {
-          while (currentPage <= maxPages && !cancelled) {
-            el.quickStatus.textContent = `Fetching page ${currentPage} of ${maxPages}...`;
-            el.quickProgress.style.width = `${(currentPage / maxPages) * 100}%`;
-            
-            const url = buildSearchURL(state.query, currentPage);
-            const data = await fetchWithFallback(url);
-            
+        const scanPages = 5;
+        let accumulated = [];
+        state.currentPage = 1; // reset before scan
+
+        for (let p = 1; p <= scanPages; p++) {
+          el.quickStatus.textContent = `Scanning database (Page ${p} of ${scanPages})...`;
+          el.quickProgress.style.width = `${(p / scanPages) * 100}%`;
+          
+          try {
+            const data = await fetchAPI(buildSearchUrl(p));
             if (data?.result?.scripts?.length) {
-              allScripts = allScripts.concat(data.result.scripts);
+              accumulated = accumulated.concat(data.result.scripts);
+              if (p >= (data.result.totalPages || 1)) break; // stop if reached end early
             } else {
-              break; // No more results
+              break;
             }
-            
-            currentPage++;
-            // Small delay to avoid rate limiting
-            await new Promise(resolve => setTimeout(resolve, 150));
+          } catch (e) {
+            console.error("Scan error on page", p, e);
+            break;
           }
-          
-          if (!cancelled) {
-            // Update state and render
-            state.scripts = allScripts;
-            state.currentPage = 1;
-            state.hasMore = false;
-            state.totalPages = 1;
-            
-            renderGrid(false);
-            showToast(`Loaded ${formatNumber(allScripts.length)} scripts`, 'success');
-          }
-          
-        } catch (error) {
-          if (error.name !== 'AbortError') {
-            console.error('Quick load error:', error);
-            showToast('Quick load failed. Try loading manually.', 'error');
-          }
-        } finally {
-          // Cleanup
-          setTimeout(() => {
-            el.quickModal.classList.remove('active');            el.quickModal.setAttribute('aria-hidden', 'true');
-            state.isQuickLoading = false;
-            el.cancelQuickLoad.onclick = null;
-          }, cancelled ? 800 : 1200);
+          await new Promise(r => setTimeout(r, 400)); // Respect API rate limits
         }
-      }
-      
-      // ===== Filter Management =====
-      function resetFilters() {
-        // Reset state
-        state.filters = {
-          mode: '',
-          verified: '',
-          key: '',
-          universal: '',
-          hidePatched: '',
-          sortBy: 'createdAt',
-          order: 'desc'
-        };
+
+        state.scripts = accumulated;
+        state.currentPage = scanPages + 1; 
+        state.hasMore = false; // Disable pagination after deep scan to prevent order mixing
         
-        // Reset UI
+        renderGrid(true);
+        el.loadMoreBtn.classList.add('hidden');
+        el.endMsg.classList.remove('hidden');
+        
+        setTimeout(() => {
+          el.quickModal.classList.remove('active');
+          showToast(`Deep scan loaded ${accumulated.length} items`);
+          state.isLoading = false;
+        }, 500);
+      }
+
+      // --- Event Listeners ---
+      
+      // Search Execution
+      const executeSearch = () => {
+        state.query = el.searchInput.value;
+        loadScripts(true);
+      };
+      el.searchBtn.addEventListener('click', executeSearch);
+      el.searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') executeSearch();
+      });
+
+      // Pagination
+      el.loadMoreBtn.addEventListener('click', () => loadScripts(false));
+      el.quickBtn.addEventListener('click', runDeepScan);
+
+      // Event Delegation for Copy Buttons (Highly stable method)
+      el.resultsGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.copy-btn');
+        if (!btn) return;
+        
+        const textarea = btn.previousElementSibling;
+        if (textarea && textarea.tagName === 'TEXTAREA') {
+          navigator.clipboard.writeText(textarea.value)
+            .then(() => {
+              const icon = btn.querySelector('i');
+              icon.className = 'fas fa-check';
+              icon.style.color = 'var(--success)';
+              showToast('Script copied to clipboard!');
+              setTimeout(() => {
+                icon.className = 'far fa-copy';
+                icon.style.color = '';
+              }, 2000);
+            })
+            .catch(() => showToast('Failed to copy text', true));
+        }
+      });
+
+      // Sidebar UI
+      const toggleSidebar = (show) => {
+        el.filterPanel.classList.toggle('active', show);
+        el.filterOverlay.classList.toggle('active', show);
+      };
+      
+      el.filterToggle.addEventListener('click', () => toggleSidebar(true));
+      el.closeFilter.addEventListener('click', () => toggleSidebar(false));
+      el.filterOverlay.addEventListener('click', () => toggleSidebar(false));
+
+      // Filter Switches UI logic
+      el.switches.forEach(sw => {
+        sw.addEventListener('click', function() {
+          this.classList.toggle('active');
+          const filterKey = this.getAttribute('data-filter');
+          state.filters[filterKey] = this.classList.contains('active') ? 'true' : '';
+        });
+      });
+
+      // Apply & Reset Filters
+      el.applyFilters.addEventListener('click', () => {
+        state.filters.mode = el.modeSelect.value;
+        state.filters.verified = el.verifiedSelect.value;
+        state.filters.sortBy = el.sortSelect.value;
+        state.filters.order = el.orderSelect.value;
+        toggleSidebar(false);
+        loadScripts(true);
+      });
+
+      el.resetFilters.addEventListener('click', () => {
+        // Reset DOM elements
         el.modeSelect.value = '';
         el.verifiedSelect.value = '';
         el.sortSelect.value = 'createdAt';
         el.orderSelect.value = 'desc';
+        el.switches.forEach(sw => sw.classList.remove('active'));
         
-        // Reset toggles
-        [el.keyToggle, el.universalToggle, el.patchedToggle].forEach(toggle => {
-          toggle.classList.remove('active');
-          toggle.setAttribute('aria-checked', 'false');
-        });
-      }
-      
-      // ===== Event Listeners =====
-      function initEventListeners() {
-        // Search form
-        el.searchForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          state.query = el.searchInput.value;
-          loadScripts(true);
-          // Close mobile keyboard
-          el.searchInput.blur();
-        });
+        // Reset State
+        state.filters = { mode:'', verified:'', key:'', universal:'', hidePatched:'', sortBy:'createdAt', order:'desc' };
         
-        // Debounced search for real-time (optional enhancement)
-        el.searchInput.addEventListener('input', debounce((e) => {
-          // Only auto-search if query is long enough
-          if (e.target.value.length >= 3) {
-            state.query = e.target.value;
-            loadScripts(true);          }
-        }, CONFIG.DEBOUNCE_MS * 2));
-        
-        // Filter panel controls
-        el.filterToggle.addEventListener('click', () => {
-          el.filterPanel.classList.add('active');
-          el.filterOverlay.classList.add('active');
-          el.filterOverlay.setAttribute('aria-hidden', 'false');
-          // Focus first focusable element for accessibility
-          setTimeout(() => el.modeSelect?.focus(), 300);
-        });
-        
-        const closeFilterPanel = () => {
-          el.filterPanel.classList.remove('active');
-          el.filterOverlay.classList.remove('active');
-          el.filterOverlay.setAttribute('aria-hidden', 'true');
-        };
-        
-        el.closeFilter.addEventListener('click', closeFilterPanel);
-        el.filterOverlay.addEventListener('click', closeFilterPanel);
-        el.filterPanel.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') closeFilterPanel();
-        });
-        
-        // Filter selects
-        el.modeSelect.addEventListener('change', e => state.filters.mode = e.target.value);
-        el.verifiedSelect.addEventListener('change', e => state.filters.verified = e.target.value);
-        el.sortSelect.addEventListener('change', e => state.filters.sortBy = e.target.value);
-        el.orderSelect.addEventListener('change', e => state.filters.order = e.target.value);
-        
-        // Toggle switches with accessibility
-        setupToggle(el.keyToggle, 'key');
-        setupToggle(el.universalToggle, 'universal');
-        setupToggle(el.patchedToggle, 'hidePatched');
-        
-        // Filter actions
-        el.resetFilters.addEventListener('click', () => {
-          resetFilters();
-          showToast('Filters reset', 'success');
-        });
-        
-        el.applyFilters.addEventListener('click', () => {
-          loadScripts(true);
-          closeFilterPanel();
-          showToast('Filters applied', 'success');
-        });
-        
-        // Load more
-        el.loadMoreBtn.addEventListener('click', () => {
-          if (!state.isLoading && state.hasMore) {            loadScripts(false);
-          }
-        });
-        
-        // Quick load
-        el.quickBtn.addEventListener('click', quickLoad);
-        
-        // Keyboard navigation for cards
-        el.resultsGrid.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            const card = e.target.closest('.script-card');
-            if (card) {
-              e.preventDefault();
-              const copyBtn = card.querySelector('.copy-btn');
-              if (copyBtn) copyBtn.click();
-            }
-          }
-        });
-        
-        // Close modals on escape
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            if (el.filterPanel.classList.contains('active')) {
-              closeFilterPanel();
-            }
-            if (el.quickModal.classList.contains('active')) {
-              el.quickModal.classList.remove('active');
-              el.quickModal.setAttribute('aria-hidden', 'true');
-              state.isQuickLoading = false;
-            }
-          }
-        });
-        
-        // Handle window resize for responsive behavior
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-          clearTimeout(resizeTimeout);
-          resizeTimeout = setTimeout(() => {
-            // Re-render if needed for responsive adjustments
-            if (state.scripts.length) {
-              renderGrid(false);
-            }
-          }, 150);
-        });
-      }
-      
-      // ===== Initialization =====
-      function init() {
-        initEventListeners();
-        state.query = el.searchInput.value || CONFIG.DEFAULT_QUERY;
-        
+        toggleSidebar(false);
         loadScripts(true);
-        
-        setTimeout(() => {
-          showToast('YANZ Script Hub loaded', 'success');
-        }, 800);
-      }
-      
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-      } else {
-        init();
-      }
-      
-      window.addEventListener('beforeunload', () => {
-        if (state.abortController) {
-          state.abortController.abort();
-        }
       });
-      
-    })();
+
+      // --- Initialization ---
+      loadScripts(true);
+    });
   </script>
 </body>
 </html>
