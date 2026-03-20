@@ -3,1755 +3,1836 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YANZ - Search Script</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onerror="this.href='/local/font-awesome.css'">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" onerror="this.src='/local/purify.min.js'"></script>
+  <meta name="description" content="YANZ Script Hub — Discover, search, and copy verified Roblox scripts. Live API integration.">
+  <meta name="theme-color" content="#0c0f15">
+  <title>YANZ Script Hub</title>
+  
+  <!-- External Resources (CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
   <style>
-    :root {
-      --bg: #0d0d0d;
-      --card: #1e1e1e;
-      --text: #f0f0f0;
-      --accent: #4a90e2;
-      --accent-hover: #6aa0f5;
-      --danger: #e74c3c;
-      --success: #2ecc71;
-      --warning: #f39c12;
-      --discord-bg: #5865F2;
-      --discord-hover: #7289DA;
-      --border-radius: 12px;
-      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      --glow: 0 0 8px rgba(255, 255, 255, 0.5);
-      --gradient: linear-gradient(135deg, #1a1a1a, #4a90e2);
-      --transition: all 0.3s ease;
-      --font-scale: calc(1 + (var(--dpi, 1) - 1) * 0.2);
-      --icon-scale: calc(1 + (var(--dpi, 1) - 1) * 0.3);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    /* ===== CSS Reset & Base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
     body {
-      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.5;
-      font-size: calc(16px * var(--font-scale));
       min-height: 100vh;
-      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-
-    header {
-      padding: calc(1.5rem * var(--font-scale));
-      background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-      box-shadow: var(--box-shadow);
-      text-align: center;
-      width: 100%;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative;
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
     }
-
-    .logo-container {
+    :focus:not(:focus-visible) { outline: none; }
+    img { max-width: 100%; display: block; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    textarea { resize: vertical; min-height: 2.5rem; }
+    
+    /* ===== Design Tokens ===== */
+    :root {
+      /* Colors */
+      --bg-dark: #0c0f15;
+      --bg-card: #141a24;
+      --bg-surface: #1e2632;
+      --bg-hover: #28303f;
+      --bg-elevated: #232c3a;
+      
+      --text-main: #eef2f8;      --text-muted: #98a6bf;
+      --text-disabled: #6b7a94;
+      
+      --accent: #377dff;
+      --accent-hover: #2b6be2;
+      --accent-glow: rgba(55, 125, 255, 0.25);
+      --accent-soft: rgba(55, 125, 255, 0.12);
+      
+      --success: #23b26d;
+      --success-bg: rgba(35, 178, 109, 0.15);
+      --warning: #f1b44c;
+      --warning-bg: rgba(241, 180, 76, 0.15);
+      --danger: #f56b6b;
+      --danger-bg: rgba(245, 107, 107, 0.15);
+      
+      --border: rgba(255, 255, 255, 0.06);
+      --border-light: rgba(255, 255, 255, 0.12);
+      --border-focus: rgba(55, 125, 255, 0.5);
+      
+      /* Effects */
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.45);
+      --shadow-glow: 0 0 0 3px var(--accent-glow);
+      
+      --blur-sm: blur(6px);
+      --blur-md: blur(12px);
+      
+      /* Dimensions */
+      --radius-sm: 10px;
+      --radius: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      
+      --header-height: 72px;
+      --spacing-xs: 0.4rem;
+      --spacing-sm: 0.75rem;
+      --spacing: 1.25rem;
+      --spacing-lg: 2rem;
+      --spacing-xl: 3rem;
+      
+      /* Transitions */
+      --transition-fast: 120ms ease;
+      --transition: 200ms ease;
+      --transition-slow: 300ms cubic-bezier(0.2, 0.9, 0.3, 1);
+      
+      /* Z-index layers */
+      --z-sticky: 100;
+      --z-overlay: 199;
+      --z-panel: 200;      --z-modal: 400;
+      --z-toast: 300;
+    }
+    
+    /* ===== Layout ===== */
+    .header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 var(--spacing-lg);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      backdrop-filter: var(--blur-sm);
+      height: var(--header-height);
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      margin-bottom: 1rem;
-      position: relative;
-      height: calc(80px * var(--icon-scale));
+    }
+    .header-container {
+      max-width: 1440px;
       width: 100%;
-      max-width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .icon-wrapper {
-      position: absolute;
-      cursor: pointer;
-      width: calc(60px * var(--icon-scale));
-      height: calc(60px * var(--icon-scale));
-      left: 0;
-      transform: translateX(0);
-      transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      z-index: 2;
-      will-change: transform;
-    }
-
-    .icon-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      border-radius: 10px;
-      box-shadow: var(--box-shadow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .icon-wrapper:hover img {
-      transform: scale(1.1);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    }
-
-    .icon-wrapper.active {
-      transform: translateX(calc(100% - calc(60px * var(--icon-scale))));
-    }
-
-    .title-slide {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) translateX(-100%);
-      opacity: 0;
-      transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease;
-      font-size: calc(1.5rem * var(--font-scale));
-      font-weight: 700;
-      color: #ffffff;
-      text-shadow: var(--glow);
-      white-space: nowrap;
-      letter-spacing: 1px;
-      will-change: transform, opacity;
-    }
-
-    .title-slide.show {
-      transform: translate(-50%, -50%) translateX(0);
-      opacity: 1;
-    }
-
-    .title-slide.hidden {
-      transform: translate(-50%, -50%) translateX(-100%);
-      opacity: 0;
-    }
-
-    .search-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 600px;
       margin: 0 auto;
-      gap: 0.75rem;
-      background: rgba(255, 255, 255, 0.05);
-      padding: calc(0.75rem * var(--font-scale));
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-    }
-
-    .search-container:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .search-box {
-      position: relative;
       display: flex;
       align-items: center;
-      width: 100%;
-      background: #2a2a2a;
-      border-radius: var(--border-radius);
-      padding: calc(0.3rem * var(--font-scale));
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-      transition: var(--transition);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
     }
-
-    .search-box:focus-within {
-      box-shadow: 0 0 0 2px var(--accent), var(--glow);
+    
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-weight: 600;
+      font-size: 1.1rem;
+      white-space: nowrap;
+    }
+    .logo-icon {
+      background: linear-gradient(145deg, var(--accent), #5f7dff);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      color: white;
+      box-shadow: 0 6px 16px -4px rgba(31, 58, 122, 0.6);
+      flex-shrink: 0;
+    }
+    .logo-text {
+      background: linear-gradient(130deg, #ffffff, #c6d6ff);
+      -webkit-background-clip: text;      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+    
+    .search-wrapper {
+      flex: 1;
+      max-width: 560px;
+      min-width: 200px;
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: 0.25rem 0.25rem 0.25rem 1.2rem;
+      align-items: center;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .search-wrapper:focus-within {
       border-color: var(--accent);
+      box-shadow: var(--shadow-glow);
     }
-
-    input {
+    .search-wrapper input {
       flex: 1;
       background: transparent;
-      color: var(--text);
-      padding: calc(0.7rem * var(--font-scale));
       border: none;
-      font-size: calc(0.95rem * var(--font-scale));
+      padding: 0.7rem 0.5rem;
+      color: var(--text-main);
+      font-size: 0.95rem;
       outline: none;
+      min-width: 0;
     }
-
-    input::placeholder {
-      color: #888;
-      font-style: italic;
-    }
-
-    .search-btn {
-      background: var(--gradient);
-      color: #fff;
-      padding: calc(0.7rem * var(--font-scale)) calc(1.2rem * var(--font-scale));
-      border-radius: calc(var(--border-radius) - 2px);
-      font-size: calc(0.95rem * var(--font-scale));
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
+    .search-wrapper input::placeholder { color: var(--text-muted); }
+    .search-wrapper button {
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius-full);
+      padding: 0.6rem 1.6rem;
+      font-weight: 500;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--box-shadow);
+      transition: background var(--transition-fast), transform var(--transition-fast);
+      white-space: nowrap;
     }
-
-    .search-btn:hover {
-      background: var(--accent-hover);
-      transform: scale(1.05);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    .search-wrapper button:hover { background: var(--accent-hover); }
+    .search-wrapper button:active { transform: translateY(1px); }
+    
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;      margin-left: auto;
     }
-
-    .search-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .search-btn:hover::before {
-      left: 100%;
-    }
-
-    .search-btn:active {
-      transform: scale(1);
-    }
-
-    .filter-btn {
-      background: var(--gradient);
-      color: #fff;
-      padding: calc(0.6rem * var(--font-scale));
-      width: calc(2.2rem * var(--icon-scale));
-      height: calc(2.2rem * var(--icon-scale));
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      color: var(--text-muted);
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-    }
-
-    .filter-btn:hover {
-      transform: rotate(90deg);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    }
-
-    .close-panel-btn {
-      background: var(--danger);
-      padding: calc(0.5rem * var(--font-scale));
-      width: calc(2rem * var(--icon-scale));
-      height: calc(2rem * var(--icon-scale));
-      border-radius: 50%;
-      align-self: flex-end;
-      transition: var(--transition);
-    }
-
-    .close-panel-btn:hover {
-      background: #ff6655;
-      transform: scale(1.1);
-    }
-
-    .clear-cache-btn, .discord-btn, .quick-load-btn {
-      background: var(--danger);
-      color: #fff;
-      padding: calc(0.6rem * var(--font-scale));
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-weight: 600;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .discord-btn {
-      background: var(--discord-bg);
-      text-decoration: none;
-    }
-
-    .quick-load-btn {
-      background: var(--success);
-    }
-
-    .clear-cache-btn:hover {
-      background: #ff6655;
-      transform: scale(1.02);
-    }
-
-    .discord-btn:hover {
-      background: var(--discord-hover);
-      transform: scale(1.02);
-    }
-
-    .quick-load-btn:hover {
-      background: #27ae60;
-      transform: scale(1.02);
-    }
-
-    .filter-panel {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: min(calc(200px * var(--font-scale)), 80vw);
-      height: 100vh;
-      background: var(--card);
-      padding: calc(1rem * var(--font-scale));
-      box-shadow: var(--box-shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      z-index: 1000;
-      transform: translateX(100%);
-      transition: transform 0.3s ease-in-out;
-      border-left: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .filter-panel.show {
-      transform: translateX(0);
-    }
-
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .filter-group label {
-      font-size: calc(0.85rem * var(--font-scale));
-      font-weight: 600;
-      color: var(--text);
-      text-transform: uppercase;
-    }
-
-    .dropdown-container {
+      font-size: 1.1rem;
+      display: grid;
+      place-items: center;
+      transition: all var(--transition);
       position: relative;
-      width: 100%;
     }
-
-    .dropdown-toggle {
-      background: #2a2a2a;
-      color: var(--text);
-      padding: calc(0.7rem * var(--font-scale));
-      border-radius: var(--border-radius);
-      font-size: calc(0.95rem * var(--font-scale));
+    .icon-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .icon-btn:active { transform: translateY(0); }
+    .icon-btn i { pointer-events: none; }
+    
+    /* Stats Bar */
+    .stats {
+      background: var(--bg-surface);
+      padding: 0.5rem var(--spacing-lg);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      position: sticky;
+      top: var(--header-height);
+      z-index: calc(var(--z-sticky) - 1);
+      backdrop-filter: var(--blur-sm);
+    }
+    .stats-container {
+      max-width: 1440px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      transition: var(--transition);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: var(--box-shadow);
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
-
-    .dropdown-toggle:hover {
-      background: #333;
-      border-color: var(--accent);
-      box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
-    }
-
-    .dropdown-toggle::after {
-      content: '\f078';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      color: #888;
-      font-size: calc(0.85rem * var(--icon-scale));
-    }
-
-    .dropdown-menu {
-      position: absolute;
-      top: calc(100% + 0.5rem);
-      left: 0;
-      right: 0;
-      background: #2a2a2a;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      z-index: 10;
-      overflow: hidden;
-      transform: scaleY(0);
-      transform-origin: top;
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .dropdown-menu.show {
-      transform: scaleY(1);
-    }
-
-    .dropdown-item {
-      padding: calc(0.7rem * var(--font-scale));
-      font-size: calc(0.95rem * var(--font-scale));
-      color: var(--text);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .dropdown-item:hover {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .dropdown-item.selected {
-      background: var(--accent);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    #results {
+    .stats span i { margin-right: 0.35rem; color: var(--accent); width: 16px; text-align: center; }
+    
+    /* Main Content */
+    main { flex: 1; padding-bottom: var(--spacing-xl); }
+    
+    .scripts-grid {      max-width: 1440px;
+      margin: var(--spacing-lg) auto;
+      padding: 0 var(--spacing-lg);
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(calc(280px * var(--font-scale)), 1fr));
-      gap: 1.5rem;
-      padding: calc(2rem * var(--font-scale));
-      width: 100%;
-      max-width: 1200px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
     }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--border-radius);
-      overflow: visible; /* Allow image to display fully */
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-      opacity: 0;
-      transform: translateY(20px);
+    
+    /* Script Card */
+    .script-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
-
-    .card.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .script-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
     }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    .script-card:focus-within {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-glow);
     }
-
-    .card > div:first-child {
+    
+    .card-image {
+      aspect-ratio: 16/9;
+      background: var(--bg-surface);
       position: relative;
-      height: auto; /* Adapt to image height */
+      overflow: hidden;
+    }
+    .card-image img {
       width: 100%;
-      aspect-ratio: 16 / 9; /* Match ScriptBlox image ratio */
-      overflow: hidden; /* Ensure badges stay within bounds */
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-slow);
+      display: block;
     }
-
-    .card-img {
-      width: 100%;
-      height: auto; /* Allow natural height */
-      max-height: calc(270px * var(--font-scale)); /* Match ScriptBlox image height */
-      object-fit: contain; /* Show full image without cropping */
-      display: block; /* Remove inline spacing */
-      aspect-ratio: 16 / 9; /* Consistent with ScriptBlox */
-      border-radius: var(--border-radius) var(--border-radius) 0 0; /* Match card border */
-    }
-
-    .card-badge {
+    .script-card:hover .card-image img { transform: scale(1.03); }
+    
+    .img-badges {
       position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      background: var(--gradient);
-      color: white;
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
-      font-size: calc(0.8rem * var(--font-scale));
-      font-weight: 600;
-      z-index: 1; /* Ensure badges are above image */
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;      flex-wrap: wrap;
+      justify-content: flex-end;
+      z-index: 2;
     }
-
-    .card-views {
-      position: absolute;
-      top: 0.5rem;
-      left: 0.5rem;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
-      font-size: calc(0.8rem * var(--font-scale));
+    .badge {
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
       font-weight: 600;
-      z-index: 1;
+      background: rgba(20, 26, 36, 0.85);
+      backdrop-filter: var(--blur-sm);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      white-space: nowrap;
+    }
+    .badge i { font-size: 0.65rem; }
+    .badge-verified { background: var(--success); color: white; border: none; }
+    .badge-key { background: var(--warning); color: #1a1a1a; border: none; }
+    .badge-paid { background: var(--danger); color: white; border: none; }
+    .badge-universal { background: var(--accent); color: white; border: none; }
+    .badge-patched { background: var(--text-disabled); color: white; border: none; }
+    
+    .views-badge {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(20, 26, 36, 0.85);
+      backdrop-filter: var(--blur-sm);
+      padding: 0.25rem 0.8rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      z-index: 2;
+    }
+    
+    .card-content {
+      padding: var(--spacing);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      flex: 1;
+    }
+    
+    .card-title {
+      font-weight: 600;
+      font-size: 1.05rem;      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .game-line {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .game-line i { color: var(--accent); width: 18px; text-align: center; flex-shrink: 0; }
+    
+    .meta-row {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .meta-row i { margin-right: 0.3rem; width: 14px; text-align: center; }
+    
+    .like-dislike {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      padding-top: 0.7rem;
+      margin-top: auto;
+    }
+    .like-dislike span {
       display: flex;
       align-items: center;
       gap: 0.3rem;
     }
-
-    .card-content {
-      padding: calc(1.2rem * var(--font-scale));
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .card-title {
-      font-size: calc(1.1rem * var(--font-scale));
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .card-meta, .card-game, .card-status, .card-likes {
-      font-size: calc(0.85rem * var(--font-scale));
-      color: #bbb;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .card-meta i, .card-game i, .card-status i {
-      font-size: calc(0.95rem * var(--icon-scale));
-    }
-
-    .card-game i { color: var(--warning); }
-    .verified { color: var(--success); }
-    .key-required { color: var(--warning); }
-    .universal { color: var(--accent); }
-    .patched { color: var(--danger); }
-    .card-likes i.fa-thumbs-up { color: var(--success); }
-    .card-likes i.fa-thumbs-down { color: var(--danger); }
-
-    .script-display-container {
+    .like-dislike .likes i { color: var(--success); }
+    .like-dislike .dislikes i { color: var(--danger); }
+    
+    .script-box {
       position: relative;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      margin-top: 0.3rem;
+      border: 1px solid var(--border);
     }
-
-    .script-display {
-      width: 100%;
-      background: #2a2a2a;
-      color: #fff;
-      padding: calc(0.8rem * var(--font-scale));
-      font-family: 'Courier New', monospace;
-      font-size: calc(0.85rem * var(--font-scale));
-      border-radius: var(--border-radius);
+    .script-box textarea {
+      width: 100%;      background: transparent;
+      border: none;
+      padding: 0.8rem 2.8rem 0.8rem 0.9rem;
+      color: #cbd5e8;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      overflow-y: auto;
+      min-height: 2.8rem;
+      max-height: 6rem;
       resize: none;
-      min-height: calc(70px * var(--font-scale));
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: text;
     }
-
-    .script-copy-btn {
+    .script-box textarea::-webkit-scrollbar { width: 6px; }
+    .script-box textarea::-webkit-scrollbar-track { background: transparent; }
+    .script-box textarea::-webkit-scrollbar-thumb {
+      background: var(--border-light);
+      border-radius: 3px;
+    }
+    .copy-btn {
       position: absolute;
-      top: calc(0.6rem * var(--font-scale));
-      right: calc(0.6rem * var(--font-scale));
+      bottom: 6px;
+      right: 6px;
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      display: grid;
+      place-items: center;
+      transition: all var(--transition-fast);
+      font-size: 0.85rem;
+    }
+    .copy-btn:hover {
       background: var(--accent);
-      padding: calc(0.4rem * var(--font-scale));
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 1;
-      transition: var(--transition);
+      color: white;
+      border-color: var(--accent);
     }
-
-    .script-copy-btn:hover {
-      background: var(--accent-hover);
-      transform: scale(1.1);
-    }
-
-    #loading {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--gradient);
-      padding: calc(0.8rem * var(--font-scale));
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      gap: 0.5rem;
-      color: #fff;
-      font-size: calc(0.95rem * var(--font-scale));
-    }
-
-    .spinner {
-      width: calc(1.2rem * var(--icon-scale));
-      height: calc(1.2rem * var(--icon-scale));
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .empty-state, .error-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: calc(2.5rem * var(--font-scale));
-      color: #888;
-    }
-
-    .error-state {
-      color: var(--danger);
-      background: rgba(231, 76, 60, 0.1);
-      border-radius: var(--border-radius);
-    }
-
-    .empty-state i, .error-state i {
-      font-size: calc(2.5rem * var(--icon-scale));
-      margin-bottom: 0.75rem;
-    }
-
-    .suggestion-btn, .retry-btn {
-      background: var(--gradient);
-      color: #fff;
-      padding: calc(0.6rem * var(--font-scale)) calc(1.2rem * var(--font-scale));
-      border-radius: var(--border-radius);
-      font-size: calc(0.85rem * var(--font-scale));
-      font-weight: 600;
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-    }
-
-    .suggestion-btn:hover, .retry-btn:hover {
-      background: var(--accent-hover);
-      transform: scale(1.05);
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%);
+    .copy-btn.copied {
       background: var(--success);
       color: white;
-      padding: calc(0.6rem * var(--font-scale)) calc(1.2rem * var(--font-scale));
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      z-index: 1000;
-      opacity: 0;
-      transition: var(--transition);
+      border-color: var(--success);
     }
-
-    .toast.show {
-      opacity: 1;
-      bottom: 2.5rem;
-    }
-
-    .toast.danger { background: var(--danger); }
-    .toast.warning { background: var(--warning); }
-
+    
+    /* Skeleton Loading */
     .skeleton-card {
-      background: var(--card);
-      border-radius: var(--border-radius);
-      height: calc(300px * var(--font-scale));
-      animation: pulse 1.5s infinite;
+      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-hover) 50%, var(--bg-card) 75%);
+      background-size: 200% 100%;
+      animation: pulse 1.4s infinite ease-in-out;      border-radius: var(--radius);
+      height: 360px;
+      border: 1px solid var(--border);
     }
-
     @keyframes pulse {
-      0% { background-color: rgba(255, 255, 255, 0.05); }
-      50% { background-color: rgba(255, 255, 255, 0.1); }
-      100% { background-color: rgba(255, 255, 255, 0.05); }
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
-
-    .load-more-container {
-      grid-column: 1 / -1;
-      display: flex;
-      justify-content: center;
-      margin-top: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .load-more-btn {
-      background: var(--gradient);
-      color: #fff;
-      padding: calc(0.8rem * var(--font-scale)) calc(1.5rem * var(--font-scale));
-      border-radius: var(--border-radius);
-      font-size: calc(0.95rem * var(--font-scale));
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      border: none;
-      box-shadow: var(--box-shadow);
-    }
-
-    .load-more-btn:hover {
-      background: var(--accent-hover);
-      transform: scale(1.05);
-    }
-
-    .load-more-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: scale(1);
-    }
-
-    .end-message {
+    
+    /* Load More Section */
+    .load-more {
       grid-column: 1 / -1;
       text-align: center;
-      padding: calc(1.5rem * var(--font-scale));
-      color: var(--danger);
-      background: rgba(231, 76, 60, 0.1);
-      border-radius: var(--border-radius);
-      margin-top: 1rem;
+      margin: var(--spacing) 0 var(--spacing-xl);
+      padding: 0 var(--spacing-lg);
     }
-
-    .auto-load-toggle {
-      display: flex;
+    .load-more-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.85rem 2.4rem;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      margin-top: 1rem;
-      padding: calc(0.5rem * var(--font-scale));
-      background: #2a2a2a;
-      border-radius: var(--border-radius);
+      gap: 0.6rem;
+      transition: all var(--transition);
     }
-
-    .toggle-label {
-      font-size: calc(0.85rem * var(--font-scale));
-      font-weight: 600;
+    .load-more-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent);
+      transform: translateY(-1px);
     }
-
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 50px;
-      height: 24px;
+    .load-more-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
-
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
+    .end-message {
+      color: var(--text-muted);
+      text-align: center;
+      padding: var(--spacing-lg);
+      font-size: 0.95rem;
     }
-
-    .toggle-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: var(--danger);
-      transition: .4s;
-      border-radius: 24px;
-    }
-
-    .toggle-slider:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-
-    input:checked + .toggle-slider {
-      background-color: var(--success);
-    }
-
-    input:checked + .toggle-slider:before {
-      transform: translateX(26px);
-    }
-
-    /* Fullscreen Loader */
-    .fullscreen-loader {
+    .hidden { display: none !important; }
+    
+    /* Filter Panel */
+    .filter-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
+      inset: 0;      background: rgba(8, 11, 16, 0.82);
+      backdrop-filter: var(--blur-md);
+      z-index: var(--z-overlay);
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
+      transition: opacity var(--transition), visibility var(--transition);
     }
-
-    .fullscreen-loader.active {
-      opacity: 1;
-      visibility: visible;
+    .filter-overlay.active { opacity: 1; visibility: visible; }
+    
+    .filter-panel {
+      position: fixed;
+      top: 0;
+      right: -380px;
+      width: 340px;
+      max-width: 90vw;
+      height: 100vh;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border);
+      padding: var(--spacing-lg);
+      z-index: var(--z-panel);
+      transition: right var(--transition-slow);
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
     }
-
-    .loader-content {
-      text-align: center;
-      color: var(--text);
-      max-width: 500px;
-      padding: 2rem;
+    .filter-panel.active { right: 0; }
+    
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing);
+      border-bottom: 1px solid var(--border);
     }
-
-    .loader-title {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-      color: var(--accent);
-      font-weight: 700;
+    .filter-header h3 { font-weight: 600; font-size: 1.2rem; }
+    .close-panel {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.6rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: all var(--transition-fast);
     }
-
-    .loader-text {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-      line-height: 1.6;
+    .close-panel:hover {      background: var(--bg-hover);
+      color: var(--text-main);
     }
-
-    .loader-progress {
+    
+    .filter-group { margin-bottom: var(--spacing-lg); }
+    .filter-label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+    }
+    .filter-select {
       width: 100%;
-      height: 6px;
-      background: #2a2a2a;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      appearance: none;
+      background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2398a6bf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.8rem center;
+      background-size: 14px;
+      padding-right: 2.2rem;
+      transition: border-color var(--transition);
     }
-
-    .loader-progress-bar {
-      height: 100%;
-      background: var(--gradient);
-      border-radius: 3px;
-      width: 0%;
-      transition: width 0.5s ease;
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: var(--shadow-glow);
     }
-
-    .loader-status {
-      font-size: 0.9rem;
-      color: #bbb;
+    
+    .toggle-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.5rem;
+      border: 1px solid transparent;
+      transition: border-color var(--transition-fast);
     }
-
-    .loader-icon {
+    .toggle-item:hover { border-color: var(--border-light); }
+    .toggle-label { font-size: 0.92rem; }
+        .toggle-switch {
+      width: 42px;
+      height: 24px;
+      background: #3a4055;
+      border-radius: 40px;
+      position: relative;
+      cursor: pointer;
+      transition: background var(--transition-fast);
+      flex-shrink: 0;
+    }
+    .toggle-switch.active { background: var(--accent); }
+    .toggle-switch::after {
+      content: '';
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: left var(--transition-fast);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-switch.active::after { left: 21px; }
+    .toggle-switch:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    
+    .filter-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: auto;
+      padding-top: var(--spacing);
+      border-top: 1px solid var(--border);
+    }
+    .filter-actions button {
+      flex: 1;
+      padding: 0.8rem;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary {
+      background: var(--bg-card);      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-light);
+    }
+    
+    .filter-footer {
+      font-size: 0.75rem;
+      color: var(--text-disabled);
+      margin-top: var(--spacing);
+      text-align: center;
+      padding-top: var(--spacing);
+      border-top: 1px dashed var(--border);
+    }
+    
+    /* Quick Load Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 11, 16, 0.88);
+      backdrop-filter: var(--blur-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: var(--z-modal);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition), visibility var(--transition);
+      padding: var(--spacing-lg);
+    }
+    .modal.active { opacity: 1; visibility: visible; }
+    
+    .modal-content {
+      background: var(--bg-surface);
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-lg);
+      animation: modalSlide 0.25s ease-out;
+    }
+    @keyframes modalSlide {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+        .modal-icon {
       font-size: 3rem;
-      margin-bottom: 1.5rem;
       color: var(--accent);
-      animation: pulse-icon 2s infinite;
+      margin-bottom: 1rem;
+      display: block;
     }
-
-    @keyframes pulse-icon {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
+    .modal h3 {
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
     }
-
+    .modal p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background: #2a3240;
+      border-radius: 10px;
+      margin: 1.2rem 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #5f7dff);
+      transition: width 0.25s ease;
+      border-radius: 10px;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .modal-btn {
+      padding: 0.7rem 1.8rem;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+    .modal-cancel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }    .modal-cancel:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-light);
+    }
+    
+    /* Toast Notifications */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--bg-surface);
+      border-left: 4px solid var(--success);
+      padding: 0.85rem 1.8rem;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      z-index: var(--z-toast);
+      opacity: 0;
+      transition: transform var(--transition-slow), opacity var(--transition);
+      max-width: 90vw;
+      text-align: left;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast.error {
+      border-left-color: var(--danger);
+      background: var(--bg-elevated);
+    }
+    .toast.warning {
+      border-left-color: var(--warning);
+      background: var(--bg-elevated);
+    }
+    .toast i { font-size: 1.1rem; flex-shrink: 0; }
+    .toast-message { font-size: 0.92rem; line-height: 1.4; }
+    
+    /* Empty State */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: var(--spacing-xl) var(--spacing-lg);
+      color: var(--text-muted);
+    }
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--text-disabled);      margin-bottom: var(--spacing);
+      display: block;
+    }
+    .empty-state p {
+      max-width: 400px;
+      margin: 0 auto var(--spacing);
+      line-height: 1.5;
+    }
+    
+    /* Responsive */
     @media (max-width: 768px) {
-      :root {
-        --font-scale: calc(0.85 + (var(--dpi, 1) - 1) * 0.15);
-        --icon-scale: calc(0.9 + (var(--dpi, 1) - 1) * 0.25);
+      .header { padding: 0 var(--spacing); }
+      .header-container { gap: var(--spacing); }
+      .search-wrapper { max-width: 100%; min-width: 0; }
+      .header-actions { margin-left: 0; }
+      
+      .stats { padding: 0.5rem var(--spacing); top: var(--header-height); }
+      .scripts-grid { 
+        grid-template-columns: 1fr; 
+        margin: var(--spacing) auto;
+        padding: 0 var(--spacing);
       }
-
-      header { padding: calc(1rem * var(--font-scale)); }
-      .search-container {
-        padding: calc(0.5rem * var(--font-scale));
-      }
-      .search-box {
-        padding: calc(0.2rem * var(--font-scale));
-      }
-      input {
-        padding: calc(0.5rem * var(--font-scale));
-        font-size: calc(0.85rem * var(--font-scale));
-      }
-      .search-btn {
-        padding: calc(0.5rem * var(--font-scale)) calc(1rem * var(--font-scale));
-        font-size: calc(0.85rem * var(--font-scale));
-      }
-      .filter-btn {
-        margin-top: calc(0.5rem * var(--font-scale));
-        width: calc(2rem * var(--icon-scale));
-        height: calc(2rem * var(--icon-scale));
-      }
-      .close-panel-btn {
-        padding: calc(0.4rem * var(--font-scale));
-        width: calc(1.8rem * var(--icon-scale));
-        height: calc(1.8rem * var(--icon-scale));
-      }
-      .clear-cache-btn, .discord-btn, .quick-load-btn {
-        padding: calc(0.5rem * var(--font-scale));
-        font-size: calc(0.85rem * var(--font-scale));
-      }
-      .filter-panel {
-        width: min(calc(160px * var(--font-scale)), 80vw);
-        padding: calc(0.75rem * var(--font-scale));
-      }
-      .dropdown-toggle {
-        padding: calc(0.5rem * var(--font-scale));
-        font-size: calc(0.85rem * var(--font-scale));
-      }
-      .dropdown-item {
-        padding: calc(0.5rem * var(--font-scale));
-        font-size: calc(0.85rem * var(--font-scale));
-      }
-      #results {
-        grid-template-columns: 1fr;
-        padding: calc(1.5rem * var(--font-scale));
-      }
-      .card-img {
-        max-height: calc(200px * var(--font-scale));
-      }
-      .skeleton-card { height: calc(280px * var(--font-scale)); }
-      #loading {
-        padding: calc(0.6rem * var(--font-scale));
-        font-size: calc(0.85rem * var(--font-scale));
-      }
-      .logo-container {
-        height: calc(70px * var(--icon-scale));
-      }
-      .icon-wrapper {
-        width: calc(50px * var(--icon-scale));
-        height: calc(50px * var(--icon-scale));
-        left: 0;
-        transform: translateX(0);
-      }
-      .icon-wrapper.active {
-        transform: translateX(calc(100% - calc(50px * var(--icon-scale))));
-      }
-      .title-slide {
-        font-size: calc(1.2rem * var(--font-scale));
-      }
+      .load-more { padding: 0 var(--spacing); }
+      
+      .filter-panel { width: 100%; max-width: 100vw; right: -100%; }
+      .filter-panel.active { right: 0; }
+      
+      .modal { padding: var(--spacing); }
+      .modal-content { padding: 1.75rem; }
     }
-
+    
     @media (max-width: 480px) {
-      :root {
-        --font-scale: calc(0.8 + (var(--dpi, 1) - 1) * 0.1);
-        --icon-scale: calc(0.85 + (var(--dpi, 1) - 1) * 0.2);
-      }
-
-      .search-btn { padding: calc(0.4rem * var(--font-scale)) calc(0.8rem * var(--font-scale)); }
-      .filter-panel { width: min(calc(140px * var(--font-scale)), 80vw); }
-      .card-img { max-height: calc(150px * var(--font-scale)); } /* Adjusted for mobile */
-      .skeleton-card { height: calc(260px * var(--font-scale)); }
-      #loading {
-        padding: calc(0.5rem * var(--font-scale));
-        font-size: calc(0.75rem * var(--font-scale));
-      }
-      .logo-container {
-        height: calc(60px * var(--icon-scale));
-      }
-      .icon-wrapper {
-        width: calc(40px * var(--icon-scale));
-        height: calc(40px * var(--icon-scale));
-        left: 0;
-        transform: translateX(0);
-      }
-      .icon-wrapper.active {
-        transform: translateX(calc(100% - calc(40px * var(--icon-scale))));
-      }
-      .title-slide {
-        font-size: calc(1rem * var(--font-scale));
-      }
+      .logo-text { display: none; }
+      .search-wrapper button span { display: none; }
+      .search-wrapper button { padding: 0.6rem 1.2rem; }
+      .stats-container { justify-content: center; text-align: center; }
+      .meta-row { flex-direction: column; gap: 0.3rem; }
+      .like-dislike { gap: 0.8rem; }
     }
-
-    @media (min-width: 769px) {
-      .search-container {
-        flex-direction: row;
-        align-items: center;
+    
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
-      .filter-btn {
-        margin-right: calc(0.5rem * var(--font-scale));
-        margin-top: 0;
-      }
-      .search-box {
-        flex: 1;
-      }
+      html { scroll-behavior: auto; }
     }
-
-    @media (min-width: 1200px) {
-      #results {
-        grid-template-columns: repeat(auto-fill, minmax(calc(300px * var(--font-scale)), 1fr));
+        /* Print Styles */
+    @media print {
+      .header, .stats, .filter-overlay, .filter-panel, .modal, .toast, .load-more {
+        display: none !important;
+      }
+      .scripts-grid { 
+        grid-template-columns: 1fr !important; 
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .script-card { 
+        break-inside: avoid; 
+        border: 1px solid #333 !important;
+        box-shadow: none !important;
+      }
+      .script-box textarea { 
+        max-height: none !important; 
+        height: auto !important;
       }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo-container">
-      <div class="icon-wrapper" id="iconWrapper">
-        <img src="https://i.postimg.cc/g0zJXrYK/a7f768b4dc4e12857e1e56f350cd2818.jpg" alt="Icon" onerror="this.src='/images/fallback.webp'">
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-icon" aria-hidden="true">
+          <i class="fa-solid fa-scroll"></i>
+        </div>
+        <span class="logo-text">YANZ Hub Scriptsx</span>
       </div>
-      <div class="title-slide hidden" id="titleSlide">YANZ - Search Script</div>
-    </div>
-    <div class="search-container">
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search scripts..." aria-label="Search scripts">
-        <button class="search-btn" id="searchButton" aria-label="Search">
-          <i class="fas fa-search"></i> Search
+      
+      <form class="search-wrapper" role="search" id="searchForm">
+        <label for="searchInput" class="visually-hidden">Search scripts</label>
+        <input 
+          type="search" 
+          id="searchInput" 
+          name="q" 
+          placeholder="search scripts (Blox Fruits, Adopt Me...)" 
+          value="free" 
+          autocomplete="off"
+          aria-label="Search scripts"
+        >
+        <button type="submit" id="searchBtn" aria-label="Search">
+          <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+          <span>Search</span>
+        </button>
+      </form>
+            <div class="header-actions">
+        <button class="icon-btn" id="filterToggle" aria-label="Open filters" title="Filters">
+          <i class="fas fa-sliders" aria-hidden="true"></i>
+        </button>
+        <button class="icon-btn" id="quickLoadBtn" aria-label="Quick load multiple pages" title="Quick load">
+          <i class="fas fa-bolt" aria-hidden="true"></i>
         </button>
       </div>
-      <button class="filter-btn" id="filterButton" aria-label="Toggle filters">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-    <div class="filter-panel" id="filterPanel" tabindex="-1">
-      <button class="close-panel-btn" id="closePanelButton" aria-label="Close filter panel">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="filter-group">
-        <label for="scriptTypeFilter">Script Type</label>
-        <div class="dropdown-container" id="scriptTypeFilter">
-          <div class="dropdown-toggle" tabindex="0" aria-expanded="false">All</div>
-          <div class="dropdown-menu">
-            <div class="dropdown-item" data-value="all">All</div>
-            <div class="dropdown-item" data-value="free">Free</div>
-            <div class="dropdown-item" data-value="premium">Paid</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="auto-load-toggle">
-        <span class="toggle-label">Auto Load</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="autoLoadToggle">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      
-      <button class="quick-load-btn" id="quickLoadButton">
-        <i class="fas fa-bolt"></i> Quickly load all scripts
-      </button>
-      
-      <button class="clear-cache-btn" id="clearCacheButton">
-        <i class="fas fa-trash"></i> Clear Cache
-      </button>
-      
-      <a href="https://discord.com/invite/mNGeUVcjKB" class="discord-btn" aria-label="Join our Discord">
-        <i class="fab fa-discord"></i> Discord
-      </a>
     </div>
   </header>
 
-  <div id="loading">
-    <div class="spinner"></div>
-    <span id="loadingMessage">Loading scripts...</span>
-  </div>
-
-  <div id="results"></div>
-  
-  <div class="load-more-container" id="loadMoreContainer" style="display: none;">
-    <button class="load-more-btn" id="loadMoreButton">Load More</button>
-  </div>
-  
-  <div class="toast" id="toast" aria-live="polite"></div>
-
-  <!-- Fullscreen Loader -->
-  <div class="fullscreen-loader" id="fullscreenLoader">
-    <div class="loader-content">
-      <div class="loader-icon">
-        <i class="fas fa-code"></i>
-      </div>
-      <h2 class="loader-title">Loading All Scripts</h2>
-      <p class="loader-text">Please wait while we load all available scripts. This may take a moment...</p>
-      <div class="loader-progress">
-        <div class="loader-progress-bar" id="loaderProgressBar"></div>
-      </div>
-      <div class="loader-status" id="loaderStatus">Initializing...</div>
+  <!-- Stats Bar -->
+  <div class="stats" role="status" aria-live="polite">
+    <div class="stats-container">
+      <div><i class="fas fa-database" aria-hidden="true"></i> total: <span id="totalCount">0</span></div>
+      <div><i class="fas fa-file-code" aria-hidden="true"></i> showing: <span id="showingCount">0</span></div>
+      <div><i class="fas fa-layer-group" aria-hidden="true"></i> page <span id="currentPageSpan">1</span> of <span id="totalPagesSpan">1</span></div>
     </div>
   </div>
 
+  <!-- Main Content -->
+  <main id="mainContent" role="main">
+    <div class="scripts-grid" id="resultsGrid" aria-live="polite" aria-busy="false">
+      <!-- Scripts will be injected here -->
+    </div>
+    
+    <div class="load-more" id="loadMoreSection">
+      <button class="load-more-btn" id="loadMoreBtn" aria-label="Load more scripts">
+        <i class="fas fa-chevron-down" aria-hidden="true"></i> 
+        <span>Load more</span>
+      </button>
+      <div class="end-message hidden" id="endMsg" role="status">
+        <i class="fas fa-check-circle" aria-hidden="true" style="margin-right:0.4rem;color:var(--success)"></i>
+        All scripts loaded
+      </div>
+    </div>
+  </main>
+
+  <!-- Filter Panel -->
+  <div class="filter-overlay" id="filterOverlay" aria-hidden="true"></div>
+  <aside class="filter-panel" id="filterPanel" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
+    <div class="filter-header">
+      <h3 id="filterTitle">Filters & Sorting</h3>
+      <button class="close-panel" id="closeFilter" aria-label="Close filters">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label" for="modeSelect">Script Type</label>      <select class="filter-select" id="modeSelect" aria-label="Filter by script type">
+        <option value="">All types</option>
+        <option value="free">Free only</option>
+        <option value="paid">Premium only</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label" for="verifiedSelect">Verification</label>
+      <select class="filter-select" id="verifiedSelect" aria-label="Filter by verification status">
+        <option value="">Any status</option>
+        <option value="1">Verified only</option>
+        <option value="0">Unverified only</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label" for="sortSelect">Sort By</label>
+      <select class="filter-select" id="sortSelect" aria-label="Sort results">
+        <option value="createdAt">Newest first</option>
+        <option value="views">Most viewed</option>
+        <option value="likeCount">Most liked</option>
+        <option value="lastBump">Recently updated</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label" for="orderSelect">Order</label>
+      <select class="filter-select" id="orderSelect" aria-label="Sort order">
+        <option value="desc">Descending</option>
+        <option value="asc">Ascending</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Quick Filters</label>
+      
+      <div class="toggle-item">
+        <span class="toggle-label">Requires key</span>
+        <div class="toggle-switch" id="keyToggle" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      
+      <div class="toggle-item">
+        <span class="toggle-label">Universal scripts</span>
+        <div class="toggle-switch" id="universalToggle" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      
+      <div class="toggle-item">
+        <span class="toggle-label">Hide patched</span>
+        <div class="toggle-switch" id="patchedToggle" role="switch" aria-checked="false" tabindex="0"></div>      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-secondary" id="resetFilters" type="button">Reset</button>
+      <button class="btn-primary" id="applyFilters" type="button">Apply</button>
+    </div>
+    
+    <div class="filter-footer">
+      <i class="fas fa-bolt" aria-hidden="true" style="color:var(--warning);margin-right:0.3rem"></i>
+      Live ScriptBlox API · March 2026
+    </div>
+  </aside>
+
+  <!-- Quick Load Modal -->
+  <div class="modal" id="quickModal" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle" aria-hidden="true">
+    <div class="modal-content">
+      <i class="fas fa-bolt modal-icon" aria-hidden="true"></i>
+      <h3 id="quickModalTitle">Quick Loading Scripts</h3>
+      <p id="quickStatus">Fetching pages...</p>
+      
+      <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-fill" id="quickProgress"></div>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="modal-btn modal-cancel" id="cancelQuickLoad">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="status" aria-live="assertive" aria-atomic="true">
+    <i class="fas fa-circle-check" aria-hidden="true"></i>
+    <span class="toast-message" id="toastMsg">Action completed</span>
+  </div>
+
+  <!-- Visually Hidden Utility -->
+  <style>
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }  </style>
+
   <script>
-    document.documentElement.style.setProperty('--dpi', window.devicePixelRatio || 1);
-
-    const CONFIG = {
-      API_URL: "https://scriptblox.com/api/script/search",
-      CACHE_DURATION: 1000 * 60 * 60,
-      CACHE_VERSION: "v2",
-      CORS_PROXY: "https://api.allorigins.win/get?url=",
-      SUGGESTED_QUERIES: ["Blox Fruits", "Adopt Me", "Murder Mystery 2", "Pet Simulator X"],
-      TITLE_TIMEOUT: 3000,
-      ITEMS_PER_PAGE: 20,
-      MAX_RETRIES: 3,
-      RETRY_DELAY: 1000,
-      FALLBACK_IMAGE: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrvP9g6B0TIxSke0IGLEGRfY7HfzkCxwpNdamQdikRRA&s=10",
-      MAX_PAGES_TO_LOAD: 10 // Safety limit for quick load
-    };
-
-    const state = {
-      scripts: [],
-      currentQuery: "free", // Default to "free" for initial load
-      currentPage: 1,
-      isLoading: false,
-      lastError: null,
-      filters: { scriptType: "all" },
-      isFilterPanelVisible: false,
-      isTitleVisible: false,
-      titleTimeout: null,
-      observer: null,
-      hasMore: true,
-      abortController: null,
-      autoLoadEnabled: false,
-      isQuickLoading: false,
-      quickLoadPages: 0
-    };
-
-    const elements = {
-      searchInput: document.getElementById("searchInput"),
-      searchButton: document.getElementById("searchButton"),
-      filterButton: document.getElementById("filterButton"),
-      closePanelButton: document.getElementById("closePanelButton"),
-      clearCacheButton: document.getElementById("clearCacheButton"),
-      filterPanel: document.getElementById("filterPanel"),
-      scriptTypeFilter: document.getElementById("scriptTypeFilter"),
-      results: document.getElementById("results"),
-      loading: document.getElementById("loading"),
-      loadingMessage: document.getElementById("loadingMessage"),
-      toast: document.getElementById("toast"),
-      iconWrapper: document.getElementById("iconWrapper"),
-      titleSlide: document.getElementById("titleSlide"),
-      logoContainer: document.querySelector(".logo-container"),
-      loadMoreButton: document.getElementById("loadMoreButton"),
-      loadMoreContainer: document.getElementById("loadMoreContainer"),
-      autoLoadToggle: document.getElementById("autoLoadToggle"),
-      quickLoadButton: document.getElementById("quickLoadButton"),
-      fullscreenLoader: document.getElementById("fullscreenLoader"),
-      loaderProgressBar: document.getElementById("loaderProgressBar"),
-      loaderStatus: document.getElementById("loaderStatus")
-    };
-
-    const init = () => {
-      setupEventListeners();
-      setupDropdown();
-      setupIntersectionObserver();
-      setupInfiniteScroll();
-      setupImageErrorHandling();
-      setupIconAnimation();
+    /**
+     * YANZ Script Hub - Production Script
+     * Official release with bug fixes, accessibility, and robust API handling
+     * March 2026
+     */
+    (function() {
+      'use strict';
       
-      // Load free scripts automatically on page load
-      setTimeout(() => {
-        fetchResults(true);
-      }, 500);
-    };
-
-    const resetTitleAndIcon = () => {
-      state.isTitleVisible = false;
-      elements.iconWrapper.classList.remove('active');
-      elements.titleSlide.classList.remove('show');
-      elements.titleSlide.classList.add('hidden');
-      elements.iconWrapper.style.transform = '';
-      clearTimeout(state.titleTimeout);
-    };
-
-    const setupIconAnimation = () => {
-      elements.iconWrapper.addEventListener('click', () => {
-        clearTimeout(state.titleTimeout);
-        state.isTitleVisible = !state.isTitleVisible;
-        elements.iconWrapper.classList.toggle('active', state.isTitleVisible);
-        elements.titleSlide.classList.toggle('show', state.isTitleVisible);
-        elements.titleSlide.classList.toggle('hidden', !state.isTitleVisible);
-        elements.iconWrapper.style.transform = '';
-        if (state.isTitleVisible) {
-          state.titleTimeout = setTimeout(resetTitleAndIcon, CONFIG.TITLE_TIMEOUT);
-        }
-      });
-
-      elements.iconWrapper.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        clearTimeout(state.titleTimeout);
-        state.isTitleVisible = !state.isTitleVisible;
-        elements.iconWrapper.classList.toggle('active', state.isTitleVisible);
-        elements.titleSlide.classList.toggle('show', state.isTitleVisible);
-        elements.titleSlide.classList.toggle('hidden', !state.isTitleVisible);
-        elements.iconWrapper.style.transform = '';
-        if (state.isTitleVisible) {
-          state.titleTimeout = setTimeout(resetTitleAndIcon, CONFIG.TITLE_TIMEOUT);
-        }
-      });
-    };
-
-    const setupImageErrorHandling = () => {
-      document.addEventListener('error', (e) => {
-        if (e.target.tagName === 'IMG' && e.target.classList.contains('card-img')) {
-          e.target.src = CONFIG.FALLBACK_IMAGE;
-          e.target.onerror = null; // Prevent infinite loop
-        }
-      }, true);
-    };
-
-    const updateLoaderProgress = (percentage, status) => {
-      elements.loaderProgressBar.style.width = `${percentage}%`;
-      if (status) {
-        elements.loaderStatus.textContent = status;
-      }
-    };
-
-    const showFullscreenLoader = () => {
-      elements.fullscreenLoader.classList.add('active');
-      updateLoaderProgress(0, "Starting quick load...");
-    };
-
-    const hideFullscreenLoader = () => {
-      elements.fullscreenLoader.classList.remove('active');
-    };
-
-    const quickLoadAllScripts = async () => {
-      if (state.isLoading || state.isQuickLoading) return;
-      
-      state.isQuickLoading = true;
-      state.quickLoadPages = 0;
-      showFullscreenLoader();
-      
-      // Reset state for quick loading
-      state.scripts = [];
-      state.currentPage = 1;
-      state.hasMore = true;
-      
-      try {
-        // Load multiple pages quickly
-        for (let page = 1; page <= CONFIG.MAX_PAGES_TO_LOAD && state.hasMore; page++) {
-          state.currentPage = page;
-          updateLoaderProgress(
-            Math.min((page / CONFIG.MAX_PAGES_TO_LOAD) * 100, 90),
-            `Loading page ${page} of ${CONFIG.MAX_PAGES_TO_LOAD}...`
-          );
-          
-          await fetchResults(false, true);
-          state.quickLoadPages = page;
-          
-          // Small delay to prevent overwhelming the API
-          await new Promise(resolve => setTimeout(resolve, 300));
-        }
-        
-        updateLoaderProgress(100, "All scripts loaded successfully!");
-        showToast(`Loaded ${state.scripts.length} scripts from ${state.quickLoadPages} pages`, "success");
-        
-        // Hide loader after a short delay
-        setTimeout(() => {
-          hideFullscreenLoader();
-          state.isQuickLoading = false;
-        }, 1500);
-        
-      } catch (error) {
-        console.error("Quick load error:", error);
-        updateLoaderProgress(100, "Error loading scripts");
-        showToast("Error during quick load: " + error.message, "danger");
-        
-        setTimeout(() => {
-          hideFullscreenLoader();
-          state.isQuickLoading = false;
-        }, 2000);
-      }
-    };
-
-    const setupEventListeners = () => {
-      let debounceTimeout;
-      elements.searchInput.addEventListener("input", () => {
-        clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(() => {
-          state.currentQuery = elements.searchInput.value.trim();
-          state.currentPage = 1;
-          state.hasMore = true;
-          fetchResults(true);
-        }, 300);
-      });
-
-      elements.searchInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          state.currentQuery = elements.searchInput.value.trim();
-          state.currentPage = 1;
-          state.hasMore = true;
-          fetchResults(true);
-        }
-      });
-
-      elements.searchButton.addEventListener("click", () => {
-        state.currentQuery = elements.searchInput.value.trim();
-        state.currentPage = 1;
-        state.hasMore = true;
-        fetchResults(true);
-      });
-
-      elements.filterButton.addEventListener("click", () => {
-        state.isFilterPanelVisible = !state.isFilterPanelVisible;
-        elements.filterPanel.classList.toggle("show", state.isFilterPanelVisible);
-        if (state.isFilterPanelVisible) elements.filterPanel.focus();
-      });
-
-      elements.closePanelButton.addEventListener("click", () => {
-        state.isFilterPanelVisible = false;
-        elements.filterPanel.classList.remove("show");
-        elements.filterButton.focus();
-      });
-
-      elements.autoLoadToggle.addEventListener("change", (e) => {
-        state.autoLoadEnabled = e.target.checked;
-        localStorage.setItem('autoLoadEnabled', state.autoLoadEnabled);
-        elements.loadMoreContainer.style.display = state.autoLoadEnabled ? "none" : "flex";
-      });
-
-      elements.loadMoreButton.addEventListener("click", () => {
-        if (!state.isLoading && state.hasMore) {
-          fetchResults(false);
-        }
-      });
-
-      elements.quickLoadButton.addEventListener("click", () => {
-        quickLoadAllScripts();
-      });
-
-      elements.clearCacheButton.addEventListener("click", () => {
-        clearCache();
-        showToast("Cache cleared!", "success");
-      });
-
-      document.addEventListener("click", (e) => {
-        if (!e.target.closest(".filter-panel") && !e.target.closest(".filter-btn") && state.isFilterPanelVisible) {
-          state.isFilterPanelVisible = false;
-          elements.filterPanel.classList.remove("show");
-        }
-      });
-    };
-
-    const setupDropdown = () => {
-      const dropdown = elements.scriptTypeFilter;
-      const toggle = dropdown.querySelector(".dropdown-toggle");
-      const menu = dropdown.querySelector(".dropdown-menu");
-      const items = dropdown.querySelectorAll(".dropdown-item");
-
-      const toggleDropdown = () => {
-        menu.classList.toggle("show");
-        toggle.setAttribute("aria-expanded", menu.classList.contains("show"));
+      // ===== Configuration =====
+      const CONFIG = {
+        API_BASE: 'https://scriptblox.com/api',
+        PROXY: 'https://api.allorigins.win/get?url=',
+        DEFAULT_QUERY: 'free',
+        RESULTS_PER_PAGE: 20,
+        QUICK_LOAD_PAGES: 5,
+        DEBOUNCE_MS: 300,
+        TOAST_DURATION: 2800,
+        MAX_SCRIPT_LENGTH: 200 // characters for preview
       };
-
-      toggle.addEventListener("click", toggleDropdown);
-      toggle.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          toggleDropdown();
+      
+      // ===== State Management =====
+      const state = {
+        scripts: [],
+        currentPage: 1,
+        totalPages: 1,
+        hasMore: true,
+        isLoading: false,
+        isQuickLoading: false,
+        abortController: null,
+        query: CONFIG.DEFAULT_QUERY,
+        filters: {
+          mode: '',
+          verified: '',
+          key: '',
+          universal: '',
+          hidePatched: '',
+          sortBy: 'createdAt',
+          order: 'desc'
+        },
+        debounceTimer: null
+      };
+      
+      // ===== DOM Elements (cached) =====
+      const el = {
+        // Search
+        searchForm: document.getElementById('searchForm'),
+        searchInput: document.getElementById('searchInput'),        searchBtn: document.getElementById('searchBtn'),
+        
+        // Grid & Loading
+        resultsGrid: document.getElementById('resultsGrid'),
+        loadMoreBtn: document.getElementById('loadMoreBtn'),
+        loadMoreSection: document.getElementById('loadMoreSection'),
+        endMsg: document.getElementById('endMsg'),
+        
+        // Stats
+        totalCount: document.getElementById('totalCount'),
+        showingCount: document.getElementById('showingCount'),
+        currentPageSpan: document.getElementById('currentPageSpan'),
+        totalPagesSpan: document.getElementById('totalPagesSpan'),
+        
+        // Filters
+        filterToggle: document.getElementById('filterToggle'),
+        filterPanel: document.getElementById('filterPanel'),
+        filterOverlay: document.getElementById('filterOverlay'),
+        closeFilter: document.getElementById('closeFilter'),
+        modeSelect: document.getElementById('modeSelect'),
+        verifiedSelect: document.getElementById('verifiedSelect'),
+        sortSelect: document.getElementById('sortSelect'),
+        orderSelect: document.getElementById('orderSelect'),
+        keyToggle: document.getElementById('keyToggle'),
+        universalToggle: document.getElementById('universalToggle'),
+        patchedToggle: document.getElementById('patchedToggle'),
+        resetFilters: document.getElementById('resetFilters'),
+        applyFilters: document.getElementById('applyFilters'),
+        
+        // Quick Load
+        quickBtn: document.getElementById('quickLoadBtn'),
+        quickModal: document.getElementById('quickModal'),
+        quickProgress: document.getElementById('quickProgress'),
+        quickStatus: document.getElementById('quickStatus'),
+        cancelQuickLoad: document.getElementById('cancelQuickLoad'),
+        
+        // Toast
+        toast: document.getElementById('toast'),
+        toastMsg: document.getElementById('toastMsg'),
+        
+        // Main
+        mainContent: document.getElementById('mainContent')
+      };
+      
+      // ===== Utilities =====
+      const sanitize = (str) => {
+        if (!str && str !== 0) return '';
+        const safe = String(str).trim();
+        return window.DOMPurify ? DOMPurify.sanitize(safe) : safe.replace(/[<>]/g, '');
+      };      
+      const formatNumber = (num) => {
+        if (num == null) return '0';
+        const n = Number(num);
+        if (isNaN(n)) return '0';
+        return n > 999999 ? (n/1000000).toFixed(1).replace(/\.0$/, '') + 'M'
+             : n > 999 ? (n/1000).toFixed(1).replace(/\.0$/, '') + 'k'
+             : n.toString();
+      };
+      
+      const formatDate = (dateStr) => {
+        try {
+          const date = new Date(dateStr);
+          if (isNaN(date.getTime())) return 'Unknown';
+          return date.toLocaleDateString(undefined, { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+          });
+        } catch {
+          return 'Unknown';
         }
-      });
-
-      items.forEach((item) => {
-        item.addEventListener("click", () => {
-          state.filters.scriptType = item.dataset.value;
-          toggle.textContent = item.textContent;
-          items.forEach((i) => i.classList.remove("selected"));
-          item.classList.add("selected");
-          menu.classList.remove("show");
-          toggle.setAttribute("aria-expanded", "false");
-          state.currentPage = 1;
-          state.hasMore = true;
-          fetchResults(true);
-        });
-      });
-
-      document.addEventListener("click", (e) => {
-        if (!e.target.closest(".dropdown-container")) {
-          menu.classList.remove("show");
-          toggle.setAttribute("aria-expanded", "false");
-        }
-      });
-    };
-
-    const setupIntersectionObserver = () => {
-      if (state.observer) state.observer.disconnect();
-      state.observer = new IntersectionObserver(
-        (entries) => entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            state.observer.unobserve(entry.target);
-          }
-        }),
-        { rootMargin: "0px 0px 100px 0px", threshold: 0.1 }
-      );
-      document.querySelectorAll(".card").forEach((card) => state.observer.observe(card));
-    };
-
-    const setupInfiniteScroll = () => {
+      };
+      
       const debounce = (func, wait) => {
-        let timeout;
-        return (...args) => {
-          clearTimeout(timeout);
-          timeout = setTimeout(() => func(...args), wait);
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(state.debounceTimer);
+            func(...args);
+          };
+          clearTimeout(state.debounceTimer);
+          state.debounceTimer = setTimeout(later, wait);
         };
       };
-
-      window.addEventListener('scroll', debounce(() => {
-        if (state.autoLoadEnabled && 
-            window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && 
-            !state.isLoading && state.hasMore) {
-          fetchResults(false);
+      
+      // ===== Toast System =====
+      function showToast(message, type = 'success') {
+        el.toastMsg.textContent = message;
+        el.toast.className = 'toast'; // reset classes
+        el.toast.classList.add(type);
+        el.toast.classList.add('show');
+        
+        // Update icon based on type
+        const icon = el.toast.querySelector('i');
+        if (icon) {
+          icon.className = type === 'error' ? 'fas fa-circle-xmark' 
+                         : type === 'warning' ? 'fas fa-triangle-exclamation'
+                         : 'fas fa-circle-check';
         }
-      }, 100));
-    };
-
-    const showToast = (message, type = "success") => {
-      elements.toast.textContent = message;
-      elements.toast.className = `toast ${type} show`;
-      setTimeout(() => elements.toast.classList.remove("show"), 3000);
-    };
-
-    const normalizeQuery = (query) =>
-      query.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ");
-
-    const getCachedResults = (query, page) => {
-      const cacheKey = `scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}_page${page}`;
-      const cached = localStorage.getItem(cacheKey);
-      if (!cached) return null;
-      try {
-        const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp > CONFIG.CACHE_DURATION) {
-          localStorage.removeItem(cacheKey);
-          return null;
+                // Auto-hide
+        setTimeout(() => {
+          el.toast.classList.remove('show');
+        }, CONFIG.TOAST_DURATION);
+      }
+      
+      // ===== Stats Updates =====
+      function updateStats() {
+        el.totalCount.textContent = formatNumber(state.scripts.length);
+        el.showingCount.textContent = formatNumber(state.scripts.length);
+        el.currentPageSpan.textContent = state.currentPage;
+        el.totalPagesSpan.textContent = state.totalPages || 1;
+        
+        // Update aria-busy on grid
+        el.resultsGrid.setAttribute('aria-busy', state.isLoading ? 'true' : 'false');
+      }
+      
+      // ===== Toggle Switches =====
+      function setupToggle(element, filterKey) {
+        const toggle = () => {
+          const isActive = element.classList.toggle('active');
+          element.setAttribute('aria-checked', isActive ? 'true' : 'false');
+          state.filters[filterKey] = isActive ? 'true' : '';
+        };
+        
+        element.addEventListener('click', toggle);
+        element.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggle();
+          }
+        });
+      }
+      
+      // ===== API Fetching with Fallback =====
+      async function fetchWithFallback(url, options = {}) {
+        // Abort previous request if exists
+        if (state.abortController) {
+          state.abortController.abort();
         }
-        return data;
-      } catch (e) {
-        console.error("Error parsing cached data:", e);
-        localStorage.removeItem(cacheKey);
-        return null;
-      }
-    };
-
-    const cacheResults = (data, query, page) => {
-      try {
-        localStorage.setItem(`scripts_${CONFIG.CACHE_VERSION}_${normalizeQuery(query)}_page${page}`, JSON.stringify({
-          data,
-          timestamp: Date.now(),
-        }));
-      } catch (e) {
-        console.error("Error caching data:", e);
-        clearCache();
-      }
-    };
-
-    const clearCache = () => {
-      Object.keys(localStorage)
-        .filter((key) => key.startsWith(`scripts_${CONFIG.CACHE_VERSION}_`))
-        .forEach((key) => localStorage.removeItem(key));
-      state.scripts = [];
-      state.currentPage = 1;
-      state.hasMore = true;
-      renderResults();
-    };
-
-    const validateScriptData = (script) => {
-      return (
-        script &&
-        typeof script._id === 'string' &&
-        typeof script.title === 'string' &&
-        typeof script.game === 'object' &&
-        typeof script.game.name === 'string'
-      );
-    };
-
-    const fetchResults = async (reset = false, isQuickLoad = false) => {
-      if (state.isLoading || !state.hasMore) return;
-      
-      // Abort previous request if still in progress
-      if (state.abortController) {
-        state.abortController.abort();
-      }
-      
-      state.abortController = new AbortController();
-      state.isLoading = true;
-      
-      if (!isQuickLoad) {
-        state.lastError = null;
-        elements.loadingMessage.textContent = `Loading scripts for "${state.currentQuery || "free"}". Please wait.`;
-        elements.loading.style.display = "flex";
-      }
-
-      if (reset) {
-        state.scripts = [];
-        state.currentPage = 1;
-        state.hasMore = true;
-      }
-
-      try {
-        const query = state.currentQuery || "free";
-        const cached = getCachedResults(query, state.currentPage);
-        if (cached) {
-          state.scripts = reset ? cached : [...state.scripts, ...cached];
-          renderResults();
-          if (!isQuickLoad) {
-            showToast(`Script loaded successfully`, "success");
+        state.abortController = new AbortController();
+        
+        const config = {
+          ...options,
+          signal: state.abortController.signal,
+          headers: {
+            'Accept': 'application/json',
+            ...(options.headers || {})
           }
-          state.currentPage++;
-          state.isLoading = false;
-          if (!isQuickLoad) {
-            elements.loading.style.display = "none";
+        };        
+        // Try direct fetch first
+        try {
+          const response = await fetch(url, config);
+          if (response.ok) {
+            return await response.json();
           }
+        } catch (error) {
+          if (error.name === 'AbortError') throw error;
+          console.warn('Direct fetch failed, trying proxy:', error.message);
+        }
+        
+        // Fallback to proxy
+        try {
+          const proxyUrl = CONFIG.PROXY + encodeURIComponent(url);
+          const response = await fetch(proxyUrl, { 
+            ...config,
+            headers: { ...config.headers, 'X-Requested-With': 'XMLHttpRequest' }
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Proxy error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          // Handle allorigins response format
+          return data.contents ? JSON.parse(data.contents) : data;
+        } catch (error) {
+          if (error.name === 'AbortError') throw error;
+          console.error('All fetch attempts failed:', error);
+          throw new Error('Failed to fetch data. Please check your connection.');
+        }
+      }
+      
+      // ===== URL Builder =====
+      function buildSearchURL(query, page) {
+        const params = new URLSearchParams();
+        const cleanQuery = (query && query.trim()) ? query.trim() : CONFIG.DEFAULT_QUERY;
+        
+        params.set('q', cleanQuery);
+        params.set('page', page);
+        params.set('max', CONFIG.RESULTS_PER_PAGE);
+        
+        // Apply filters
+        if (state.filters.mode) params.set('mode', state.filters.mode);
+        if (state.filters.verified !== '') params.set('verified', state.filters.verified);
+        if (state.filters.key) params.set('key', 'true');
+        if (state.filters.universal) params.set('universal', 'true');
+        if (state.filters.hidePatched) params.set('patched', 'false'); // Only show non-patched
+        if (state.filters.sortBy) params.set('sortBy', state.filters.sortBy);        if (state.filters.order) params.set('order', state.filters.order);
+        
+        return `${CONFIG.API_BASE}/script/search?${params.toString()}`;
+      }
+      
+      // ===== Script Rendering =====
+      function createScriptCard(script) {
+        // Safe data extraction with fallbacks
+        const {
+          _id = '',
+          title = 'Untitled Script',
+          script: scriptCode = '',
+          views = 0,
+          likeCount = 0,
+          dislikeCount = 0,
+          verified = false,
+          key = false,
+          scriptType = 'free',
+          isUniversal = false,
+          isPatched = false,
+          createdAt = new Date().toISOString(),
+          lastBump = new Date().toISOString(),
+          game = {}
+        } = script || {};
+        
+        const gameName = game?.name || 'Universal';
+        const imageUrl = script.image || game?.imageUrl || `https://via.placeholder.com/480x270/1e2632/3a68c0?text=${encodeURIComponent(gameName)}`;
+        const safeTitle = sanitize(title);
+        const safeGame = sanitize(gameName);
+        const safeScript = sanitize(scriptCode).substring(0, CONFIG.MAX_SCRIPT_LENGTH) + 
+                          (scriptCode.length > CONFIG.MAX_SCRIPT_LENGTH ? '...' : '');
+        
+        // Build badge HTML
+        const badges = [];
+        if (verified) badges.push(`<span class="badge badge-verified"><i class="fas fa-check"></i> verified</span>`);
+        if (key) badges.push(`<span class="badge badge-key"><i class="fas fa-key"></i> key</span>`);
+        if (scriptType === 'paid') badges.push(`<span class="badge badge-paid"><i class="fas fa-star"></i> premium</span>`);
+        if (isUniversal) badges.push(`<span class="badge badge-universal"><i class="fas fa-globe"></i> universal</span>`);
+        if (isPatched) badges.push(`<span class="badge badge-patched"><i class="fas fa-wrench"></i> patched</span>`);
+        
+        // Format dates
+        const createdDate = formatDate(createdAt);
+        const bumpedDate = formatDate(lastBump);
+        
+        // Escape script for data attribute (safe copy)
+        const escapedScript = scriptCode
+          .replace(/\\/g, '\\\\')
+          .replace(/'/g, "\\'")
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r');        
+        return `
+          <article class="script-card" data-id="${sanitize(_id)}" tabindex="0">
+            <div class="card-image">
+              <img 
+                src="${sanitize(imageUrl)}" 
+                alt="${safeTitle} - ${safeGame}"
+                loading="lazy"
+                onerror="this.src='https://via.placeholder.com/480x270/1e2632/3a68c0?text=Script';this.onerror=null;"
+              >
+              <div class="img-badges">${badges.join('')}</div>
+              <div class="views-badge">
+                <i class="far fa-eye" aria-hidden="true"></i> 
+                <span class="visually-hidden">Views:</span> ${formatNumber(views)}
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <h3 class="card-title">${safeTitle}</h3>
+              
+              <div class="game-line">
+                <i class="fas fa-gamepad" aria-hidden="true"></i>
+                <span>${safeGame}</span>
+              </div>
+              
+              <div class="meta-row">
+                <span><i class="far fa-calendar" aria-hidden="true"></i> ${createdDate}</span>
+                <span><i class="far fa-clock" aria-hidden="true"></i> Updated: ${bumpedDate}</span>
+              </div>
+              
+              <div class="like-dislike" aria-label="Community ratings">
+                <span class="likes">
+                  <i class="fas fa-thumbs-up" aria-hidden="true"></i>
+                  <span class="visually-hidden">Likes:</span> ${formatNumber(likeCount)}
+                </span>
+                <span class="dislikes">
+                  <i class="fas fa-thumbs-down" aria-hidden="true"></i>
+                  <span class="visually-hidden">Dislikes:</span> ${formatNumber(dislikeCount)}
+                </span>
+              </div>
+              
+              <div class="script-box">
+                <textarea 
+                  readonly 
+                  aria-label="Script code preview"
+                  title="Click copy button to copy full script"
+                >${safeScript}</textarea>
+                <button 
+                  class="copy-btn" 
+                  data-script="${escapedScript}"                  aria-label="Copy script to clipboard"
+                  title="Copy to clipboard"
+                >
+                  <i class="fas fa-copy" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+      
+      function renderGrid(append = false) {
+        if (!append) {
+          el.resultsGrid.innerHTML = '';
+          el.resultsGrid.setAttribute('aria-busy', 'false');
+        }
+        
+        if (!state.scripts.length) {
+          if (!append) {
+            el.resultsGrid.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <p>No scripts found. Try adjusting your search or filters.</p>
+                <button class="btn-secondary" id="clearFiltersBtn" style="margin-top:1rem">
+                  <i class="fas fa-undo" aria-hidden="true"></i> Reset filters
+                </button>
+              </div>
+            `;
+            document.getElementById('clearFiltersBtn')?.addEventListener('click', () => {
+              resetFilters();
+              loadScripts(true);
+            });
+          }
+          updateStats();
           return;
         }
-
-        const url = new URL(CONFIG.API_URL);
-        url.searchParams.append("q", query);
-        url.searchParams.append("page", state.currentPage);
-        url.searchParams.append("max", CONFIG.ITEMS_PER_PAGE);
-
-        let res;
-        try {
-          res = await fetchWithRetry(CONFIG.CORS_PROXY + encodeURIComponent(url), {
-            signal: state.abortController.signal
-          });
-        } catch (proxyErr) {
-          console.warn("CORS proxy failed, trying direct API...");
-          res = await fetchWithRetry(url, {
-            signal: state.abortController.signal
-          });
-        }
-
-        if (!res.ok) throw new Error(`API failed: ${res.status}`);
-        const data = await res.json();
         
-        // Handle CORS proxy response format
-        let parsed;
-        if (data.contents) {
-          parsed = JSON.parse(data.contents);
+        // Render new cards
+        const fragment = document.createDocumentFragment();
+        const tempDiv = document.createElement('div');
+        
+        state.scripts.forEach(script => {
+          tempDiv.innerHTML = createScriptCard(script);
+          fragment.appendChild(tempDiv.firstElementChild);
+        });
+        
+        if (append) {
+          el.resultsGrid.appendChild(fragment);
         } else {
-          parsed = data;
+          el.resultsGrid.innerHTML = '';          el.resultsGrid.appendChild(fragment);
         }
         
-        if (!parsed.result || !Array.isArray(parsed.result.scripts)) {
-          throw new Error("Invalid API response: Missing or invalid scripts array");
-        }
-        
-        const newScripts = parsed.result.scripts.filter(validateScriptData);
-        state.scripts = reset ? newScripts : [...state.scripts, ...newScripts];
-        state.hasMore = newScripts.length === CONFIG.ITEMS_PER_PAGE;
-        cacheResults(newScripts, query, state.currentPage);
-        renderResults();
-        
-        if (!isQuickLoad) {
-          showToast(`Script loaded successfully`, newScripts.length ? "success" : "warning");
-        }
-        
-        if (!state.scripts.length && reset) {
-          state.scripts = getSampleData();
-          renderResults();
-        }
-        
-        state.currentPage++;
-      } catch (err) {
-        if (err.name === 'AbortError') {
-          console.log('Request aborted');
-          return;
-        }
-        
-        state.lastError = err;
-        if (!isQuickLoad) {
-          showToast(`Error: ${err.message}. Using sample data.`, "danger");
-        }
-        if (reset) {
-          const cached = getCachedResults(query, 1) || getSampleData();
-          state.scripts = cached;
-          renderResults();
-        }
-      } finally {
-        state.isLoading = false;
-        if (!isQuickLoad) {
-          elements.loading.style.display = "none";
-        }
-        state.abortController = null;
-      }
-    };
-
-    const fetchWithRetry = async (url, options = {}, retries = CONFIG.MAX_RETRIES, delay = CONFIG.RETRY_DELAY) => {
-      for (let i = 0; i < retries; i++) {
-        try {
-          const res = await fetch(url, { 
-            headers: { 'Accept': 'application/json' },
-            ...options 
+        // Setup copy buttons
+        el.resultsGrid.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const script = btn.dataset.script;
+            copyToClipboard(script, btn);
           });
+        });
+        
+        // Update stats and UI state
+        updateStats();
+        el.loadMoreSection.classList.toggle('hidden', !state.hasMore);
+        el.endMsg.classList.toggle('hidden', state.hasMore);
+        el.loadMoreBtn.disabled = state.isLoading || !state.hasMore;
+      }
+      
+      // ===== Clipboard Functionality =====
+      async function copyToClipboard(text, buttonEl) {
+        try {
+          // Decode escaped characters for actual copy
+          const cleanText = text
+            .replace(/\\n/g, '\n')
+            .replace(/\\r/g, '\r')
+            .replace(/\\'/g, "'")
+            .replace(/\\\\/g, '\\');
+            
+          await navigator.clipboard.writeText(cleanText);
           
-          if (res.status === 429) {
-            const retryAfter = res.headers.get('Retry-After') || delay * 2 ** i;
-            await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
-            continue;
-          }
+          // Visual feedback
+          const originalIcon = buttonEl.innerHTML;
+          buttonEl.innerHTML = '<i class="fas fa-check"></i>';
+          buttonEl.classList.add('copied');
+          buttonEl.disabled = true;
           
-          if (res.ok) return res;
-          throw new Error(`HTTP ${res.status}`);
+          showToast('Script copied to clipboard!', 'success');
+          
+          // Reset after delay
+          setTimeout(() => {
+            buttonEl.innerHTML = originalIcon;
+            buttonEl.classList.remove('copied');
+            buttonEl.disabled = false;
+          }, 2000);
         } catch (err) {
-          if (i < retries - 1) {
-            await new Promise((resolve) => setTimeout(resolve, delay * 2 ** i));
+          console.error('Copy failed:', err);
+          showToast('Failed to copy. Select text manually.', 'error');
+        }
+      }      
+      // ===== Loading States =====
+      function showSkeleton(count = 6) {
+        el.resultsGrid.setAttribute('aria-busy', 'true');
+        el.resultsGrid.innerHTML = Array(count).fill(`
+          <div class="skeleton-card" role="status" aria-label="Loading script"></div>
+        `).join('');
+      }
+      
+      // ===== Core Data Loading =====
+      async function loadScripts(reset = true) {
+        if (state.isLoading) return;
+        if (!reset && !state.hasMore) return;
+        
+        state.isLoading = true;
+        el.loadMoreBtn.disabled = true;
+        
+        if (reset) {
+          state.scripts = [];
+          state.currentPage = 1;
+          state.hasMore = true;
+          showSkeleton();
+        }
+        
+        const url = buildSearchURL(state.query, state.currentPage);
+        
+        try {
+          const data = await fetchWithFallback(url);
+          
+          // Validate response structure
+          const newScripts = Array.isArray(data?.result?.scripts) ? data.result.scripts : [];
+          const totalPages = Number(data?.result?.totalPages) || 1;
+          
+          // Update state
+          if (reset) {
+            state.scripts = newScripts;
           } else {
-            throw err;
+            state.scripts = [...state.scripts, ...newScripts];
           }
+          
+          state.totalPages = totalPages;
+          state.hasMore = state.currentPage < totalPages && newScripts.length === CONFIG.RESULTS_PER_PAGE;
+          
+          // Render and update
+          renderGrid(!reset);
+          
+          // User feedback
+          if (reset && newScripts.length) {
+            showToast(`Found ${formatNumber(newScripts.length)} scripts`, 'success');
+          } else if (!reset && newScripts.length) {            showToast(`Loaded ${formatNumber(newScripts.length)} more`, 'success');
+          } else if (reset && !newScripts.length) {
+            showToast('No results found', 'warning');
+          }
+          
+          // Advance page counter
+          state.currentPage++;
+          
+        } catch (error) {
+          console.error('Load error:', error);
+          
+          if (error.name === 'AbortError') {
+            console.log('Request aborted');
+            return;
+          }
+          
+          // Fallback to demo data on error
+          if (reset) {
+            state.scripts = getFallbackScripts();
+            renderGrid(true);
+            showToast('Showing demo data (API unavailable)', 'warning');
+          } else {
+            showToast('Failed to load more scripts', 'error');
+          }
+        } finally {
+          state.isLoading = false;
+          el.loadMoreBtn.disabled = !state.hasMore;
+          updateStats();
         }
       }
-      throw new Error("Max retries reached.");
-    };
-
-    const getSampleData = () => [
-      {
-        _id: "683b3949a348d24efdf83b72",
-        title: "Forge Hub (10+ GAMES, OP FEATURES, AUTOFARMS AND LOTS MORE!)",
-        game: { gameId: 0, name: "Universal Script 📌", imageUrl: "/images/no-script.webp" },
-        slug: "Universal-Script-Forge-Hub-41461",
-        verified: true,
-        key: true,
-        views: 3137720,
-        scriptType: "free",
-        isUniversal: true,
-        isPatched: false,
-        image: "https://scriptblox.com/images/script/0-1748711753445.png",
-        lastBump: "2025-08-16T14:57:50.845Z",
-        likeCount: 19,
-        dislikeCount: 10,
-        createdAt: "2025-05-31T17:15:53.512Z",
-        script: "loadstring(game:HttpGet(\"https://rawscripts.net/raw/Universal-Script-Forge-Hub-41461\"))()",
-        matched: ["title", "features"],
-      },
-      {
-        _id: "689a6cc770d65046a249e924",
-        title: "Garden Tower Defense ( OP script free gui Xenith )",
-        game: {
-          gameId: 108533757090220,
-          name: "[😱] Garden Tower Defense 🌻",
-          imageUrl: "https://tr.rbxcdn.com/180DAY-5bdc7bca1f2489f0caed6fabf50a1b24/480/270/Image/Png/noFilter",
-        },
-        slug: "Garden-Tower-Defense-Garden-Tower-Defense-OP-script-free-gui-Xenith-48253",
-        verified: true,
-        key: true,
-        views: 28298,
-        scriptType: "free",
-        isUniversal: false,
-        isPatched: false,
-        image: "https://tr.rbxcdn.com/180DAY-5bdc7bca1f2489f0caed6fabf50a1b24/480/270/Image/Png/noFilter",
-        lastBump: "2025-08-11T22:20:55.822Z",
-        likeCount: 1,
-        dislikeCount: 1,
-        createdAt: "2025-08-11T22:20:55.824Z",
-        script: "loadstring(game:HttpGet(\"https://rawscripts.net/raw/Garden-Tower-Defense-Garden-Tower-Defense-OP-script-free-gui-Xenith-48253\"))()",
-        matched: ["features"],
-      },
-    ];
-
-    const renderResults = () => {
-      requestAnimationFrame(() => {
-        const container = elements.results;
-        if (state.isLoading && !state.isQuickLoading) {
-          container.innerHTML = Array(6).fill().map(() => '<div class="skeleton-card"></div>').join("");
-          return;
-        }
-        if (state.lastError) {
-          container.innerHTML = `
-            <div class="error-state">
-              <i class="fas fa-exclamation-triangle"></i>
-              <h3>Error Loading Scripts</h3>
-              <p>${sanitizeHTML(state.lastError.message)}</p>
-              <button class="retry-btn" onclick="fetchResults(true)">Retry</button>
-              <div class="empty-state-suggestions">
-                ${CONFIG.SUGGESTED_QUERIES.map((q) => `<button class="suggestion-btn" onclick="searchSuggestion('${sanitizeHTML(q)}')">${sanitizeHTML(q)}</button>`).join("")}
-              </div>
-            </div>`;
-          return;
-        }
-
-        const scripts = filterScripts();
-        if (!scripts.length) {
-          container.innerHTML = `
-            <div class="empty-state">
-              <i class="fas fa-file-code"></i>
-              <h3>No scripts found</h3>
-              <p>Try a different search term:</p>
-              <div class="empty-state-suggestions">
-                ${CONFIG.SUGGESTED_QUERIES.map((q) => `<button class="suggestion-btn" onclick="searchSuggestion('${sanitizeHTML(q)}')">${sanitizeHTML(q)}</button>`).join("")}
-              </div>
-            </div>`;
-          return;
-        }
-
-        container.innerHTML = scripts.map(createScriptCard).join("");
+      
+      // ===== Fallback Data (Offline Mode) =====
+      function getFallbackScripts() {
+        return [
+          {
+            _id: 'demo-1',
+            title: 'Nova Hub · Universal',
+            script: 'loadstring(game:HttpGet("https://example.com/nova.lua"))()',
+            views: 24850,
+            likeCount: 892,
+            dislikeCount: 24,
+            verified: true,
+            key: false,
+            scriptType: 'free',
+            isUniversal: true,
+            isPatched: false,
+            createdAt: '2026-02-15T10:30:00Z',
+            lastBump: '2026-03-18T14:22:00Z',
+            game: { name: 'Universal', imageUrl: 'https://via.placeholder.com/480x270/2a3a5a/7da9ff?text=Universal' }
+          },          {
+            _id: 'demo-2',
+            title: 'Blox Fruits Auto Farm',
+            script: 'loadstring(game:HttpGet("https://example.com/bloxfruits.lua"))()',
+            views: 189300,
+            likeCount: 4210,
+            dislikeCount: 187,
+            verified: true,
+            key: true,
+            scriptType: 'free',
+            isUniversal: false,
+            isPatched: false,
+            createdAt: '2026-03-01T08:15:00Z',
+            lastBump: '2026-03-19T11:45:00Z',
+            game: { name: 'Blox Fruits', imageUrl: 'https://via.placeholder.com/480x270/3a2a5a/bd7dff?text=Blox+Fruits' }
+          },
+          {
+            _id: 'demo-3',
+            title: 'Adopt Me Trading Assistant',
+            script: 'loadstring(game:HttpGet("https://example.com/adoptme.lua"))()',
+            views: 76420,
+            likeCount: 1843,
+            dislikeCount: 92,
+            verified: false,
+            key: false,
+            scriptType: 'free',
+            isUniversal: false,
+            isPatched: true,
+            createdAt: '2026-01-20T16:40:00Z',
+            lastBump: '2026-03-10T09:12:00Z',
+            game: { name: 'Adopt Me!', imageUrl: 'https://via.placeholder.com/480x270/5a3a2a/ffbd7d?text=Adopt+Me' }
+          }
+        ];
+      }
+      
+      // ===== Quick Load (Multi-Page Fetch) =====
+      async function quickLoad() {
+        if (state.isQuickLoading) return;
         
-        // Show/hide load more button based on auto-load setting
-        elements.loadMoreContainer.style.display = state.autoLoadEnabled || !state.hasMore ? "none" : "flex";
+        state.isQuickLoading = true;
+        el.quickModal.classList.add('active');
+        el.quickModal.setAttribute('aria-hidden', 'false');
+        el.quickProgress.style.width = '0%';
+        el.quickStatus.textContent = 'Initializing...';
+        el.cancelQuickLoad.disabled = false;
         
-        // Show end message if no more results
-        if (!state.hasMore) {
-          const endMessage = document.createElement('div');
-          endMessage.className = 'end-message';
-          endMessage.textContent = `The end of the page (${state.currentPage - 1}) has been reached.`;
-          container.appendChild(endMessage);
+        const maxPages = Math.min(CONFIG.QUICK_LOAD_PAGES, state.totalPages || CONFIG.QUICK_LOAD_PAGES);
+        let allScripts = [];
+        let currentPage = 1;
+        let cancelled = false;        
+        // Cancel handler
+        const cancelHandler = () => {
+          cancelled = true;
+          if (state.abortController) state.abortController.abort();
+          el.quickStatus.textContent = 'Cancelled';
+          el.cancelQuickLoad.disabled = true;
+        };
+        
+        el.cancelQuickLoad.onclick = cancelHandler;
+        
+        try {
+          while (currentPage <= maxPages && !cancelled) {
+            el.quickStatus.textContent = `Fetching page ${currentPage} of ${maxPages}...`;
+            el.quickProgress.style.width = `${(currentPage / maxPages) * 100}%`;
+            
+            const url = buildSearchURL(state.query, currentPage);
+            const data = await fetchWithFallback(url);
+            
+            if (data?.result?.scripts?.length) {
+              allScripts = allScripts.concat(data.result.scripts);
+            } else {
+              break; // No more results
+            }
+            
+            currentPage++;
+            // Small delay to avoid rate limiting
+            await new Promise(resolve => setTimeout(resolve, 150));
+          }
+          
+          if (!cancelled) {
+            // Update state and render
+            state.scripts = allScripts;
+            state.currentPage = 1;
+            state.hasMore = false;
+            state.totalPages = 1;
+            
+            renderGrid(false);
+            showToast(`Loaded ${formatNumber(allScripts.length)} scripts`, 'success');
+          }
+          
+        } catch (error) {
+          if (error.name !== 'AbortError') {
+            console.error('Quick load error:', error);
+            showToast('Quick load failed. Try loading manually.', 'error');
+          }
+        } finally {
+          // Cleanup
+          setTimeout(() => {
+            el.quickModal.classList.remove('active');            el.quickModal.setAttribute('aria-hidden', 'true');
+            state.isQuickLoading = false;
+            el.cancelQuickLoad.onclick = null;
+          }, cancelled ? 800 : 1200);
         }
+      }
+      
+      // ===== Filter Management =====
+      function resetFilters() {
+        // Reset state
+        state.filters = {
+          mode: '',
+          verified: '',
+          key: '',
+          universal: '',
+          hidePatched: '',
+          sortBy: 'createdAt',
+          order: 'desc'
+        };
         
-        setupIntersectionObserver();
+        // Reset UI
+        el.modeSelect.value = '';
+        el.verifiedSelect.value = '';
+        el.sortSelect.value = 'createdAt';
+        el.orderSelect.value = 'desc';
+        
+        // Reset toggles
+        [el.keyToggle, el.universalToggle, el.patchedToggle].forEach(toggle => {
+          toggle.classList.remove('active');
+          toggle.setAttribute('aria-checked', 'false');
+        });
+      }
+      
+      // ===== Event Listeners =====
+      function initEventListeners() {
+        // Search form
+        el.searchForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          state.query = el.searchInput.value;
+          loadScripts(true);
+          // Close mobile keyboard
+          el.searchInput.blur();
+        });
+        
+        // Debounced search for real-time (optional enhancement)
+        el.searchInput.addEventListener('input', debounce((e) => {
+          // Only auto-search if query is long enough
+          if (e.target.value.length >= 3) {
+            state.query = e.target.value;
+            loadScripts(true);          }
+        }, CONFIG.DEBOUNCE_MS * 2));
+        
+        // Filter panel controls
+        el.filterToggle.addEventListener('click', () => {
+          el.filterPanel.classList.add('active');
+          el.filterOverlay.classList.add('active');
+          el.filterOverlay.setAttribute('aria-hidden', 'false');
+          // Focus first focusable element for accessibility
+          setTimeout(() => el.modeSelect?.focus(), 300);
+        });
+        
+        const closeFilterPanel = () => {
+          el.filterPanel.classList.remove('active');
+          el.filterOverlay.classList.remove('active');
+          el.filterOverlay.setAttribute('aria-hidden', 'true');
+        };
+        
+        el.closeFilter.addEventListener('click', closeFilterPanel);
+        el.filterOverlay.addEventListener('click', closeFilterPanel);
+        el.filterPanel.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') closeFilterPanel();
+        });
+        
+        // Filter selects
+        el.modeSelect.addEventListener('change', e => state.filters.mode = e.target.value);
+        el.verifiedSelect.addEventListener('change', e => state.filters.verified = e.target.value);
+        el.sortSelect.addEventListener('change', e => state.filters.sortBy = e.target.value);
+        el.orderSelect.addEventListener('change', e => state.filters.order = e.target.value);
+        
+        // Toggle switches with accessibility
+        setupToggle(el.keyToggle, 'key');
+        setupToggle(el.universalToggle, 'universal');
+        setupToggle(el.patchedToggle, 'hidePatched');
+        
+        // Filter actions
+        el.resetFilters.addEventListener('click', () => {
+          resetFilters();
+          showToast('Filters reset', 'success');
+        });
+        
+        el.applyFilters.addEventListener('click', () => {
+          loadScripts(true);
+          closeFilterPanel();
+          showToast('Filters applied', 'success');
+        });
+        
+        // Load more
+        el.loadMoreBtn.addEventListener('click', () => {
+          if (!state.isLoading && state.hasMore) {            loadScripts(false);
+          }
+        });
+        
+        // Quick load
+        el.quickBtn.addEventListener('click', quickLoad);
+        
+        // Keyboard navigation for cards
+        el.resultsGrid.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            const card = e.target.closest('.script-card');
+            if (card) {
+              e.preventDefault();
+              const copyBtn = card.querySelector('.copy-btn');
+              if (copyBtn) copyBtn.click();
+            }
+          }
+        });
+        
+        // Close modals on escape
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            if (el.filterPanel.classList.contains('active')) {
+              closeFilterPanel();
+            }
+            if (el.quickModal.classList.contains('active')) {
+              el.quickModal.classList.remove('active');
+              el.quickModal.setAttribute('aria-hidden', 'true');
+              state.isQuickLoading = false;
+            }
+          }
+        });
+        
+        // Handle window resize for responsive behavior
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            // Re-render if needed for responsive adjustments
+            if (state.scripts.length) {
+              renderGrid(false);
+            }
+          }, 150);
+        });
+      }
+      
+      // ===== Initialization =====
+      function init() {
+        initEventListeners();
+        state.query = el.searchInput.value || CONFIG.DEFAULT_QUERY;
+        
+        loadScripts(true);
+        
+        setTimeout(() => {
+          showToast('YANZ Script Hub loaded', 'success');
+        }, 800);
+      }
+      
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+      
+      window.addEventListener('beforeunload', () => {
+        if (state.abortController) {
+          state.abortController.abort();
+        }
       });
-    };
-
-    const sanitizeHTML = (str) => DOMPurify.sanitize(str || "");
-
-    const filterScripts = () => {
-      let filtered = state.scripts;
-      const query = normalizeQuery(state.currentQuery);
-      if (query) {
-        filtered = filtered.filter((script) =>
-          [script.title, script.game?.name, script.slug, script.matched?.join(" ")].some((field) =>
-            normalizeQuery(field || "").includes(query)
-          )
-        );
-      }
-      if (state.filters.scriptType !== "all") {
-        filtered = filtered.filter((script) => script.scriptType === state.filters.scriptType);
-      }
-      return filtered;
-    };
-
-    const createScriptCard = (script) => {
-      const imgSrc = sanitizeHTML(script.image || script.game.imageUrl || CONFIG.FALLBACK_IMAGE);
-      const createdAt = new Date(script.createdAt).toLocaleDateString();
-      const lastBump = new Date(script.lastBump).toLocaleDateString();
-      const matchedFields = script.matched ? script.matched.join(", ") : "None";
-      const gameId = script.game.gameId === 0 ? "ERROR ID" : script.game.gameId;
-
-      return `
-        <div class="card" data-id="${sanitizeHTML(script._id)}">
-          <div style="position: relative;">
-            <img src="${imgSrc}" class="card-img" loading="lazy" alt="${sanitizeHTML(script.game.name)}" onerror="this.src='${CONFIG.FALLBACK_IMAGE}'">
-            <div class="card-views">
-              <i class="fas fa-eye"></i> ${script.views.toLocaleString()}
-            </div>
-            ${script.scriptType === "paid" ? '<span class="card-badge">PREMIUM</span>' : ""}
-            ${script.isUniversal ? '<span class="card-badge universal">UNIVERSAL</span>' : ""}
-            ${script.isPatched ? '<span class="card-badge patched">PATCHED</span>' : ""}
-          </div>
-          <div class="card-content">
-            <div class="card-header">
-              <h3 class="card-title">${sanitizeHTML(script.title)}</h3>
-            </div>
-            <div class="card-game">
-              <i class="fas fa-gamepad"></i> ${sanitizeHTML(script.game.name)}
-            </div>
-            <div class="card-meta">
-              <i class="fas fa-id-badge"></i> ID: ${sanitizeHTML(script._id)}
-            </div>
-            <div class="card-meta">
-              <i class="fas fa-gamepad"></i> Game ID: ${gameId}
-            </div>
-            <div class="card-meta">
-              <i class="fas fa-calendar-alt"></i> Created: ${createdAt}
-            </div>
-            <div class="card-meta">
-              <i class="fas fa-calendar-check"></i> Last Bump: ${lastBump}
-            </div>
-            <div class="card-meta">
-              <i class="fas fa-tags"></i> Matched: ${sanitizeHTML(matchedFields)}
-            </div>
-            <div class="card-likes">
-              <span><i class="fas fa-thumbs-up"></i> ${script.likeCount}</span>
-              <span><i class="fas fa-thumbs-down"></i> ${script.dislikeCount}</span>
-            </div>
-            <div class="card-status">
-              ${script.verified ? '<span class="verified"><i class="fas fa-check-circle"></i> Verified</span>' : ''}
-              ${script.key ? '<span class="key-required"><i class="fas fa-key"></i> Key Required</span>' : ''}
-            </div>
-            <div class="script-display-container">
-              <textarea class="script-display" readonly>${sanitizeHTML(script.script)}</textarea>
-              <button class="script-copy-btn" onclick="copyScript('${sanitizeHTML(script.script)}')">
-                <i class="fas fa-copy"></i>
-              </button>
-            </div>
-          </div>
-        </div>`;
-    };
-
-    const copyScript = (script) => {
-      try {
-        navigator.clipboard.writeText(script);
-        showToast("Script copied!", "success");
-      } catch (err) {
-        showToast("Copy failed", "danger");
-      }
-    };
-
-    const searchSuggestion = (query) => {
-      state.currentQuery = query;
-      elements.searchInput.value = query;
-      state.currentPage = 1;
-      state.hasMore = true;
-      fetchResults(true);
-    };
-
-    document.addEventListener("DOMContentLoaded", init);
-    window.copyScript = copyScript;
-    window.fetchResults = fetchResults;
-    window.searchSuggestion = searchSuggestion;
+      
+    })();
   </script>
 </body>
 </html>
