@@ -1,501 +1,526 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>about YANZ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>YANZ V4</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono&display=swap');
-
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto+Mono:wght@300;400;500&display=swap');
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        body {
             min-height: 100vh;
-            background: #000000;
-            color: #ffffff;
+            background: radial-gradient(circle at center, #0a0a0f 0%, #000000 100%);
+            color: #0ff;
+            font-family: 'Roboto Mono', monospace;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-family: 'Roboto Mono', monospace;
             position: relative;
             overflow-x: hidden;
-            perspective: 1000px;
+            cursor: default;
         }
-
-        #matrix-canvas {
-            position: absolute;
-            top: 0; left: 0;
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 60px 60px;
             pointer-events: none;
-            z-index: -2;
-            opacity: 0.3;
+            z-index: 0;
+            animation: gridPulse 20s linear infinite;
         }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: 
-                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            animation: grid-move 40s linear infinite;
-            z-index: -1;
+        @keyframes gridPulse {
+            0% { opacity: 0.3; background-position: 0 0; }
+            50% { opacity: 0.6; background-position: 30px 30px; }
+            100% { opacity: 0.3; background-position: 60px 60px; }
         }
-
-        @keyframes grid-move {
-            0% { background-position: 0 0; }
-            100% { background-position: 50px 50px; }
-        }
-
-        body::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: repeating-linear-gradient(
                 0deg,
-                rgba(0, 0, 0, 0),
-                rgba(0, 0, 0, 0) 2px,
-                rgba(0, 255, 255, 0.02) 2px,
-                rgba(0, 255, 255, 0.02) 4px
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 255, 0.03) 2px,
+                rgba(0, 255, 255, 0.03) 4px
             );
             pointer-events: none;
-            animation: scanline 12s linear infinite;
-            z-index: -1;
+            z-index: 1;
+            animation: scanMove 10s linear infinite;
         }
-
-        @keyframes scanline {
+        @keyframes scanMove {
             0% { transform: translateY(-100%); }
             100% { transform: translateY(100%); }
         }
-
         .container {
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
-            z-index: 1;
-            transform-style: preserve-3d;
+            backdrop-filter: blur(2px);
         }
-
-        @keyframes holographic-appear {
+        @keyframes fadeInUp {
             0% {
                 opacity: 0;
-                transform: translateY(100px) rotateX(-20deg) scale(0.8);
-                filter: blur(10px);
+                transform: translateY(60px) scale(0.95);
+                filter: blur(12px);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0) rotateX(0) scale(1);
+                transform: translateY(0) scale(1);
                 filter: blur(0);
             }
         }
-
-        .animate-entrance {
-            opacity: 0;
-            animation: holographic-appear 1.2s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+        @keyframes glitchText {
+            0%, 100% { transform: skew(0deg, 0deg); text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
+            25% { transform: skew(1deg, 0.5deg); text-shadow: -3px 0 #ff00ff, 3px 0 #00ffff; }
+            75% { transform: skew(-1deg, -0.5deg); text-shadow: 3px 0 #ff00ff, -3px 0 #00ffff; }
         }
-
-        .avatar { animation-delay: 0.4s; }
-        .name { animation-delay: 0.8s; }
-        .glitch { animation-delay: 1.2s; }
-        .description { animation-delay: 1.6s; }
-        .links { animation-delay: 2.0s; }
-
+        .animate-item {
+            opacity: 0;
+        }
+        .avatar-item { animation: fadeInUp 0.8s cubic-bezier(0.34, 1.2, 0.64, 1) 0.2s forwards; }
+        .name-item { animation: fadeInUp 0.8s cubic-bezier(0.34, 1.2, 0.64, 1) 0.5s forwards; }
+        .glitch-item { animation: fadeInUp 0.8s cubic-bezier(0.34, 1.2, 0.64, 1) 0.8s forwards; }
+        .desc-item { animation: fadeInUp 0.8s cubic-bezier(0.34, 1.2, 0.64, 1) 1.1s forwards; }
+        .links-item { animation: fadeInUp 0.8s cubic-bezier(0.34, 1.2, 0.64, 1) 1.4s forwards; }
         .avatar-wrapper {
             position: relative;
-            margin-bottom: 40px;
-            transform-style: preserve-3d;
+            margin-bottom: 35px;
         }
-
         .avatar {
-            width: 200px;
-            height: 200px;
+            width: 210px;
+            height: 210px;
             border-radius: 50%;
+            object-fit: cover;
             border: 3px solid transparent;
-            background: 
-                linear-gradient(#000, #000) padding-box,
-                linear-gradient(45deg, #00ffff, #ff00ff, #00ff41, #00ffff) border-box;
+            background: linear-gradient(135deg, #0ff, #f0f, #0fa) border-box;
+            background-origin: border-box;
             box-shadow: 
-                0 0 30px rgba(0, 255, 255, 0.8),
-                0 0 60px rgba(255, 0, 255, 0.5),
+                0 0 40px rgba(0, 255, 255, 0.7),
+                0 0 80px rgba(255, 0, 255, 0.4),
                 inset 0 0 30px rgba(0, 255, 255, 0.3);
-            animation: 
-                holographic-glow 6s ease-in-out infinite alternate,
-                float 8s ease-in-out infinite;
-            transition: all 0.5s ease;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            animation: floatGlow 5s ease-in-out infinite;
         }
-
-        @keyframes holographic-glow {
-            0% { 
-                box-shadow: 
-                    0 0 30px rgba(0, 255, 255, 0.8),
-                    0 0 80px rgba(255, 0, 255, 0.4);
-                filter: hue-rotate(0deg) brightness(1);
+        @keyframes floatGlow {
+            0%, 100% { 
+                transform: translateY(0px) scale(1);
+                box-shadow: 0 0 40px rgba(0, 255, 255, 0.7), 0 0 80px rgba(255, 0, 255, 0.4);
             }
             50% { 
-                box-shadow: 
-                    0 0 50px rgba(0, 255, 255, 1),
-                    0 0 100px rgba(255, 0, 255, 0.7);
-                filter: hue-rotate(180deg) brightness(1.2);
-            }
-            100% { 
-                box-shadow: 
-                    0 0 30px rgba(0, 255, 255, 0.8),
-                    0 0 80px rgba(0, 255, 65, 0.5);
-                filter: hue-rotate(360deg) brightness(1);
+                transform: translateY(-12px) scale(1.02);
+                box-shadow: 0 0 60px rgba(0, 255, 255, 1), 0 0 100px rgba(255, 0, 255, 0.7);
             }
         }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotateX(0); }
-            50% { transform: translateY(-20px) rotateX(10deg); }
-        }
-
         .avatar:hover {
-            transform: scale(1.2) rotateY(15deg);
-            box-shadow: 
-                0 0 80px rgba(0, 255, 255, 1),
-                0 0 120px rgba(255, 0, 255, 0.9);
+            transform: scale(1.08) rotateY(8deg);
+            box-shadow: 0 0 70px #0ff, 0 0 120px #f0f;
+            transition: 0.3s;
         }
-
-        .glitch {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 5.5rem;
-            font-weight: 700;
-            position: relative;
-            color: transparent;
-            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ff41);
+        .name {
+            font-size: 2.4rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, #0ff, #f0f, #0ff);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             background-clip: text;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-            animation: 
-                holographic-shift 8s linear infinite,
-                glitch-pulse 4s infinite;
+            color: transparent;
+            letter-spacing: 3px;
+            margin: 15px 0 5px;
+            text-transform: uppercase;
+            animation: shineText 6s linear infinite;
         }
-
-        @keyframes holographic-shift {
+        @keyframes shineText {
             0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+            100% { background-position: 200% 50%; }
         }
-
-        @keyframes glitch-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.9; text-shadow: 0 0 40px #00ffff; }
+        .glitch {
+            font-family: 'Orbitron', monospace;
+            font-size: 5rem;
+            font-weight: 900;
+            position: relative;
+            color: #0ff;
+            text-shadow: 0 0 15px #0ff;
+            margin: 15px 0;
+            letter-spacing: 6px;
         }
-
+        @media (max-width: 640px) {
+            .glitch { font-size: 3rem; letter-spacing: 3px; }
+            .name { font-size: 1.8rem; }
+            .avatar { width: 160px; height: 160px; }
+        }
         .glitch::before,
         .glitch::after {
-            content: 'YANZ V4';
+            content: attr(data-text);
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: inherit;
             -webkit-background-clip: text;
             background-clip: text;
-            color: transparent;
+            color: inherit;
         }
-
         .glitch::before {
-            animation: glitch-1 3s infinite linear alternate-reverse;
+            animation: glitchOffset 0.25s infinite linear alternate-reverse;
+            left: 2px;
+            text-shadow: -2px 0 #f0f;
             clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
         }
-
         .glitch::after {
-            animation: glitch-2 2.5s infinite linear alternate-reverse;
+            animation: glitchOffset 0.2s infinite linear alternate-reverse;
+            left: -2px;
+            text-shadow: 2px 0 #0ff;
             clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
         }
-
-        @keyframes glitch-1 {
+        @keyframes glitchOffset {
             0% { transform: translate(0); }
-            20% { transform: translate(-4px, 4px); }
-            60% { transform: translate(4px, -4px); }
+            100% { transform: translate(3px, -2px); }
         }
-
-        @keyframes glitch-2 {
-            0% { transform: translate(0); }
-            40% { transform: translate(6px, -6px); }
-            80% { transform: translate(-6px, 6px); }
-        }
-
-        .name {
-            font-size: 2.6rem;
-            margin: 10px 0;
-            color: #00ffff;
-            text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
-            background: linear-gradient(90deg, #00ffff, #ff00ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: neon-flicker 5s infinite alternate;
-        }
-
-        @keyframes neon-flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.85; }
-        }
-
         .description {
-            max-width: 700px;
+            max-width: 750px;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             line-height: 1.9;
-            margin: 40px 0;
-            color: #00ffff;
-            text-shadow: 0 0 10px #00ffff;
-            opacity: 0.9;
-            animation: tracking-in-expand 1.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
-            animation-delay: 1.6s;
+            margin: 35px 20px;
+            padding: 25px 30px;
+            background: rgba(0, 20, 30, 0.45);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            color: #bff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
         }
-
-        @keyframes tracking-in-expand {
-            0% { letter-spacing: -0.3em; opacity: 0; filter: blur(8px); }
-            40% { opacity: 0.7; }
-            100% { letter-spacing: normal; opacity: 0.9; filter: blur(0); }
-        }
-
         .links {
-            margin-top: 60px;
             display: flex;
             flex-wrap: wrap;
-            gap: 35px;
+            gap: 28px;
             justify-content: center;
+            margin: 20px 0 30px;
         }
-
-        .links a {
+        .cyber-btn {
             position: relative;
-            color: #00ffff;
+            background: rgba(0, 0, 0, 0.7);
+            color: #0ff;
             text-decoration: none;
-            font-size: 1.3rem;
-            padding: 15px 35px;
-            border: 2px solid transparent;
-            border-radius: 15px;
-            background: 
-                linear-gradient(#000, #000) padding-box,
-                linear-gradient(45deg, #00ffff, #ff00ff) border-box;
-            text-shadow: 0 0 15px #00ffff;
-            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
-            transition: all 0.5s ease;
+            font-size: 1.25rem;
+            font-weight: 600;
+            padding: 14px 38px;
+            border: 2px solid #0ff;
+            border-radius: 50px;
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
+            transition: all 0.4s ease;
             overflow: hidden;
+            z-index: 1;
+            font-family: 'Orbitron', monospace;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
         }
-
-        .links a:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 
-                0 0 50px rgba(0, 255, 255, 1),
-                0 0 80px rgba(255, 0, 255, 0.7);
-            background: linear-gradient(45deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
-        }
-
-        .links a::before {
+        .cyber-btn::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.7s;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+            z-index: -1;
         }
-
-        .links a:hover::before {
+        .cyber-btn:hover {
+            transform: translateY(-6px) scale(1.03);
+            color: #000;
+            background: #0ff;
+            border-color: #f0f;
+            box-shadow: 0 0 35px #0ff, 0 0 60px #f0f;
+            text-shadow: none;
+        }
+        .cyber-btn:hover::before {
             left: 100%;
         }
-
-        /* Particles ลดลงอีกนิด */
-        #particles {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.3;
+        .status-badge {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 22px;
+            border-radius: 40px;
+            border: 1px solid #0ff;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
-
-        @media (max-width: 768px) {
-            .glitch { font-size: 3.8rem; }
-            .name { font-size: 2.2rem; }
-            .avatar { width: 160px; height: 160px; }
-            .description { font-size: 1.1rem; padding: 0 20px; }
-            .links a { padding: 12px 25px; font-size: 1.1rem; }
+        .led {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #0f0;
+            box-shadow: 0 0 8px #0f0;
+            animation: pulseLed 1.5s infinite;
+        }
+        @keyframes pulseLed {
+            0%, 100% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        @media (max-width: 560px) {
+            .cyber-btn { padding: 10px 22px; font-size: 1rem; }
+            .description { font-size: 0.95rem; padding: 20px; margin: 20px; }
+            .glitch { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
-    <canvas id="particles"></canvas>
+<div class="cyber-grid"></div>
+<div class="scanline"></div>
 
-    <div class="container">
-        <div class="avatar-wrapper animate-entrance">
-            <img src="https://i.postimg.cc/ydM6cMhZ/73e8e557f8d8840773c00922f8b17686.jpg" alt="Arzuz Yanz Avatar" class="avatar">
-        </div>
+<canvas id="matrixCanvas" style="position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.25;"></canvas>
+<canvas id="starCanvas" style="position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
 
-        <div class="name animate-entrance">! Arzuz Yanz</div>
-
-        <h1 class="glitch animate-entrance">YANZ V4</h1>
-
-        <div class="description animate-entrance">
-            My job is simply to follow my feelings or endless free time.<br>
-            Updates are frequent, but might be slow if I'm feeling energetic or have nothing to do;<br>
-            I'll update quietly without prior notice.
-        </div>
-
-        <div class="links animate-entrance">
-            <a href="https://discord.gg/mNGeUVcjKB" target="_blank">Server Main</a>
-            <a href="https://discord.gg/xppGk6fAFY" target="_blank">Server Script</a>
-        </div>
+<div class="container">
+    <div class="avatar-wrapper animate-item avatar-item">
+        <img src="https://i.postimg.cc/ydM6cMhZ/73e8e557f8d8840773c00922f8b17686.jpg" alt="YANZ Avatar" class="avatar" onerror="this.src='https://via.placeholder.com/200x200?text=YANZ'">
     </div>
+
+    <div class="name animate-item name-item">ARZUZ YANZ</div>
+
+    <h1 class="glitch animate-item glitch-item" data-text="YANZ V4.0">YANZ V4.0</h1>
+
+    <div class="description animate-item desc-item">
+        <strong>CYBER INTERFACE ACTIVE</strong><br><br>
+        An automatic update system based on limitless inspiration.<br>
+        Development is ongoing • The speed may fluctuate depending on internal energy levels.<br>
+        Updates without leaving a trace • Prepare for the next version anytime.<br>
+        <span style="color:#0ff;">STATUS : ONLINE</span>
+    </div>
+
+    <div class="links animate-item links-item">
+        <a href="https://discord.gg/mNGeUVcjKB" target="_blank" class="cyber-btn" rel="noopener noreferrer">MAIN SERVER</a>
+        <a href="https://discord.gg/xppGk6fAFY" target="_blank" class="cyber-btn" rel="noopener noreferrer">SCRIPT HUB</a>
+    </div>
+
+    <div class="status-badge">
+        <div class="led"></div>
+        <span>SYSTEM ONLINE v4.0</span>
+        <div class="led" style="background:#0ff; box-shadow:0 0 8px #0ff;"></div>
+    </div>
+</div>
+
 <script>
-/* =========================
-   Canvas Utilities (เสถียร)
-========================= */
-const DPR = window.devicePixelRatio || 1;
+    (function() {
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        const mCtx = matrixCanvas.getContext('2d');
+        
+        let matrixColumns = 0;
+        let matrixDrops = [];
+        let matrixInterval = null;
+        const MATRIX_FONT_SIZE = 16;
+        const MATRIX_CHARS = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-function resizeCanvas(canvas, ctx) {
-    const { innerWidth, innerHeight } = window;
-    canvas.width = innerWidth * DPR;
-    canvas.height = innerHeight * DPR;
-    canvas.style.width = innerWidth + 'px';
-    canvas.style.height = innerHeight + 'px';
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-}
-
-/* =========================
-   Matrix Rain (Fix resize + DPI)
-========================= */
-const matrixCanvas = document.getElementById('matrix-canvas');
-const mCtx = matrixCanvas.getContext('2d');
-
-let fontSize = 14;
-let columns = 0;
-let drops = [];
-const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-
-function initMatrix() {
-    resizeCanvas(matrixCanvas, mCtx);
-    columns = Math.floor(matrixCanvas.width / DPR / fontSize);
-    drops = new Array(columns).fill(1);
-}
-
-function drawMatrix() {
-    mCtx.fillStyle = 'rgba(0, 0, 0, 0.04)';
-    mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-
-    mCtx.fillStyle = '#00ff41';
-    mCtx.font = `${fontSize}px monospace`;
-
-    for (let i = 0; i < drops.length; i++) {
-        const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-        const x = i * fontSize;
-        const y = drops[i] * fontSize;
-
-        mCtx.fillText(char, x, y);
-
-        if (y > matrixCanvas.height / DPR && Math.random() > 0.975) {
-            drops[i] = 0;
+        function initMatrixRain() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            matrixCanvas.width = w;
+            matrixCanvas.height = h;
+            matrixCanvas.style.width = w + 'px';
+            matrixCanvas.style.height = h + 'px';
+            
+            const cols = Math.floor(w / MATRIX_FONT_SIZE);
+            matrixColumns = cols;
+            matrixDrops = new Array(cols).fill(0);
+            
+            for(let i = 0; i < matrixDrops.length; i++) {
+                matrixDrops[i] = Math.floor(Math.random() * -50);
+            }
         }
-        drops[i]++;
-    }
-}
 
-let matrixTimer = null;
-function startMatrix() {
-    if (!matrixTimer) {
-        matrixTimer = setInterval(drawMatrix, 40);
-    }
-}
-function stopMatrix() {
-    clearInterval(matrixTimer);
-    matrixTimer = null;
-}
+        function drawMatrixRain() {
+            if (!mCtx) return;
+            mCtx.fillStyle = 'rgba(0, 0, 0, 0.045)';
+            mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+            
+            mCtx.font = `${MATRIX_FONT_SIZE}px 'Courier New', monospace`;
+            mCtx.textBaseline = 'top';
+            
+            for (let i = 0; i < matrixDrops.length; i++) {
+                const char = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
+                const x = i * MATRIX_FONT_SIZE;
+                const y = matrixDrops[i] * MATRIX_FONT_SIZE;
+                const intensity = Math.min(255, 100 + Math.floor(Math.random() * 155));
+                mCtx.fillStyle = `rgba(0, ${intensity}, 100, 0.8)`;
+                mCtx.fillText(char, x, y);
+                if (y > matrixCanvas.height && Math.random() > 0.98) {
+                    matrixDrops[i] = 0;
+                } else if (y > matrixCanvas.height + 100) {
+                    matrixDrops[i] = 0;
+                }
+                matrixDrops[i]++;
+            }
+        }
 
-initMatrix();
-startMatrix();
-
-/* =========================
-   Particles (DPI + visibility safe)
-========================= */
-const particlesCanvas = document.getElementById('particles');
-const pCtx = particlesCanvas.getContext('2d');
-
-resizeCanvas(particlesCanvas, pCtx);
-
-const particles = [];
-const numParticles = 20;
-let particlesRunning = true;
-
-class Particle {
-    constructor() {
-        this.reset();
-    }
-    reset() {
-        this.x = Math.random() * particlesCanvas.width / DPR;
-        this.y = Math.random() * particlesCanvas.height / DPR;
-        this.size = Math.random() * 1.5 + 0.5;
-        this.speedX = Math.random() * 0.6 - 0.3;
-        this.speedY = Math.random() * 0.6 - 0.3;
-        this.color = Math.random() > 0.5
-            ? 'rgba(0, 255, 255, 0.5)'
-            : 'rgba(255, 0, 255, 0.5)';
-    }
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x < 0 || this.x > particlesCanvas.width / DPR) this.speedX *= -1;
-        if (this.y < 0 || this.y > particlesCanvas.height / DPR) this.speedY *= -1;
-    }
-    draw() {
-        pCtx.fillStyle = this.color;
-        pCtx.beginPath();
-        pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        pCtx.fill();
-    }
-}
-
-for (let i = 0; i < numParticles; i++) {
-    particles.push(new Particle());
-}
-
-function animateParticles() {
-    if (!particlesRunning) return;
-
-    pCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-    pCtx.fillRect(0, 0, particlesCanvas.width, particlesCanvas.height);
-
-    particles.forEach(p => {
-        p.update();
-        p.draw();
-    });
-
-    requestAnimationFrame(animateParticles);
-}
-
-animateParticles();
-
-/* =========================
-   Visibility API (กันกินทรัพยากร)
-========================= */
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        stopMatrix();
-        particlesRunning = false;
-    } else {
-        startMatrix();
-        particlesRunning = true;
-        animateParticles();
-    }
-});
-
-/* =========================
-   Resize (ไม่พัง layout)
-========================= */
-window.addEventListener('resize', () => {
-    initMatrix();
-    resizeCanvas(particlesCanvas, pCtx);
-});
+        function startMatrixRain() {
+            if (matrixInterval) clearInterval(matrixInterval);
+            matrixInterval = setInterval(drawMatrixRain, 45);
+        }
+        
+        function stopMatrixRain() {
+            if (matrixInterval) {
+                clearInterval(matrixInterval);
+                matrixInterval = null;
+            }
+        }
+        const starCanvas = document.getElementById('starCanvas');
+        const sCtx = starCanvas.getContext('2d');
+        
+        let stars = [];
+        let starAnimationId = null;
+        let starActive = true;
+        
+        class Star {
+            constructor(width, height) {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.2;
+                this.alpha = Math.random() * 0.6 + 0.2;
+                this.twinkle = Math.random() * Math.PI * 2;
+                this.color = Math.random() > 0.7 ? '#0ff' : '#f0f';
+            }
+            
+            update(width, height) {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.twinkle += 0.03;
+                
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+                
+                const twinkleAlpha = this.alpha + Math.sin(this.twinkle) * 0.2;
+                return Math.min(0.9, Math.max(0.1, twinkleAlpha));
+            }
+            
+            draw(ctx, alphaVal) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = alphaVal;
+                ctx.fill();
+            }
+        }
+        
+        function initStars() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            starCanvas.width = w;
+            starCanvas.height = h;
+            starCanvas.style.width = w + 'px';
+            starCanvas.style.height = h + 'px';
+            
+            const starCount = Math.min(80, Math.floor((w * h) / 12000));
+            stars = [];
+            for (let i = 0; i < starCount; i++) {
+                stars.push(new Star(w, h));
+            }
+        }
+        
+        function animateStars() {
+            if (!starActive) return;
+            if (!sCtx) return;
+            
+            sCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+            const w = starCanvas.width;
+            const h = starCanvas.height;
+            
+            stars.forEach(star => {
+                const alphaVal = star.update(w, h);
+                star.draw(sCtx, alphaVal);
+            });
+            
+            starAnimationId = requestAnimationFrame(animateStars);
+        }
+        function stopStars() {
+            starActive = false;
+            if (starAnimationId) {
+                cancelAnimationFrame(starAnimationId);
+                starAnimationId = null;
+            }
+        }
+        function resumeStars() {
+            if (!starActive) {
+                starActive = true;
+                animateStars();
+            }
+        }
+        function handleResize() {
+            initMatrixRain();
+            initStars();
+            if (matrixInterval) {
+                drawMatrixRain();
+            }
+        }
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                stopMatrixRain();
+                stopStars();
+            } else {
+                startMatrixRain();
+                resumeStars();
+                handleResize();
+            }
+        }
+        function fullInit() {
+            initMatrixRain();
+            initStars();
+            startMatrixRain();
+            animateStars();
+        }
+        window.addEventListener('resize', () => {
+            handleResize();
+        });
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        fullInit();
+        const avatarImg = document.querySelector('.avatar');
+        if (avatarImg) {
+            avatarImg.addEventListener('error', () => {
+                avatarImg.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%2300ffff" stroke="%23ff00ff" stroke-width="3"/%3E%3Ctext x="50" y="67" text-anchor="middle" fill="black" font-size="40" font-family="monospace"%3EYZ%3C/text%3E%3C/svg%3E';
+            });
+        }
+        let glitchCount = 0;
+        setInterval(() => {
+            if (!document.hidden && glitchCount % 12 === 0) {
+                const glitchEl = document.querySelector('.glitch');
+                if (glitchEl) {
+                    glitchEl.style.animation = 'none';
+                    setTimeout(() => {
+                        if (glitchEl) glitchEl.style.animation = '';
+                    }, 20);
+                }
+            }
+            glitchCount++;
+        }, 4000);
+    })();
 </script>
 </body>
 </html>
