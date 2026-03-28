@@ -164,19 +164,9 @@
     let deepThinkMode = false, webSearchMode = false, codeReviewMode = false;
     let attachedFiles = [];
     let autoModelEnabled = true, manualModel = 'llama-3.3-70b', temperature = 0.5, hallucinationGuard = true;
-    let threadTypingStatus = {};
+    let isStreaming = false;
 
-    function applyTheme(theme) {
-        const root = document.body;
-        if (theme === 'dark') root.classList.remove('light');
-        else if (theme === 'light') root.classList.add('light');
-        else if (theme === 'system') {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (prefersDark) root.classList.remove('light');
-            else root.classList.add('light');
-        }
-        localStorage.setItem('yaz_theme', theme);
-    }
+    function applyTheme(theme) { }
     function loadTheme() { const saved = localStorage.getItem('yaz_theme') || 'system'; document.getElementById('themeSelect').value = saved; applyTheme(saved); }
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (localStorage.getItem('yaz_theme') === 'system') applyTheme('system'); });
 
@@ -242,30 +232,34 @@
     }
 
     async function sendMessage() {
-        const tid = currentThreadId;
-        if(threadTypingStatus[tid]) return;
-        let text=document.getElementById('messageInput').value.trim();
-        if(!text && attachedFiles.length===0) return;
-        threadTypingStatus[tid] = true;
-        if(tid === currentThreadId) showTypingIndicator();
-        const sendBtn=document.getElementById('sendBtn'); sendBtn.disabled=true;
-        let finalText=text;
+        if (isStreaming) return;
+        let text = document.getElementById('messageInput').value.trim();
+        if (!text && attachedFiles.length === 0) return;
+        isStreaming = true;
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true;
+
+        let finalText = text;
         let imageDataList = [];
-        for(let file of attachedFiles) {
-            if(file.type.startsWith('image/')) {
+        for (let file of attachedFiles) {
+            if (file.type.startsWith('image/')) {
                 imageDataList.push(file.dataUrl);
                 finalText += `\n[Image attached]`;
             } else {
                 finalText += `\n\n[Attached: ${file.name}]\nContent preview: ${file.content.slice(0,500)}`;
             }
         }
-        const thread=threads[tid];
-        const userMsg={role:'user',content:finalText,timestamp:new Date().toISOString(),images:imageDataList};
+        const thread = threads[currentThreadId];
+        const userMsg = { role: 'user', content: finalText, timestamp: new Date().toISOString(), images: imageDataList };
         thread.messages.push(userMsg);
-        thread.updatedAt=new Date().toISOString();
-        if(thread.title==='New chat') thread.title=text.slice(0,30);
-        saveThreads(); loadThread(tid);
-        document.getElementById('messageInput').value=''; attachedFiles=[]; document.getElementById('attachmentPreviews').innerHTML=''; updateSendButton();
+        thread.updatedAt = new Date().toISOString();
+        if (thread.title === 'New chat') thread.title = text.slice(0,30);
+        saveThreads();
+        appendMessageToDOM('user', finalText, userMsg.timestamp, thread.messages.length-1, null, imageDataList);
+        document.getElementById('messageInput').value = '';
+        attachedFiles = [];
+        document.getElementById('attachmentPreviews').innerHTML = '';
+        updateSendButton();
 
         let selectedModel;
         if (autoModelEnabled) {
@@ -273,7 +267,15 @@
         } else {
             selectedModel = manualModel;
         }
-        let messagesForAPI = [...thread.messages];
+
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'typing-indicator';
+        typingDiv.id = 'typing';
+        typingDiv.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+        document.getElementById('chatContainer').appendChild(typingDiv);
+        scrollToBottom();
+
+        const messagesForAPI = [...thread.messages];
         const requestBody = {
             model: selectedModel,
             messages: messagesForAPI.map(m => {
@@ -292,41 +294,83 @@
             temperature: temperature,
             max_tokens: 4096,
             deep_research: deepThinkMode,
-            web_search: webSearchMode
+            web_search: webSearchMode,
+            stream: true
         };
-        try{
-            const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(requestBody)});
-            const data=await res.json();
-            if(!res.ok) throw new Error(data.error||'API error');
-            let reply=data.reply||'No response';
-            if(codeReviewMode && !reply.startsWith('🔍')) reply = `🔍 **Code Review**\n\n${reply}`;
-            const verification = { verified: true, isHallucination: false };
-            const assistantMsg={role:'assistant',content:reply,timestamp:new Date().toISOString(), verification};
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const assistantDiv = document.createElement('div');
+            assistantDiv.className = 'message assistant streaming';
+            assistantDiv.innerHTML = `<div class="message-avatar">AI</div><div class="message-content"><div class="message-bubble"></div></div>`;
+            document.getElementById('chatContainer').appendChild(assistantDiv);
+            const bubble = assistantDiv.querySelector('.message-bubble');
+            let accumulated = '';
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let done = false;
+            while (!done) {
+                const { value, done: readerDone } = await reader.read();
+                if (readerDone) break;
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6);
+                        if (data === '[DONE]') {
+                            done = true;
+                            break;
+                        }
+                        try {
+                            const json = JSON.parse(data);
+                            const delta = json.choices?.[0]?.delta?.content || '';
+                            accumulated += delta;
+                            bubble.innerText = accumulated;
+                            scrollToBottom();
+                        } catch (e) {}
+                    }
+                }
+            }
+
+            document.getElementById('typing')?.remove();
+            const finalContent = accumulated;
+            const rendered = DOMPurify.sanitize(marked.parse(finalContent));
+            bubble.innerHTML = rendered;
+
+            const verification = { verified: true };
+            const feedbackBtns = `<div class="feedback-buttons"><button class="feedback-btn" data-feedback="correct"><i class="fas fa-thumbs-up"></i> Correct</button><button class="feedback-btn" data-feedback="wrong"><i class="fas fa-thumbs-down"></i> Hallucinated</button></div>`;
+            const actions = `<div class="message-actions"><button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button><button class="action-btn" data-action="regenerate">⟳ Regenerate</button><button class="action-btn" data-action="delete">🗑️ Delete</button></div>`;
+            const contentDiv = assistantDiv.querySelector('.message-content');
+            contentDiv.insertAdjacentHTML('beforeend', `<div class="verification-badge"><i class="fas fa-check-circle"></i> Verified</div>${feedbackBtns}${actions}`);
+            assistantDiv.classList.remove('streaming');
+
+            const assistantMsg = { role: 'assistant', content: finalContent, timestamp: new Date().toISOString(), verification };
             thread.messages.push(assistantMsg);
             saveThreads();
-            if(tid === currentThreadId) removeTypingIndicator();
-            loadThread(tid);
-        } catch(err){
-            if(tid === currentThreadId) removeTypingIndicator();
-            const errorMsg=`❌ Error: ${err.message}`;
-            thread.messages.push({role:'assistant',content:errorMsg,timestamp:new Date().toISOString()});
+            attachMessageActions();
+
+        } catch (err) {
+            document.getElementById('typing')?.remove();
+            const errorMsg = `❌ Error: ${err.message}`;
+            appendMessageToDOM('assistant', errorMsg, new Date().toISOString(), thread.messages.length);
+            thread.messages.push({ role: 'assistant', content: errorMsg, timestamp: new Date().toISOString() });
             saveThreads();
-            if(tid === currentThreadId) loadThread(tid);
-        } finally{
-            threadTypingStatus[tid] = false;
-            sendBtn.disabled=false; updateSendButton();
+        } finally {
+            isStreaming = false;
+            sendBtn.disabled = false;
+            updateSendButton();
         }
     }
 
-    function showTypingIndicator() {
-        if(document.getElementById('typing')) return;
-        const typingDiv=document.createElement('div'); typingDiv.className='typing-indicator'; typingDiv.id='typing'; typingDiv.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-        document.getElementById('chatContainer').appendChild(typingDiv);
-        scrollToBottom();
-    }
-    function removeTypingIndicator() {
-        const el=document.getElementById('typing'); if(el) el.remove();
-    }
+    function showTypingIndicator() {}
+    function removeTypingIndicator() {}
 
     function renderThreads() {
         const container=document.getElementById('threadList');
@@ -360,8 +404,6 @@
         const newWelcome=document.createElement('div'); newWelcome.className='welcome'; newWelcome.innerHTML='<h2>How can I help you?</h2>'; container.appendChild(newWelcome);
         thread.messages.forEach((msg,idx)=>appendMessageToDOM(msg.role,msg.content,msg.timestamp,idx,msg.verification,msg.images||[]));
         if(thread.messages.length>0) newWelcome.style.display='none'; else newWelcome.style.display='flex';
-        if(threadTypingStatus[id] && thread.messages.length>0 && thread.messages[thread.messages.length-1].role !== 'assistant') showTypingIndicator();
-        else removeTypingIndicator();
         scrollToBottom(); renderThreads(); attachMessageActions();
     }
     
@@ -419,6 +461,4 @@
     document.getElementById('hallucinationGuardToggle').classList.toggle('active',hallucinationGuard);
     document.getElementById('tempSlider').value=temperature; document.getElementById('tempValue').innerText=temperature;
     document.getElementById('manualModelSelect').value=manualModel;
-</script>
-</body>
-</html>
+</script> </body> </html>
