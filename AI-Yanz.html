@@ -86,7 +86,7 @@
         .message-bubble { padding: 12px 16px; border-radius: 20px; background: var(--bg-surface); line-height: 1.5; font-size: 0.9rem; word-break: break-word; }
         .message.user .message-bubble { background: var(--accent); border-radius: 20px 20px 4px 20px; }
         .message-bubble pre { background: #0d0d12; padding: 12px; border-radius: 12px; overflow-x: auto; margin: 8px 0; position: relative; }
-        .message-bubble pre .copy-code-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; border-radius: 999px; font-size: 0.75rem; cursor: pointer; transition: background 0.2s; }
+        .message-bubble pre .copy-code-btn { position: absolute; top: 8px; right: 8px; z-index: 1; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 8px; border-radius: 999px; font-size: 0.75rem; cursor: pointer; transition: background 0.2s; }
         .message-bubble pre .copy-code-btn:hover { background: rgba(255,255,255,0.12); }
         .verification-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(16,185,129,0.15); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; margin-top: 8px; color: var(--verified); }
         .feedback-buttons { display: flex; gap: 8px; margin-top: 8px; }
@@ -183,7 +183,8 @@
             <button class="tool-btn" id="deepThinkBtn"><i class="fas fa-brain"></i> DeepThink</button>
             <button class="tool-btn" id="webSearchBtn"><i class="fas fa-globe"></i> Search</button>
             <button class="tool-btn" id="codeReviewBtn"><i class="fas fa-code-branch"></i> Code Review</button>
-            <label class="tool-btn" for="fileInput"><i class="fas fa-paperclip"></i> Attach</label>
+            <button class="tool-btn" id="imageGenBtn"><i class="fas fa-image"></i> Image</button>
+            <label class="tool-btn" for="fileInput"><i class="fas fa-paperclip"></i> Attach</label> 
             <input type="file" id="fileInput" style="display: none;" multiple accept="image/*,.txt,.pdf,.js,.py,.html,.css,.json,.md">
         </div>
         <div id="attachmentPreviews" class="attachment-previews" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;"></div>
@@ -205,7 +206,8 @@
             <option value="llama-3.1-405b">Extreme reasoning</option>
             <option value="deepseek-r1">Deep reasoning</option>
             <option value="deepseek-chat">Code expert</option>
-            <option value="qwen-2.5-72b">Multilingual</option>
+            <option value="gpt-image-1">Image generation</option>
+            <option value="qwen-2.5-72b">Multilingual</option> 
             <option value="gpt-4o-mini">Fast</option>
             <option value="claude-3-haiku">Balanced</option>
             <option value="llama-guard-3-8b">Safety check</option>
@@ -228,14 +230,19 @@
 </div>
 
 <script>
-    const API_URL = 'https://yanz-ai-free.vercel.app/api/chat';
+    const API_BASE_URL = (window.location.protocol === 'file:' || window.location.origin === 'null')
+        ? 'https://yanz-ai-free.vercel.app'
+        : window.location.origin;
+    const API_URL = `${API_BASE_URL}/api/chat`;
+    const IMAGE_API_URL = `${API_BASE_URL}/api/image`;
     const VISION_MODEL = 'llama-3.2-11b-vision';
     let currentThreadId = null;
-    let threads = {};
+    let threads = {}; 
     let deepThinkMode = false;
     let webSearchMode = false;
     let codeReviewMode = false;
-    let attachedFiles = [];
+    let imageGenMode = false;
+    let attachedFiles = []; 
     let autoModelEnabled = true;
     let manualModel = 'llama-3.3-70b';
     let temperature = 0.5;
@@ -366,6 +373,98 @@
         bubble.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
         addCopyButtonsToCodeBlocks(bubble);
         if (autoScroll) scrollToBottom();
+    }
+
+    function setImageMode(active) {
+        imageGenMode = active;
+        document.getElementById('imageGenBtn').classList.toggle('active', active);
+        document.getElementById('messageInput').placeholder = active ? 'Describe the image you want...' : 'Message YANZ AI...';
+        if (active) {
+            webSearchMode = false;
+            deepThinkMode = false;
+            codeReviewMode = false;
+            document.getElementById('webSearchBtn').classList.remove('active');
+            document.getElementById('deepThinkBtn').classList.remove('active');
+            document.getElementById('codeReviewBtn').classList.remove('active');
+        }
+    }
+
+    async function sendImageGeneration() {
+        if (isStreaming) return;
+        const text = document.getElementById('messageInput').value.trim();
+        if (!text) return;
+        if (!currentThreadId || !threads[currentThreadId]) createNewThread();
+        isStreaming = true;
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true;
+
+        const thread = threads[currentThreadId];
+        const userMsg = { role: 'user', content: text, timestamp: new Date().toISOString() };
+        thread.messages.push(userMsg);
+        thread.updatedAt = new Date().toISOString();
+        if (thread.title === 'New chat') thread.title = text.slice(0, 30);
+        saveThreads();
+        appendMessageToDOM('user', text, userMsg.timestamp, thread.messages.length - 1);
+        document.getElementById('messageInput').value = '';
+        setImageMode(false);
+        updateSendButton();
+
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'typing-indicator';
+        typingDiv.id = 'typing';
+        typingDiv.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+        document.getElementById('chatContainer').appendChild(typingDiv);
+        scrollToBottom();
+
+        const requestBody = {
+            prompt: text,
+            model: 'gpt-image-1',
+            size: '512x512',
+            n: 1,
+            response_format: 'url'
+        };
+
+        if (currentAbortController) currentAbortController.abort();
+        currentAbortController = new AbortController();
+
+        try {
+            const response = await fetch(IMAGE_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody),
+                signal: currentAbortController.signal
+            });
+            document.getElementById('typing')?.remove();
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({ error: 'Image generation failed' }));
+                throw new Error(error.error || `HTTP ${response.status}`);
+            }
+            const data = await response.json();
+            const imageUrl = data?.data?.[0]?.url || null;
+            const b64 = data?.data?.[0]?.b64_json || null;
+            const finalImage = imageUrl || (b64 ? `data:image/png;base64,${b64}` : null);
+            if (!finalImage) throw new Error('No image returned from API');
+
+            const assistantMsg = {
+                role: 'assistant',
+                content: `Generated image for: ${text}`,
+                timestamp: new Date().toISOString(),
+                images: [finalImage],
+                verification: hallucinationGuard ? { model: 'gpt-image-1', time: new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) } : null
+            };
+            thread.messages.push(assistantMsg);
+            saveThreads();
+            appendMessageToDOM('assistant', assistantMsg.content, assistantMsg.timestamp, thread.messages.length - 1, assistantMsg.verification, assistantMsg.images);
+            attachMessageActions();
+        } catch (err) {
+            document.getElementById('typing')?.remove();
+            showToast(`Image error: ${err.message}`, 'error');
+        } finally {
+            isStreaming = false;
+            sendBtn.disabled = false;
+            updateSendButton();
+            currentAbortController = null;
+        }
     }
 
     function confirmAction(message) {
@@ -513,9 +612,10 @@
     }
 
     async function sendMessage() {
+        if (imageGenMode) return sendImageGeneration();
         if (isStreaming) return;
         let text = document.getElementById('messageInput').value.trim();
-        if (!text && attachedFiles.length === 0) return;
+        if (!text && attachedFiles.length === 0) return; 
         if (!currentThreadId || !threads[currentThreadId]) createNewThread();
         isStreaming = true;
         const sendBtn = document.getElementById('sendBtn');
@@ -887,11 +987,15 @@
     document.getElementById('webSearchBtn').addEventListener('click', () => {
         webSearchMode = !webSearchMode;
         document.getElementById('webSearchBtn').classList.toggle('active', webSearchMode);
+        if (webSearchMode) setImageMode(false);
     });
     document.getElementById('codeReviewBtn').addEventListener('click', () => {
         codeReviewMode = !codeReviewMode;
         document.getElementById('codeReviewBtn').classList.toggle('active', codeReviewMode);
-        if (codeReviewMode) { deepThinkMode = false; document.getElementById('deepThinkBtn').classList.remove('active'); }
+        if (codeReviewMode) { deepThinkMode = false; document.getElementById('deepThinkBtn').classList.remove('active'); setImageMode(false); }
+    });
+    document.getElementById('imageGenBtn').addEventListener('click', () => {
+        setImageMode(!imageGenMode);
     });
     document.getElementById('settingsBtn').addEventListener('click', () => document.getElementById('settingsModal').classList.add('active'));
     document.getElementById('closeSettings').addEventListener('click', () => document.getElementById('settingsModal').classList.remove('active'));
