@@ -104,6 +104,22 @@
         .send-btn { background: var(--accent); border: none; width: 36px; height: 36px; border-radius: 50%; color: white; cursor: pointer; }
         .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .typing-indicator { display: flex; gap: 4px; padding: 12px; background: var(--bg-surface); border-radius: 20px; width: fit-content; }
+        .toast-container { position: fixed; right: 20px; bottom: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1200; pointer-events: none; }
+        .toast { min-width: 220px; max-width: 320px; padding: 12px 16px; border-radius: 16px; color: white; font-size: 0.95rem; line-height: 1.4; box-shadow: 0 12px 30px rgba(0,0,0,0.25); opacity: 0; transform: translateY(10px); transition: transform 0.2s ease, opacity 0.2s ease; pointer-events: auto; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.info { background: rgba(51,65,85,0.95); }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .confirm-modal-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.65); z-index: 1300; }
+        .confirm-modal-overlay.active { display: flex; }
+        .confirm-modal { width: min(95vw, 380px); background: var(--bg-main); border: 1px solid var(--border); border-radius: 20px; padding: 24px; box-shadow: var(--shadow); }
+        .confirm-message { margin-bottom: 18px; color: var(--text); font-size: 0.95rem; line-height: 1.6; }
+        .confirm-actions { display: flex; justify-content: flex-end; gap: 10px; }
+        .confirm-btn { border: none; border-radius: 12px; padding: 10px 16px; cursor: pointer; font-weight: 600; }
+        .confirm-no { background: var(--bg-surface); color: var(--text-secondary); }
+        .confirm-yes { background: var(--accent); color: white; }
+        .thread-rename-input { width: 100%; background: transparent; color: inherit; font: inherit; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 8px 10px; }
+        .message-bubble textarea.inline-edit-textarea { width: 100%; min-height: 100px; border: 1px solid rgba(255,255,255,0.2); background: rgba(15,23,42,0.95); color: inherit; border-radius: 12px; padding: 10px; font: inherit; resize: vertical; }
         .dot { width: 6px; height: 6px; background: var(--text-secondary); border-radius: 50%; animation: bounce 1.4s infinite; }
         @keyframes bounce { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -193,9 +209,19 @@
             <option value="llama-guard-3-8b">Safety check</option>
         </select></div></div>
         <div class="setting-group"><div class="setting-label"><i class="fas fa-thermometer-half"></i> Temperature</div><input type="range" id="tempSlider" min="0" max="1.5" step="0.05" value="0.5"><div style="display:flex;justify-content:space-between;"><span>Precise</span><span id="tempValue">0.5</span><span>Creative</span></div></div>
-        <div class="setting-group"><div class="setting-label"><i class="fas fa-shield-alt"></i> Hallucination Guard</div><div class="toggle-switch"><div class="toggle" id="hallucinationGuardToggle"></div><span>Enable verification</span></div></div>
+        <div class="setting-group"><div class="setting-label"><i class="fas fa-info-circle"></i> Response info</div><div class="toggle-switch"><div class="toggle" id="hallucinationGuardToggle"></div><span>Show model info</span></div></div>
         <div class="setting-group"><div class="setting-label"><i class="fas fa-palette"></i> Theme</div><select id="themeSelect" class="select-input"><option value="system">System</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
         <div class="setting-group"><div class="action-buttons"><button class="action-btn" id="exportDataBtn"><i class="fas fa-download"></i> Export data</button><button class="action-btn danger" id="deleteAllChatsBtn"><i class="fas fa-trash-alt"></i> Delete all chats</button></div></div>
+    </div>
+</div>
+<div id="toastContainer" class="toast-container"></div>
+<div id="confirmModal" class="confirm-modal-overlay" aria-hidden="true">
+    <div class="confirm-modal">
+        <div class="confirm-message" id="confirmMessage"></div>
+        <div class="confirm-actions">
+            <button type="button" class="confirm-btn confirm-no">Cancel</button>
+            <button type="button" class="confirm-btn confirm-yes">Confirm</button>
+        </div>
     </div>
 </div>
 
@@ -217,6 +243,10 @@
 
     function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&')return '&amp;';if(m==='<')return '&lt;';if(m==='>')return '&gt;';return m;}); }
     function scrollToBottom() { const c = document.getElementById('chatContainer'); c.scrollTop = c.scrollHeight; }
+    function isUserAtBottom() {
+        const c = document.getElementById('chatContainer');
+        return c.scrollTop + c.clientHeight >= c.scrollHeight - 100;
+    }
 
     function applyTheme(theme) {
         if (theme === 'dark') document.body.classList.remove('light');
@@ -238,20 +268,97 @@
     });
 
     function loadSettings() {
-        autoModelEnabled = localStorage.getItem('yaz_auto_model') !== 'false';
-        manualModel = localStorage.getItem('yaz_manual_model') || 'llama-3.3-70b';
-        temperature = parseFloat(localStorage.getItem('yaz_temperature') || '0.5');
-        hallucinationGuard = localStorage.getItem('yaz_hallucination_guard') !== 'false';
-        document.getElementById('autoModelToggle').classList.toggle('active', autoModelEnabled);
-        document.getElementById('manualModelContainer').style.display = autoModelEnabled ? 'none' : 'block';
-        document.getElementById('manualModelSelect').value = manualModel;
-        document.getElementById('tempSlider').value = temperature;
-        document.getElementById('tempValue').innerText = temperature;
-        document.getElementById('hallucinationGuardToggle').classList.toggle('active', hallucinationGuard);
+        try {
+            autoModelEnabled = localStorage.getItem('yaz_auto_model') !== 'false';
+            manualModel = localStorage.getItem('yaz_manual_model') || 'llama-3.3-70b';
+            temperature = parseFloat(localStorage.getItem('yaz_temperature') || '0.5');
+            hallucinationGuard = localStorage.getItem('yaz_hallucination_guard') !== 'false';
+            document.getElementById('autoModelToggle').classList.toggle('active', autoModelEnabled);
+            document.getElementById('manualModelContainer').style.display = autoModelEnabled ? 'none' : 'block';
+            document.getElementById('manualModelSelect').value = manualModel;
+            document.getElementById('tempSlider').value = temperature;
+            document.getElementById('tempValue').innerText = temperature;
+            document.getElementById('hallucinationGuardToggle').classList.toggle('active', hallucinationGuard);
+        } catch (err) {
+            console.error('Error loading settings from localStorage', err);
+            autoModelEnabled = true;
+            manualModel = 'llama-3.3-70b';
+            temperature = 0.5;
+            hallucinationGuard = true;
+            document.getElementById('autoModelToggle').classList.toggle('active', autoModelEnabled);
+            document.getElementById('manualModelContainer').style.display = 'none';
+            document.getElementById('manualModelSelect').value = manualModel;
+            document.getElementById('tempSlider').value = temperature;
+            document.getElementById('tempValue').innerText = temperature;
+            document.getElementById('hallucinationGuardToggle').classList.toggle('active', hallucinationGuard);
+            showToast('Settings reset due to storage error', 'error');
+        }
     }
 
-    function loadThreads() { const s = localStorage.getItem('yaz_threads'); if(s) threads = JSON.parse(s); else threads = {}; }
-    function saveThreads() { localStorage.setItem('yaz_threads', JSON.stringify(threads)); }
+    function safeParseJSON(value, fallback = null) {
+        try { return JSON.parse(value); } catch (err) { return fallback; }
+    }
+    function loadThreads() {
+        try {
+            const s = localStorage.getItem('yaz_threads');
+            if (s) {
+                const parsed = safeParseJSON(s, null);
+                threads = parsed && typeof parsed === 'object' ? parsed : {};
+            } else {
+                threads = {};
+            }
+        } catch (err) {
+            console.error('Error loading threads from localStorage', err);
+            threads = {};
+            showToast('Storage error: chat history reset', 'error');
+        }
+    }
+    function saveThreads() {
+        try {
+            localStorage.setItem('yaz_threads', JSON.stringify(threads));
+        } catch (err) {
+            console.error('Error saving threads to localStorage', err);
+            showToast('Unable to save chat locally', 'error');
+        }
+    }
+
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        requestAnimationFrame(() => toast.classList.add('show'));
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 250);
+        }, 3600);
+    }
+
+    function confirmAction(message) {
+        return new Promise(resolve => {
+            const modal = document.getElementById('confirmModal');
+            const msg = document.getElementById('confirmMessage');
+            const yes = modal.querySelector('.confirm-yes');
+            const no = modal.querySelector('.confirm-no');
+            const cleanup = result => {
+                modal.classList.remove('active');
+                yes.removeEventListener('click', onYes);
+                no.removeEventListener('click', onNo);
+                modal.removeEventListener('click', onOverlay);
+                resolve(result);
+            };
+            const onYes = () => cleanup(true);
+            const onNo = () => cleanup(false);
+            const onOverlay = e => { if (e.target === modal) cleanup(false); };
+            msg.textContent = message;
+            modal.classList.add('active');
+            yes.addEventListener('click', onYes);
+            no.addEventListener('click', onNo);
+            modal.addEventListener('click', onOverlay);
+        });
+    }
 
     function appendMessageToDOM(role, content, timestamp, idx, verification=null, images=[]) {
         const container = document.getElementById('chatContainer');
@@ -263,9 +370,8 @@
         const time = new Date(timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         let sanitized = DOMPurify.sanitize(marked.parse(content));
         let badgeHtml = '';
-        if (role === 'assistant' && verification) {
-            if (verification.verified) badgeHtml = `<div class="verification-badge"><i class="fas fa-check-circle"></i> Verified · Code syntax OK</div>`;
-            else if (verification.isHallucination) badgeHtml = `<div class="verification-badge hallucination-badge"><i class="fas fa-exclamation-triangle"></i> ⚠️ Potential Hallucination (${Math.round(verification.score*100)}%)</div>`;
+        if (role === 'assistant' && verification?.model) {
+            badgeHtml = `<div class="verification-badge"><i class="fas fa-info-circle"></i> ${verification.model} · ${verification.time}</div>`;
         }
         let imgPreviews = '';
         if (images && images.length) imgPreviews = images.map(img => `<img src="${img}" class="preview-img" style="max-width:120px;max-height:120px;border-radius:8px;margin:8px 0;border:1px solid var(--border);">`).join('');
@@ -296,20 +402,50 @@
         if (!thread) return;
         if (action === 'copy') {
             navigator.clipboard.writeText(thread.messages[idx].content);
-            alert('Copied!');
+            showToast('Copied!', 'success');
         } else if (action === 'delete') {
             thread.messages.splice(idx, 1);
             saveThreads();
             loadThread(currentThreadId);
         } else if (action === 'edit') {
-            const newText = prompt('Edit your message:', thread.messages[idx].content);
-            if (newText && newText.trim()) {
-                thread.messages[idx].content = newText.trim();
+            const bubble = msgDiv.querySelector('.message-bubble');
+            if (!bubble || bubble.querySelector('textarea')) return;
+            const currentText = thread.messages[idx].content;
+            bubble.innerHTML = '';
+            const textarea = document.createElement('textarea');
+            textarea.className = 'inline-edit-textarea';
+            textarea.value = currentText;
+            bubble.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            let committed = false;
+            const commitEdit = () => {
+                if (committed) return;
+                committed = true;
+                const newText = textarea.value.trim();
+                if (!newText) {
+                    showToast('Message cannot be empty', 'error');
+                    committed = false;
+                    return;
+                }
+                thread.messages[idx].content = newText;
                 thread.messages = thread.messages.slice(0, idx+1);
                 saveThreads();
                 loadThread(currentThreadId);
                 sendMessage();
-            }
+            };
+            textarea.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    commitEdit();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    loadThread(currentThreadId);
+                }
+            });
+            textarea.addEventListener('blur', () => {
+                if (!committed && textarea.value.trim() !== currentText) commitEdit();
+            });
         } else if (action === 'regenerate') {
             let userIdx = idx-1;
             while (userIdx >=0 && thread.messages[userIdx].role !== 'user') userIdx--;
@@ -324,7 +460,7 @@
 
     function handleFeedback(e) {
         const wasCorrect = e.currentTarget.dataset.feedback === 'correct';
-        alert(wasCorrect ? '✅ Thanks! Feedback saved.' : '🔍 Reported. We\'ll improve.');
+        showToast(wasCorrect ? '✅ Thanks! Feedback saved.' : '🔍 Reported. We\'ll improve.', 'success');
     }
 
     function selectAutoModel(prompt, hasImages) {
@@ -335,15 +471,6 @@
         if (/[\u0E00-\u0E7F]/.test(prompt)) return 'qwen-2.5-72b';
         if (/safety|guard|moderate/.test(lower)) return 'llama-guard-3-8b';
         return 'llama-3.3-70b';
-    }
-
-    function detectHallucination(text) {
-        const hasDoubt = /(not sure|maybe|perhaps|might)/i.test(text);
-        return {
-            isHallucination: hasDoubt && Math.random() < 0.3,
-            score: hasDoubt ? 0.4 : 0.1,
-            reasons: hasDoubt ? ['Uncertain language'] : []
-        };
     }
 
     async function sendMessage() {
@@ -432,30 +559,44 @@
             document.getElementById('chatContainer').appendChild(assistantDiv);
             const bubble = assistantDiv.querySelector('.message-bubble');
             let accumulated = '';
+            const shouldAutoScroll = isUserAtBottom();
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let done = false;
+            let streamBuffer = '';
             while (!done) {
                 const { value, done: readerDone } = await reader.read();
                 if (readerDone) break;
-                const chunk = decoder.decode(value, { stream: true });
-                const lines = chunk.split('\n');
+                streamBuffer += decoder.decode(value, { stream: true });
+                const lines = streamBuffer.split(/\r?\n/);
+                streamBuffer = lines.pop();
                 for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        const data = line.slice(6);
-                        if (data === '[DONE]') {
-                            done = true;
-                            break;
-                        }
-                        try {
-                            const json = JSON.parse(data);
-                            const delta = json.choices?.[0]?.delta?.content || '';
-                            accumulated += delta;
-                            bubble.innerText = accumulated;
-                            scrollToBottom();
-                        } catch (e) {}
+                    if (!line.startsWith('data: ')) continue;
+                    const data = line.slice(6);
+                    if (data === '[DONE]') {
+                        done = true;
+                        break;
                     }
+                    try {
+                        const json = JSON.parse(data);
+                        const delta = json.choices?.[0]?.delta?.content || '';
+                        accumulated += delta;
+                        bubble.innerText = accumulated;
+                        if (shouldAutoScroll) scrollToBottom();
+                    } catch (e) {}
+                }
+            }
+            if (streamBuffer.startsWith('data: ')) {
+                const data = streamBuffer.slice(6).trim();
+                if (data && data !== '[DONE]') {
+                    try {
+                        const json = JSON.parse(data);
+                        const delta = json.choices?.[0]?.delta?.content || '';
+                        accumulated += delta;
+                        bubble.innerText = accumulated;
+                        if (shouldAutoScroll) scrollToBottom();
+                    } catch (e) {}
                 }
             }
 
@@ -465,24 +606,14 @@
             bubble.innerHTML = rendered;
             bubble.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
 
-            let verification = { verified: true };
-            if (hallucinationGuard) {
-                const detection = detectHallucination(finalContent);
-                verification = {
-                    verified: !detection.isHallucination,
-                    isHallucination: detection.isHallucination,
-                    score: detection.score,
-                    reasons: detection.reasons
-                };
-            }
-
+            const infoBadge = hallucinationGuard ? `<div class="verification-badge"><i class="fas fa-info-circle"></i> ${selectedModel} · ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>` : '';
             const feedbackBtns = `<div class="feedback-buttons"><button class="feedback-btn" data-feedback="correct"><i class="fas fa-thumbs-up"></i> Correct</button><button class="feedback-btn" data-feedback="wrong"><i class="fas fa-thumbs-down"></i> Hallucinated</button></div>`;
             const actions = `<div class="message-actions"><button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button><button class="action-btn" data-action="regenerate">⟳ Regenerate</button><button class="action-btn" data-action="delete">🗑️ Delete</button></div>`;
             const contentDiv = assistantDiv.querySelector('.message-content');
-            contentDiv.insertAdjacentHTML('beforeend', `<div class="verification-badge"><i class="fas ${verification.verified ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${verification.verified ? 'Verified' : 'Potential Hallucination'}</div>${feedbackBtns}${actions}`);
+            contentDiv.insertAdjacentHTML('beforeend', `${infoBadge}${feedbackBtns}${actions}`);
             assistantDiv.classList.remove('streaming');
 
-            const assistantMsg = { role: 'assistant', content: finalContent, timestamp: new Date().toISOString(), verification };
+            const assistantMsg = { role: 'assistant', content: finalContent, timestamp: new Date().toISOString(), verification: hallucinationGuard ? { model: selectedModel, time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) } : null };
             thread.messages.push(assistantMsg);
             saveThreads();
             attachMessageActions();
@@ -553,26 +684,53 @@
     }
 
     function renameThread(id) {
-        const newTitle = prompt('Rename:', threads[id].title);
-        if (newTitle && newTitle.trim()) {
-            threads[id].title = newTitle.trim();
+        const thread = threads[id];
+        if (!thread) return;
+        const item = document.querySelector(`.thread-item[data-id="${id}"]`);
+        if (!item) return;
+        const titleEl = item.querySelector('.thread-title');
+        const originalTitle = thread.title;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = originalTitle;
+        input.className = 'thread-rename-input';
+        titleEl.replaceWith(input);
+        input.focus();
+        input.select();
+        let saved = false;
+        const save = () => {
+            if (saved) return;
+            saved = true;
+            const newTitle = input.value.trim() || originalTitle;
+            thread.title = newTitle;
             saveThreads();
             renderThreads();
             if (id === currentThreadId) document.getElementById('currentChatTitle').innerText = newTitle;
-        }
+        };
+        const cancel = () => renderThreads();
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                save();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancel();
+            }
+        });
+        input.addEventListener('blur', save);
     }
 
-    function deleteThread(id) {
-        if (confirm('Delete this chat?')) {
-            delete threads[id];
-            if (id === currentThreadId) {
-                const remaining = Object.keys(threads);
-                if (remaining.length) loadThread(remaining[0]);
-                else createNewThread();
-            }
-            saveThreads();
-            renderThreads();
+    async function deleteThread(id) {
+        const confirmed = await confirmAction('Delete this chat?');
+        if (!confirmed) return;
+        delete threads[id];
+        if (id === currentThreadId) {
+            const remaining = Object.keys(threads);
+            if (remaining.length) loadThread(remaining[0]);
+            else createNewThread();
         }
+        saveThreads();
+        renderThreads();
     }
 
     function createNewThread() {
@@ -616,7 +774,7 @@
 
     document.getElementById('fileInput').addEventListener('change', e => {
         Array.from(e.target.files).forEach(file => {
-            if (file.size > 5*1024*1024) { alert('File too large (max 5MB)'); return; }
+            if (file.size > 5*1024*1024) { showToast('File too large (max 5MB)', 'error'); return; }
             const reader = new FileReader();
             reader.onload = ev => {
                 const dataUrl = ev.target.result;
@@ -713,20 +871,20 @@
         a.click();
         URL.revokeObjectURL(a.href);
     });
-    document.getElementById('deleteAllChatsBtn').addEventListener('click', () => {
-        if (confirm('Delete ALL chats? This cannot be undone.')) {
-            threads = {};
-            saveThreads();
-            createNewThread();
-            renderThreads();
-        }
+    document.getElementById('deleteAllChatsBtn').addEventListener('click', async () => {
+        const confirmed = await confirmAction('Delete ALL chats? This cannot be undone.');
+        if (!confirmed) return;
+        threads = {};
+        saveThreads();
+        createNewThread();
+        renderThreads();
     });
     document.getElementById('renameChatBtn').addEventListener('click', () => {
         if (currentThreadId) renameThread(currentThreadId);
     });
     document.getElementById('exportChatBtn').addEventListener('click', () => {
         const thread = threads[currentThreadId];
-        if (!thread || !thread.messages.length) { alert('No messages'); return; }
+        if (!thread || !thread.messages.length) { showToast('No messages to export', 'error'); return; }
         let content = `# ${thread.title}\n\n`;
         thread.messages.forEach(m => content += `## ${m.role === 'user' ? 'User' : 'AI'}\n${m.content}\n\n---\n\n`);
         const blob = new Blob([content], {type: 'text/markdown'});
@@ -735,13 +893,14 @@
         a.download = `chat-${thread.id}.md`;
         a.click();
     });
-    document.getElementById('clearChatBtn').addEventListener('click', () => {
-        if (currentThreadId && confirm('Clear all messages in this chat?')) {
-            threads[currentThreadId].messages = [];
-            threads[currentThreadId].title = 'New chat';
-            saveThreads();
-            loadThread(currentThreadId);
-        }
+    document.getElementById('clearChatBtn').addEventListener('click', async () => {
+        if (!currentThreadId) return;
+        const confirmed = await confirmAction('Clear all messages in this chat?');
+        if (!confirmed) return;
+        threads[currentThreadId].messages = [];
+        threads[currentThreadId].title = 'New chat';
+        saveThreads();
+        loadThread(currentThreadId);
     });
     document.getElementById('closeChatBtn').addEventListener('click', () => {
         if (currentThreadId) {
