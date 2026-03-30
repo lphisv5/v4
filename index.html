@@ -24,7 +24,7 @@
   <meta property="og:url" content="https://lphisv5.github.io/v4" />
   <meta property="og:title" content="YANZ - Dashboard" />
   <meta property="og:description" content="YANZ Winter Edition - Tools collection with real-time tracking." />
-  <meta property="og:image" content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif" alt="YANZ preview image" />
+  <meta property="og:image" content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif" />
   <meta name="twitter:card" content="summary_large_image" />
   
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
@@ -1614,11 +1614,16 @@
       elements.totalTools.textContent = toolsData.length;
     }
 
+    function getStoredClicks(toolId) {
+      const rawValue = localStorage.getItem(`clicks_${toolId}`);
+      const parsed = Number.parseInt(rawValue, 10);
+      return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
     function loadStoredClicks() {
       let totalClicks = 0;
       toolsData.forEach(tool => {
-        const clicks = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10);
-        totalClicks += clicks;
+        totalClicks += getStoredClicks(tool.id);
       });
       
       currentToolClicks = totalClicks;
@@ -1627,6 +1632,22 @@
     }
 
     function initializeFirebase() {
+      if (typeof firebase === 'undefined' || typeof firebase.initializeApp !== 'function') {
+        console.warn('Firebase library not available. Skipping realtime updates.');
+        return;
+      }
+
+      try {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        console.log('✅ Firebase initialized successfully');
+        
+        trackVisitor();
+        setupRealtimeListeners();
+        
+      } catch (error) {
+        console.error('❌ Firebase initialization failed:', error);
+      }
       try {
         firebaseApp = firebase.initializeApp(firebaseConfig);
         database = firebase.database();
@@ -1742,7 +1763,7 @@
       elements.toolsGrid.innerHTML = '';
       
       toolsToRender.forEach(tool => {
-        const clickCount = parseInt(localStorage.getItem(`clicks_${tool.id}`) || '0', 10);
+        const clickCount = getStoredClicks(tool.id);
         
         const toolCard = document.createElement('div');
         toolCard.className = 'tool-card';
