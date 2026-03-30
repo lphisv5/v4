@@ -20,11 +20,10 @@
   <title>YANZ Hub - Dashboard</title>
   <meta name="description" content="YANZ Winter Edition - Tools collection with real-time tracking system." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://i.postimg.cc/TPNFmJ50/a7f768b4dc4e12857e1e56f350cd2818.jpg" />
+  <meta property="og:image" content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif" />
   <meta property="og:url" content="https://lphisv5.github.io/v4" />
   <meta property="og:title" content="YANZ - Dashboard" />
   <meta property="og:description" content="YANZ Winter Edition - Tools collection with real-time tracking." />
-  <meta property="og:image" content="https://i.postimg.cc/hv65wD1d/328c881f1929b778adcc7d9c1c75adcd.gif" />
   <meta name="twitter:card" content="summary_large_image" />
   
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
@@ -1637,17 +1636,6 @@
         return;
       }
 
-      try {
-        firebaseApp = firebase.initializeApp(firebaseConfig);
-        database = firebase.database();
-        console.log('✅ Firebase initialized successfully');
-        
-        trackVisitor();
-        setupRealtimeListeners();
-        
-      } catch (error) {
-        console.error('❌ Firebase initialization failed:', error);
-      }
       try {
         firebaseApp = firebase.initializeApp(firebaseConfig);
         database = firebase.database();
