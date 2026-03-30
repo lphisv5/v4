@@ -419,8 +419,9 @@
             textarea.focus();
             textarea.select();
             let committed = false;
+            let cancelled = false;
             const commitEdit = () => {
-                if (committed) return;
+                if (committed || cancelled) return;
                 committed = true;
                 const newText = textarea.value.trim();
                 if (!newText) {
@@ -440,11 +441,12 @@
                     commitEdit();
                 } else if (e.key === 'Escape') {
                     e.preventDefault();
+                    cancelled = true;
                     loadThread(currentThreadId);
                 }
             });
             textarea.addEventListener('blur', () => {
-                if (!committed && textarea.value.trim() !== currentText) commitEdit();
+                if (!committed && !cancelled && textarea.value.trim() !== currentText) commitEdit();
             });
         } else if (action === 'regenerate') {
             let userIdx = idx-1;
@@ -543,6 +545,7 @@
 
         if (currentAbortController) currentAbortController.abort();
         currentAbortController = new AbortController();
+        let assistantDiv = null;
 
         try {
             const response = await fetch(API_URL, {
@@ -553,7 +556,7 @@
             });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-            const assistantDiv = document.createElement('div');
+            assistantDiv = document.createElement('div');
             assistantDiv.className = 'message assistant streaming';
             assistantDiv.innerHTML = `<div class="message-avatar">AI</div><div class="message-content"><div class="message-bubble"></div></div>`;
             document.getElementById('chatContainer').appendChild(assistantDiv);
@@ -620,9 +623,12 @@
 
         } catch (err) {
             if (err.name === 'AbortError') {
+                document.getElementById('typing')?.remove();
+                assistantDiv?.remove();
                 console.log('Request aborted');
             } else {
                 document.getElementById('typing')?.remove();
+                assistantDiv?.remove();
                 const errorMsg = `❌ Error: ${err.message}`;
                 appendMessageToDOM('assistant', errorMsg, new Date().toISOString(), thread.messages.length);
                 thread.messages.push({ role: 'assistant', content: errorMsg, timestamp: new Date().toISOString() });
@@ -698,8 +704,9 @@
         input.focus();
         input.select();
         let saved = false;
+        let cancelled = false;
         const save = () => {
-            if (saved) return;
+            if (saved || cancelled) return;
             saved = true;
             const newTitle = input.value.trim() || originalTitle;
             thread.title = newTitle;
@@ -707,7 +714,10 @@
             renderThreads();
             if (id === currentThreadId) document.getElementById('currentChatTitle').innerText = newTitle;
         };
-        const cancel = () => renderThreads();
+        const cancel = () => {
+            cancelled = true;
+            renderThreads();
+        };
         input.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
