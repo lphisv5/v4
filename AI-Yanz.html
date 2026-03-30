@@ -379,7 +379,8 @@
         msgDiv.innerHTML = `<div class="message-avatar">${role==='user'?'U':'AI'}</div><div class="message-content"><div class="message-bubble">${imgPreviews}${sanitized}</div>${badgeHtml}${feedbackBtns}<div class="message-actions"><button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button>${role==='assistant'?'<button class="action-btn" data-action="regenerate">⟳ Regenerate</button>':'<button class="action-btn" data-action="edit">✏️ Edit</button>'}<button class="action-btn" data-action="delete">🗑️ Delete</button></div></div>`;
         container.appendChild(msgDiv);
         msgDiv.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
-        scrollToBottom();
+        const shouldAutoScroll = isUserAtBottom();
+        if (shouldAutoScroll) scrollToBottom();
     }
 
     function attachMessageActions() {
@@ -401,8 +402,11 @@
         const thread = threads[currentThreadId];
         if (!thread) return;
         if (action === 'copy') {
-            navigator.clipboard.writeText(thread.messages[idx].content);
-            showToast('Copied!', 'success');
+            navigator.clipboard.writeText(thread.messages[idx].content).then(() => {
+                showToast('Copied!', 'success');
+            }).catch(() => {
+                showToast('Unable to copy content', 'error');
+            });
         } else if (action === 'delete') {
             thread.messages.splice(idx, 1);
             saveThreads();
@@ -479,6 +483,7 @@
         if (isStreaming) return;
         let text = document.getElementById('messageInput').value.trim();
         if (!text && attachedFiles.length === 0) return;
+        if (!currentThreadId || !threads[currentThreadId]) createNewThread();
         isStreaming = true;
         const sendBtn = document.getElementById('sendBtn');
         sendBtn.disabled = true;
@@ -563,43 +568,60 @@
             const bubble = assistantDiv.querySelector('.message-bubble');
             let accumulated = '';
             const shouldAutoScroll = isUserAtBottom();
+            const contentType = response.headers.get('content-type') || '';
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let done = false;
-            let streamBuffer = '';
-            while (!done) {
-                const { value, done: readerDone } = await reader.read();
-                if (readerDone) break;
-                streamBuffer += decoder.decode(value, { stream: true });
-                const lines = streamBuffer.split(/\r?\n/);
-                streamBuffer = lines.pop();
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const data = line.slice(6);
-                    if (data === '[DONE]') {
-                        done = true;
-                        break;
+            if (!response.body || typeof response.body.getReader !== 'function') {
+                const text = await response.text();
+                if (contentType.includes('application/json')) {
+                    try {
+                        const json = JSON.parse(text);
+                        accumulated = json.choices?.[0]?.message?.content || json.choices?.[0]?.delta?.content || text;
+                    } catch (err) {
+                        accumulated = text;
                     }
-                    try {
-                        const json = JSON.parse(data);
-                        const delta = json.choices?.[0]?.delta?.content || '';
-                        accumulated += delta;
-                        bubble.innerText = accumulated;
-                        if (shouldAutoScroll) scrollToBottom();
-                    } catch (e) {}
+                } else {
+                    accumulated = text;
                 }
-            }
-            if (streamBuffer.startsWith('data: ')) {
-                const data = streamBuffer.slice(6).trim();
-                if (data && data !== '[DONE]') {
-                    try {
-                        const json = JSON.parse(data);
-                        const delta = json.choices?.[0]?.delta?.content || '';
-                        accumulated += delta;
-                        bubble.innerText = accumulated;
-                        if (shouldAutoScroll) scrollToBottom();
-                    } catch (e) {}
+                bubble.innerText = accumulated;
+                if (shouldAutoScroll) scrollToBottom();
+            } else {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let done = false;
+                let streamBuffer = '';
+                while (!done) {
+                    const { value, done: readerDone } = await reader.read();
+                    if (readerDone) break;
+                    streamBuffer += decoder.decode(value, { stream: true });
+                    const lines = streamBuffer.split(/\r?\n/);
+                    streamBuffer = lines.pop();
+                    for (const line of lines) {
+                        if (!line.startsWith('data: ')) continue;
+                        const data = line.slice(6);
+                        if (data === '[DONE]') {
+                            done = true;
+                            break;
+                        }
+                        try {
+                            const json = JSON.parse(data);
+                            const delta = json.choices?.[0]?.delta?.content || '';
+                            accumulated += delta;
+                            bubble.innerText = accumulated;
+                            if (shouldAutoScroll) scrollToBottom();
+                        } catch (e) {}
+                    }
+                }
+                if (streamBuffer.startsWith('data: ')) {
+                    const data = streamBuffer.slice(6).trim();
+                    if (data && data !== '[DONE]') {
+                        try {
+                            const json = JSON.parse(data);
+                            const delta = json.choices?.[0]?.delta?.content || '';
+                            accumulated += delta;
+                            bubble.innerText = accumulated;
+                            if (shouldAutoScroll) scrollToBottom();
+                        } catch (e) {}
+                    }
                 }
             }
 
@@ -644,7 +666,7 @@
 
     function updateSendButton() {
         const hasText = document.getElementById('messageInput').value.trim().length > 0;
-        document.getElementById('sendBtn').disabled = !hasText && attachedFiles.length === 0;
+        document.getElementById('sendBtn').disabled = isStreaming || (!hasText && attachedFiles.length === 0);
     }
 
     function renderThreads() {
