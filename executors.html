@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Yanz Executors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: radial-gradient(circle at 10% 20%, #0a0c15, #03050b);
+            font-family: 'Inter', sans-serif;
+            color: #eef5ff;
+            padding: 1.8rem 1.5rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .glass-header {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1rem 2rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logo-area h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(130deg, #a78bfa, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .live-stream-badge {
+            background: #ef444420;
+            border: 1px solid #ef4444;
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .live-dot-stream {
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulseRed 0.8s infinite;
+            box-shadow: 0 0 5px red;
+        }
+        @keyframes pulseRed {
+            0% { opacity: 0.4; transform: scale(0.8);}
+            100% { opacity: 1; transform: scale(1.2);}
+        }
+        .timestamp-live {
+            font-family: 'Monaco', monospace;
+            background: #00000060;
+            padding: 0.2rem 0.7rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .stats-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-tile {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 1.5rem;
+            padding: 0.7rem 1.2rem;
+            flex: 1 1 130px;
+            text-align: center;
+            border-bottom: 2px solid #3b82f6;
+        }
+        .stat-number {
+            font-size: 1.7rem;
+            font-weight: 800;
+        }
+        .control-bar {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 0.7rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+        .search-wrapper {
+            background: #0f172a;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+        }
+        #globalSearch {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 0.8rem;
+            color: white;
+            width: 200px;
+            outline: none;
+        }
+        .filter-chip {
+            background: #1e293b;
+            border-radius: 2rem;
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #334155;
+            transition: 0.1s;
+        }
+        .filter-chip.active {
+            background: #3b82f6;
+            border-color: #60a5fa;
+        }
+        .platform-section {
+            margin-bottom: 2.5rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.2rem;
+        }
+        .exec-card {
+            background: linear-gradient(145deg, #111827, #0f172a);
+            border-radius: 1.5rem;
+            border: 1px solid #2d3a5e;
+            transition: 0.2s;
+        }
+        .exec-card:hover {
+            transform: translateY(-4px);
+            border-color: #3b82f6;
+        }
+        .card-inner {
+            padding: 1.2rem;
+        }
+        .card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+        .exec-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .premium-badge {
+            background: #f59e0b20;
+            color: #fbbf24;
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .status-chip {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 2rem;
+        }
+        .status-online {
+            background: #10b98120;
+            color: #34d399;
+            border: 1px solid #10b981;
+        }
+        .status-offline {
+            background: #ef444420;
+            color: #f87171;
+            border: 1px solid #ef4444;
+        }
+        .version-text {
+            font-family: monospace;
+            background: #00000030;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            margin: 0.5rem 0;
+        }
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 0;
+        }
+        .btn-icon {
+            background: #1e293b;
+            border-radius: 2rem;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #cbd5e1;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid #334155;
+            cursor: pointer;
+        }
+        .vng-details {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed #334155;
+            font-size: 0.7rem;
+        }
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            background: #0f172a80;
+            border-radius: 2rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+        .connection-status {
+            font-size: 0.7rem;
+            background: #00000050;
+            border-radius: 1rem;
+            padding: 0.2rem 0.6rem;
+        }
+        @keyframes pulseGreen {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .live-text {
+            animation: pulseGreen 1s infinite;
+            font-weight: bold;
+        }
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="glass-header">
+        <div class="logo-area">
+            <h1><i class="fas fa-broadcast-tower"></i> YANZ EXECUTORS</h1>
+        </div>
+        <div class="live-stream-badge">
+            <span class="live-dot-stream"></span>
+            <span class="live-text">LIVE</span>
+            <span id="liveTimestamp" class="timestamp-live">--:--:--</span>
+        </div>
+    </div>
+
+    <div id="statsPanel" class="stats-panel">Loading stats...</div>
+
+    <div class="control-bar">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="globalSearch" placeholder="Search executors...">
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <div data-filter="all" class="filter-chip active">All</div>
+            <div data-filter="Android" class="filter-chip"><i class="fab fa-android"></i> Android</div>
+            <div data-filter="iOS" class="filter-chip"><i class="fab fa-apple"></i> iOS</div>
+            <div data-filter="Windows" class="filter-chip"><i class="fab fa-windows"></i> Windows</div>
+            <div data-filter="MacOS" class="filter-chip"><i class="fas fa-desktop"></i> macOS</div>
+            <div data-filter="External" class="filter-chip"><i class="fas fa-external-link-alt"></i> External</div>
+        </div>
+    </div>
+
+    <div id="platformsContainer"></div>
+    <footer> Discord: https://discord.gg/mNGeUVcjKB | Creator _lphisv5 </footer>
+</div>
+
+<script>
+    const API_URL = "https://executors-one.vercel.app/executors";
+    const UPDATE_INTERVAL_MS = 1000;
+    
+    let fullData = null;
+    let activePlatform = "all";
+    let searchTerm = "";
+    let updateIntervalId = null;
+    let isFetching = false;
+    let lastSuccessTime = null;
+
+    const statsDiv = document.getElementById("statsPanel");
+    const platformsContainer = document.getElementById("platformsContainer");
+    const searchInput = document.getElementById("globalSearch");
+    const liveTimestampSpan = document.getElementById("liveTimestamp");
+
+    const statIconMap = {
+        Android: '<i class="fab fa-android"></i>',
+        iOS: '<i class="fab fa-apple"></i>',
+        Windows: '<i class="fab fa-windows"></i>',
+        MacOS: '<i class="fas fa-desktop"></i>',
+        External: '<i class="fas fa-external-link-alt"></i>'
+    };
+
+    function updateLiveClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
+        liveTimestampSpan.innerText = timeStr;
+    }
+    setInterval(updateLiveClock, 1000);
+    updateLiveClock();
+
+    function showToast(msg, isError = false) {
+        let toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.background = isError ? '#dc2626' : '#10b981';
+        toast.style.color = 'white';
+        toast.style.padding = '8px 18px';
+        toast.style.borderRadius = '40px';
+        toast.style.fontSize = '0.8rem';
+        toast.style.zIndex = '9999';
+        toast.style.backdropFilter = 'blur(8px)';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"]/g, (m) => {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            if (m === '"') return '&quot;';
+            return m;
+        });
+    }
+
+    async function copyToClipboard(text, btn) {
+        try {
+            await navigator.clipboard.writeText(text);
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => { if(btn) btn.innerHTML = original; }, 1200);
+        } catch(e) { showToast("Copy failed", true); }
+    }
+
+    function getFilteredData() {
+        if (!fullData) return {};
+        const platforms = ["Android", "iOS", "Windows", "MacOS", "External"];
+        let result = {};
+        for (let plat of platforms) {
+            if (activePlatform !== "all" && activePlatform !== plat) {
+                result[plat] = [];
+                continue;
+            }
+            let execs = fullData[plat] || [];
+            if (searchTerm.trim() !== "") {
+                const term = searchTerm.toLowerCase();
+                execs = execs.filter(ex => ex.name && ex.name.toLowerCase().includes(term));
+            }
+            result[plat] = execs;
+        }
+        return result;
+    }
+
+    function renderStats() {
+        if (!fullData) return;
+        const platforms = ["Android", "iOS", "Windows", "MacOS", "External"];
+        let html = '';
+        for (let plat of platforms) {
+            const total = fullData[`Available ${plat}`] ?? (fullData[plat]?.length || 0);
+            const online = fullData[`${plat} Online`] ?? (fullData[plat]?.filter(ex => ex.status === "Online").length || 0);
+            html += `<div class="stat-tile">
+                        ${statIconMap[plat] || '<i class="fas fa-mobile-alt"></i>'}
+                        <div class="stat-number">${online}/${total}</div>
+                        <div style="font-size:0.7rem;">${plat} online</div>
+                    </div>`;
+        }
+        let totalAll = 0, totalOnlineAll = 0;
+        for (let plat of platforms) {
+            totalAll += (fullData[`Available ${plat}`] ?? (fullData[plat]?.length || 0));
+            totalOnlineAll += (fullData[`${plat} Online`] ?? (fullData[plat]?.filter(ex=>ex.status==="Online").length || 0));
+        }
+        statsDiv.innerHTML = `<div class="stat-tile"><i class="fas fa-chart-line"></i><div class="stat-number">${totalOnlineAll}/${totalAll}</div><div>Global active</div></div>` + html;
+    }
+
+    function renderCards() {
+        if (!fullData) {
+            platformsContainer.innerHTML = `<div class="no-results"><i class="fas fa-spinner fa-pulse"></i> Waiting for live stream data...</div>`;
+            return;
+        }
+        const cmdMap = {};
+        const filteredData = getFilteredData();
+        const platforms = ["Android", "iOS", "Windows", "MacOS", "External"];
+        let html = '';
+        let anyVisible = false;
+        for (let plat of platforms) {
+            const execs = filteredData[plat];
+            if (activePlatform !== "all" && activePlatform !== plat) continue;
+            if (execs.length === 0 && activePlatform === "all") continue;
+            anyVisible = true;
+            const totalOriginal = fullData[plat]?.length || 0;
+            const onlineOriginal = fullData[plat]?.filter(ex=>ex.status==="Online").length || 0;
+            
+            let headerIcon = '';
+            if (plat === 'Android') headerIcon = '<i class="fab fa-android"></i>';
+            else if (plat === 'iOS') headerIcon = '<i class="fab fa-apple"></i>';
+            else if (plat === 'Windows') headerIcon = '<i class="fab fa-windows"></i>';
+            else if (plat === 'MacOS') headerIcon = '<i class="fas fa-desktop"></i>';
+            else if (plat === 'External') headerIcon = '<i class="fas fa-external-link-alt"></i>';
+            
+            html += `<div class="platform-section">
+                        <div class="section-header">
+                            <div>${headerIcon} <strong>${plat}</strong></div>
+                            <div class="filter-chip" style="background:#0f172a;">${execs.length} / ${totalOriginal}  |  🟢 ${onlineOriginal}</div>
+                        </div>
+                        <div class="card-grid">`;
+            for (let ex of execs) {
+                const isOnline = ex.status === "Online";
+                const statusClass = isOnline ? "status-online" : "status-offline";
+                const premiumFlag = ex.type === "Premium" || ex.purchaseLink;
+                const cmdKey = `${plat}-${ex.name}`;
+                if (ex.installCommand) cmdMap[cmdKey] = ex.installCommand;
+
+                html += `<div class="exec-card">
+                            <div class="card-inner">
+                                <div class="card-title-row">
+                                    <div class="exec-name">${escapeHtml(ex.name || '?')} ${premiumFlag ? '<span class="premium-badge"><i class="fas fa-gem"></i> Premium</span>' : ''}</div>
+                                    <div class="status-chip ${statusClass}">${ex.status || 'Offline'}</div>
+                                </div>
+                                <div class="version-text"><i class="fas fa-code-branch"></i> ${escapeHtml(ex.version || 'N/A')}</div>
+                                <div class="action-buttons">`;
+                if (ex.downloadLink) html += `<a href="${escapeHtml(ex.downloadLink)}" target="_blank" class="btn-icon"><i class="fas fa-download"></i> Download</a>`;
+                if (ex.purchaseLink) html += `<a href="${escapeHtml(ex.purchaseLink)}" target="_blank" class="btn-icon"><i class="fas fa-shopping-cart"></i> Purchase</a>`;
+                if (ex.installCommand) {
+                    html += `<button class="btn-icon copy-cmd" data-key="${escapeHtml(cmdKey)}"><i class="fas fa-terminal"></i> Copy Cmd</button>`;
+                }
+                if (!ex.downloadLink && !ex.purchaseLink && !ex.installCommand) html += `<span class="btn-icon">No link</span>`;
+                html += `</div>`;
+                if (plat === "Android" && (ex.vngVersion || ex.vngStatus || ex.vngDownloadLink)) {
+                    html += `<div class="vng-details">
+                                <i class="fas fa-code-branch"></i> VNG: ${escapeHtml(ex.vngVersion || '?')} 
+                                ${ex.vngStatus ? `<span class="status-chip ${ex.vngStatus === 'Online' ? 'status-online' : 'status-offline'}" style="margin-left:5px;">${ex.vngStatus}</span>` : ''}
+                                ${ex.vngDownloadLink ? `<div style="margin-top:5px;"><a href="${escapeHtml(ex.vngDownloadLink)}" target="_blank" class="btn-icon"><i class="fas fa-download"></i> VNG DL</a></div>` : ''}
+                            </div>`;
+                }
+                html += `</div></div>`;
+            }
+            html += `</div></div>`;
+        }
+        if (!anyVisible && activePlatform !== "all") html = `<div class="no-results"><i class="fas fa-filter"></i> No results for selected platform</div>`;
+        else if (!anyVisible) html = `<div class="no-results">No executor data found</div>`;
+        platformsContainer.innerHTML = html;
+
+        document.querySelectorAll('.copy-cmd').forEach(btn => {
+            const key = btn.getAttribute('data-key');
+            if (key && cmdMap[key]) {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    copyToClipboard(cmdMap[key], btn);
+                });
+            }
+        });
+    }
+
+    async function fetchLiveData(showToastMsg = false) {
+        if (isFetching) return;
+        isFetching = true;
+        try {
+            const timeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Request timed out")), 7000)
+            );
+            const response = await Promise.race([fetch(API_URL), timeout]);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            fullData = data;
+            lastSuccessTime = Date.now();
+            renderStats();
+            renderCards();
+            if (showToastMsg) showToast("Live data refreshed", false);
+        } catch (err) {
+            console.warn("Fetch error:", err);
+            if (showToastMsg) showToast(`API error: ${err.message}`, true);
+            if (!fullData) {
+                platformsContainer.innerHTML = `<div class="no-results"><i class="fas fa-exclamation-triangle"></i> Cannot reach API. Retrying every 1s...<br>${err.message}</div>`;
+            } else {
+                if (!document.getElementById('stream-warning')) {
+                    const warn = document.createElement('div');
+                    warn.id = 'stream-warning';
+                    warn.style.background = '#dc262630';
+                    warn.style.borderRadius = '1rem';
+                    warn.style.padding = '0.3rem';
+                    warn.style.marginBottom = '1rem';
+                    warn.style.fontSize = '0.7rem';
+                    warn.innerHTML = `<i class="fas fa-clock"></i> Using cached data — waiting for API response (last update: ${new Date(lastSuccessTime || Date.now()).toLocaleTimeString()})`;
+                    platformsContainer.prepend(warn);
+                    setTimeout(() => warn.remove(), 3000);
+                }
+            }
+        } finally {
+            isFetching = false;
+        }
+    }
+
+    function startLiveStream() {
+        if (updateIntervalId) clearInterval(updateIntervalId);
+        fetchLiveData(false);
+        updateIntervalId = setInterval(() => {
+            fetchLiveData(false);
+        }, UPDATE_INTERVAL_MS);
+    }
+
+    function bindControls() {
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderCards();
+        });
+        document.querySelectorAll('[data-filter]').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('[data-filter]').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                activePlatform = chip.getAttribute('data-filter');
+                renderCards();
+            });
+        });
+    }
+
+    function init() {
+        bindControls();
+        startLiveStream();
+    }
+    init();
+</script>
+</body>
+</html>
