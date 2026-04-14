@@ -2,256 +2,1374 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Binance Market Data Dashboard - Real-time cryptocurrency ticker and exchange information" />
   <title>Binance Dashboard</title>
   <style>
     :root {
-      --bg: #0d1117;
-      --card: #161b22;
-      --text: #e6edf3;
-      --green: #2ecc71;
-      --red: #e74c3c;
-      --blue: #3498db;
-      --yellow: #f1c40f;
-      --radius: 12px;
-      --shadow: 0 4px 12px rgba(0,0,0,0.5);
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent-green: #238636;
+      --accent-red: #da3633;
+      --accent-blue: #58a6ff;
+      --accent-yellow: #d29922;
+      --accent-purple: #8957e5;
+      --border-color: #30363d;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
     * {
       box-sizing: border-box;
-      margin: 0; padding: 0;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      background: var(--bg);
-      color: var(--text);
+      margin: 0;
       padding: 0;
     }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
     header {
-      background: var(--card);
-      padding: 1rem;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: var(--shadow);
     }
-    header h1 {
-      font-size: 1.2rem;
-      color: var(--blue);
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent-yellow), var(--accent-purple));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--bg-primary);
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.025em;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      transition: var(--transition);
+    }
+
+    .status-dot.connected {
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .status-dot.error {
+      background: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red);
+    }
+
     .menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
       font-size: 1.5rem;
       cursor: pointer;
-      user-select: none;
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
     }
+
+    .menu-btn:hover {
+      background: var(--bg-tertiary);
+    }
+
     nav {
-      background: var(--card);
-      max-height: 0;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 1.5rem;
+    }
+
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+      padding: 0.5rem 0;
+    }
+
+    .nav-tab {
+      padding: 0.625rem 1.25rem;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-tab.active {
+      background: var(--accent-blue);
+      color: var(--bg-primary);
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .page-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .page-header p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+      max-width: 400px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.625rem 1rem 0.625rem 2.5rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+    }
+
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.6;
+    }
+
+    .filter-select {
+      padding: 0.625rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      min-width: 150px;
+    }
+
+    .refresh-btn {
+      padding: 0.625rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .refresh-btn:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--accent-blue);
+    }
+
+    .refresh-btn.spinning::after {
+      content: "↻";
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-blue);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .stat-change {
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      transition: var(--transition);
+      position: relative;
       overflow: hidden;
-      transition: max-height 0.4s ease;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent-blue);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-color);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .symbol-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .symbol-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-tertiary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--accent-yellow);
+    }
+
+    .symbol-info h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .symbol-rank {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+    }
+
+    .price-main {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    .price-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .price-change.positive {
+      background: rgba(35, 134, 54, 0.15);
+      color: var(--accent-green);
+    }
+
+    .price-change.negative {
+      background: rgba(218, 54, 51, 0.15);
+      color: var(--accent-red);
+    }
+
+    .card-details {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .detail-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .detail-value {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    .detail-value.volume {
+      color: var(--accent-blue);
+    }
+
+    .exchange-meta {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .meta-tag {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.625rem;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .meta-tag.status-trading {
+      background: rgba(35, 134, 54, 0.15);
+      color: var(--accent-green);
+      border-color: var(--accent-green);
+    }
+
+    .time-display {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .time-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .time-main {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--accent-yellow);
+      margin-bottom: 0.5rem;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    .time-sub {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .time-meta {
       display: flex;
       justify-content: center;
+      gap: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
     }
-    nav.open {
-      max-height: 300px;
+
+    .time-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
-    nav ul {
-      list-style: none;
-      padding: 0.5rem;
-      width: 100%;
+
+    .error-container {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--accent-red);
+      border-radius: var(--radius-md);
       max-width: 600px;
-      text-align: center;
+      margin: 2rem auto;
     }
-    nav li {
-      padding: 0.5rem 0;
+
+    .error-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-title {
+      font-size: 1.25rem;
+      color: var(--accent-red);
+      margin-bottom: 0.5rem;
+    }
+
+    .error-message {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .retry-btn {
+      padding: 0.75rem 1.5rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
       cursor: pointer;
-      color: var(--yellow);
+      transition: var(--transition);
     }
-    nav li:hover {
-      color: var(--blue);
+
+    .retry-btn:hover {
+      background: #f85149;
     }
-    main {
-      padding: 1rem;
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: var(--radius-sm);
     }
-    #ticker-container, #exchange-container {
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .loading-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
     }
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 1rem;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s ease;
+
+    .loading-card {
+      height: 200px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
     }
-    .card:hover {
-      transform: scale(1.03);
-    }
-    .symbol {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-      color: var(--yellow);
-    }
-    .price {
-      font-size: 1.4rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-    .green { color: var(--green); }
-    .red { color: var(--red); }
-    .details {
-      font-size: 0.9rem;
-      line-height: 1.4;
-      opacity: 0.9;
-    }
-    .number {
-      font-size: 0.8rem;
-      color: var(--blue);
-      margin-bottom: 0.3rem;
-    }
-    .time-box {
-      font-size: 1.4rem;
-      font-weight: bold;
+
+    .empty-state {
       text-align: center;
-      color: var(--yellow);
-      padding: 1rem;
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .page-btn {
+      padding: 0.5rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .page-btn:hover:not(:disabled) {
+      background: var(--bg-tertiary);
+      border-color: var(--accent-blue);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .menu-btn {
+        display: block;
+      }
+
+      nav {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      nav.open {
+        max-height: 300px;
+      }
+
+      .nav-tabs {
+        flex-direction: column;
+        padding: 0.5rem;
+      }
+
+      .nav-tab {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .time-main {
+        font-size: 2rem;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        max-width: 100%;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-tertiary);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-color);
     }
   </style>
+<base target="_blank">
 </head>
 <body>
   <header>
-    <h1>Binance Dashboard</h1>
-    <div class="menu-btn">☰</div>
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">₿</div>
+        <h1>Binance</h1>
+      </div>
+      <div class="connection-status">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Connecting...</span>
+      </div>
+      <button class="menu-btn" id="menu-btn" aria-label="Toggle menu">☰</button>
+    </div>
   </header>
 
-  <nav>
-    <ul>
-      <li onclick="showPage('ticker')">📊 24h Ticker</li>
-      <li onclick="showPage('exchange')">📑 Exchange Info</li>
-      <li onclick="showPage('time')">⏰ Server Time</li>
-    </ul>
+  <nav id="main-nav">
+    <div class="nav-content">
+      <ul class="nav-tabs">
+        <li class="nav-tab active" data-page="ticker">
+          <span>📊</span> 24h Ticker
+        </li>
+        <li class="nav-tab" data-page="exchange">
+          <span>📑</span> Exchange Info
+        </li>
+        <li class="nav-tab" data-page="time">
+          <span>⏰</span> Server Time
+        </li>
+      </ul>
+    </div>
   </nav>
 
   <main>
-    <section id="ticker" class="page">
-      <h2>📊 Binance 24h Ticker</h2>
-      <div id="ticker-container"></div>
+    <section id="ticker" class="page active">
+      <div class="page-header">
+        <h2><span>📊</span>24 Hour Price</h2>
+        <p>Real-time price change statistics for all trading pairs. Updates every 30 seconds</p>
+      </div>
+
+      <div class="stats-grid" id="ticker-stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Trading Pairs</div>
+          <div class="stat-value" id="total-pairs">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Gainers (24h)</div>
+          <div class="stat-value" id="gainers-count" style="color: var(--accent-green);">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Losers (24h)</div>
+          <div class="stat-value" id="losers-count" style="color: var(--accent-red);">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Top Volume (USDT)</div>
+          <div class="stat-value" id="top-volume">-</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="search-box">
+          <input type="text" id="ticker-search" placeholder="Search..." autocomplete="off">
+        </div>
+        <select class="filter-select" id="ticker-filter">
+          <option value="all">All Pairs</option>
+          <option value="usdt">USDT Pairs</option>
+          <option value="btc">BTC Pairs</option>
+          <option value="eth">ETH Pairs</option>
+          <option value="bnb">BNB Pairs</option>
+        </select>
+        <button class="refresh-btn" id="ticker-refresh">
+          <span>🔄</span> Refresh
+        </button>
+      </div>
+
+      <div id="ticker-container" class="cards-grid">
+        <div class="loading-grid">
+          <div class="loading-card skeleton"></div>
+          <div class="loading-card skeleton"></div>
+          <div class="loading-card skeleton"></div>
+          <div class="loading-card skeleton"></div>
+        </div>
+      </div>
+
+      <div class="pagination" id="ticker-pagination" style="display: none;">
+        <button class="page-btn" id="prev-page" disabled>← Previous</button>
+        <span class="page-info">Page <span id="current-page">1</span> of <span id="total-pages">1</span></span>
+        <button class="page-btn" id="next-page">Next →</button>
+      </div>
     </section>
 
-    <section id="exchange" class="page" style="display:none;">
-      <h2>📑 Binance Exchange Info</h2>
-      <div id="exchange-container"></div>
+    <section id="exchange" class="page">
+      <div class="page-header">
+        <h2><span>📑</span> Exchange Information</h2>
+        <p>Trading rules, symbol status, and exchange configuration. Showing top 100 active pairs by volume.</p>
+      </div>
+
+      <div class="controls">
+        <div class="search-box">
+          <input type="text" id="exchange-search" placeholder="Search trading pair..." autocomplete="off">
+        </div>
+        <select class="filter-select" id="exchange-filter">
+          <option value="all">All Status</option>
+          <option value="TRADING">Active Trading</option>
+          <option value="BREAK">Paused</option>
+        </select>
+        <button class="refresh-btn" id="exchange-refresh">
+          <span>🔄</span> Refresh
+        </button>
+      </div>
+
+      <div id="exchange-container" class="cards-grid">
+        <div class="loading-grid">
+          <div class="loading-card skeleton"></div>
+          <div class="loading-card skeleton"></div>
+          <div class="loading-card skeleton"></div>
+        </div>
+      </div>
     </section>
 
-    <section id="time" class="page" style="display:none;">
-      <h2>⏰ Binance Server Time</h2>
-      <div id="time-container" class="time-box">Loading...</div>
+    <section id="time" class="page">
+      <div class="page-header" style="text-align: center;">
+        <h2><span>⏰</span> Server Time</h2>
+        <p>Binance server time</p>
+      </div>
+
+      <div class="time-display">
+        <div class="time-icon">🕐</div>
+        <div class="time-main" id="time-main">--:--:--</div>
+        <div class="time-sub" id="time-sub">Loading...</div>
+        <div class="time-meta">
+          <div class="time-meta-item">
+            <span>Timezone</span>
+            <strong>UTC</strong>
+          </div>
+          <div class="time-meta-item">
+            <span>Last Sync</span>
+            <strong id="last-sync">Never</strong>
+          </div>
+          <div class="time-meta-item">
+            <span>Latency</span>
+            <strong id="latency">-- ms</strong>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
   <script>
-    const menuBtn = document.querySelector(".menu-btn");
-    const nav = document.querySelector("nav");
-    menuBtn.addEventListener("click", () => {
-      nav.classList.toggle("open");
+    const CONFIG = {
+      API_BASE: 'https://api.binance.com/api/v3',
+      UPDATE_INTERVALS: {
+        TICKER: 30000,    // 30 seconds
+        EXCHANGE: 30000,  // 30 seconds
+        TIME: 1000        // 1 seconds
+      },
+      ITEMS_PER_PAGE: 30,
+      MAX_EXCHANGE_ITEMS: 100
+    };
+
+    const state = {
+      currentPage: 'ticker',
+      tickerData: [],
+      exchangeData: [],
+      filteredTicker: [],
+      filteredExchange: [],
+      currentTickerPage: 1,
+      abortControllers: new Map(),
+      lastUpdate: {
+        ticker: 0,
+        exchange: 0,
+        time: 0
+      }
+    };
+
+    const elements = {
+      menuBtn: document.getElementById('menu-btn'),
+      nav: document.getElementById('main-nav'),
+      statusDot: document.getElementById('status-dot'),
+      statusText: document.getElementById('status-text'),
+      pages: document.querySelectorAll('.page'),
+      navTabs: document.querySelectorAll('.nav-tab'),
+      
+      tickerContainer: document.getElementById('ticker-container'),
+      tickerSearch: document.getElementById('ticker-search'),
+      tickerFilter: document.getElementById('ticker-filter'),
+      tickerRefresh: document.getElementById('ticker-refresh'),
+      totalPairs: document.getElementById('total-pairs'),
+      gainersCount: document.getElementById('gainers-count'),
+      losersCount: document.getElementById('losers-count'),
+      topVolume: document.getElementById('top-volume'),
+      tickerPagination: document.getElementById('ticker-pagination'),
+      prevPage: document.getElementById('prev-page'),
+      nextPage: document.getElementById('next-page'),
+      currentPageSpan: document.getElementById('current-page'),
+      totalPagesSpan: document.getElementById('total-pages'),
+      
+      exchangeContainer: document.getElementById('exchange-container'),
+      exchangeSearch: document.getElementById('exchange-search'),
+      exchangeFilter: document.getElementById('exchange-filter'),
+      exchangeRefresh: document.getElementById('exchange-refresh'),
+      
+      timeMain: document.getElementById('time-main'),
+      timeSub: document.getElementById('time-sub'),
+      lastSync: document.getElementById('last-sync'),
+      latency: document.getElementById('latency')
+    };
+
+    const formatNumber = (num, decimals = 2) => {
+      if (!num) return '-';
+      const n = parseFloat(num);
+      if (n >= 1e9) return (n / 1e9).toFixed(decimals) + 'B';
+      if (n >= 1e6) return (n / 1e6).toFixed(decimals) + 'M';
+      if (n >= 1e3) return (n / 1e3).toFixed(decimals) + 'K';
+      return n.toFixed(decimals);
+    };
+
+    const formatPrice = (price) => {
+      if (!price) return '-';
+      const p = parseFloat(price);
+      if (p < 0.01) return p.toFixed(6);
+      if (p < 1) return p.toFixed(4);
+      return p.toFixed(2);
+    };
+
+    const formatTime = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString('en-US', { 
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    };
+
+    const formatDate = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleDateString('en-US', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    };
+
+    const updateStatus = (status, message) => {
+      elements.statusDot.className = 'status-dot ' + status;
+      elements.statusText.textContent = message;
+    };
+
+    const fetchAPI = async (endpoint, signal) => {
+      const url = `${CONFIG.API_BASE}${endpoint}`;
+      const response = await fetch(url, { 
+        signal,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      return response.json();
+    };
+
+    const fetchTicker = async () => {
+      if (state.abortControllers.has('ticker')) {
+        state.abortControllers.get('ticker').abort();
+      }
+      
+      const controller = new AbortController();
+      state.abortControllers.set('ticker', controller);
+      
+      try {
+        elements.tickerRefresh.classList.add('spinning');
+        updateStatus('connected', 'Updating...');
+        
+        const startTime = performance.now();
+        const data = await fetchAPI('/ticker/24hr', controller.signal);
+        const latency = Math.round(performance.now() - startTime);
+        
+        state.tickerData = data.sort((a, b) => 
+          parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume)
+        );
+        
+        applyTickerFilter();
+        updateStatus('connected', `Updated (${latency}ms)`);
+        state.lastUpdate.ticker = Date.now();
+        
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Ticker fetch error:', error);
+          updateStatus('error', 'Connection Failed');
+          showError(elements.tickerContainer, 'Failed to load ticker data', fetchTicker);
+        }
+      } finally {
+        elements.tickerRefresh.classList.remove('spinning');
+      }
+    };
+
+    const renderTicker = () => {
+      const start = (state.currentTickerPage - 1) * CONFIG.ITEMS_PER_PAGE;
+      const end = start + CONFIG.ITEMS_PER_PAGE;
+      const pageData = state.filteredTicker.slice(start, end);
+      
+      if (pageData.length === 0) {
+        elements.tickerContainer.innerHTML = `
+          <div class="empty-state" style="grid-column: 1/-1;">
+            <div class="empty-icon">🔍</div>
+            <p>No trading pairs found matching your criteria</p>
+          </div>
+        `;
+        elements.tickerPagination.style.display = 'none';
+        return;
+      }
+      
+      elements.tickerContainer.innerHTML = pageData.map((item, idx) => {
+        const globalIndex = start + idx + 1;
+        const priceChange = parseFloat(item.priceChangePercent);
+        const isPositive = priceChange >= 0;
+        const changeClass = isPositive ? 'positive' : 'negative';
+        const arrow = isPositive ? '▲' : '▼';
+        
+        return `
+          <article class="card">
+            <div class="card-header">
+              <div class="symbol-badge">
+                <div class="symbol-icon">${item.symbol.slice(0, 2)}</div>
+                <div class="symbol-info">
+                  <h3>${item.symbol}</h3>
+                  <span class="symbol-rank">Rank #${globalIndex}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="price-main ${changeClass}">
+              $${formatPrice(item.lastPrice)}
+            </div>
+            
+            <div class="price-change ${changeClass}">
+              ${arrow} ${Math.abs(priceChange).toFixed(2)}%
+            </div>
+            
+            <div class="card-details">
+              <div class="detail-item">
+                <span class="detail-label">24h Change</span>
+                <span class="detail-value">${parseFloat(item.priceChange) > 0 ? '+' : ''}${formatPrice(item.priceChange)}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">24h High</span>
+                <span class="detail-value">$${formatPrice(item.highPrice)}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">24h Low</span>
+                <span class="detail-value">$${formatPrice(item.lowPrice)}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Volume</span>
+                <span class="detail-value volume">${formatNumber(item.volume)}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Quote Volume</span>
+                <span class="detail-value">$${formatNumber(item.quoteVolume)}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Trades</span>
+                <span class="detail-value">${formatNumber(item.count || item.tradeCount, 0)}</span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+      
+      updatePagination();
+      updateTickerStats();
+    };
+
+    const updateTickerStats = () => {
+      const gainers = state.tickerData.filter(d => parseFloat(d.priceChangePercent) > 0).length;
+      const losers = state.tickerData.filter(d => parseFloat(d.priceChangePercent) < 0).length;
+      const topByVolume = state.tickerData[0];
+      
+      elements.totalPairs.textContent = state.tickerData.length.toLocaleString();
+      elements.gainersCount.textContent = gainers.toLocaleString();
+      elements.losersCount.textContent = losers.toLocaleString();
+      elements.topVolume.textContent = topByVolume ? topByVolume.symbol : '-';
+    };
+
+    const updatePagination = () => {
+      const totalPages = Math.ceil(state.filteredTicker.length / CONFIG.ITEMS_PER_PAGE);
+      
+      elements.currentPageSpan.textContent = state.currentTickerPage;
+      elements.totalPagesSpan.textContent = totalPages || 1;
+      elements.prevPage.disabled = state.currentTickerPage === 1;
+      elements.nextPage.disabled = state.currentTickerPage >= totalPages;
+      
+      elements.tickerPagination.style.display = totalPages > 1 ? 'flex' : 'none';
+    };
+
+    const applyTickerFilter = () => {
+      const search = elements.tickerSearch.value.toUpperCase();
+      const filter = elements.tickerFilter.value;
+      
+      state.filteredTicker = state.tickerData.filter(item => {
+        const matchesSearch = item.symbol.includes(search);
+        const matchesFilter = filter === 'all' || item.symbol.endsWith(filter.toUpperCase());
+        return matchesSearch && matchesFilter;
+      });
+      
+      state.currentTickerPage = 1;
+      renderTicker();
+    };
+
+    const fetchExchangeInfo = async () => {
+      if (state.abortControllers.has('exchange')) {
+        state.abortControllers.get('exchange').abort();
+      }
+      
+      const controller = new AbortController();
+      state.abortControllers.set('exchange', controller);
+      
+      try {
+        elements.exchangeRefresh.classList.add('spinning');
+        
+        const data = await fetchAPI('/exchangeInfo', controller.signal);
+        
+        state.exchangeData = data.symbols
+          .sort((a, b) => a.symbol.localeCompare(b.symbol))
+          .slice(0, CONFIG.MAX_EXCHANGE_ITEMS);
+        
+        applyExchangeFilter();
+        state.lastUpdate.exchange = Date.now();
+        
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Exchange fetch error:', error);
+          showError(elements.exchangeContainer, 'Failed to load exchange info', fetchExchangeInfo);
+        }
+      } finally {
+        elements.exchangeRefresh.classList.remove('spinning');
+      }
+    };
+
+    const renderExchange = () => {
+      const data = state.filteredExchange;
+      
+      if (data.length === 0) {
+        elements.exchangeContainer.innerHTML = `
+          <div class="empty-state" style="grid-column: 1/-1;">
+            <div class="empty-icon">📑</div>
+            <p>No exchange data found</p>
+          </div>
+        `;
+        return;
+      }
+      
+      elements.exchangeContainer.innerHTML = data.map((item, idx) => `
+        <article class="card">
+          <div class="card-header">
+            <div class="symbol-badge">
+              <div class="symbol-icon">${item.baseAsset.slice(0, 2)}</div>
+              <div class="symbol-info">
+                <h3>${item.symbol}</h3>
+                <div class="exchange-meta">
+                  <span class="meta-tag status-${item.status.toLowerCase()}">${item.status}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-details" style="grid-template-columns: 1fr;">
+            <div class="detail-item">
+              <span class="detail-label">Base Asset</span>
+              <span class="detail-value">${item.baseAsset}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Quote Asset</span>
+              <span class="detail-value">${item.quoteAsset}</span>
+            </div>
+            <div class="detail-item" style="grid-column: 1/-1;">
+              <span class="detail-label">Order Types</span>
+              <div class="exchange-meta" style="margin-top: 0.5rem;">
+                ${item.orderTypes.map(type => `<span class="meta-tag">${type}</span>`).join('')}
+              </div>
+            </div>
+            <div class="detail-item" style="grid-column: 1/-1;">
+              <span class="detail-label">Permissions</span>
+              <div class="exchange-meta" style="margin-top: 0.5rem;">
+                ${item.permissions.map(perm => `<span class="meta-tag">${perm}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    };
+
+    const applyExchangeFilter = () => {
+      const search = elements.exchangeSearch.value.toUpperCase();
+      const filter = elements.exchangeFilter.value;
+      
+      state.filteredExchange = state.exchangeData.filter(item => {
+        const matchesSearch = item.symbol.includes(search);
+        const matchesFilter = filter === 'all' || item.status === filter;
+        return matchesSearch && matchesFilter;
+      });
+      
+      renderExchange();
+    };
+
+    // Server Time Functions
+    const fetchServerTime = async () => {
+      if (state.abortControllers.has('time')) {
+        state.abortControllers.get('time').abort();
+      }
+      
+      const controller = new AbortController();
+      state.abortControllers.set('time', controller);
+      
+      try {
+        const startTime = performance.now();
+        const data = await fetchAPI('/time', controller.signal);
+        const latency = Math.round(performance.now() - startTime);
+        
+        const serverTime = data.serverTime;
+        
+        elements.timeMain.textContent = formatTime(serverTime);
+        elements.timeSub.textContent = formatDate(serverTime);
+        elements.lastSync.textContent = new Date().toLocaleTimeString();
+        elements.latency.textContent = `${latency} ms`;
+        
+        state.lastUpdate.time = Date.now();
+        
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Time fetch error:', error);
+          elements.timeMain.textContent = 'Error';
+          elements.timeSub.textContent = 'Failed to sync with server';
+        }
+      }
+    };
+
+    const showError = (container, message, retryFn) => {
+      container.innerHTML = `
+        <div class="error-container" style="grid-column: 1/-1;">
+          <div class="error-icon">⚠️</div>
+          <div class="error-title">Oops! Something went wrong</div>
+          <div class="error-message">${message}</div>
+          <button class="retry-btn" onclick="(${retryFn.toString()})()">Try Again</button>
+        </div>
+      `;
+    };
+
+    const showPage = (pageId) => {
+      state.currentPage = pageId;
+      
+      elements.navTabs.forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.page === pageId);
+      });
+      
+      elements.pages.forEach(page => {
+        page.classList.toggle('active', page.id === pageId);
+      });
+      
+      elements.nav.classList.remove('open');
+      
+      if (pageId === 'ticker' && state.tickerData.length === 0) {
+        fetchTicker();
+      } else if (pageId === 'exchange' && state.exchangeData.length === 0) {
+        fetchExchangeInfo();
+      } else if (pageId === 'time') {
+        fetchServerTime();
+      }
+    };
+
+    const initEventListeners = () => {
+      elements.menuBtn.addEventListener('click', () => {
+        elements.nav.classList.toggle('open');
+      });
+      
+      elements.navTabs.forEach(tab => {
+        tab.addEventListener('click', () => showPage(tab.dataset.page));
+      });
+      
+      elements.tickerSearch.addEventListener('input', applyTickerFilter);
+      elements.tickerFilter.addEventListener('change', applyTickerFilter);
+      elements.tickerRefresh.addEventListener('click', fetchTicker);
+      
+      elements.prevPage.addEventListener('click', () => {
+        if (state.currentTickerPage > 1) {
+          state.currentTickerPage--;
+          renderTicker();
+          elements.tickerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+      
+      elements.nextPage.addEventListener('click', () => {
+        const totalPages = Math.ceil(state.filteredTicker.length / CONFIG.ITEMS_PER_PAGE);
+        if (state.currentTickerPage < totalPages) {
+          state.currentTickerPage++;
+          renderTicker();
+          elements.tickerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+
+      elements.exchangeSearch.addEventListener('input', applyExchangeFilter);
+      elements.exchangeFilter.addEventListener('change', applyExchangeFilter);
+      elements.exchangeRefresh.addEventListener('click', fetchExchangeInfo);
+    };
+
+    let intervals = {};
+
+    const startPolling = () => {
+      Object.values(intervals).forEach(clearInterval);
+      
+      intervals.ticker = setInterval(() => {
+        if (state.currentPage === 'ticker' && !document.hidden) {
+          fetchTicker();
+        }
+      }, CONFIG.UPDATE_INTERVALS.TICKER);
+      
+      intervals.exchange = setInterval(() => {
+        if (state.currentPage === 'exchange' && !document.hidden) {
+          fetchExchangeInfo();
+        }
+      }, CONFIG.UPDATE_INTERVALS.EXCHANGE);
+      
+      intervals.time = setInterval(() => {
+        if (state.currentPage === 'time' && !document.hidden) {
+          fetchServerTime();
+        }
+      }, CONFIG.UPDATE_INTERVALS.TIME);
+    };
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        Object.values(intervals).forEach(clearInterval);
+      } else {
+        startPolling();
+        if (state.currentPage === 'ticker') fetchTicker();
+        else if (state.currentPage === 'exchange') fetchExchangeInfo();
+        else if (state.currentPage === 'time') fetchServerTime();
+      }
     });
 
-    function showPage(id) {
-      document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-      document.getElementById(id).style.display = "block";
-      nav.classList.remove("open");
+    const init = () => {
+      initEventListeners();
+      startPolling();
+      
+      fetchTicker();
+      fetchServerTime();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
     }
 
-    async function fetchTicker() {
-      try {
-        const res = await fetch("https://api.binance.com/api/v3/ticker/24hr");
-        const data = await res.json();
-
-        const container = document.getElementById("ticker-container");
-        container.innerHTML = "";
-
-        data.forEach((item, idx) => {
-          const card = document.createElement("div");
-          card.className = "card";
-
-          const priceClass = parseFloat(item.priceChangePercent) >= 0 ? "green" : "red";
-
-          card.innerHTML = `
-            <div class="number">#${idx+1}</div>
-            <div class="symbol">${item.symbol}</div>
-            <div class="price ${priceClass}">${item.lastPrice}</div>
-            <div class="details">
-              <div>Change: <span class="${priceClass}">${item.priceChange} (${item.priceChangePercent}%)</span></div>
-              <div>High: ${item.highPrice} | Low: ${item.lowPrice}</div>
-              <div>Volume: ${item.volume}</div>
-              <div>Quote Volume: ${item.quoteVolume}</div>
-              <div>Open: ${item.openPrice}</div>
-              <div>Prev Close: ${item.prevClosePrice}</div>
-              <div>Bid: ${item.bidPrice} (${item.bidQty})</div>
-              <div>Ask: ${item.askPrice} (${item.askQty})</div>
-            </div>
-          `;
-          container.appendChild(card);
-        });
-      } catch (err) {
-        console.error("Error fetching ticker:", err);
-      }
-    }
-
-    async function fetchExchangeInfo() {
-      try {
-        const res = await fetch("https://api.binance.com/api/v3/exchangeInfo");
-        const data = await res.json();
-
-        const container = document.getElementById("exchange-container");
-        container.innerHTML = "";
-
-        data.symbols.forEach((item, idx) => {
-          const card = document.createElement("div");
-          card.className = "card";
-
-          card.innerHTML = `
-            <div class="number">#${idx+1}</div>
-            <div class="symbol">${item.symbol}</div>
-            <div class="details">
-              <div>Status: ${item.status}</div>
-              <div>Base Asset: ${item.baseAsset}</div>
-              <div>Quote Asset: ${item.quoteAsset}</div>
-              <div>Order Types: ${item.orderTypes.join(", ")}</div>
-              <div>Permissions: ${item.permissions.join(", ")}</div>
-            </div>
-          `;
-          container.appendChild(card);
-        });
-      } catch (err) {
-        console.error("Error fetching exchange info:", err);
-      }
-    }
-
-    async function fetchServerTime() {
-      try {
-        const res = await fetch("https://api.binance.com/api/v3/time");
-        const data = await res.json();
-        const serverTime = new Date(data.serverTime);
-
-        document.getElementById("time-container").textContent =
-          serverTime.toLocaleString();
-      } catch (err) {
-        console.error("Error fetching time:", err);
-      }
-    }
-
-    setInterval(fetchTicker, 1000);
-    setInterval(fetchExchangeInfo, 1000);
-    setInterval(fetchServerTime, 1000);
-
-    fetchTicker();
-    fetchExchangeInfo();
-    fetchServerTime();
+    window.addEventListener('beforeunload', () => {
+      Object.values(intervals).forEach(clearInterval);
+      state.abortControllers.forEach(controller => controller.abort());
+    });
   </script>
 </body>
 </html>
