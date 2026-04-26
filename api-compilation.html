@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="YANZ Official API Documentation — Free, open APIs for everyone." />
+  <title>YANZ Official — API Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: rgba(20, 20, 30, 0.6);
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(255, 77, 109, 0.3);
+      --accent: #ff4d6d;
+      --accent-2: #ff6b9d;
+      --gold: #f5c842;
+      --green: #00d4a4;
+      --purple: #a855f7;
+      --discord: #5865F2;
+      --text: #ffffff;
+      --text-muted: #8b92a8;
+      --code-bg: rgba(0, 0, 0, 0.4);
+      --radius: 12px;
+      --radius-lg: 16px;
+      --font-main: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --glow: 0 0 40px rgba(255, 77, 109, 0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+      background-image: 
+        radial-gradient(ellipse at 20% 0%, rgba(255, 77, 109, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .nav-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+    .nav-brand-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nav-brand-name span { 
+      color: var(--accent); 
+    }
+
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all .3s;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .nav-links a:hover { 
+      color: var(--accent); 
+      background: rgba(255, 77, 109, 0.1);
+      border-color: rgba(255, 77, 109, 0.2);
+    }
+
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .discord-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--discord);
+      color: #fff;
+      font-family: var(--font-main);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all .3s;
+      text-decoration: none;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+    }
+    .discord-btn:hover {
+      background: #4752C4;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(88, 101, 242, 0.4);
+    }
+    .discord-btn svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 2rem 1rem 2rem;
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(255, 77, 109, 0.1);
+      border: 1px solid rgba(255, 77, 109, 0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+    .hero-badge::before { 
+      content: '●'; 
+      font-size: 0.4rem;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 0%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      width: 100%;
+    }
+
+    .hero-desc {
+      width: 100%;
+      max-width: 100%;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 300;
+      line-height: 1.6;
+      padding: 0 0.5rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      backdrop-filter: blur(10px);
+    }
+    .stat-dot { 
+      width: 6px; 
+      height: 6px; 
+      border-radius: 50%; 
+      flex-shrink: 0;
+    }
+    .dot-gold { background: var(--gold); }
+
+    /* LAYOUT */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 1rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* SIDEBAR - Horizontal Scroll on Mobile */
+    .sidebar {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--bg-glass);
+    }
+    .sidebar::-webkit-scrollbar {
+      height: 4px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+      background: var(--bg-glass);
+      border-radius: 4px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 4px;
+    }
+    .sidebar-inner {
+      display: inline-flex;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+      min-width: max-content;
+    }
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding-right: 1rem;
+      border-right: 1px solid var(--border);
+    }
+    .sidebar-section:last-child {
+      border-right: none;
+    }
+    .sidebar-section-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 4px 0;
+      white-space: nowrap;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: all .3s;
+      white-space: nowrap;
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+    }
+    .sidebar a:hover {
+      color: var(--text);
+      background: rgba(255, 77, 109, 0.1);
+      border-color: var(--accent);
+    }
+    .sidebar a .status-dot { 
+      width: 5px; 
+      height: 5px; 
+      border-radius: 50%; 
+      flex-shrink: 0;
+    }
+
+    /* MAIN */
+    main { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 2rem;
+      width: 100%;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+    .tag-free { 
+      background: rgba(0, 212, 164, 0.15); 
+      color: var(--green); 
+      border: 1px solid rgba(0, 212, 164, 0.3);
+    }
+    .tag-down { 
+      background: rgba(255, 77, 109, 0.15); 
+      color: var(--accent); 
+      border: 1px solid rgba(255, 77, 109, 0.3);
+    }
+
+    /* API CARD */
+    .api-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: all .3s;
+      width: 100%;
+    }
+    .api-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: var(--glow), var(--shadow);
+    }
+    .api-card.offline { 
+      opacity: 0.7;
+      border-color: rgba(255, 77, 109, 0.5);
+    }
+    .api-card + .api-card { margin-top: 1rem; }
+
+    .api-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+    }
+
+    .api-name-block { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .api-icon {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .api-title-wrapper {
+      min-width: 0;
+      flex: 1;
+    }
+    .api-title { 
+      font-weight: 700; 
+      font-size: 0.95rem; 
+      color: var(--text);
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .api-subtitle { 
+      font-size: 0.75rem; 
+      color: var(--text-muted);
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .api-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700;
+      padding: 4px 8px; border-radius: 6px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .badge-get { 
+      background: rgba(0, 212, 164, 0.15); 
+      color: var(--green); 
+      border: 1px solid rgba(0, 212, 164, 0.3);
+    }
+    .badge-post { 
+      background: rgba(168, 85, 247, 0.15); 
+      color: var(--purple); 
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .badge-online { 
+      background: rgba(0, 212, 164, 0.15); 
+      color: var(--green); 
+      border: 1px solid rgba(0, 212, 164, 0.3);
+    }
+    .badge-online::before { content: '●'; font-size: 0.35rem; }
+    .badge-offline { 
+      background: rgba(255, 77, 109, 0.15); 
+      color: var(--accent); 
+      border: 1px solid rgba(255, 77, 109, 0.3);
+    }
+    .badge-offline::before { content: '●'; font-size: 0.35rem; }
+
+    .api-card-body { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
+    .api-desc { 
+      color: var(--text-muted); 
+      font-size: 0.85rem; 
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    /* ENDPOINT ROW */
+    .endpoint-block { display: flex; flex-direction: column; gap: 0.5rem; }
+    .endpoint-label {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .endpoint-row {
+      display: flex; align-items: stretch;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      width: 100%;
+    }
+    .endpoint-row.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .endpoint-method {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 10px;
+      font-size: 0.65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 60px;
+    }
+    .method-get { 
+      color: var(--green); 
+      background: rgba(0, 212, 164, 0.1);
+    }
+    .method-post { 
+      color: var(--purple); 
+      background: rgba(168, 85, 247, 0.1);
+    }
+    .endpoint-url {
+      padding: 10px;
+      font-size: 0.75rem; font-weight: 400;
+      color: var(--text);
+      overflow-x: auto;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .endpoint-copy {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 10px;
+      cursor: pointer;
+      border-left: 1px solid var(--border);
+      color: var(--text-muted);
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      transition: all .3s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 50px;
+    }
+    .endpoint-copy:hover { 
+      color: var(--accent);
+      background: rgba(255, 77, 109, 0.1);
+    }
+    .endpoint-copy.disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    /* PARAMS TABLE */
+    .params-block { display: flex; flex-direction: column; gap: 0.6rem; width: 100%; overflow-x: auto; }
+    .params-label {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .params-table {
+      width: 100%; min-width: 500px;
+      border-collapse: collapse;
+      font-family: var(--font-mono); font-size: 0.75rem;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .params-table th {
+      text-align: left; padding: 10px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text-muted); font-size: 0.65rem;
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .params-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .params-table tr:last-child td { border-bottom: none; }
+    .params-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .param-name { color: var(--accent); font-weight: 600; }
+    .param-type { color: var(--gold); }
+    .param-required {
+      display: inline-block; padding: 2px 6px; border-radius: 4px;
+      font-size: 0.6rem; font-weight: 700;
+      white-space: nowrap;
+    }
+    .req-yes { background: rgba(0, 212, 164, 0.15); color: var(--green); }
+    .req-no { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+
+    /* NOTICE */
+    .notice {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      border: 1px solid;
+      width: 100%;
+    }
+    .notice-info { 
+      background: rgba(168, 85, 247, 0.1); 
+      border-color: rgba(168, 85, 247, 0.3); 
+      color: #c4b5fd;
+    }
+    .notice-warn { 
+      background: rgba(255, 202, 40, 0.1); 
+      border-color: rgba(255, 202, 40, 0.3); 
+      color: #fde047;
+    }
+    .notice-icon { font-size: 1rem; flex-shrink: 0; }
+
+    /* AUTHOR */
+    .author-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: center;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+    .author-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--gold), var(--purple));
+    }
+    
+    .author-avatar-container {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .author-avatar {
+      width: 120px; 
+      height: 150px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      box-shadow: 0 0 30px rgba(255, 77, 109, 0.3);
+    }
+    .author-status {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      width: 14px;
+      height: 14px;
+      background: var(--green);
+      border: 2px solid var(--bg);
+      border-radius: 50%;
+    }
+
+    .author-info { width: 100%; }
+    .author-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .author-name {
+      font-weight: 700; 
+      font-size: 1.25rem;
+      color: var(--text);
+      background: linear-gradient(135deg, #fff, var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .author-badge-custom {
+      background: linear-gradient(135deg, var(--gold), #f59e0b);
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .author-handle {
+      font-family: var(--font-mono); 
+      font-size: 0.75rem;
+      color: var(--text-muted); 
+      margin-bottom: 0.75rem;
+    }
+    .author-bio { 
+      font-size: 0.85rem; 
+      color: var(--text-muted); 
+      font-weight: 400;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .author-links {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+    }
+    .social-link {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; color: var(--text-muted);
+      text-decoration: none;
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      transition: all .3s;
+      font-weight: 500;
+    }
+    .social-link:hover { 
+      color: var(--accent); 
+      border-color: var(--accent);
+      background: rgba(255, 77, 109, 0.1);
+    }
+    .social-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* FOOTER */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(0,0,0,0.3);
+      width: 100%;
+    }
+    footer a { color: var(--text-muted); text-decoration: none; transition: color .3s; }
+    footer a:hover { color: var(--accent); }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* COPY TOAST */
+    #copy-toast {
+      position: fixed; bottom: 1.5rem; right: 1rem; left: 1rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+      padding: 10px 16px; border-radius: 8px;
+      z-index: 999; opacity: 0; pointer-events: none;
+      transform: translateY(10px);
+      transition: all .3s;
+      box-shadow: 0 8px 24px rgba(255, 77, 109, 0.4);
+      text-align: center;
+    }
+    #copy-toast.show { opacity: 1; transform: translateY(0); }
+    
+    #error-toast {
+      position: fixed; bottom: 1.5rem; right: 1rem; left: 1rem;
+      background: linear-gradient(135deg, var(--accent), #ff0000);
+      color: #fff;
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+      padding: 10px 16px; border-radius: 8px;
+      z-index: 999; opacity: 0; pointer-events: none;
+      transform: translateY(10px);
+      transition: all .3s;
+      box-shadow: 0 8px 24px rgba(255, 77, 109, 0.4);
+      text-align: center;
+    }
+    #error-toast.show { opacity: 1; transform: translateY(0); }
+
+    /* TABLET */
+    @media (min-width: 768px) {
+      .hero {
+        padding: 3rem 2rem 3rem;
+      }
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      .hero-desc {
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      
+      .page-wrapper {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 2rem;
+        padding: 0 2rem 3rem;
+      }
+      
+      .sidebar {
+        overflow-x: visible;
+        overflow-y: visible;
+        position: sticky;
+        top: 80px;
+      }
+      .sidebar-inner {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        padding: 0;
+        min-width: auto;
+        width: 100%;
+      }
+      .sidebar-section {
+        padding-right: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+      }
+      .sidebar-section:last-child {
+        border-bottom: none;
+      }
+      .sidebar a {
+        width: 100%;
+      }
+      
+      .author-card {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+      }
+      .author-header {
+        justify-content: flex-start;
+      }
+      .author-links {
+        justify-content: flex-start;
+      }
+      
+      footer {
+        flex-direction: row;
+        justify-content: center;
+        text-align: center;
+      }
+      
+      #copy-toast, #error-toast {
+        left: auto;
+        right: 2rem;
+        width: auto;
+      }
+    }
+
+    /* DESKTOP */
+    @media (min-width: 1024px) {
+      .nav-links {
+        display: flex;
+      }
+      .discord-btn {
+        display: none;
+      }
+      
+      .hero h1 {
+        font-size: 3rem;
+      }
+      .hero-desc {
+        font-size: 1.1rem;
+      }
+      
+      .page-wrapper {
+        grid-template-columns: 240px 1fr;
+        gap: 3rem;
+        padding: 0 3rem 4rem;
+      }
+      
+      .api-card-header {
+        padding: 1.25rem;
+      }
+      .api-card-body {
+        padding: 1.25rem;
+      }
+    }
+
+    /* LARGE DESKTOP */
+    @media (min-width: 1280px) {
+      .hero {
+        padding: 4rem 3rem 4rem;
+      }
+      .page-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-brand">
+    <img src="https://i.postimg.cc/zGdBB2n9/file-00000000515c71faafcd117a160847f9.png" alt="YANZ Logo" class="nav-logo" />
+    <span class="nav-brand-name">YANZ <span> OFFICIAL</span></span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#ai-apis">AI APIs</a></li>
+    <li><a href="#media-apis">Media</a></li>
+    <li><a href="#roblox-apis">Roblox</a></li>
+    <li><a href="#utility-apis">Utilities</a></li>
+    <li><a href="#author">Author</a></li>
+    <li><a href="https://discord.gg/mNGeUVcjKB" target="_blank"><span class="nav-badge">Discord</span></a></li>
+  </ul>
+  <a href="https://discord.gg/mNGeUVcjKB" target="_blank" class="discord-btn" id="discordBtn">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028z"/></svg>
+    <span>Discord</span>
+  </a>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">Free &amp; Open API Platform</div>
+  <h1>
+    YANZ Official<br />
+    API Documentation
+  </h1>
+  <p class="hero-desc">
+    A collection of free, publicly accessible APIs covering AI chat, Roblox platform data, utility generators, and more. No authentication required. No usage limits. Open to everyone.
+  </p>
+  <div class="hero-stats">
+    <div class="stat-card"><span class="stat-dot dot-gold"></span> 100% Free to Use</div>
+  </div>
+</section>
+
+<div class="page-wrapper">
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Quick Jump</div>
+        <a href="#overview">Overview</a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">AI</div>
+        <a href="#api-uuid"><span class="status-dot" style="background:var(--green)"></span> UUID Generator</a>
+        <a href="#api-ai-free"><span class="status-dot" style="background:var(--green)"></span> AI Free Chat</a>
+        <a href="#api-chatbot"><span class="status-dot" style="background:var(--green)"></span> Chatbot AI</a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Media</div>
+        <a href="#api-spotify"><span class="status-dot" style="background:var(--accent)"></span> Spotify API</a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Roblox</div>
+        <a href="#api-roblox-status"><span class="status-dot" style="background:var(--green)"></span> Roblox Status</a>
+        <a href="#api-roblox-news"><span class="status-dot" style="background:var(--green)"></span> Roblox News</a>
+        <a href="#api-roblox-version"><span class="status-dot" style="background:var(--green)"></span> Roblox Version</a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Utilities</div>
+        <a href="#api-executors"><span class="status-dot" style="background:var(--green)"></span> Executors</a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Info</div>
+        <a href="#author">Author</a>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <div class="section-header">
+        <h2>Overview</h2>
+        <span class="section-tag tag-free">Public</span>
+      </div>
+      <div class="notice notice-info">
+        <span class="notice-icon">ℹ</span>
+        <span>All APIs on this page are <strong>completely free</strong> and require no API key or user authentication. Simply send a request to the desired endpoint and you will receive a response immediately.</span>
+      </div>
+      <br/>
+      <div class="notice notice-warn">
+        <span class="notice-icon">⚠</span>
+        <span>APIs marked <strong>Offline</strong> are currently unavailable or under maintenance. Join our Discord server for real-time status updates. Please avoid sending excessive repeated requests to any single endpoint.</span>
+      </div>
+    </section>
+
+    <!-- AI APIS -->
+    <section id="ai-apis">
+      <div class="section-header">
+        <h2>AI APIs</h2>
+        <span class="section-tag tag-free">Online</span>
+      </div>
+
+      <!-- UUID -->
+      <div class="api-card" id="api-uuid" data-status="online">
+        <div class="api-card-header">
+          <div class="api-name-block">
+            <div class="api-icon">🔑</div>
+            <div class="api-title-wrapper">
+              <div class="api-title">UUID Generator</div>
+              <div class="api-subtitle">Generate universally unique identifiers (v4)</div>
+            </div>
+          </div>
+          <div class="api-badges">
+            <span class="badge badge-get">GET</span>
+            <span class="badge badge-online">Online</span>
+          </div>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns a freshly generated UUID v4 string on every request. Suitable for use as unique identifiers in databases, session tokens, transaction IDs, or any application requiring globally unique values.</p>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://generators-uuid.vercel.app/api/uuid</span>
+              <button class="endpoint-copy" onclick="copyText('https://generators-uuid.vercel.app/api/uuid', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI FREE -->
+      <div class="api-card" id="api-ai-free" data-status="online">
+        <div class="api-card-header">
+          <div class="api-name-block">
+            <div class="api-icon">🤖</div>
+            <div class="api-title-wrapper">
+              <div class="api-title">AI Free Chat</div>
+              <div class="api-subtitle">Open-access AI chat completions endpoint</div>
+            </div>
+          </div>
+          <div class="api-badges">
+            <span class="badge badge-post">POST</span>
+            <span class="badge badge-online">Online</span>
+          </div>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">A free, donation-funded AI chat completion API built on OpenRouter. Send a message in the request body and receive an AI-generated reply. No authentication or API key is required by design.</p>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-url">https://yanz-ai-free.vercel.app/api/chat</span>
+              <button class="endpoint-copy" onclick="copyText('https://yanz-ai-free.vercel.app/api/chat', this)">Copy</button>
+            </div>
+          </div>
+
+          <div class="params-block">
+            <div class="params-label">Request Body (JSON)</div>
+            <table class="params-table">
+              <thead>
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="param-name">message</span></td>
+                  <td><span class="param-type">string</span></td>
+                  <td><span class="param-required req-yes">Required</span></td>
+                  <td>The user message or prompt to send to the AI model.</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">model</span></td>
+                  <td><span class="param-type">string</span></td>
+                  <td><span class="param-required req-no">Optional</span></td>
+                  <td>Model identifier. Defaults to a free-tier model when omitted.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHATBOT AI -->
+      <div class="api-card" id="api-chatbot" data-status="online">
+        <div class="api-card-header">
+          <div class="api-name-block">
+            <div class="api-icon">💬</div>
+            <div class="api-title-wrapper">
+              <div class="api-title">Chatbot AI</div>
+              <div class="api-subtitle">Conversational AI via URL query parameters</div>
+            </div>
+          </div>
+          <div class="api-badges">
+            <span class="badge badge-get">GET</span>
+            <span class="badge badge-online">Online</span>
+          </div>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">A GET-based AI chat endpoint. Pass your prompt and optionally a model identifier directly in the URL query string — ideal for quick integrations, webhooks, Discord bots, or any browser-based requests where POST requests are not practical.</p>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://yanzai-bot.vercel.app/api/chat</span>
+              <button class="endpoint-copy" onclick="copyText('https://yanzai-bot.vercel.app/api/chat', this)">Copy</button>
+            </div>
+          </div>
+
+          <div class="params-block">
+            <div class="params-label">Query Parameters</div>
+            <table class="params-table">
+              <thead>
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="param-name">prompt</span></td>
+                  <td><span class="param-type">string</span></td>
+                  <td><span class="param-required req-yes">Required</span></td>
+                  <td>URL-encoded message or question for the AI to respond to.</td>
+                </tr>
+                <tr>
+                  <td><span class="param-name">model</span></td>
+                  <td><span class="param-type">string</span></td>
+                  <td><span class="param-required req-no">Optional</span></td>
+                  <td>Model selector. Pass <code>auto-free</code> to use the default free-tier model.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEDIA -->
+    <section id="media-apis">
+      <div class="section-header">
+        <h2>Media APIs</h2>
+        <span class="section-tag tag-down">Offline</span>
+      </div>
+
+      <div class="api-card offline" id="api-spotify" data-status="offline">
+        <div class="api-card-header">
+          <div class="api-name-block">
+            <div class="api-icon">🎵</div>
+            <div class="api-title-wrapper">
+              <div class="api-title">Spotify Download API</div>
+              <div class="api-subtitle">Track download endpoint — currently offline</div>
+            </div>
+          </div>
+          <div class="api-badges">
+            <span class="badge badge-get">GET</span>
+            <span class="badge badge-offline">Offline</span>
+          </div>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">This endpoint previously provided Spotify track download functionality. It is currently offline and unavailable. No estimated time of restoration has been announced. Monitor the Discord server for updates.</p>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint (Unavailable)</div>
+            <div class="endpoint-row disabled">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://spotify-mod-api.vercel.app/api/download</span>
+              <button class="endpoint-copy disabled" onclick="showError()">Copy</button>
+            </div>
+          </div>
+
+          <div class="notice notice-warn">
+            <span class="notice-icon">⚠</span>
+            <span>This endpoint is <strong>offline</strong>. Requests will fail or return errors. Please join the Discord server for restoration updates.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROBLOX -->
+    <section id="roblox-apis">
+      <div class="section-header">
+        <h2>Roblox APIs</h2>
+        <span class="section-tag tag-free">Online</span>
+      </div>
+
+      <!-- STATUS -->
+      <div class="api-card" id="api-roblox-status" data-status="online">
+        <div class="api-card-header">
+          <div class="api-name-block">
+            <div class="api-icon">🕹</div>
+            <div class="api-title-wrapper">
+              <div class="api-title">Roblox Status</div>
+              <div class="api-subtitle">Real-time Roblox platform &amp; API health check</div>
+            </div>
+          </div>
+          <div class="api-badges">
+            <span class="badge badge-get">GET</span>
+            <span class="badge badge-online">Online</span>
+          </div>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns the current operational status of the Roblox platform. Two endpoints are available: one that checks the Roblox game platform's health, and one that checks this API service's own availability.</p>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint — Roblox Platform Status</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://api-roblox-xi.vercel.app/api/roblox/status</span>
+              <button class="endpoint-copy" onclick="copyText('https://api-roblox-xi.vercel.app/api/roblox/status', this)">Copy</button>
+            </div>
+          </div>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint — API Service Health</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://api-roblox-xi.vercel.app/api/status</span>
+              <button class="endpoint-copy" onclick="copyText('https://api-roblox-xi.vercel.app/api/status', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEWS -->
+      <div class="api-card" id="api-roblox-news" data-status="online">
+        <div class="api-card-header">
+          <div class="api-name-block">
+            <div class="api-icon">📰</div>
+            <div class="api-title-wrapper">
+              <div class="api-title">Roblox News</div>
+              <div class="api-subtitle">Latest news and announcements from Roblox</div>
+            </div>
+          </div>
+          <div class="api-badges">
+            <span class="badge badge-get">GET</span>
+            <span class="badge badge-online">Online</span>
+          </div>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Fetches the most recent news articles and official announcements published by Roblox. Returns structured news data including titles, summaries, and publication timestamps — useful for bots, dashboards, or news aggregators.</p>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://robloxnews.vercel.app/api/robloxnews</span>
+              <button class="endpoint-copy" onclick="copyText('https://robloxnews.vercel.app/api/robloxnews', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VERSION -->
+      <div class="api-card" id="api-roblox-version" data-status="online">
+        <div class="api-card-header">
+          <div class="api-name-block">
+            <div class="api-icon">📦</div>
+            <div class="api-title-wrapper">
+              <div class="api-title">Roblox Version</div>
+              <div class="api-subtitle">Current Roblox client version by platform</div>
+            </div>
+          </div>
+          <div class="api-badges">
+            <span class="badge badge-get">GET</span>
+            <span class="badge badge-online">Online</span>
+          </div>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns the latest Roblox client version number for a specified platform. Supports iOS, Android, Windows, and macOS. Useful for detecting outdated clients or automating platform-specific update checks.</p>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://yanz-api.vercel.app/api/version?platform={platform}</span>
+              <button class="endpoint-copy" onclick="copyText('https://yanz-api.vercel.app/api/version?platform=ios', this)">Copy</button>
+            </div>
+          </div>
+
+          <div class="params-block">
+            <div class="params-label">Query Parameters</div>
+            <table class="params-table">
+              <thead>
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Accepted Values</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="param-name">platform</span></td>
+                  <td><span class="param-type">string</span></td>
+                  <td><span class="param-required req-yes">Required</span></td>
+                  <td><code>ios</code> &nbsp;·&nbsp; <code>android</code> &nbsp;·&nbsp; <code>windows</code> &nbsp;·&nbsp; <code>macos</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">All Platform Endpoints</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://yanz-api.vercel.app/api/version?platform=ios</span>
+              <button class="endpoint-copy" onclick="copyText('https://yanz-api.vercel.app/api/version?platform=ios', this)">Copy</button>
+            </div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://yanz-api.vercel.app/api/version?platform=android</span>
+              <button class="endpoint-copy" onclick="copyText('https://yanz-api.vercel.app/api/version?platform=android', this)">Copy</button>
+            </div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://yanz-api.vercel.app/api/version?platform=windows</span>
+              <button class="endpoint-copy" onclick="copyText('https://yanz-api.vercel.app/api/version?platform=windows', this)">Copy</button>
+            </div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://yanz-api.vercel.app/api/version?platform=macos</span>
+              <button class="endpoint-copy" onclick="copyText('https://yanz-api.vercel.app/api/version?platform=macos', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UTILITIES -->
+    <section id="utility-apis">
+      <div class="section-header">
+        <h2>Roblox Executors API</h2>
+        <span class="section-tag tag-free">Online</span>
+      </div>
+
+      <div class="api-card" id="api-executors" data-status="online">
+        <div class="api-card-header">
+          <div class="api-name-block">
+            <div class="api-icon">🎮</div>
+            <div class="api-title-wrapper">
+              <div class="api-title">Executors API</div>
+              <div class="api-subtitle">Executor list and metadata for Roblox scripting</div>
+            </div>
+          </div>
+          <div class="api-badges">
+            <span class="badge badge-get">GET</span>
+            <span class="badge badge-online">Online</span>
+          </div>
+        </div>
+        <div class="api-card-body">
+          <p class="api-desc">Returns a structured list of Roblox script executors along with their associated metadata such as platform support, version, and current status. Useful for community tools, comparison dashboards, or any project tracking executor availability.</p>
+
+          <div class="endpoint-block">
+            <div class="endpoint-label">Endpoint</div>
+            <div class="endpoint-row">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-url">https://executors-one.vercel.app/executors</span>
+              <button class="endpoint-copy" onclick="copyText('https://executors-one.vercel.app/executors', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTHOR -->
+    <section id="author">
+      <div class="section-header">
+        <h2>Author</h2>
+      </div>
+      <div class="author-card">
+        <div class="author-avatar-container">
+          <img
+            src="https://i.postimg.cc/prSnSRB4/quality-restoration-20260426085833956.jpg"
+            alt="YANZ Profile"
+            class="author-avatar"
+          />
+          <div class="author-status"></div>
+        </div>
+        <div class="author-info">
+          <div class="author-header">
+            <div class="author-name">! YANZ</div>
+            <span class="author-badge-custom">SBLX</span>
+          </div>
+          <div class="author-handle">
+            @_lphisv5 &nbsp;·&nbsp; Discord ID: 1092079301337284638
+          </div>
+          <div class="author-bio">
+            Independent developer and creator of YANZ Official - a free, open API platform serving AI chat, Roblox data, and utility services to the public. All endpoints are donation-funded and freely accessible with no registration, no API key, and no usage limits required.
+          </div>
+          <div class="author-links">
+            <a href="https://discord.gg/mNGeUVcjKB" target="_blank" class="social-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028z"/></svg>
+              Discord
+            </a>
+            <a href="https://lphisv5.github.io/v4/" target="_blank" class="social-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              Website
+            </a>
+            <a href="https://github.com/lphisv5" target="_blank" class="social-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+              GitHub
+            </a>
+            <a href="https://youtube.com/@drhigu9043?si=FiB6Rynk5QD3piN_" target="_blank" class="social-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              STAFF RATE
+            </a>
+            <a href="https://youtube.com/@yanz_v4?si=kEKF0awrlGKsyBHG" target="_blank" class="social-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              z9YANZZ
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="https://discord.gg/mNGeUVcjKB" target="_blank">Discord</a>
+    <a href="https://github.com/lphisv5" target="_blank">GitHub</a>
+    <a href="https://lphisv5.github.io/v4/" target="_blank">Website</a>
+  </div>
+</footer>
+
+<div id="copy-toast">Copied to clipboard ✓</div>
+<div id="error-toast">API is offline. Cannot copy.</div>
+
+<script>
+  const navLinks  = document.getElementById('navLinks');
+  
+  function copyText(text, btn) {
+    if (btn.classList.contains('disabled')) {
+      showError();
+      return;
+    }
+    
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓';
+      showToast();
+      setTimeout(() => btn.textContent = orig, 1800);
+    });
+  }
+  
+  function showError() {
+    const errorToast = document.getElementById('error-toast');
+    errorToast.classList.add('show');
+    setTimeout(() => errorToast.classList.remove('show'), 2000);
+  }
+
+  let toastTimer;
+  function showToast() {
+    const toast = document.getElementById('copy-toast');
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+</script>
+</body>
+</html>
