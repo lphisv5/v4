@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
-<meta name="keywords" content="YANZ, lphisv5, tools, scripts, systems, web hub, productivity tools, api, ai, deep ocean">
-<meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0" />
-<meta name="google-site-verification" content="ctalwY44kcnXVpIVYysi59z66XwVqQqhN-LME8GssAQ" />
-<meta name="theme-color" content="#7c3aed">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="YANZ Executors">
-
-  <link rel="canonical" href="https://lphisv5.github.io/v4/">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+  <meta name="keywords" content="YANZ, lphisv5, tools, scripts, systems, web hub, productivity tools, api, ai, deep ocean">
+  <meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0" />
+  <meta name="google-site-verification" content="ctalwY44kcnXVpIVYysi59z66XwVqQqhN-LME8GssAQ" />
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="YANZ Executors">
+  <link rel="canonical" href="https://lphisv5.github.io/v4/executors">
   <link rel="icon" href="https://i.postimg.cc/zGdBB2n9/file-00000000515c71faafcd117a160847f9.png" type="image/png" alt="YANZ" />
   <link rel="apple-touch-icon" href="https://i.postimg.cc/zGdBB2n9/file-00000000515c71faafcd117a160847f9.png">
   <link rel="manifest" href="manifest.json">
@@ -21,14 +20,13 @@
   <meta name="description" content="YANZ - Dive into our hub of web tools and scripts. Fast, reliable, and continuously updated for your productivity." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://i.postimg.cc/jSLXxBS3/cf51de944668431b1c81c0b340577063.gif" />
-  <meta property="og:url" content="https://lphisv5.github.io/v4" />
+  <meta property="og:url" content="https://lphisv5.github.io/v4/executors" />
   <meta property="og:title" content="YANZ - EXECUTORS" />
   <meta property="og:description" content="YANZ - Dive into our hub of web tools and scripts. Fast, reliable, and continuously updated for your productivity." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
 
@@ -67,6 +65,7 @@ body {
     line-height: 1.6;
 }
 
+/* ========== 🎨 BACKGROUND ========== */
 #bg-canvas {
     position: fixed;
     top: 0; left: 0;
@@ -94,7 +93,6 @@ body {
     75% { transform: translate(3%, 1%) scale(1.01); }
 }
 
-/* Grid overlay */
 .bg-grid {
     position: fixed;
     top: 0; left: 0;
@@ -110,6 +108,18 @@ body {
 @keyframes gridMove {
     0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
     100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* ========== 🏗️ LAYOUT ========== */
@@ -146,14 +156,8 @@ body {
     animation: shimmer 3s infinite;
 }
 
-@keyframes shimmer {
-    100% { left: 100%; }
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+@keyframes shimmer { 100% { left: 100%; } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
 
 .logo {
     display: flex;
@@ -177,11 +181,7 @@ body {
     0%, 100% { box-shadow: var(--shadow-neon); }
     50% { box-shadow: 0 0 30px var(--primary-glow), 0 0 60px var(--secondary-glow); }
 }
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-}
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
 .logo h1 {
     font-family: 'Orbitron', sans-serif;
@@ -194,47 +194,6 @@ body {
     letter-spacing: 1px;
 }
 
-.live-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid var(--danger);
-    border-radius: 50px;
-    padding: 0.4rem 1.2rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-    animation: pulseBorder 1.5s infinite;
-}
-
-.live-dot {
-    width: 10px; height: 10px;
-    background: var(--danger);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--danger), 0 0 20px var(--danger);
-    animation: livePulse 0.6s ease-in-out infinite alternate;
-}
-
-@keyframes livePulse {
-    from { opacity: 0.5; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1.1); }
-}
-
-@keyframes pulseBorder {
-    0%, 100% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
-    50% { border-color: #f87171; box-shadow: 0 0 0 8px rgba(239,68,68,0); }
-}
-
-.timestamp {
-    font-family: 'Orbitron', monospace;
-    background: rgba(0,0,0,0.3);
-    padding: 0.3rem 0.9rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-    border: 1px solid var(--border);
-}
-
 /* ========== 📊 STATS PANEL ========== */
 .stats-panel {
     display: grid;
@@ -244,10 +203,7 @@ body {
     animation: slideUp 0.6s ease-out 0.1s both;
 }
 
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 .stat-card {
     background: var(--bg-card);
@@ -276,7 +232,6 @@ body {
     border-color: var(--border-hover);
     box-shadow: var(--shadow-card);
 }
-
 .stat-card:hover::after { transform: scaleX(1); }
 
 .stat-icon {
@@ -346,8 +301,13 @@ body {
     font-size: 0.95rem;
     outline: none;
 }
-
 .search-box input::placeholder { color: var(--text-muted); }
+
+.search-box input:focus-visible {
+    outline: 2px solid var(--secondary);
+    outline-offset: 2px;
+    border-radius: 14px;
+}
 
 .filter-chips {
     display: flex;
@@ -382,11 +342,12 @@ body {
     animation: chipActivate 0.3s ease;
 }
 
-@keyframes chipActivate {
-    0% { transform: scale(0.95); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+.filter-chip:focus-visible {
+    outline: 2px solid var(--secondary);
+    outline-offset: 2px;
 }
+
+@keyframes chipActivate { 0% { transform: scale(0.95); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
 /* ========== 🎴 PLATFORM SECTIONS ========== */
 .platform-section {
@@ -394,10 +355,7 @@ body {
     animation: fadeIn 0.5s ease-out both;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .section-header {
     display: flex;
@@ -434,9 +392,9 @@ body {
 
 /* ========== 🗂️ CARD GRID ========== */
 .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(320px, 100vw - 2rem), 1fr));
     gap: 1.2rem;
+    display: grid;
 }
 
 .exec-card {
@@ -449,10 +407,7 @@ body {
     animation: cardEnter 0.4s ease-out both;
 }
 
-@keyframes cardEnter {
-    from { opacity: 0; transform: translateY(20px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+@keyframes cardEnter { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 .exec-card:nth-child(1) { animation-delay: 0.05s; }
 .exec-card:nth-child(2) { animation-delay: 0.1s; }
@@ -475,7 +430,6 @@ body {
     opacity: 0;
     transition: opacity 0.3s ease;
 }
-
 .exec-card:hover::before { opacity: 1; }
 
 .card-content { padding: 1.3rem; }
@@ -546,10 +500,7 @@ body {
     animation: sparkle 2s infinite;
 }
 
-@keyframes sparkle {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; filter: brightness(1.2); }
-}
+@keyframes sparkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; filter: brightness(1.2); } }
 
 .status-badge {
     font-size: 0.7rem;
@@ -583,10 +534,7 @@ body {
     border: 1px solid var(--danger);
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
 .version-tag {
     display: inline-flex;
@@ -644,6 +592,11 @@ body {
     box-shadow: 0 5px 20px rgba(124,58,237,0.4);
 }
 
+.btn:focus-visible {
+    outline: 2px solid var(--secondary);
+    outline-offset: 2px;
+}
+
 .btn-download { color: var(--secondary); }
 .btn-purchase { color: var(--accent); }
 .btn-copy { color: var(--primary); }
@@ -690,12 +643,13 @@ body {
     animation: float 3s ease-in-out infinite;
 }
 
-/* ========== 🔔 TOAST NOTIFICATIONS ========== */
 #toast-container {
     position: fixed;
-    bottom: 2rem;
+    bottom: max(2rem, env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
+    width: min(90vw, 400px);
+    max-width: 90vw;
     z-index: 9999;
     display: flex;
     flex-direction: column;
@@ -719,22 +673,12 @@ body {
     box-shadow: var(--shadow-card);
 }
 
-.toast.error {
-    border-left-color: var(--danger);
-}
-
+.toast.error { border-left-color: var(--danger); }
 .toast i { font-size: 1.1rem; }
 
-@keyframes toastIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+@keyframes toastIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(-10px) scale(0.95); } }
 
-@keyframes toastOut {
-    to { opacity: 0; transform: translateY(-10px) scale(0.95); }
-}
-
-/* ========== 🦶 FOOTER ========== */
 footer {
     text-align: center;
     padding: 2rem;
@@ -756,7 +700,6 @@ footer a:hover {
     text-shadow: 0 0 10px var(--primary-glow);
 }
 
-/* ========== 📱 RESPONSIVE ========== */
 @media (max-width: 768px) {
     .container { padding: 1rem; }
     .header { padding: 1rem 1.5rem; flex-direction: column; text-align: center; }
@@ -769,7 +712,14 @@ footer a:hover {
     .stat-value { font-size: 1.5rem; }
 }
 
-/* ========== 🎯 CUSTOM SCROLLBAR ========== */
+@media (max-width: 360px) {
+    .card-grid { grid-template-columns: 1fr; }
+    .exec-card { min-width: unset; }
+    .header { padding: 0.8rem 1rem; }
+    .logo-icon { width: 40px; height: 40px; font-size: 1.2rem; }
+    .logo h1 { font-size: 1.3rem; }
+}
+
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-dark); }
 ::-webkit-scrollbar-thumb {
@@ -781,11 +731,7 @@ footer a:hover {
     background: linear-gradient(135deg, var(--secondary), var(--primary));
 }
 
-/* ========== 🎨 SELECTION ========== */
-::selection {
-    background: var(--primary);
-    color: white;
-}
+::selection { background: var(--primary); color: white; }
 </style>
 </head>
 <body>
@@ -799,74 +745,73 @@ footer a:hover {
     <!-- Header -->
     <header class="header">
         <div class="logo">
-            <div class="logo-icon"><i class="fas fa-bolt"></i></div>
-            <h1>YANZ<span style="color:var(--secondary)">EXECUTORS</span></h1>
-        </div>
-        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-            <div class="live-badge">
-                <span class="live-dot"></span>
-                <span>LIVE STREAM</span>
-            </div>
-            <span class="timestamp" id="liveTime">--:--:--</span>
+            <div class="logo-icon"><i class="fas fa-bolt" aria-hidden="true"></i></div>
+            <h1>YANZ <span style="color:var(--secondary)"> EXECUTORS</span></h1>
         </div>
     </header>
 
-    <!-- Stats Panel -->
-    <div class="stats-panel" id="statsPanel">
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-cube"></i></div>
-            <span class="stat-value" id="totalExec">0</span>
-            <span class="stat-label">Total Executors</span>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-signal"></i></div>
-            <span class="stat-value" id="onlineCount">0</span>
-            <span class="stat-label">Online Now</span>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fab fa-android"></i></div>
-            <span class="stat-value" id="androidCount">0</span>
-            <span class="stat-label">Android</span>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fab fa-windows"></i></div>
-            <span class="stat-value" id="windowsCount">0</span>
-            <span class="stat-label">Windows</span>
-        </div>
+<!-- ========== 📊 STATS PANEL ========== -->
+<div class="stats-panel" id="statsPanel" role="region" aria-label="Statistics">
+    <div class="stat-card">
+        <div class="stat-icon" aria-hidden="true"><i class="fas fa-cube"></i></div>
+        <span class="stat-value" id="totalExec">0</span>
+        <span class="stat-label">All Executors</span>
     </div>
+    <div class="stat-card">
+        <div class="stat-icon" aria-hidden="true"><i class="fas fa-signal"></i></div>
+        <span class="stat-value" id="onlineCount">0</span>
+        <span class="stat-label">Online Now</span>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" aria-hidden="true" style="color: var(--danger);">
+            <i class="fas fa-power-off"></i>
+        </div>
+        <span class="stat-value" id="offlineCount">0</span>
+        <span class="stat-label">Offline Now</span>
+    </div>
+</div>
 
     <!-- Control Bar -->
     <div class="control-bar">
         <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search executors...">
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <label for="searchInput" class="visually-hidden">Search executors</label>
+            <input type="text" id="searchInput" placeholder="Search executors..." aria-label="Search executors" autocomplete="off">
         </div>
-        <div class="filter-chips">
-            <div class="filter-chip active" data-filter="all"><i class="fas fa-globe"></i> All</div>
-            <div class="filter-chip" data-filter="Android"><i class="fab fa-android"></i> Android</div>
-            <div class="filter-chip" data-filter="iOS"><i class="fab fa-apple"></i> iOS</div>
-            <div class="filter-chip" data-filter="Windows"><i class="fab fa-windows"></i> Windows</div>
-            <div class="filter-chip" data-filter="MacOS"><i class="fas fa-desktop"></i> macOS</div>
-            <div class="filter-chip" data-filter="External"><i class="fas fa-external-link-alt"></i> External</div>
+        <div class="filter-chips" role="group" aria-label="Platform filters">
+            <div class="filter-chip active" data-filter="all" role="radio" aria-checked="true" tabindex="0">
+                <i class="fas fa-globe" aria-hidden="true"></i> All
+            </div>
+            <div class="filter-chip" data-filter="Android" role="radio" aria-checked="false" tabindex="0">
+                <i class="fab fa-android" aria-hidden="true"></i> Android
+            </div>
+            <div class="filter-chip" data-filter="iOS" role="radio" aria-checked="false" tabindex="0">
+                <i class="fab fa-apple" aria-hidden="true"></i> iOS
+            </div>
+            <div class="filter-chip" data-filter="Windows" role="radio" aria-checked="false" tabindex="0">
+                <i class="fab fa-windows" aria-hidden="true"></i> Windows
+            </div>
+            <div class="filter-chip" data-filter="MacOS" role="radio" aria-checked="false" tabindex="0">
+                <i class="fas fa-desktop" aria-hidden="true"></i> macOS
+            </div>
+            <div class="filter-chip" data-filter="External" role="radio" aria-checked="false" tabindex="0">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i> External
+            </div>
         </div>
     </div>
 
-    <!-- Platforms Container -->
-    <div id="platformsContainer"></div>
+    <div id="platformsContainer" role="main" aria-live="polite"></div>
 
-    <!-- Footer -->
     <footer>
-        <i class="fab fa-discord"></i> 
-        <a href="https://discord.gg/mNGeUVcjKB" target="_blank">Join Discord</a> 
+        <i class="fab fa-discord" aria-hidden="true"></i> 
+        <a href="https://discord.gg/mNGeUVcjKB" target="_blank" rel="noopener noreferrer">Join Discord</a> 
         | Created by <strong>_lphisv5</strong> • © 2026 YANZ
     </footer>
 </div>
 
-<!-- Toast Container -->
-<div id="toast-container"></div>
+<div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
 
 <script>
-/* ========== 🎮 PARTICLE BACKGROUND ========== */
 class ParticleBG {
     constructor(canvas) {
         this.canvas = canvas;
@@ -878,11 +823,11 @@ class ParticleBG {
         this.init();
         this.animate();
         
-        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('resize', () => this.resize(), { passive: true });
         window.addEventListener('mousemove', (e) => {
             this.mouse.x = e.x;
             this.mouse.y = e.y;
-        });
+        }, { passive: true });
     }
     
     resize() {
@@ -907,17 +852,13 @@ class ParticleBG {
     animate() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Draw connections
         this.particles.forEach((p, i) => {
-            // Update position
             p.x += p.vx;
             p.y += p.vy;
             
-            // Bounce edges
             if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
             if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
             
-            // Mouse interaction
             if (this.mouse.x) {
                 const dx = p.x - this.mouse.x;
                 const dy = p.y - this.mouse.y;
@@ -929,13 +870,11 @@ class ParticleBG {
                 }
             }
             
-            // Draw particle
             this.ctx.beginPath();
             this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             this.ctx.fillStyle = p.color;
             this.ctx.fill();
             
-            // Draw connections
             for (let j = i + 1; j < this.particles.length; j++) {
                 const p2 = this.particles[j];
                 const dx = p.x - p2.x;
@@ -957,89 +896,123 @@ class ParticleBG {
     }
 }
 
-/* ========== ⚡ MAIN APP ========== */
 const API_URL = "https://executors-one.vercel.app/executors";
 const UPDATE_INTERVAL = 1000;
 
 let fullData = null;
 let activeFilter = "all";
 let searchTerm = "";
-let updateInterval = null;
 let isFetching = false;
+let streamInterval = null;
 
 const canvas = document.getElementById('bg-canvas');
-new ParticleBG(canvas);
+if (canvas) new ParticleBG(canvas);
 
-// Live clock
-function updateClock() {
-    const now = new Date();
-    document.getElementById('liveTime').textContent = 
-        now.toLocaleTimeString('en-GB', { hour12: false });
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
-setInterval(updateClock, 1000);
-updateClock();
 
-// Toast notification
+function handleImageError(img, initial) {
+    try {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'executor-logo-placeholder';
+        placeholder.textContent = initial;
+        placeholder.setAttribute('aria-label', `${initial} logo`);
+        if (img.parentElement) {
+            img.parentElement.replaceWith(placeholder);
+        }
+    } catch (e) {
+        console.warn('Error handling image fallback:', e);
+    }
+}
+
+function handleCopyCommand(btn) {
+    const command = btn?.dataset?.command;
+    if (command) {
+        copyText(command, btn);
+    }
+}
+
 function toast(message, type = 'success') {
     const container = document.getElementById('toast-container');
+    if (!container) return;
+    
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
+    toast.setAttribute('role', 'alert');
     toast.innerHTML = `
-        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}"></i>
+        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}" aria-hidden="true"></i>
         <span>${message}</span>
     `;
     container.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 2000);
 }
 
-// Copy to clipboard with animation
 async function copyText(text, btn) {
     try {
         await navigator.clipboard.writeText(text);
         const original = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
         btn.classList.add('copied');
+        btn.setAttribute('aria-label', 'Copied to clipboard');
+        
         setTimeout(() => {
             btn.innerHTML = original;
             btn.classList.remove('copied');
+            btn.setAttribute('aria-label', 'Copy command to clipboard');
         }, 1500);
+        toast('Command copied! ✨');
     } catch {
         toast('Failed to copy', 'error');
     }
 }
 
-// Logo handler
 function getLogoHTML(exec) {
-    const name = exec.name || '?';
-    const initial = name.charAt(0).toUpperCase();
+    const name = exec?.name || '?';
+    const initial = String(name).charAt(0).toUpperCase();
     
-    if (exec.logo) {
-        return `<img src="${exec.logo}" alt="${name}" class="executor-logo" 
-            onerror="this.parentElement.innerHTML='<div class=\\'executor-logo-placeholder\\'>${initial}</div>'">`;
+    if (exec?.logo) {
+        return `<img src="${exec.logo}" alt="${name} logo" class="executor-logo" 
+            onerror="handleImageError(this, '${initial}')">`;
     }
-    return `<div class="executor-logo-placeholder">${initial}</div>`;
+    return `<div class="executor-logo-placeholder" aria-label="${name} logo">${initial}</div>`;
 }
 
-// Render stats
 function renderStats() {
     if (!fullData) return;
     
     const platforms = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
-    let total = 0, online = 0;
+    let total = 0, online = 0, offline = 0;
     
     platforms.forEach(plat => {
         const execs = fullData[plat] || [];
         total += execs.length;
         online += execs.filter(e => e.status === 'Online').length;
+        offline += execs.filter(e => e.status !== 'Online').length;
     });
     
-    document.getElementById('totalExec').textContent = total;
-    document.getElementById('onlineCount').textContent = online;
-    document.getElementById('androidCount').textContent = fullData['Android']?.length || 0;
-    document.getElementById('windowsCount').textContent = fullData['Windows']?.length || 0;
+    const totalEl = document.getElementById('totalExec');
+    const onlineEl = document.getElementById('onlineCount');
+    const offlineEl = document.getElementById('offlineCount');
+    
+    if (totalEl) totalEl.textContent = total;
+    if (onlineEl) onlineEl.textContent = online;
+    if (offlineEl) offlineEl.textContent = offline;
 }
 
-// Filter data
 function getFilteredData() {
     if (!fullData) return {};
     const result = {};
@@ -1060,22 +1033,23 @@ function getFilteredData() {
     return result;
 }
 
-// Render cards
 function renderCards() {
     const container = document.getElementById('platformsContainer');
+    if (!container) return;
+    
     if (!fullData) {
-        container.innerHTML = '<div class="no-results"><i class="fas fa-spinner fa-spin"></i><p>Connecting to live stream...</p></div>';
+        container.innerHTML = '<div class="no-results"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i><p>Connecting to live stream...</p></div>';
         return;
     }
     
     const filtered = getFilteredData();
     const platforms = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
     const icons = {
-        Android: '<i class="fab fa-android"></i>',
-        iOS: '<i class="fab fa-apple"></i>',
-        Windows: '<i class="fab fa-windows"></i>',
-        MacOS: '<i class="fas fa-desktop"></i>',
-        External: '<i class="fas fa-external-link-alt"></i>'
+        Android: '<i class="fab fa-android" aria-hidden="true"></i>',
+        iOS: '<i class="fab fa-apple" aria-hidden="true"></i>',
+        Windows: '<i class="fab fa-windows" aria-hidden="true"></i>',
+        MacOS: '<i class="fas fa-desktop" aria-hidden="true"></i>',
+        External: '<i class="fas fa-external-link-alt" aria-hidden="true"></i>'
     };
     
     let html = '';
@@ -1091,23 +1065,28 @@ function renderCards() {
         const online = fullData[plat]?.filter(e => e.status === 'Online').length || 0;
         
         html += `
-        <div class="platform-section">
+        <div class="platform-section" data-platform="${plat}">
             <div class="section-header">
                 <div class="section-title">
                     ${icons[plat]} ${plat}
                 </div>
-                <div class="section-count">
+                <div class="section-count" aria-label="${execs.length} of ${total} executors, ${online} online">
                     ${execs.length}/${total} • 🟢 ${online}
                 </div>
             </div>
-            <div class="card-grid">`;
+            <div class="card-grid" role="list">`;
         
         for (const ex of execs) {
             const isOnline = ex.status === 'Online';
             const isPremium = ex.type === 'Premium' || ex.purchaseLink;
+            const escapedCommand = (ex.installCommand || '').toString()
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
             
             html += `
-            <div class="exec-card">
+            <div class="exec-card" role="listitem">
                 <div class="card-content">
                     <div class="card-header">
                         <div class="executor-info">
@@ -1115,30 +1094,30 @@ function renderCards() {
                             <div>
                                 <div class="executor-name">
                                     ${ex.name || '?'}
-                                    ${isPremium ? '<span class="premium-badge"><i class="fas fa-gem"></i> Premium</span>' : ''}
+                                    ${isPremium ? '<span class="premium-badge" aria-label="Premium executor"><i class="fas fa-gem" aria-hidden="true"></i> Premium</span>' : ''}
                                 </div>
-                                <div class="version-tag"><i class="fas fa-code-branch"></i> ${ex.version || 'N/A'}</div>
+                                <div class="version-tag"><i class="fas fa-code-branch" aria-hidden="true"></i> ${ex.version || 'N/A'}</div>
                             </div>
                         </div>
-                        <div class="status-badge ${isOnline ? 'status-online' : 'status-offline'}">
+                        <div class="status-badge ${isOnline ? 'status-online' : 'status-offline'}" aria-label="Status: ${ex.status || 'Offline'}">
                             ${ex.status || 'Offline'}
                         </div>
                     </div>
                     
                     <div class="action-buttons">
-                        ${ex.downloadLink ? `<a href="${ex.downloadLink}" target="_blank" class="btn btn-download"><i class="fas fa-download"></i> Download</a>` : ''}
-                        ${ex.purchaseLink ? `<a href="${ex.purchaseLink}" target="_blank" class="btn btn-purchase"><i class="fas fa-shopping-cart"></i> Purchase</a>` : ''}
-                        ${ex.installCommand ? `<button class="btn btn-copy" onclick="copyText('${ex.installCommand}', this)"><i class="fas fa-terminal"></i> Copy Cmd</button>` : ''}
-                        ${!ex.downloadLink && !ex.purchaseLink && !ex.installCommand ? '<span class="btn">No link</span>' : ''}
+                        ${ex.downloadLink ? `<a href="${ex.downloadLink}" target="_blank" rel="noopener noreferrer" class="btn btn-download"><i class="fas fa-download" aria-hidden="true"></i> Download</a>` : ''}
+                        ${ex.purchaseLink ? `<a href="${ex.purchaseLink}" target="_blank" rel="noopener noreferrer" class="btn btn-purchase"><i class="fas fa-shopping-cart" aria-hidden="true"></i> Purchase</a>` : ''}
+                        ${ex.installCommand ? `<button class="btn btn-copy" data-command="${escapedCommand}" onclick="handleCopyCommand(this)" aria-label="Copy install command"><i class="fas fa-terminal" aria-hidden="true"></i> Copy Cmd</button>` : ''}
+                        ${!ex.downloadLink && !ex.purchaseLink && !ex.installCommand ? '<span class="btn" aria-label="No link available">No link</span>' : ''}
                     </div>
                     
                     ${plat === 'Android' && (ex.vngVersion || ex.vngDownloadLink) ? `
                     <div class="vng-section">
-                        <div class="vng-header"><i class="fas fa-code-branch"></i> VNG Version</div>
+                        <div class="vng-header"><i class="fas fa-code-branch" aria-hidden="true"></i> VNG Version</div>
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                             <span>${ex.vngVersion || '?'}</span>
                             ${ex.vngStatus ? `<span class="status-badge ${ex.vngStatus==='Online'?'status-online':'status-offline'}">${ex.vngStatus}</span>` : ''}
-                            ${ex.vngDownloadLink ? `<a href="${ex.vngDownloadLink}" target="_blank" class="btn btn-download" style="padding:0.25rem 0.6rem;font-size:0.75rem;"><i class="fas fa-download"></i> VNG</a>` : ''}
+                            ${ex.vngDownloadLink ? `<a href="${ex.vngDownloadLink}" target="_blank" rel="noopener noreferrer" class="btn btn-download" style="padding:0.25rem 0.6rem;font-size:0.75rem;"><i class="fas fa-download" aria-hidden="true"></i> VNG</a>` : ''}
                         </div>
                     </div>` : ''}
                 </div>
@@ -1148,8 +1127,8 @@ function renderCards() {
     }
     
     if (!hasResults) {
-        html = `<div class="no-results">
-            <i class="fas fa-search"></i>
+        html = `<div class="no-results" role="status">
+            <i class="fas fa-search" aria-hidden="true"></i>
             <p>No executors found matching "${searchTerm}"</p>
         </div>`;
     }
@@ -1157,42 +1136,68 @@ function renderCards() {
     container.innerHTML = html;
 }
 
-// Update existing cards (for live updates)
 function updateCards() {
     if (!fullData) return;
     const filtered = getFilteredData();
+    const platforms = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
+    let offline = 0;
+    platforms.forEach(plat => {
+        const execs = fullData[plat] || [];
+        offline += execs.filter(e => e.status !== 'Online').length;
+    });
+    const offlineEl = document.getElementById('offlineCount');
+    if (offlineEl) offlineEl.textContent = offline;
     
-    // Update counts
     document.querySelectorAll('.section-count').forEach(el => {
         const plat = el.closest('.platform-section')?.dataset?.platform;
         if (plat && filtered[plat]) {
             const total = fullData[plat]?.length || 0;
             const online = fullData[plat]?.filter(e => e.status === 'Online').length || 0;
             el.textContent = `${filtered[plat].length}/${total} • 🟢 ${online}`;
+            el.setAttribute('aria-label', `${filtered[plat].length} of ${total} executors, ${online} online`);
         }
-    });
-    
-    // Update card content
-    document.querySelectorAll('.exec-card').forEach(card => {
-        // Could add more granular updates here
     });
 }
 
-// Fetch data
+async function fetchWithRetry(url, options = {}, retries = 3, backoff = 1000) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 7000);
+            
+            const res = await fetch(url, { ...options, signal: controller.signal });
+            clearTimeout(timeout);
+            
+            if (!res.ok) {
+                if (res.status >= 500 && i < retries - 1) {
+                    await new Promise(r => setTimeout(r, backoff * Math.pow(2, i)));
+                    continue;
+                }
+                throw new Error(`HTTP ${res.status}`);
+            }
+            
+            const contentType = res.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Invalid response format: expected JSON');
+            }
+            
+            return await res.json();
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                throw new Error('Request timeout');
+            }
+            if (i === retries - 1) throw err;
+            await new Promise(r => setTimeout(r, backoff * Math.pow(2, i)));
+        }
+    }
+}
+
 async function fetchData(showToast = false) {
     if (isFetching) return;
     isFetching = true;
     
     try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 7000);
-        
-        const res = await fetch(API_URL, { signal: controller.signal });
-        clearTimeout(timeout);
-        
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        
-        fullData = await res.json();
+        fullData = await fetchWithRetry(API_URL);
         renderStats();
         
         if (!document.querySelector('.exec-card')) {
@@ -1205,47 +1210,87 @@ async function fetchData(showToast = false) {
     } catch (err) {
         console.warn('Fetch error:', err);
         if (showToast) toast(`Connection error: ${err.message}`, 'error');
-        if (!fullData) {
-            document.getElementById('platformsContainer').innerHTML = 
-                `<div class="no-results"><i class="fas fa-wifi"></i><p>Cannot connect to API<br><small>Retrying...</small></p></div>`;
+        
+        const container = document.getElementById('platformsContainer');
+        if (!fullData && container) {
+            container.innerHTML = 
+                `<div class="no-results" role="alert">
+                    <i class="fas fa-wifi" aria-hidden="true"></i>
+                    <p>Cannot connect to API<br><small>Retrying in ${UPDATE_INTERVAL/1000}s...</small></p>
+                </div>`;
         }
     } finally {
         isFetching = false;
     }
 }
 
-// Start live stream
 function startStream() {
     fetchData(false);
-    updateInterval = setInterval(() => fetchData(false), UPDATE_INTERVAL);
+    if (!streamInterval) {
+        streamInterval = setInterval(() => fetchData(false), UPDATE_INTERVAL);
+    }
 }
 
-// Bind controls
+function stopStream() {
+    if (streamInterval) {
+        clearInterval(streamInterval);
+        streamInterval = null;
+    }
+}
+
 function bindControls() {
-    // Search
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        searchTerm = e.target.value;
-        renderCards();
-    });
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce((e) => {
+            searchTerm = e.target.value;
+            renderCards();
+        }, 300));
+    }
     
-    // Filters
     document.querySelectorAll('.filter-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        const handleClick = () => {
+            document.querySelectorAll('.filter-chip').forEach(c => {
+                c.classList.remove('active');
+                c.setAttribute('aria-checked', 'false');
+            });
             chip.classList.add('active');
+            chip.setAttribute('aria-checked', 'true');
             activeFilter = chip.dataset.filter;
             renderCards();
+        };
+        
+        chip.addEventListener('click', handleClick);
+        chip.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleClick();
+            }
         });
     });
 }
 
-// Init
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        stopStream();
+    } else if (!streamInterval) {
+        startStream();
+    }
+});
+
+window.addEventListener('beforeunload', () => {
+    stopStream();
+});
+
 function init() {
     bindControls();
     startStream();
 }
 
-init();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 </script>
 </body>
 </html>
