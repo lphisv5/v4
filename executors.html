@@ -926,14 +926,12 @@ function handleImageError(img, initial) {
         placeholder.className = 'executor-logo-placeholder';
         placeholder.textContent = initial;
         placeholder.setAttribute('aria-label', `${initial} logo`);
-        
+        placeholder.style.flexShrink = '0';
         img.replaceWith(placeholder);
-        
     } catch (e) {
         console.warn('Error handling image fallback:', e);
     }
 }
-
 function handleCopyCommand(btn) {
     const command = btn?.dataset?.command;
     if (command) {
