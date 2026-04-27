@@ -926,9 +926,9 @@ function handleImageError(img, initial) {
         placeholder.className = 'executor-logo-placeholder';
         placeholder.textContent = initial;
         placeholder.setAttribute('aria-label', `${initial} logo`);
-        if (img.parentElement) {
-            img.parentElement.replaceWith(placeholder);
-        }
+        
+        img.replaceWith(placeholder);
+        
     } catch (e) {
         console.warn('Error handling image fallback:', e);
     }
