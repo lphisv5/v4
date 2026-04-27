@@ -1,11 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Yanz Executors</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+  <meta name="keywords" content="YANZ, lphisv5, tools, scripts, systems, web hub, productivity tools, api, ai, deep ocean">
+  <meta name="google-site-verification" content="JBRMY2D-joTthmVgUJIx5_U7CER2SosgBqEcoRGmzp0" />
+  <meta name="google-site-verification" content="ctalwY44kcnXVpIVYysi59z66XwVqQqhN-LME8GssAQ" />
+  <meta name="theme-color" content="#D8BFD8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="YANZ Executors, YANZ EXECUTORS, yanz hub, yanzexe, yanz, yazz exe">
+
+  <link rel="canonical" href="https://lphisv5.github.io/v4/executors.html">
+  <link rel="icon" href="https://i.postimg.cc/zGdBB2n9/file-00000000515c71faafcd117a160847f9.png" type="image/png" alt="YANZ" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/zGdBB2n9/file-00000000515c71faafcd117a160847f9.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="author" content="YANZ EXECUTORS" />
+  <title>YANZ EXECUTORS</title>
+  <meta name="description" content="YANZ - Dive into our hub of web tools and scripts. Fast, reliable, and continuously updated for your productivity." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://i.postimg.cc/jSLXxBS3/cf51de944668431b1c81c0b340577063.gif" />
+  <meta property="og:url" content="https://lphisv5.github.io/v4/executors.html" />
+  <meta property="og:title" content="YANZ - ROBLOX EXECUTORS" />
+  <meta property="og:description" content="YANZ - Dive into our hub of web tools and scripts. Fast, reliable, and continuously updated for your productivity." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  
     <style>
         * {
             margin: 0;
@@ -173,7 +199,38 @@
             font-weight: 800;
             display: flex;
             gap: 8px;
+            align-items: center;
             flex-wrap: wrap;
+        }
+        .executor-logo-container {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .executor-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.08);
+            padding: 3px;
+            border: 1px solid rgba(255,255,255,0.15);
+            display: block;
+        }
+        .executor-logo-placeholder {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         .premium-badge {
             background: #f59e0b20;
@@ -312,6 +369,10 @@
     let updateIntervalId = null;
     let isFetching = false;
     let lastSuccessTime = null;
+    
+    const logoCache = new Map();
+    const failedLogos = new Set();
+    const logoContainers = new Map();
 
     const statsDiv = document.getElementById("statsPanel");
     const platformsContainer = document.getElementById("platformsContainer");
@@ -372,6 +433,39 @@
         } catch(e) { showToast("Copy failed", true); }
     }
 
+    function getLogoHtml(executor) {
+        const cacheKey = `${executor.name}`;
+        
+        if (executor.logo && !failedLogos.has(executor.logo)) {
+            if (!logoCache.has(cacheKey)) {
+                logoCache.set(cacheKey, executor.logo);
+            }
+            return `<div class="executor-logo-container" data-executor="${escapeHtml(executor.name)}">
+                        <img src="${escapeHtml(executor.logo)}" 
+                             alt="${escapeHtml(executor.name)}" 
+                             class="executor-logo"
+                             loading="lazy"
+                             onerror="handleLogoError(this, '${escapeHtml(executor.name)}')" />
+                    </div>`;
+        }
+        
+        const initial = (executor.name || '?').charAt(0).toUpperCase();
+        return `<div class="executor-logo-container" data-executor="${escapeHtml(executor.name)}">
+                    <div class="executor-logo-placeholder">${initial}</div>
+                </div>`;
+    }
+
+    window.handleLogoError = function(imgElement, executorName) {
+        const logoUrl = imgElement.src;
+        failedLogos.add(logoUrl);
+        
+        const container = imgElement.parentElement;
+        if (container) {
+            const initial = (executorName || '?').charAt(0).toUpperCase();
+            container.innerHTML = `<div class="executor-logo-placeholder">${initial}</div>`;
+        }
+    };
+
     function getFilteredData() {
         if (!fullData) return {};
         const platforms = ["Android", "iOS", "Windows", "MacOS", "External"];
@@ -391,25 +485,54 @@
         return result;
     }
 
-    function renderStats() {
-        if (!fullData) return;
-        const platforms = ["Android", "iOS", "Windows", "MacOS", "External"];
-        let html = '';
-        for (let plat of platforms) {
-            const total = fullData[`Available ${plat}`] ?? (fullData[plat]?.length || 0);
-            const online = fullData[`${plat} Online`] ?? (fullData[plat]?.filter(ex => ex.status === "Online").length || 0);
-            html += `<div class="stat-tile">
-                        ${statIconMap[plat] || '<i class="fas fa-mobile-alt"></i>'}
-                        <div class="stat-number">${online}/${total}</div>
-                        <div style="font-size:0.7rem;">${plat} online</div>
-                    </div>`;
+    function updateCardData(cardElement, executor) {
+        const statusChip = cardElement.querySelector('.status-chip');
+        if (statusChip) {
+            const isOnline = executor.status === "Online";
+            statusChip.className = `status-chip ${isOnline ? 'status-online' : 'status-offline'}`;
+            statusChip.textContent = executor.status || 'Offline';
         }
-        let totalAll = 0, totalOnlineAll = 0;
-        for (let plat of platforms) {
-            totalAll += (fullData[`Available ${plat}`] ?? (fullData[plat]?.length || 0));
-            totalOnlineAll += (fullData[`${plat} Online`] ?? (fullData[plat]?.filter(ex=>ex.status==="Online").length || 0));
+        
+        const versionEl = cardElement.querySelector('.version-text');
+        if (versionEl) {
+            versionEl.innerHTML = `<i class="fas fa-code-branch"></i> ${escapeHtml(executor.version || 'N/A')}`;
         }
-        statsDiv.innerHTML = `<div class="stat-tile"><i class="fas fa-chart-line"></i><div class="stat-number">${totalOnlineAll}/${totalAll}</div><div>Global active</div></div>` + html;
+        
+        const actionButtons = cardElement.querySelector('.action-buttons');
+        if (actionButtons) {
+            let btnHtml = '';
+            if (executor.downloadLink) btnHtml += `<a href="${escapeHtml(executor.downloadLink)}" target="_blank" class="btn-icon"><i class="fas fa-download"></i> Download</a>`;
+            if (executor.purchaseLink) btnHtml += `<a href="${escapeHtml(executor.purchaseLink)}" target="_blank" class="btn-icon"><i class="fas fa-shopping-cart"></i> Purchase</a>`;
+            if (executor.installCommand) {
+                btnHtml += `<button class="btn-icon copy-cmd" data-cmd="${escapeHtml(executor.installCommand)}"><i class="fas fa-terminal"></i> Copy Cmd</button>`;
+            }
+            if (!executor.downloadLink && !executor.purchaseLink && !executor.installCommand) btnHtml += `<span class="btn-icon">No link</span>`;
+            actionButtons.innerHTML = btnHtml;
+        }
+        
+        const vngDetails = cardElement.querySelector('.vng-details');
+        if (vngDetails) {
+            if (executor.vngVersion || executor.vngStatus || executor.vngDownloadLink) {
+                vngDetails.style.display = '';
+                vngDetails.innerHTML = `
+                    <i class="fas fa-code-branch"></i> VNG: ${escapeHtml(executor.vngVersion || '?')} 
+                    ${executor.vngStatus ? `<span class="status-chip ${executor.vngStatus === 'Online' ? 'status-online' : 'status-offline'}" style="margin-left:5px;">${executor.vngStatus}</span>` : ''}
+                    ${executor.vngDownloadLink ? `<div style="margin-top:5px;"><a href="${escapeHtml(executor.vngDownloadLink)}" target="_blank" class="btn-icon"><i class="fas fa-download"></i> VNG DL</a></div>` : ''}
+                `;
+            } else {
+                vngDetails.style.display = 'none';
+            }
+        }
+        
+        cardElement.querySelectorAll('.copy-cmd').forEach(btn => {
+            const cmd = btn.getAttribute('data-cmd');
+            if (cmd) {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    copyToClipboard(cmd, btn);
+                });
+            }
+        });
     }
 
     function renderCards() {
@@ -417,11 +540,14 @@
             platformsContainer.innerHTML = `<div class="no-results"><i class="fas fa-spinner fa-pulse"></i> Waiting for live stream data...</div>`;
             return;
         }
-        const cmdMap = {};
+        
         const filteredData = getFilteredData();
         const platforms = ["Android", "iOS", "Windows", "MacOS", "External"];
         let html = '';
         let anyVisible = false;
+        
+        const currentExecutors = new Map();
+        
         for (let plat of platforms) {
             const execs = filteredData[plat];
             if (activePlatform !== "all" && activePlatform !== plat) continue;
@@ -437,23 +563,31 @@
             else if (plat === 'MacOS') headerIcon = '<i class="fas fa-desktop"></i>';
             else if (plat === 'External') headerIcon = '<i class="fas fa-external-link-alt"></i>';
             
-            html += `<div class="platform-section">
+            html += `<div class="platform-section" data-platform="${plat}">
                         <div class="section-header">
                             <div>${headerIcon} <strong>${plat}</strong></div>
-                            <div class="filter-chip" style="background:#0f172a;">${execs.length} / ${totalOriginal}  |  🟢 ${onlineOriginal}</div>
+                            <div class="filter-chip" style="background:#0f172a;" data-platform-count="${plat}">${execs.length} / ${totalOriginal}  |  🟢 ${onlineOriginal}</div>
                         </div>
                         <div class="card-grid">`;
+            
             for (let ex of execs) {
+                const key = `${plat}-${ex.name}`;
+                currentExecutors.set(key, ex);
+                
                 const isOnline = ex.status === "Online";
                 const statusClass = isOnline ? "status-online" : "status-offline";
                 const premiumFlag = ex.type === "Premium" || ex.purchaseLink;
-                const cmdKey = `${plat}-${ex.name}`;
-                if (ex.installCommand) cmdMap[cmdKey] = ex.installCommand;
-
-                html += `<div class="exec-card">
+                
+                const logoHtml = getLogoHtml(ex);
+                
+                html += `<div class="exec-card" data-executor-key="${escapeHtml(key)}">
                             <div class="card-inner">
                                 <div class="card-title-row">
-                                    <div class="exec-name">${escapeHtml(ex.name || '?')} ${premiumFlag ? '<span class="premium-badge"><i class="fas fa-gem"></i> Premium</span>' : ''}</div>
+                                    <div class="exec-name">
+                                        ${logoHtml}
+                                        <span>${escapeHtml(ex.name || '?')}</span>
+                                        ${premiumFlag ? '<span class="premium-badge"><i class="fas fa-gem"></i> Premium</span>' : ''}
+                                    </div>
                                     <div class="status-chip ${statusClass}">${ex.status || 'Offline'}</div>
                                 </div>
                                 <div class="version-text"><i class="fas fa-code-branch"></i> ${escapeHtml(ex.version || 'N/A')}</div>
@@ -461,32 +595,68 @@
                 if (ex.downloadLink) html += `<a href="${escapeHtml(ex.downloadLink)}" target="_blank" class="btn-icon"><i class="fas fa-download"></i> Download</a>`;
                 if (ex.purchaseLink) html += `<a href="${escapeHtml(ex.purchaseLink)}" target="_blank" class="btn-icon"><i class="fas fa-shopping-cart"></i> Purchase</a>`;
                 if (ex.installCommand) {
-                    html += `<button class="btn-icon copy-cmd" data-key="${escapeHtml(cmdKey)}"><i class="fas fa-terminal"></i> Copy Cmd</button>`;
+                    html += `<button class="btn-icon copy-cmd" data-cmd="${escapeHtml(ex.installCommand)}"><i class="fas fa-terminal"></i> Copy Cmd</button>`;
                 }
                 if (!ex.downloadLink && !ex.purchaseLink && !ex.installCommand) html += `<span class="btn-icon">No link</span>`;
                 html += `</div>`;
+                
                 if (plat === "Android" && (ex.vngVersion || ex.vngStatus || ex.vngDownloadLink)) {
                     html += `<div class="vng-details">
                                 <i class="fas fa-code-branch"></i> VNG: ${escapeHtml(ex.vngVersion || '?')} 
                                 ${ex.vngStatus ? `<span class="status-chip ${ex.vngStatus === 'Online' ? 'status-online' : 'status-offline'}" style="margin-left:5px;">${ex.vngStatus}</span>` : ''}
                                 ${ex.vngDownloadLink ? `<div style="margin-top:5px;"><a href="${escapeHtml(ex.vngDownloadLink)}" target="_blank" class="btn-icon"><i class="fas fa-download"></i> VNG DL</a></div>` : ''}
                             </div>`;
+                } else if (plat === "Android") {
+                    html += `<div class="vng-details" style="display:none;"></div>`;
                 }
+                
                 html += `</div></div>`;
             }
             html += `</div></div>`;
         }
+        
         if (!anyVisible && activePlatform !== "all") html = `<div class="no-results"><i class="fas fa-filter"></i> No results for selected platform</div>`;
         else if (!anyVisible) html = `<div class="no-results">No executor data found</div>`;
+        
         platformsContainer.innerHTML = html;
-
+        
         document.querySelectorAll('.copy-cmd').forEach(btn => {
-            const key = btn.getAttribute('data-key');
-            if (key && cmdMap[key]) {
+            const cmd = btn.getAttribute('data-cmd');
+            if (cmd) {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    copyToClipboard(cmdMap[key], btn);
+                    copyToClipboard(cmd, btn);
                 });
+            }
+        });
+    }
+
+    function updateExistingCards() {
+        if (!fullData) return;
+        
+        const filteredData = getFilteredData();
+        
+        document.querySelectorAll('[data-platform-count]').forEach(el => {
+            const plat = el.getAttribute('data-platform-count');
+            if (plat && filteredData[plat]) {
+                const execs = filteredData[plat];
+                const totalOriginal = fullData[plat]?.length || 0;
+                const onlineOriginal = fullData[plat]?.filter(ex=>ex.status==="Online").length || 0;
+                el.textContent = `${execs.length} / ${totalOriginal}  |  🟢 ${onlineOriginal}`;
+            }
+        });
+        
+        document.querySelectorAll('.exec-card').forEach(card => {
+            const key = card.getAttribute('data-executor-key');
+            if (!key) return;
+            
+            for (const plat of ["Android", "iOS", "Windows", "MacOS", "External"]) {
+                const execs = filteredData[plat] || [];
+                const executor = execs.find(ex => `${plat}-${ex.name}` === key);
+                if (executor) {
+                    updateCardData(card, executor);
+                    break;
+                }
             }
         });
     }
@@ -503,27 +673,20 @@
             const data = await response.json();
             fullData = data;
             lastSuccessTime = Date.now();
+        
+            if (!platformsContainer.querySelector('.exec-card')) {
+                renderCards();
+            } else {
+                updateExistingCards();
+            }
+            
             renderStats();
-            renderCards();
             if (showToastMsg) showToast("Live data refreshed", false);
         } catch (err) {
             console.warn("Fetch error:", err);
             if (showToastMsg) showToast(`API error: ${err.message}`, true);
             if (!fullData) {
                 platformsContainer.innerHTML = `<div class="no-results"><i class="fas fa-exclamation-triangle"></i> Cannot reach API. Retrying every 1s...<br>${err.message}</div>`;
-            } else {
-                if (!document.getElementById('stream-warning')) {
-                    const warn = document.createElement('div');
-                    warn.id = 'stream-warning';
-                    warn.style.background = '#dc262630';
-                    warn.style.borderRadius = '1rem';
-                    warn.style.padding = '0.3rem';
-                    warn.style.marginBottom = '1rem';
-                    warn.style.fontSize = '0.7rem';
-                    warn.innerHTML = `<i class="fas fa-clock"></i> Using cached data — waiting for API response (last update: ${new Date(lastSuccessTime || Date.now()).toLocaleTimeString()})`;
-                    platformsContainer.prepend(warn);
-                    setTimeout(() => warn.remove(), 3000);
-                }
             }
         } finally {
             isFetching = false;
