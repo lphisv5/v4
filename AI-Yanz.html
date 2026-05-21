@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -70,6 +70,7 @@
         .user-info { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; border-radius: 40px; }
         .user-info:hover { background: var(--bg-surface); }
         .user-avatar { width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .api-info-badge { font-size: 0.7rem; color: var(--text-secondary); background: var(--bg-surface); border-radius: 20px; padding: 3px 8px; border: 1px solid var(--border); }
         .main { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
         .chat-header { padding: 12px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg-main); }
         .chat-title { font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 8px; }
@@ -79,43 +80,17 @@
         .chat-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 24px; scroll-behavior: smooth; }
         .welcome { text-align: center; margin: auto; max-width: 500px; padding: 40px; }
         .welcome h2 { font-size: 2rem; font-weight: 600; margin-bottom: 16px; background: linear-gradient(135deg, var(--text), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .welcome-models { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+        .welcome-model-chip { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; color: var(--text-secondary); }
         .message { display: flex; gap: 16px; max-width: 80%; animation: fadeIn 0.2s ease; }
         .message.user { align-self: flex-end; flex-direction: row-reverse; }
         .message-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
         .message.user .message-avatar { background: var(--accent); }
         .message-bubble { padding: 12px 16px; border-radius: 20px; background: var(--bg-surface); line-height: 1.6; font-size: 0.9rem; word-break: break-word; }
         .message.user .message-bubble { background: var(--accent); border-radius: 20px 20px 4px 20px; }
-
-        .message-bubble pre {
-            background: #0d0d12;
-            padding: 12px;
-            border-radius: 12px;
-            overflow-x: auto;
-            margin: 8px 0;
-            position: relative;
-        }
-        .message-bubble pre code {
-            padding-top: 28px !important;
-            display: block;
-        }
-        .copy-code-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            z-index: 10;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #ccc;
-            padding: 3px 10px;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            cursor: pointer;
-            transition: background 0.15s, color 0.15s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-        }
+        .message-bubble pre { background: #0d0d12; padding: 12px; border-radius: 12px; overflow-x: auto; margin: 8px 0; position: relative; }
+        .message-bubble pre code { padding-top: 28px !important; display: block; }
+        .copy-code-btn { position: absolute; top: 8px; right: 8px; z-index: 10; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #ccc; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; cursor: pointer; transition: background 0.15s, color 0.15s; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
         .copy-code-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
         .copy-code-btn.copied { background: rgba(16,185,129,0.3); color: #6ee7b7; border-color: #10b981; }
         .verification-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(16,185,129,0.15); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; margin-top: 8px; color: var(--verified); }
@@ -172,7 +147,7 @@
         .attachment-preview img { width: 28px; height: 28px; object-fit: cover; border-radius: 6px; }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: 0.2s; backdrop-filter: blur(4px); }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        .settings-modal { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 32px; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; padding: 28px; }
+        .settings-modal { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 32px; width: 90%; max-width: 580px; max-height: 85vh; overflow-y: auto; padding: 28px; }
         .settings-header { display: flex; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
         .settings-header h3 { font-size: 1.4rem; font-weight: 600; }
         .close-settings { background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; padding: 8px; border-radius: 50%; }
@@ -186,6 +161,7 @@
         .toggle::after { content: ''; position: absolute; width: 20px; height: 20px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.2s; }
         .toggle.active::after { left: 22px; }
         .select-input { background: var(--bg-input); border: 1px solid var(--border); border-radius: 28px; padding: 10px 16px; width: 100%; color: var(--text); outline: none; }
+        .select-input optgroup { font-weight: 600; color: var(--text-secondary); font-size: 0.8rem; }
         .action-buttons { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
         .action-btn-settings { background: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: 28px; cursor: pointer; color: var(--text); }
         .action-btn-settings.danger { border-color: #ef4444; color: #ef4444; }
@@ -193,18 +169,17 @@
         .action-btn-settings:hover { background: var(--bg-hover); }
         hr { border-color: var(--border); margin: 20px 0; }
         .sidebar-toggle-btn { display: none; position: fixed; top: 16px; left: 16px; z-index: 20; background: var(--bg-surface); border: none; border-radius: 50%; width: 40px; height: 40px; color: var(--text); cursor: pointer; font-size: 1.2rem; box-shadow: var(--shadow); }
-
+        .model-search-input { background: var(--bg-input); border: 1px solid var(--border); border-radius: 28px; padding: 8px 14px; width: 100%; color: var(--text); outline: none; font-size: 0.85rem; margin-bottom: 8px; }
+        .model-search-input:focus { border-color: var(--accent); }
         .image-options { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         .size-option { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; cursor: pointer; color: var(--text-secondary); transition: 0.15s; }
         .size-option.active { border-color: #ec4899; color: #f9a8d4; background: rgba(236,72,153,0.1); }
-
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
             .sidebar-toggle-btn { display: flex; align-items: center; justify-content: center; }
             .message { max-width: 95%; }
         }
-
         .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 2000; cursor: zoom-out; }
         .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 12px; object-fit: contain; }
     </style>
@@ -221,6 +196,7 @@
             <div class="user-avatar"><i class="fas fa-cog"></i></div>
             <span>Settings</span>
         </div>
+        <div class="api-info-badge" id="apiInfoBadge" title="Available models">...</div>
     </div>
 </div>
 <div class="main">
@@ -234,7 +210,16 @@
         </div>
     </div>
     <div class="chat-container" id="chatContainer">
-        <div class="welcome" id="welcomeScreen"><h2>How can I help you?</h2></div>
+        <div class="welcome" id="welcomeScreen">
+            <h2>How can I help you?</h2>
+            <div class="welcome-models" id="welcomeModels">
+                <span class="welcome-model-chip"><i class="fas fa-bolt"></i> Llama 4 Scout</span>
+                <span class="welcome-model-chip"><i class="fas fa-brain"></i> DeepSeek R1</span>
+                <span class="welcome-model-chip"><i class="fas fa-code"></i> Qwen3 Coder</span>
+                <span class="welcome-model-chip"><i class="fas fa-eye"></i> Gemini 2.5 Flash</span>
+                <span class="welcome-model-chip">+ 200 more models</span>
+            </div>
+        </div>
     </div>
     <div class="input-area">
         <div class="input-tools">
@@ -248,10 +233,10 @@
         <div id="imageOptions" style="display:none;">
             <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:6px;"><i class="fas fa-image" style="color:#ec4899;"></i> Image size:</div>
             <div class="image-options">
-                <div class="size-option active" data-size="512x512">512×512</div>
-                <div class="size-option" data-size="768x768">768×768</div>
-                <div class="size-option" data-size="1024x1024">1024×1024</div>
-                <div class="size-option" data-size="1280x720">1280×720 (16:9)</div>
+                <div class="size-option active" data-size="512x512">512x512</div>
+                <div class="size-option" data-size="768x768">768x768</div>
+                <div class="size-option" data-size="1024x1024">1024x1024</div>
+                <div class="size-option" data-size="1280x720">1280x720 (16:9)</div>
             </div>
         </div>
         <div id="attachmentPreviews" class="attachment-previews"></div>
@@ -268,26 +253,105 @@
             <h3><i class="fas fa-sliders-h"></i> Settings</h3>
             <button class="close-settings" id="closeSettings"><i class="fas fa-times"></i></button>
         </div>
+
+        <!-- MODEL SELECTION -->
         <div class="setting-group">
             <div class="setting-label"><i class="fas fa-microchip"></i> Model selection</div>
-            <div class="toggle-switch"><div class="toggle" id="autoModelToggle"></div><span>Auto Model</span></div>
+            <div class="toggle-switch">
+                <div class="toggle" id="autoModelToggle"></div>
+                <span>Auto Model <span style="font-size:0.75rem;color:var(--text-secondary);">(picks best for task)</span></span>
+            </div>
             <div id="manualModelContainer" style="margin-top:12px;display:none;">
-                <select id="manualModelSelect" class="select-input">
-                    <option value="llama-4-maverick">General & Reasoning</option>
-                    <option value="llama-4-scout">Fast, Efficient</option>
-                    <option value="llama-3.2-11b-vision">Image understanding</option>
-                    <option value="llama-3.2-90b-vision">High-res vision</option>
-                    <option value="llama-3.3-70b">General purpose</option>
-                    <option value="llama-3.1-405b">Extreme reasoning</option>
-                    <option value="deepseek-r1">Deep reasoning</option>
-                    <option value="deepseek-chat">Code expert</option>
-                    <option value="qwen-2.5-72b">Multilingual</option>
-                    <option value="gpt-4o-mini">Fast</option>
-                    <option value="claude-3-haiku">Balanced</option>
+                <input type="text" id="modelSearchInput" class="model-search-input" placeholder="Search models..." />
+                <select id="manualModelSelect" class="select-input" size="6" style="border-radius:16px;height:auto;">
+                    <optgroup label="⚡ Fast &amp; General">
+                        <option value="llama-3.3-70b">Llama 3.3 70B – General purpose</option>
+                        <option value="llama-4-scout">Llama 4 Scout – Fast &amp; efficient</option>
+                        <option value="llama-4-maverick">Llama 4 Maverick – Smart</option>
+                        <option value="gpt-4o-mini">GPT-4o Mini – Fast</option>
+                        <option value="gpt-4.1-nano">GPT-4.1 Nano – Very fast</option>
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                        <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+                        <option value="llama-3.3-70b-instruct:free">Llama 3.3 70B (Free tier)</option>
+                    </optgroup>
+                    <optgroup label="🧠 Reasoning &amp; Deep Think">
+                        <option value="deepseek-r1">DeepSeek R1 – Deep reasoning</option>
+                        <option value="deepseek-r1-0528">DeepSeek R1 0528 – Latest</option>
+                        <option value="qwq-32b">QwQ 32B – Reasoning</option>
+                        <option value="o3-mini">OpenAI o3-mini</option>
+                        <option value="o4-mini">OpenAI o4-mini</option>
+                        <option value="o3">OpenAI o3</option>
+                        <option value="deepseek-r1-distill-qwen-32b">DeepSeek R1 Distill Qwen 32B</option>
+                    </optgroup>
+                    <optgroup label="💻 Code">
+                        <option value="deepseek-chat-v3.1">DeepSeek Chat v3.1 – Code expert</option>
+                        <option value="deepseek-v3.2">DeepSeek v3.2</option>
+                        <option value="qwen3-coder">Qwen3 Coder</option>
+                        <option value="qwen3-coder-plus">Qwen3 Coder Plus</option>
+                        <option value="qwen-2.5-coder-32b">Qwen 2.5 Coder 32B</option>
+                        <option value="devstral-small">Devstral Small</option>
+                    </optgroup>
+                    <optgroup label="👁️ Vision &amp; Multimodal">
+                        <option value="llama-3.2-11b">Llama 3.2 11B Vision</option>
+                        <option value="gpt-4o">GPT-4o (Vision)</option>
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (Vision)</option>
+                        <option value="claude-sonnet-4">Claude Sonnet 4 (Vision)</option>
+                        <option value="qwen-2.5-vl-72b">Qwen 2.5 VL 72B</option>
+                        <option value="llama-4-maverick">Llama 4 Maverick (Vision)</option>
+                        <option value="gemini-2.5-flash-image">Gemini 2.5 Flash Image</option>
+                    </optgroup>
+                    <optgroup label="🌏 Multilingual / Thai">
+                        <option value="qwen-2.5-72b">Qwen 2.5 72B – Multilingual</option>
+                        <option value="qwen-max">Qwen Max</option>
+                        <option value="qwen3-max">Qwen3 Max</option>
+                        <option value="qwen3-235b-a22b">Qwen3 235B A22B</option>
+                        <option value="qwen-plus">Qwen Plus</option>
+                    </optgroup>
+                    <optgroup label="🚀 Powerful / Premium">
+                        <option value="claude-opus-4">Claude Opus 4</option>
+                        <option value="claude-sonnet-4">Claude Sonnet 4</option>
+                        <option value="claude-opus-4.6">Claude Opus 4.6</option>
+                        <option value="claude-sonnet-4.6">Claude Sonnet 4.6</option>
+                        <option value="gpt-4o">GPT-4o</option>
+                        <option value="gpt-4.1">GPT-4.1</option>
+                        <option value="gpt-5">GPT-5</option>
+                        <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                        <option value="grok-4">Grok 4</option>
+                        <option value="grok-3">Grok 3</option>
+                    </optgroup>
+                    <optgroup label="🔍 Search / Web">
+                        <option value="sonar-pro">Perplexity Sonar Pro</option>
+                        <option value="sonar">Perplexity Sonar</option>
+                        <option value="gpt-4o-search">GPT-4o Search</option>
+                        <option value="gpt-4o-mini-search">GPT-4o Mini Search</option>
+                    </optgroup>
+                    <optgroup label="🆓 Free Models">
+                        <option value="llama-3.3-70b-instruct:free">Llama 3.3 70B (Free)</option>
+                        <option value="gemma-3-27b-it:free">Gemma 3 27B (Free)</option>
+                        <option value="gemma-3-12b-it:free">Gemma 3 12B (Free)</option>
+                        <option value="qwen3-coder:free">Qwen3 Coder (Free)</option>
+                        <option value="deepseek-r1-distill-llama-70b">DeepSeek R1 Distill 70B</option>
+                        <option value="free">OpenRouter Free (Auto)</option>
+                    </optgroup>
                 </select>
+                <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:6px;" id="selectedModelLabel"></div>
             </div>
         </div>
-        <div class="setting-group">
+
+        <!-- AUTO-SELECT INFO -->
+        <div class="setting-group" id="autoModelInfo" style="background:var(--bg-input);border-radius:16px;padding:12px 16px;">
+            <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;">
+                <strong style="color:var(--text);">Auto model selects:</strong><br>
+                🖼️ Images → <code>llama-3.2-11b</code> (vision)<br>
+                💻 Code keywords → <code>deepseek-chat-v3.1</code><br>
+                🧠 Deep Think mode → <code>llama-4-maverick</code><br>
+                🌏 Thai text → <code>qwen-2.5-72b</code><br>
+                ✨ Default → <code>llama-3.3-70b</code>
+            </div>
+        </div>
+
+        <!-- IMAGE ENGINE -->
+        <div class="setting-group" style="margin-top:20px;">
             <div class="setting-label"><i class="fas fa-palette"></i> Image Generation Engine</div>
             <div class="setting-desc">Free image generation via Pollinations AI (no API key needed)</div>
             <select id="imageEngineSelect" class="select-input">
@@ -296,18 +360,23 @@
                 <option value="flux-realism">Flux Realism</option>
                 <option value="flux-anime">Flux Anime</option>
                 <option value="flux-3d">Flux 3D</option>
-                <option value="dall-e-3">DALL·E 3 (if backend supports)</option>
             </select>
         </div>
+
+        <!-- TEMPERATURE -->
         <div class="setting-group">
             <div class="setting-label"><i class="fas fa-thermometer-half"></i> Temperature</div>
-            <input type="range" id="tempSlider" min="0" max="1.5" step="0.05" value="0.5">
-            <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-secondary);margin-top:4px;"><span>Precise</span><span id="tempValue">0.5</span><span>Creative</span></div>
+            <input type="range" id="tempSlider" min="0" max="1.5" step="0.05" value="0.7">
+            <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-secondary);margin-top:4px;"><span>Precise</span><span id="tempValue">0.7</span><span>Creative</span></div>
         </div>
+
+        <!-- MODEL INFO BADGE -->
         <div class="setting-group">
             <div class="setting-label"><i class="fas fa-info-circle"></i> Show model info</div>
             <div class="toggle-switch"><div class="toggle" id="hallucinationGuardToggle"></div><span>Show model info badge</span></div>
         </div>
+
+        <!-- THEME -->
         <div class="setting-group">
             <div class="setting-label"><i class="fas fa-palette"></i> Theme</div>
             <select id="themeSelect" class="select-input">
@@ -316,11 +385,19 @@
                 <option value="light">Light</option>
             </select>
         </div>
+
+        <!-- DATA ACTIONS -->
         <div class="setting-group">
             <div class="action-buttons">
                 <button class="action-btn-settings" id="exportDataBtn"><i class="fas fa-download"></i> Export data</button>
                 <button class="action-btn-settings danger" id="deleteAllChatsBtn"><i class="fas fa-trash-alt"></i> Delete all chats</button>
             </div>
+        </div>
+
+        <!-- API INFO -->
+        <div id="apiInfoSection" style="background:var(--bg-input);border-radius:16px;padding:12px 16px;font-size:0.8rem;color:var(--text-secondary);">
+            <i class="fas fa-server"></i> API: <a href="https://yanz-ai-free.vercel.app" target="_blank" style="color:var(--accent);">yanz-ai-free.vercel.app</a>
+            <span id="apiVersionInfo" style="margin-left:8px;"></span>
         </div>
     </div>
 </div>
@@ -337,18 +414,25 @@
 </div>
 
 <script>
-const API_BASE_URL = (window.location.protocol === 'file:' || window.location.origin === 'null')
-    ? 'https://yanz-ai-free.vercel.app'
-    : window.location.origin;
-const API_URL = `${API_BASE_URL}/api/chat`;
+// ─────────────────────────────────────────────────────────────
+// CONFIG — points at the live API
+// ─────────────────────────────────────────────────────────────
+const API_BASE_URL = 'https://yanz-ai-free.vercel.app';
+const API_URL      = `${API_BASE_URL}/api/chat`;
 const IMAGE_API_URL = `${API_BASE_URL}/api/image`;
-const VISION_MODEL = 'llama-3.2-11b-vision';
+
+// FIX: correct model key as defined in api/chat.js SUPPORTED_MODELS
+const VISION_MODEL   = 'llama-3.2-11b';
+const DEFAULT_MODEL  = 'llama-3.3-70b';
 
 function buildPollinationsUrl(prompt, model, width, height) {
     const encoded = encodeURIComponent(prompt);
     return `https://image.pollinations.ai/prompt/${encoded}?model=${model}&width=${width}&height=${height}&nologo=true&seed=${Math.floor(Math.random()*99999)}`;
 }
 
+// ─────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────
 let currentThreadId = null;
 let threads = {};
 let deepThinkMode = false;
@@ -357,16 +441,18 @@ let codeReviewMode = false;
 let imageGenMode = false;
 let attachedFiles = [];
 let autoModelEnabled = true;
-let manualModel = 'llama-3.3-70b';
-let temperature = 0.5;
+let manualModel = DEFAULT_MODEL;
+let temperature = 0.7;
 let hallucinationGuard = true;
 let isStreaming = false;
 let currentAbortController = null;
 let selectedImageSize = '512x512';
 let imageEngine = 'flux';
-
 let renderScheduled = false;
 
+// ─────────────────────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────────────────────
 function escapeHtml(str) {
     return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
@@ -378,7 +464,6 @@ function isUserAtBottom() {
     const c = document.getElementById('chatContainer');
     return c.scrollTop + c.clientHeight >= c.scrollHeight - 120;
 }
-
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -392,7 +477,6 @@ function showToast(message, type = 'info') {
         setTimeout(() => toast.remove(), 300);
     }, 3500);
 }
-
 function confirmAction(message) {
     return new Promise(resolve => {
         const modal = document.getElementById('confirmModal');
@@ -418,6 +502,9 @@ function confirmAction(message) {
     });
 }
 
+// ─────────────────────────────────────────────────────────────
+// THEME
+// ─────────────────────────────────────────────────────────────
 function applyTheme(theme) {
     if (theme === 'dark') document.body.classList.remove('light');
     else if (theme === 'light') document.body.classList.add('light');
@@ -437,25 +524,67 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
     if (localStorage.getItem('yaz_theme') === 'system') applyTheme('system');
 });
 
+// ─────────────────────────────────────────────────────────────
+// API INFO — fetch GET /api/chat for version & model count
+// ─────────────────────────────────────────────────────────────
+async function fetchApiInfo() {
+    try {
+        const res = await fetch(API_URL, { method: 'GET' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const badge = document.getElementById('apiInfoBadge');
+        const versionEl = document.getElementById('apiVersionInfo');
+        if (badge && data.model_count) {
+            badge.textContent = `${data.model_count} models`;
+            badge.title = `API v${data.version} · ${data.model_count} available models`;
+        }
+        if (versionEl) {
+            versionEl.textContent = `v${data.version} · ${data.model_count} models`;
+        }
+        // Update welcome chips
+        const welcomeModels = document.getElementById('welcomeModels');
+        if (welcomeModels && data.model_count) {
+            const last = welcomeModels.querySelector('.welcome-model-chip:last-child');
+            if (last) last.textContent = `+${data.model_count - 4} more models`;
+        }
+    } catch { }
+}
+
+// ─────────────────────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────────────────────
 function loadSettings() {
     try {
         autoModelEnabled = localStorage.getItem('yaz_auto_model') !== 'false';
-        manualModel = localStorage.getItem('yaz_manual_model') || 'llama-3.3-70b';
-        temperature = parseFloat(localStorage.getItem('yaz_temperature') || '0.5');
+        manualModel = localStorage.getItem('yaz_manual_model') || DEFAULT_MODEL;
+        temperature = parseFloat(localStorage.getItem('yaz_temperature') || '0.7');
         hallucinationGuard = localStorage.getItem('yaz_hallucination_guard') !== 'false';
         imageEngine = localStorage.getItem('yaz_image_engine') || 'flux';
+
         document.getElementById('autoModelToggle').classList.toggle('active', autoModelEnabled);
         document.getElementById('manualModelContainer').style.display = autoModelEnabled ? 'none' : 'block';
+        document.getElementById('autoModelInfo').style.display = autoModelEnabled ? 'block' : 'none';
         document.getElementById('manualModelSelect').value = manualModel;
         document.getElementById('tempSlider').value = temperature;
         document.getElementById('tempValue').innerText = temperature;
         document.getElementById('hallucinationGuardToggle').classList.toggle('active', hallucinationGuard);
         document.getElementById('imageEngineSelect').value = imageEngine;
+        updateSelectedModelLabel();
     } catch (err) {
         console.error('Settings load error', err);
     }
 }
+function updateSelectedModelLabel() {
+    const sel = document.getElementById('manualModelSelect');
+    const label = document.getElementById('selectedModelLabel');
+    if (!sel || !label) return;
+    const opt = sel.options[sel.selectedIndex];
+    label.textContent = opt ? `Selected: ${opt.value}` : '';
+}
 
+// ─────────────────────────────────────────────────────────────
+// THREADS
+// ─────────────────────────────────────────────────────────────
 function safeParseJSON(value, fallback = null) {
     try { return JSON.parse(value); } catch { return fallback; }
 }
@@ -477,6 +606,9 @@ function saveThreads() {
     }
 }
 
+// ─────────────────────────────────────────────────────────────
+// RENDER HELPERS
+// ─────────────────────────────────────────────────────────────
 function addCopyButtonsToCodeBlocks(root) {
     if (!root) return;
     root.querySelectorAll('pre').forEach(pre => {
@@ -501,7 +633,6 @@ function addCopyButtonsToCodeBlocks(root) {
         pre.appendChild(btn);
     });
 }
-
 function renderBubbleContent(bubble, text, autoScroll = true) {
     if (!bubble) return;
     const wasAtBottom = isUserAtBottom();
@@ -516,7 +647,6 @@ function renderBubbleContent(bubble, text, autoScroll = true) {
     addCopyButtonsToCodeBlocks(bubble);
     if (autoScroll && wasAtBottom) scrollToBottom();
 }
-
 function scheduleRender(bubble, text, autoScroll) {
     if (renderScheduled) return;
     renderScheduled = true;
@@ -526,6 +656,9 @@ function scheduleRender(bubble, text, autoScroll) {
     });
 }
 
+// ─────────────────────────────────────────────────────────────
+// IMAGE MODE
+// ─────────────────────────────────────────────────────────────
 function setImageMode(active) {
     imageGenMode = active;
     document.getElementById('imageGenBtn').classList.toggle('active', active);
@@ -543,6 +676,9 @@ function setImageMode(active) {
     }
 }
 
+// ─────────────────────────────────────────────────────────────
+// IMAGE GENERATION
+// ─────────────────────────────────────────────────────────────
 async function sendImageGeneration() {
     if (isStreaming) return;
     const prompt = document.getElementById('messageInput').value.trim();
@@ -578,8 +714,8 @@ async function sendImageGeneration() {
     try {
         const [imgW, imgH] = (selectedImageSize || '512x512').split('x').map(Number);
         let imageUrl;
-
         let usedPollinations = false;
+
         try {
             const res = await fetch(IMAGE_API_URL, {
                 method: 'POST',
@@ -589,8 +725,8 @@ async function sendImageGeneration() {
             });
             if (res.ok) {
                 const data = await res.json();
-                imageUrl = data?.data?.[0]?.url || data?.data?.[0]?.b64_json
-                    ? `data:image/png;base64,${data.data[0].b64_json}` : null;
+                imageUrl = data?.data?.[0]?.url || (data?.data?.[0]?.b64_json
+                    ? `data:image/png;base64,${data.data[0].b64_json}` : null);
             }
         } catch { }
 
@@ -608,7 +744,7 @@ async function sendImageGeneration() {
             setTimeout(reject, 30000);
         });
 
-        const modelLabel = usedPollinations ? `Pollinations / ${imageEngine}` : 'DALL·E 3';
+        const modelLabel = usedPollinations ? `Pollinations / ${imageEngine}` : 'DALL-E 3';
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         bubble.innerHTML = `
@@ -616,8 +752,7 @@ async function sendImageGeneration() {
             <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:6px;">"${escapeHtml(prompt)}"</div>
             <a href="${imageUrl}" download="yanz-ai-image.png" target="_blank" class="image-download-btn">
                 <i class="fas fa-download"></i> Download image
-            </a>
-        `;
+            </a>`;
 
         bubble.querySelector('.generated-image').addEventListener('click', () => {
             const lb = document.createElement('div');
@@ -657,6 +792,9 @@ async function sendImageGeneration() {
     }
 }
 
+// ─────────────────────────────────────────────────────────────
+// APPEND MESSAGE TO DOM
+// ─────────────────────────────────────────────────────────────
 function appendMessageToDOM(role, content, timestamp, idx, verification = null, images = []) {
     const container = document.getElementById('chatContainer');
     const welcome = document.querySelector('.welcome');
@@ -687,8 +825,8 @@ function appendMessageToDOM(role, content, timestamp, idx, verification = null, 
         : '';
 
     const editOrRegen = role === 'assistant'
-        ? `<button class="action-btn" data-action="regenerate">⟳ Regenerate</button>`
-        : `<button class="action-btn" data-action="edit">✏️ Edit</button>`;
+        ? `<button class="action-btn" data-action="regenerate">&#8634; Regenerate</button>`
+        : `<button class="action-btn" data-action="edit">&#9998; Edit</button>`;
 
     msgDiv.innerHTML = `
         <div class="message-avatar">${role === 'user' ? 'U' : 'AI'}</div>
@@ -698,7 +836,7 @@ function appendMessageToDOM(role, content, timestamp, idx, verification = null, 
             <div class="message-actions">
                 <button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button>
                 ${editOrRegen}
-                <button class="action-btn" data-action="delete">🗑️ Delete</button>
+                <button class="action-btn" data-action="delete">&#128465; Delete</button>
             </div>
         </div>`;
     container.appendChild(msgDiv);
@@ -720,6 +858,9 @@ function openLightbox(url) {
     document.body.appendChild(lb);
 }
 
+// ─────────────────────────────────────────────────────────────
+// MESSAGE ACTIONS
+// ─────────────────────────────────────────────────────────────
 function attachMessageActions() {
     document.querySelectorAll('.message .action-btn').forEach(btn => {
         btn.replaceWith(btn.cloneNode(true));
@@ -795,18 +936,30 @@ function handleMessageAction(e) {
 
 function handleFeedback(e) {
     const ok = e.currentTarget.dataset.feedback === 'correct';
-    showToast(ok ? '✅ Thanks! Feedback saved.' : '🔍 Reported. We\'ll improve.', 'success');
+    showToast(ok ? 'Thanks! Feedback saved.' : 'Reported. We\'ll improve.', 'success');
 }
 
+// ─────────────────────────────────────────────────────────────
+// FIX: AUTO MODEL — keys now match api/chat.js SUPPORTED_MODELS
+// ─────────────────────────────────────────────────────────────
 function selectAutoModel(prompt, hasImages) {
-    if (hasImages) return VISION_MODEL;
+    if (hasImages) return VISION_MODEL;               // 'llama-3.2-11b' ✓
     const lower = prompt.toLowerCase();
-    if (codeReviewMode || /\b(code|function|debug|javascript|typescript|python|css|html|php|java|c\+\+|sql)\b/.test(lower)) return 'deepseek-chat';
-    if (deepThinkMode || /\b(why|explain|analyze|reason|think|philosophy|compare)\b/.test(lower)) return 'llama-4-maverick';
-    if (/[\u0E00-\u0E7F]/.test(prompt)) return 'qwen-2.5-72b';
-    return 'llama-3.3-70b';
+    if (codeReviewMode || /\b(code|function|debug|javascript|typescript|python|css|html|php|java|c\+\+|sql|class|import|export|def |const |let |var )\b/.test(lower)) {
+        return 'deepseek-chat-v3.1';                  // 'deepseek-chat-v3.1' ✓
+    }
+    if (deepThinkMode || /\b(why|explain|analyze|analyse|reason|think|philosophy|compare|evaluate|critically)\b/.test(lower)) {
+        return 'llama-4-maverick';                    // 'llama-4-maverick' ✓
+    }
+    if (/[\u0E00-\u0E7F]/.test(prompt)) {
+        return 'qwen-2.5-72b';                        // 'qwen-2.5-72b' ✓
+    }
+    return DEFAULT_MODEL;                             // 'llama-3.3-70b' ✓
 }
 
+// ─────────────────────────────────────────────────────────────
+// SEND MESSAGE
+// ─────────────────────────────────────────────────────────────
 async function sendMessage() {
     if (imageGenMode) return sendImageGeneration();
     if (isStreaming) return;
@@ -850,6 +1003,7 @@ async function sendMessage() {
     document.getElementById('chatContainer').appendChild(typingDiv);
     scrollToBottom();
 
+    // FIX: Only send fields the API actually supports (removed deep_research, web_search)
     const requestBody = {
         model: selectedModel,
         messages: thread.messages.map(m => {
@@ -866,8 +1020,6 @@ async function sendMessage() {
         }),
         temperature,
         max_tokens: 4096,
-        deep_research: deepThinkMode,
-        web_search: webSearchMode,
         stream: true
     };
 
@@ -889,7 +1041,7 @@ async function sendMessage() {
 
         if (!response.ok) {
             const errText = await response.text().catch(() => '');
-            throw new Error(`HTTP ${response.status}${errText ? ': ' + errText.slice(0, 100) : ''}`);
+            throw new Error(`HTTP ${response.status}${errText ? ': ' + errText.slice(0, 200) : ''}`);
         }
 
         assistantDiv = document.createElement('div');
@@ -959,7 +1111,7 @@ async function sendMessage() {
             ? `<div class="verification-badge"><i class="fas fa-info-circle"></i> ${escapeHtml(selectedModel)} · ${timeStr}</div>`
             : '';
         const feedbackBtns = `<div class="feedback-buttons"><button class="feedback-btn" data-feedback="correct"><i class="fas fa-thumbs-up"></i> Correct</button><button class="feedback-btn" data-feedback="wrong"><i class="fas fa-thumbs-down"></i> Hallucinated</button></div>`;
-        const actions = `<div class="message-actions"><button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button><button class="action-btn" data-action="regenerate">⟳ Regenerate</button><button class="action-btn" data-action="delete">🗑️ Delete</button></div>`;
+        const actions = `<div class="message-actions"><button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button><button class="action-btn" data-action="regenerate">&#8634; Regenerate</button><button class="action-btn" data-action="delete">&#128465; Delete</button></div>`;
         assistantDiv.querySelector('.message-content').insertAdjacentHTML('beforeend', `${infoBadge}${feedbackBtns}${actions}`);
 
         thread.messages.push({
@@ -991,6 +1143,9 @@ async function sendMessage() {
     }
 }
 
+// ─────────────────────────────────────────────────────────────
+// THREAD MANAGEMENT
+// ─────────────────────────────────────────────────────────────
 function updateSendButton() {
     const hasText = document.getElementById('messageInput').value.trim().length > 0;
     document.getElementById('sendBtn').disabled = isStreaming || (!hasText && attachedFiles.length === 0);
@@ -1016,8 +1171,8 @@ function renderThreads() {
                 <div class="thread-menu">
                     <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
                     <div class="menu-dropdown">
-                        <div class="menu-item" data-action="rename">✏️ Rename</div>
-                        <div class="menu-item" data-action="delete">🗑️ Delete</div>
+                        <div class="menu-item" data-action="rename">&#9998; Rename</div>
+                        <div class="menu-item" data-action="delete">&#128465; Delete</div>
                     </div>
                 </div>`;
             container.appendChild(div);
@@ -1049,9 +1204,6 @@ function attachThreadEvents() {
             loadThread(item.dataset.id);
         });
     });
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.menu-dropdown').forEach(d => d.classList.remove('active'));
-    }, { once: false, capture: true });
 }
 
 function renameThread(id) {
@@ -1132,6 +1284,9 @@ function loadThread(id) {
     attachMessageActions();
 }
 
+// ─────────────────────────────────────────────────────────────
+// FILE INPUT
+// ─────────────────────────────────────────────────────────────
 document.getElementById('fileInput').addEventListener('change', e => {
     Array.from(e.target.files).forEach(file => {
         if (file.size > 5 * 1024 * 1024) { showToast('File too large (max 5MB)', 'error'); return; }
@@ -1164,6 +1319,9 @@ document.getElementById('fileInput').addEventListener('change', e => {
     e.target.value = '';
 });
 
+// ─────────────────────────────────────────────────────────────
+// EVENT LISTENERS
+// ─────────────────────────────────────────────────────────────
 document.getElementById('newChatBtn').addEventListener('click', createNewThread);
 document.getElementById('sendBtn').addEventListener('click', sendMessage);
 document.getElementById('messageInput').addEventListener('input', () => {
@@ -1204,21 +1362,37 @@ document.querySelectorAll('.size-option').forEach(opt => {
     });
 });
 
+// Settings
 document.getElementById('settingsBtn').addEventListener('click', () => document.getElementById('settingsModal').classList.add('active'));
 document.getElementById('closeSettings').addEventListener('click', () => document.getElementById('settingsModal').classList.remove('active'));
 document.getElementById('settingsModal').addEventListener('click', e => {
     if (e.target === document.getElementById('settingsModal')) document.getElementById('settingsModal').classList.remove('active');
 });
+
 document.getElementById('autoModelToggle').addEventListener('click', () => {
     autoModelEnabled = !autoModelEnabled;
     document.getElementById('autoModelToggle').classList.toggle('active', autoModelEnabled);
     document.getElementById('manualModelContainer').style.display = autoModelEnabled ? 'none' : 'block';
+    document.getElementById('autoModelInfo').style.display = autoModelEnabled ? 'block' : 'none';
     localStorage.setItem('yaz_auto_model', autoModelEnabled);
 });
+
 document.getElementById('manualModelSelect').addEventListener('change', e => {
     manualModel = e.target.value;
     localStorage.setItem('yaz_manual_model', manualModel);
+    updateSelectedModelLabel();
 });
+
+// Model search filter
+document.getElementById('modelSearchInput').addEventListener('input', e => {
+    const query = e.target.value.toLowerCase();
+    const sel = document.getElementById('manualModelSelect');
+    Array.from(sel.options).forEach(opt => {
+        const match = opt.value.toLowerCase().includes(query) || opt.text.toLowerCase().includes(query);
+        opt.style.display = match ? '' : 'none';
+    });
+});
+
 document.getElementById('imageEngineSelect').addEventListener('change', e => {
     imageEngine = e.target.value;
     localStorage.setItem('yaz_image_engine', imageEngine);
@@ -1294,10 +1468,17 @@ document.addEventListener('keydown', e => {
         document.querySelectorAll('.menu-dropdown').forEach(d => d.classList.remove('active'));
     }
 });
+document.addEventListener('click', () => {
+    document.querySelectorAll('.menu-dropdown').forEach(d => d.classList.remove('active'));
+}, { capture: true });
 
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
 loadThreads();
 loadTheme();
 loadSettings();
+fetchApiInfo();
 if (Object.keys(threads).length === 0) createNewThread();
 else loadThread(Object.keys(threads).sort((a, b) => new Date(threads[b].updatedAt) - new Date(threads[a].updatedAt))[0]);
 renderThreads();
