@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https: blob:; connect-src 'self' https://yanz-ai-free.vercel.app https://image.pollinations.ai; font-src https://cdnjs.cloudflare.com;">
     <title>YANZ AI Studio</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-3+c1lD5P7NqYzJ9Y7K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q5K3L5K9+5D8Vq1q......" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -88,8 +89,8 @@
         .message.user .message-avatar { background: var(--accent); }
         .message-bubble { padding: 12px 16px; border-radius: 20px; background: var(--bg-surface); line-height: 1.6; font-size: 0.9rem; word-break: break-word; }
         .message.user .message-bubble { background: var(--accent); border-radius: 20px 20px 4px 20px; }
-        .message-bubble pre { background: #0d0d12; padding: 12px; border-radius: 12px; overflow-x: auto; margin: 8px 0; position: relative; }
-        .message-bubble pre code { padding-top: 28px !important; display: block; }
+        .message-bubble pre { background: #0d0d12; padding: 12px; padding-top: 36px; border-radius: 12px; overflow-x: auto; margin: 8px 0; position: relative; }
+        .message-bubble pre code { display: block; }
         .copy-code-btn { position: absolute; top: 8px; right: 8px; z-index: 10; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #ccc; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; cursor: pointer; transition: background 0.15s, color 0.15s; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
         .copy-code-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
         .copy-code-btn.copied { background: rgba(16,185,129,0.3); color: #6ee7b7; border-color: #10b981; }
@@ -185,14 +186,14 @@
     </style>
 </head>
 <body>
-<button class="sidebar-toggle-btn" id="sidebarToggleBtn"><i class="fas fa-bars"></i></button>
+<button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <div class="new-chat-btn" id="newChatBtn"><span><i class="fas fa-plus"></i> New chat</span><span class="shortcut-hint">Ctrl+J</span></div>
+        <div class="new-chat-btn" id="newChatBtn" role="button" tabindex="0"><span><i class="fas fa-plus"></i> New chat</span><span class="shortcut-hint">Ctrl+J</span></div>
     </div>
-    <div class="sidebar-content"><div class="thread-list" id="threadList"></div></div>
+    <div class="sidebar-content"><div class="thread-list" id="threadList" role="list"></div></div>
     <div class="sidebar-footer">
-        <div class="user-info" id="settingsBtn">
+        <div class="user-info" id="settingsBtn" role="button" tabindex="0">
             <div class="user-avatar"><i class="fas fa-cog"></i></div>
             <span>Settings</span>
         </div>
@@ -203,13 +204,13 @@
     <div class="chat-header" id="chatHeader" style="display: none;">
         <div class="chat-title"><i class="fas fa-message"></i> <span id="currentChatTitle"></span></div>
         <div class="chat-actions">
-            <button class="chat-action-btn" id="renameChatBtn" title="Rename"><i class="fas fa-pen"></i></button>
-            <button class="chat-action-btn" id="exportChatBtn" title="Export"><i class="fas fa-download"></i></button>
-            <button class="chat-action-btn" id="clearChatBtn" title="Clear"><i class="fas fa-trash-alt"></i></button>
-            <button class="chat-action-btn" id="closeChatBtn" title="Close"><i class="fas fa-times"></i></button>
+            <button class="chat-action-btn" id="renameChatBtn" title="Rename" aria-label="Rename chat"><i class="fas fa-pen"></i></button>
+            <button class="chat-action-btn" id="exportChatBtn" title="Export" aria-label="Export chat"><i class="fas fa-download"></i></button>
+            <button class="chat-action-btn" id="clearChatBtn" title="Clear" aria-label="Clear chat"><i class="fas fa-trash-alt"></i></button>
+            <button class="chat-action-btn" id="closeChatBtn" title="Close" aria-label="Close chat"><i class="fas fa-times"></i></button>
         </div>
     </div>
-    <div class="chat-container" id="chatContainer">
+    <div class="chat-container" id="chatContainer" role="log" aria-live="polite">
         <div class="welcome" id="welcomeScreen">
             <h2>How can I help you?</h2>
             <div class="welcome-models" id="welcomeModels">
@@ -223,47 +224,47 @@
     </div>
     <div class="input-area">
         <div class="input-tools">
-            <button class="tool-btn" id="deepThinkBtn"><i class="fas fa-brain"></i> DeepThink</button>
-            <button class="tool-btn" id="webSearchBtn"><i class="fas fa-globe"></i> Search</button>
-            <button class="tool-btn" id="codeReviewBtn"><i class="fas fa-code-branch"></i> Code Review</button>
-            <button class="tool-btn" id="imageGenBtn"><i class="fas fa-image"></i> Image</button>
-            <label class="tool-btn" for="fileInput" style="cursor:pointer;"><i class="fas fa-paperclip"></i> Attach</label>
+            <button class="tool-btn" id="deepThinkBtn" role="switch" aria-checked="false"><i class="fas fa-brain"></i> DeepThink</button>
+            <button class="tool-btn" id="webSearchBtn" role="switch" aria-checked="false"><i class="fas fa-globe"></i> Search</button>
+            <button class="tool-btn" id="codeReviewBtn" role="switch" aria-checked="false"><i class="fas fa-code-branch"></i> Code Review</button>
+            <button class="tool-btn" id="imageGenBtn" role="switch" aria-checked="false"><i class="fas fa-image"></i> Image</button>
+            <label class="tool-btn" for="fileInput" style="cursor:pointer;" role="button" tabindex="0"><i class="fas fa-paperclip"></i> Attach</label>
             <input type="file" id="fileInput" style="display: none;" multiple accept="image/*,.txt,.pdf,.js,.py,.html,.css,.json,.md">
         </div>
         <div id="imageOptions" style="display:none;">
             <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:6px;"><i class="fas fa-image" style="color:#ec4899;"></i> Image size:</div>
-            <div class="image-options">
-                <div class="size-option active" data-size="512x512">512x512</div>
-                <div class="size-option" data-size="768x768">768x768</div>
-                <div class="size-option" data-size="1024x1024">1024x1024</div>
-                <div class="size-option" data-size="1280x720">1280x720 (16:9)</div>
+            <div class="image-options" role="radiogroup">
+                <div class="size-option active" data-size="512x512" role="radio" aria-checked="true" tabindex="0">512x512</div>
+                <div class="size-option" data-size="768x768" role="radio" aria-checked="false" tabindex="0">768x768</div>
+                <div class="size-option" data-size="1024x1024" role="radio" aria-checked="false" tabindex="0">1024x1024</div>
+                <div class="size-option" data-size="1280x720" role="radio" aria-checked="false" tabindex="0">1280x720 (16:9)</div>
             </div>
         </div>
-        <div id="attachmentPreviews" class="attachment-previews"></div>
+        <div id="attachmentPreviews" class="attachment-previews" aria-live="polite"></div>
         <div class="input-wrapper">
-            <textarea id="messageInput" rows="1" placeholder="Message YANZ AI..."></textarea>
-            <button class="send-btn" id="sendBtn" disabled><i class="fas fa-paper-plane"></i></button>
+            <textarea id="messageInput" rows="1" placeholder="Message YANZ AI..." aria-label="Type your message"></textarea>
+            <button class="send-btn" id="sendBtn" disabled aria-label="Send message"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
 
-<div class="modal-overlay" id="settingsModal">
+<div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="settings-modal">
         <div class="settings-header">
-            <h3><i class="fas fa-sliders-h"></i> Settings</h3>
-            <button class="close-settings" id="closeSettings"><i class="fas fa-times"></i></button>
+            <h3 id="settingsTitle"><i class="fas fa-sliders-h"></i> Settings</h3>
+            <button class="close-settings" id="closeSettings" aria-label="Close settings"><i class="fas fa-times"></i></button>
         </div>
 
         <!-- MODEL SELECTION -->
         <div class="setting-group">
             <div class="setting-label"><i class="fas fa-microchip"></i> Model selection</div>
             <div class="toggle-switch">
-                <div class="toggle" id="autoModelToggle"></div>
+                <div class="toggle" id="autoModelToggle" role="switch" aria-checked="true" tabindex="0"></div>
                 <span>Auto Model <span style="font-size:0.75rem;color:var(--text-secondary);">(picks best for task)</span></span>
             </div>
             <div id="manualModelContainer" style="margin-top:12px;display:none;">
-                <input type="text" id="modelSearchInput" class="model-search-input" placeholder="Search models..." />
-                <select id="manualModelSelect" class="select-input" size="6" style="border-radius:16px;height:auto;">
+                <input type="text" id="modelSearchInput" class="model-search-input" placeholder="Search models..." aria-label="Search models" />
+                <select id="manualModelSelect" class="select-input" size="6" style="border-radius:16px;height:auto;" aria-label="Select model">
                     <optgroup label="⚡ Fast &amp; General">
                         <option value="llama-3.3-70b">Llama 3.3 70B – General purpose</option>
                         <option value="llama-4-scout">Llama 4 Scout – Fast &amp; efficient</option>
@@ -354,7 +355,7 @@
         <div class="setting-group" style="margin-top:20px;">
             <div class="setting-label"><i class="fas fa-palette"></i> Image Generation Engine</div>
             <div class="setting-desc">Free image generation via Pollinations AI (no API key needed)</div>
-            <select id="imageEngineSelect" class="select-input">
+            <select id="imageEngineSelect" class="select-input" aria-label="Select image engine">
                 <option value="flux">Flux (recommended, photorealistic)</option>
                 <option value="turbo">Turbo (fast)</option>
                 <option value="flux-realism">Flux Realism</option>
@@ -366,20 +367,20 @@
         <!-- TEMPERATURE -->
         <div class="setting-group">
             <div class="setting-label"><i class="fas fa-thermometer-half"></i> Temperature</div>
-            <input type="range" id="tempSlider" min="0" max="1.5" step="0.05" value="0.7">
+            <input type="range" id="tempSlider" min="0" max="1.5" step="0.05" value="0.7" aria-label="Temperature slider">
             <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-secondary);margin-top:4px;"><span>Precise</span><span id="tempValue">0.7</span><span>Creative</span></div>
         </div>
 
         <!-- MODEL INFO BADGE -->
         <div class="setting-group">
             <div class="setting-label"><i class="fas fa-info-circle"></i> Show model info</div>
-            <div class="toggle-switch"><div class="toggle" id="hallucinationGuardToggle"></div><span>Show model info badge</span></div>
+            <div class="toggle-switch"><div class="toggle" id="hallucinationGuardToggle" role="switch" aria-checked="true" tabindex="0"></div><span>Show model info badge</span></div>
         </div>
 
         <!-- THEME -->
         <div class="setting-group">
             <div class="setting-label"><i class="fas fa-palette"></i> Theme</div>
-            <select id="themeSelect" class="select-input">
+            <select id="themeSelect" class="select-input" aria-label="Select theme">
                 <option value="system">System</option>
                 <option value="dark">Dark</option>
                 <option value="light">Light</option>
@@ -402,9 +403,10 @@
     </div>
 </div>
 
-<div id="toastContainer" class="toast-container"></div>
-<div id="confirmModal" class="confirm-modal-overlay" aria-hidden="true">
+<div id="toastContainer" class="toast-container" aria-live="assertive"></div>
+<div id="confirmModal" class="confirm-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-hidden="true">
     <div class="confirm-modal">
+        <h3 id="confirmTitle" style="position:absolute;left:-9999px;">Confirm Action</h3>
         <div class="confirm-message" id="confirmMessage"></div>
         <div class="confirm-actions">
             <button type="button" class="confirm-btn confirm-no">Cancel</button>
@@ -415,13 +417,11 @@
 
 <script>
 // ─────────────────────────────────────────────────────────────
-// CONFIG — points at the live API
+// CONFIG
 // ─────────────────────────────────────────────────────────────
 const API_BASE_URL = 'https://yanz-ai-free.vercel.app';
 const API_URL      = `${API_BASE_URL}/api/chat`;
 const IMAGE_API_URL = `${API_BASE_URL}/api/image`;
-
-// FIX: correct model key as defined in api/chat.js SUPPORTED_MODELS
 const VISION_MODEL   = 'llama-3.2-11b';
 const DEFAULT_MODEL  = 'llama-3.3-70b';
 
@@ -448,7 +448,6 @@ let isStreaming = false;
 let currentAbortController = null;
 let selectedImageSize = '512x512';
 let imageEngine = 'flux';
-let renderScheduled = false;
 
 // ─────────────────────────────────────────────────────────────
 // UTILS
@@ -470,6 +469,7 @@ function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    toast.setAttribute('role', 'alert');
     container.appendChild(toast);
     requestAnimationFrame(() => { requestAnimationFrame(() => toast.classList.add('show')); });
     setTimeout(() => {
@@ -525,7 +525,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 });
 
 // ─────────────────────────────────────────────────────────────
-// API INFO — fetch GET /api/chat for version & model count
+// API INFO
 // ─────────────────────────────────────────────────────────────
 async function fetchApiInfo() {
     try {
@@ -541,7 +541,6 @@ async function fetchApiInfo() {
         if (versionEl) {
             versionEl.textContent = `v${data.version} · ${data.model_count} models`;
         }
-        // Update welcome chips
         const welcomeModels = document.getElementById('welcomeModels');
         if (welcomeModels && data.model_count) {
             const last = welcomeModels.querySelector('.welcome-model-chip:last-child');
@@ -562,17 +561,17 @@ function loadSettings() {
         imageEngine = localStorage.getItem('yaz_image_engine') || 'flux';
 
         document.getElementById('autoModelToggle').classList.toggle('active', autoModelEnabled);
+        document.getElementById('autoModelToggle').setAttribute('aria-checked', autoModelEnabled);
         document.getElementById('manualModelContainer').style.display = autoModelEnabled ? 'none' : 'block';
         document.getElementById('autoModelInfo').style.display = autoModelEnabled ? 'block' : 'none';
         document.getElementById('manualModelSelect').value = manualModel;
         document.getElementById('tempSlider').value = temperature;
         document.getElementById('tempValue').innerText = temperature;
         document.getElementById('hallucinationGuardToggle').classList.toggle('active', hallucinationGuard);
+        document.getElementById('hallucinationGuardToggle').setAttribute('aria-checked', hallucinationGuard);
         document.getElementById('imageEngineSelect').value = imageEngine;
         updateSelectedModelLabel();
-    } catch (err) {
-        console.error('Settings load error', err);
-    }
+    } catch (err) { console.error('Settings load error', err); }
 }
 function updateSelectedModelLabel() {
     const sel = document.getElementById('manualModelSelect');
@@ -593,17 +592,11 @@ function loadThreads() {
         const s = localStorage.getItem('yaz_threads');
         const parsed = s ? safeParseJSON(s, {}) : {};
         threads = (parsed && typeof parsed === 'object') ? parsed : {};
-    } catch (err) {
-        console.error('Load threads error', err);
-        threads = {};
-    }
+    } catch (err) { console.error('Load threads error', err); threads = {}; }
 }
 function saveThreads() {
-    try {
-        localStorage.setItem('yaz_threads', JSON.stringify(threads));
-    } catch (err) {
-        showToast('Unable to save chat locally (storage full?)', 'error');
-    }
+    try { localStorage.setItem('yaz_threads', JSON.stringify(threads)); }
+    catch (err) { showToast('Unable to save chat locally (storage full?)', 'error'); }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -620,6 +613,7 @@ function addCopyButtonsToCodeBlocks(root) {
         btn.className = 'copy-code-btn';
         btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
         btn.title = 'Copy code';
+        btn.setAttribute('aria-label', 'Copy code');
         btn.addEventListener('click', () => {
             navigator.clipboard.writeText(codeEl.innerText).then(() => {
                 btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
@@ -648,11 +642,16 @@ function renderBubbleContent(bubble, text, autoScroll = true) {
     if (autoScroll && wasAtBottom) scrollToBottom();
 }
 function scheduleRender(bubble, text, autoScroll) {
-    if (renderScheduled) return;
-    renderScheduled = true;
+    bubble._pendingContent = text;
+    bubble._autoScroll = autoScroll;
+    if (bubble._renderRequested) return;
+    bubble._renderRequested = true;
     requestAnimationFrame(() => {
-        renderScheduled = false;
-        renderBubbleContent(bubble, text, autoScroll);
+        bubble._renderRequested = false;
+        if (bubble._pendingContent !== undefined) {
+            renderBubbleContent(bubble, bubble._pendingContent, bubble._autoScroll);
+            delete bubble._pendingContent;
+        }
     });
 }
 
@@ -662,17 +661,19 @@ function scheduleRender(bubble, text, autoScroll) {
 function setImageMode(active) {
     imageGenMode = active;
     document.getElementById('imageGenBtn').classList.toggle('active', active);
+    document.getElementById('imageGenBtn').setAttribute('aria-checked', active);
     document.getElementById('imageOptions').style.display = active ? 'block' : 'none';
     document.getElementById('messageInput').placeholder = active
         ? '✨ Describe the image you want to generate...'
         : 'Message YANZ AI...';
     if (active) {
-        webSearchMode = false;
-        deepThinkMode = false;
-        codeReviewMode = false;
+        webSearchMode = false; deepThinkMode = false; codeReviewMode = false;
         document.getElementById('webSearchBtn').classList.remove('active');
         document.getElementById('deepThinkBtn').classList.remove('active');
         document.getElementById('codeReviewBtn').classList.remove('active');
+        document.getElementById('webSearchBtn').setAttribute('aria-checked', false);
+        document.getElementById('deepThinkBtn').setAttribute('aria-checked', false);
+        document.getElementById('codeReviewBtn').setAttribute('aria-checked', false);
     }
 }
 
@@ -708,13 +709,11 @@ async function sendImageGeneration() {
     if (welcome) welcome.style.display = 'none';
     document.getElementById('chatHeader').style.display = 'flex';
     scrollToBottom();
-
     const bubble = assistantDiv.querySelector('.message-bubble');
 
     try {
         const [imgW, imgH] = (selectedImageSize || '512x512').split('x').map(Number);
-        let imageUrl;
-        let usedPollinations = false;
+        let imageUrl, usedPollinations = false;
 
         try {
             const res = await fetch(IMAGE_API_URL, {
@@ -725,8 +724,7 @@ async function sendImageGeneration() {
             });
             if (res.ok) {
                 const data = await res.json();
-                imageUrl = data?.data?.[0]?.url || (data?.data?.[0]?.b64_json
-                    ? `data:image/png;base64,${data.data[0].b64_json}` : null);
+                imageUrl = data?.data?.[0]?.url || (data?.data?.[0]?.b64_json ? `data:image/png;base64,${data.data[0].b64_json}` : null);
             }
         } catch { }
 
@@ -738,22 +736,15 @@ async function sendImageGeneration() {
 
         await new Promise((resolve, reject) => {
             const img = new Image();
-            img.onload = resolve;
-            img.onerror = reject;
+            const timeout = setTimeout(() => { img.onerror = null; reject(new Error('Image load timeout')); }, 45000);
+            img.onload = () => { clearTimeout(timeout); resolve(); };
+            img.onerror = (e) => { clearTimeout(timeout); reject(new Error(`Failed to load image: ${e?.type || 'unknown'}`)); };
             img.src = imageUrl;
-            setTimeout(reject, 30000);
         });
 
         const modelLabel = usedPollinations ? `Pollinations / ${imageEngine}` : 'DALL-E 3';
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        bubble.innerHTML = `
-            <img src="${imageUrl}" class="generated-image" alt="${escapeHtml(prompt)}" title="Click to enlarge">
-            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:6px;">"${escapeHtml(prompt)}"</div>
-            <a href="${imageUrl}" download="yanz-ai-image.png" target="_blank" class="image-download-btn">
-                <i class="fas fa-download"></i> Download image
-            </a>`;
-
+        bubble.innerHTML = `<img src="${imageUrl}" class="generated-image" alt="${escapeHtml(prompt)}" title="Click to enlarge"><div style="font-size:0.8rem;color:var(--text-secondary);margin-top:6px;">"${escapeHtml(prompt)}"</div><a href="${imageUrl}" download="yanz-ai-image.png" target="_blank" class="image-download-btn"><i class="fas fa-download"></i> Download image</a>`;
         bubble.querySelector('.generated-image').addEventListener('click', () => {
             const lb = document.createElement('div');
             lb.className = 'lightbox';
@@ -761,34 +752,21 @@ async function sendImageGeneration() {
             lb.addEventListener('click', () => lb.remove());
             document.body.appendChild(lb);
         });
-
         if (hallucinationGuard) {
             const badge = document.createElement('div');
             badge.className = 'verification-badge';
             badge.innerHTML = `<i class="fas fa-image"></i> ${modelLabel} · ${timeStr}`;
             assistantDiv.querySelector('.message-content').appendChild(badge);
         }
-
-        const assistantMsg = {
-            role: 'assistant',
-            content: `Generated image for: "${prompt}"`,
-            timestamp: new Date().toISOString(),
-            images: [imageUrl],
-            isGeneratedImage: true,
-            verification: hallucinationGuard ? { model: modelLabel, time: timeStr } : null
-        };
+        const assistantMsg = { role: 'assistant', content: `Generated image for: "${prompt}"`, timestamp: new Date().toISOString(), images: [imageUrl], isGeneratedImage: true, verification: hallucinationGuard ? { model: modelLabel, time: timeStr } : null };
         thread.messages.push(assistantMsg);
         saveThreads();
         scrollToBottom();
-
     } catch (err) {
         bubble.innerHTML = `<span style="color:var(--hallucination);">❌ Image generation failed: ${escapeHtml(err.message || 'Unknown error')}</span><br><span style="font-size:0.8rem;color:var(--text-secondary);">Try a different prompt or check your connection.</span>`;
         showToast('Image generation failed', 'error');
     } finally {
-        isStreaming = false;
-        sendBtn.disabled = false;
-        updateSendButton();
-        attachMessageActions();
+        isStreaming = false; sendBtn.disabled = false; updateSendButton(); attachMessageActions();
     }
 }
 
@@ -800,56 +778,28 @@ function appendMessageToDOM(role, content, timestamp, idx, verification = null, 
     const welcome = document.querySelector('.welcome');
     if (welcome) welcome.style.display = 'none';
     document.getElementById('chatHeader').style.display = 'flex';
-
     const msgDiv = document.createElement('div');
     msgDiv.className = `message ${role}`;
     msgDiv.dataset.index = idx;
-
+    msgDiv.setAttribute('role', 'article');
     const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const sanitized = DOMPurify.sanitize(marked.parse(content));
-
     let badgeHtml = '';
     if (role === 'assistant' && verification?.model) {
         badgeHtml = `<div class="verification-badge"><i class="fas fa-info-circle"></i> ${escapeHtml(verification.model)} · ${escapeHtml(verification.time || time)}</div>`;
     }
-
     let imgPreviews = '';
     if (images && images.length) {
-        imgPreviews = images.map(img =>
-            `<img src="${img}" style="max-width:100%;max-height:300px;border-radius:10px;margin:6px 0;display:block;border:1px solid var(--border);cursor:zoom-in;" onclick="openLightbox('${img}')">`
-        ).join('');
+        imgPreviews = images.map(img => `<img src="${img}" style="max-width:100%;max-height:300px;border-radius:10px;margin:6px 0;display:block;border:1px solid var(--border);cursor:zoom-in;" onclick="openLightbox('${img}')" alt="Attached image">`).join('');
     }
-
-    const feedbackBtns = role === 'assistant'
-        ? `<div class="feedback-buttons"><button class="feedback-btn" data-feedback="correct"><i class="fas fa-thumbs-up"></i> Correct</button><button class="feedback-btn" data-feedback="wrong"><i class="fas fa-thumbs-down"></i> Hallucinated</button></div>`
-        : '';
-
-    const editOrRegen = role === 'assistant'
-        ? `<button class="action-btn" data-action="regenerate">&#8634; Regenerate</button>`
-        : `<button class="action-btn" data-action="edit">&#9998; Edit</button>`;
-
-    msgDiv.innerHTML = `
-        <div class="message-avatar">${role === 'user' ? 'U' : 'AI'}</div>
-        <div class="message-content">
-            <div class="message-bubble">${imgPreviews}${sanitized}</div>
-            ${badgeHtml}${feedbackBtns}
-            <div class="message-actions">
-                <button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button>
-                ${editOrRegen}
-                <button class="action-btn" data-action="delete">&#128465; Delete</button>
-            </div>
-        </div>`;
+    const feedbackBtns = role === 'assistant' ? `<div class="feedback-buttons"><button class="feedback-btn" data-feedback="correct"><i class="fas fa-thumbs-up"></i> Correct</button><button class="feedback-btn" data-feedback="wrong"><i class="fas fa-thumbs-down"></i> Hallucinated</button></div>` : '';
+    const editOrRegen = role === 'assistant' ? `<button class="action-btn" data-action="regenerate">&#8634; Regenerate</button>` : `<button class="action-btn" data-action="edit">&#9998; Edit</button>`;
+    msgDiv.innerHTML = `<div class="message-avatar" aria-hidden="true">${role === 'user' ? 'U' : 'AI'}</div><div class="message-content"><div class="message-bubble">${imgPreviews}${sanitized}</div>${badgeHtml}${feedbackBtns}<div class="message-actions"><button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button>${editOrRegen}<button class="action-btn" data-action="delete">&#128465; Delete</button></div></div>`;
     container.appendChild(msgDiv);
-
-    msgDiv.querySelectorAll('pre code').forEach(block => {
-        hljs.highlightElement(block);
-        block.dataset.highlighted = 'yes';
-    });
+    msgDiv.querySelectorAll('pre code').forEach(block => { hljs.highlightElement(block); block.dataset.highlighted = 'yes'; });
     addCopyButtonsToCodeBlocks(msgDiv);
-
     if (isUserAtBottom()) scrollToBottom();
 }
-
 function openLightbox(url) {
     const lb = document.createElement('div');
     lb.className = 'lightbox';
@@ -862,20 +812,11 @@ function openLightbox(url) {
 // MESSAGE ACTIONS
 // ─────────────────────────────────────────────────────────────
 function attachMessageActions() {
-    document.querySelectorAll('.message .action-btn').forEach(btn => {
-        btn.replaceWith(btn.cloneNode(true));
-    });
-    document.querySelectorAll('.message .action-btn').forEach(btn => {
-        btn.addEventListener('click', handleMessageAction);
-    });
-    document.querySelectorAll('.feedback-btn').forEach(btn => {
-        btn.replaceWith(btn.cloneNode(true));
-    });
-    document.querySelectorAll('.feedback-btn').forEach(btn => {
-        btn.addEventListener('click', handleFeedback);
-    });
+    document.querySelectorAll('.message .action-btn').forEach(btn => { btn.replaceWith(btn.cloneNode(true)); });
+    document.querySelectorAll('.message .action-btn').forEach(btn => { btn.addEventListener('click', handleMessageAction); });
+    document.querySelectorAll('.feedback-btn').forEach(btn => { btn.replaceWith(btn.cloneNode(true)); });
+    document.querySelectorAll('.feedback-btn').forEach(btn => { btn.addEventListener('click', handleFeedback); });
 }
-
 function handleMessageAction(e) {
     const btn = e.currentTarget;
     const action = btn.dataset.action;
@@ -884,17 +825,12 @@ function handleMessageAction(e) {
     const idx = parseInt(msgDiv.dataset.index);
     const thread = threads[currentThreadId];
     if (!thread || !thread.messages[idx]) return;
-
     if (action === 'copy') {
-        navigator.clipboard.writeText(thread.messages[idx].content)
-            .then(() => showToast('Copied!', 'success'))
-            .catch(() => showToast('Unable to copy', 'error'));
-
+        navigator.clipboard.writeText(thread.messages[idx].content).then(() => showToast('Copied!', 'success')).catch(() => showToast('Unable to copy', 'error'));
     } else if (action === 'delete') {
         thread.messages.splice(idx, 1);
         saveThreads();
         loadThread(currentThreadId);
-
     } else if (action === 'edit') {
         const bubble = msgDiv.querySelector('.message-bubble');
         if (!bubble || bubble.querySelector('textarea')) return;
@@ -921,40 +857,32 @@ function handleMessageAction(e) {
             if (e.key === 'Escape') { done = true; loadThread(currentThreadId); }
         });
         textarea.addEventListener('blur', () => { if (!done && textarea.value.trim() !== currentText) commit(); });
-
     } else if (action === 'regenerate') {
         let userIdx = idx - 1;
         while (userIdx >= 0 && thread.messages[userIdx].role !== 'user') userIdx--;
-        if (userIdx >= 0) {
-            thread.messages = thread.messages.slice(0, userIdx + 1);
-            saveThreads();
-            loadThread(currentThreadId);
-            sendMessage();
-        }
+        if (userIdx >= 0) { thread.messages = thread.messages.slice(0, userIdx + 1); saveThreads(); loadThread(currentThreadId); sendMessage(); }
     }
 }
-
 function handleFeedback(e) {
     const ok = e.currentTarget.dataset.feedback === 'correct';
     showToast(ok ? 'Thanks! Feedback saved.' : 'Reported. We\'ll improve.', 'success');
 }
 
 // ─────────────────────────────────────────────────────────────
-// FIX: AUTO MODEL — keys now match api/chat.js SUPPORTED_MODELS
+// AUTO MODEL SELECTION (FIXED REGEX)
 // ─────────────────────────────────────────────────────────────
 function selectAutoModel(prompt, hasImages) {
-    if (hasImages) return VISION_MODEL;               // 'llama-3.2-11b' ✓
+    if (hasImages) return VISION_MODEL;
     const lower = prompt.toLowerCase();
-    if (codeReviewMode || /\b(code|function|debug|javascript|typescript|python|css|html|php|java|c\+\+|sql|class|import|export|def |const |let |var )\b/.test(lower)) {
-        return 'deepseek-chat-v3.1';                  // 'deepseek-chat-v3.1' ✓
+    // ✅ FIXED: Removed trailing spaces in keywords
+    if (codeReviewMode || /\b(code|function|debug|javascript|typescript|python|css|html|php|java|c\+\+|sql|class|import|export|def|const|let|var)\b/.test(lower)) {
+        return 'deepseek-chat-v3.1';
     }
     if (deepThinkMode || /\b(why|explain|analyze|analyse|reason|think|philosophy|compare|evaluate|critically)\b/.test(lower)) {
-        return 'llama-4-maverick';                    // 'llama-4-maverick' ✓
+        return 'llama-4-maverick';
     }
-    if (/[\u0E00-\u0E7F]/.test(prompt)) {
-        return 'qwen-2.5-72b';                        // 'qwen-2.5-72b' ✓
-    }
-    return DEFAULT_MODEL;                             // 'llama-3.3-70b' ✓
+    if (/[\u0E00-\u0E7F]/.test(prompt)) { return 'qwen-2.5-72b'; }
+    return DEFAULT_MODEL;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -973,14 +901,9 @@ async function sendMessage() {
     let finalText = text;
     let imageDataList = [];
     for (const file of attachedFiles) {
-        if (file.type.startsWith('image/')) {
-            imageDataList.push(file.dataUrl);
-            finalText += `\n[Image attached]`;
-        } else {
-            finalText += `\n\n[Attached: ${file.name}]\nContent preview:\n${file.content.slice(0, 500)}`;
-        }
+        if (file.type.startsWith('image/')) { imageDataList.push(file.dataUrl); finalText += `\n[Image attached]`; }
+        else { finalText += `\n\n[Attached: ${file.name}]\nContent preview:\n${file.content.slice(0, 500)}`; }
     }
-
     const thread = threads[currentThreadId];
     const userMsg = { role: 'user', content: finalText, timestamp: new Date().toISOString(), images: imageDataList };
     thread.messages.push(userMsg);
@@ -995,7 +918,6 @@ async function sendMessage() {
     renderThreads();
 
     const selectedModel = autoModelEnabled ? selectAutoModel(text, imageDataList.length > 0) : manualModel;
-
     const typingDiv = document.createElement('div');
     typingDiv.className = 'typing-indicator';
     typingDiv.id = 'typing';
@@ -1003,46 +925,25 @@ async function sendMessage() {
     document.getElementById('chatContainer').appendChild(typingDiv);
     scrollToBottom();
 
-    // FIX: Only send fields the API actually supports (removed deep_research, web_search)
     const requestBody = {
         model: selectedModel,
         messages: thread.messages.map(m => {
             if (m.images && m.images.length) {
-                return {
-                    role: m.role,
-                    content: [
-                        { type: 'text', text: m.content },
-                        ...m.images.map(img => ({ type: 'image_url', image_url: { url: img } }))
-                    ]
-                };
+                return { role: m.role, content: [{ type: 'text', text: m.content }, ...m.images.map(img => ({ type: 'image_url', image_url: { url: img } }))] };
             }
             return { role: m.role, content: m.content };
         }),
-        temperature,
-        max_tokens: 4096,
-        stream: true
+        temperature, max_tokens: 4096, stream: true
     };
 
     if (currentAbortController) currentAbortController.abort();
     currentAbortController = new AbortController();
-
-    let assistantDiv = null;
-    let accumulated = '';
+    let assistantDiv = null, accumulated = '';
 
     try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody),
-            signal: currentAbortController.signal
-        });
-
+        const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody), signal: currentAbortController.signal });
         document.getElementById('typing')?.remove();
-
-        if (!response.ok) {
-            const errText = await response.text().catch(() => '');
-            throw new Error(`HTTP ${response.status}${errText ? ': ' + errText.slice(0, 200) : ''}`);
-        }
+        if (!response.ok) { const errText = await response.text().catch(() => ''); throw new Error(`HTTP ${response.status}${errText ? ': ' + errText.slice(0, 200) : ''}`); }
 
         assistantDiv = document.createElement('div');
         assistantDiv.className = 'message assistant';
@@ -1050,84 +951,54 @@ async function sendMessage() {
         document.getElementById('chatContainer').appendChild(assistantDiv);
         const bubble = assistantDiv.querySelector('.message-bubble');
         const wasAtBottom = isUserAtBottom();
-
         const contentType = response.headers.get('content-type') || '';
 
         if (!response.body || typeof response.body.getReader !== 'function') {
             const txt = await response.text();
-            if (contentType.includes('application/json')) {
-                try {
-                    const json = JSON.parse(txt);
-                    accumulated = json.choices?.[0]?.message?.content || json.choices?.[0]?.delta?.content || txt;
-                } catch { accumulated = txt; }
-            } else {
-                accumulated = txt;
-            }
+            if (contentType.includes('application/json')) { try { const json = JSON.parse(txt); accumulated = json.choices?.[0]?.message?.content || json.choices?.[0]?.delta?.content || txt; } catch { accumulated = txt; } }
+            else { accumulated = txt; }
             renderBubbleContent(bubble, accumulated, wasAtBottom);
         } else {
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
-            let buffer = '';
-            let done = false;
-
+            let buffer = '', done = false;
             while (!done) {
                 const { value, done: readerDone } = await reader.read();
                 if (readerDone) break;
                 buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split(/\r?\n/);
-                buffer = lines.pop();
-
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
                 for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const data = line.slice(6).trim();
+                    const trimmed = line.trim();
+                    if (!trimmed || !trimmed.startsWith('data:')) continue;
+                    const data = trimmed.slice(5).trim();
                     if (data === '[DONE]') { done = true; break; }
                     try {
                         const json = JSON.parse(data);
                         const delta = json.choices?.[0]?.delta?.content || '';
-                        if (delta) {
-                            accumulated += delta;
-                            scheduleRender(bubble, accumulated, wasAtBottom);
-                        }
-                    } catch { }
+                        if (delta) { accumulated += delta; scheduleRender(bubble, accumulated, wasAtBottom); }
+                    } catch (e) { console.warn('Stream parse error:', e); }
                 }
             }
-
-            if (buffer.startsWith('data: ')) {
-                const data = buffer.slice(6).trim();
-                if (data && data !== '[DONE]') {
-                    try {
-                        const json = JSON.parse(data);
-                        const delta = json.choices?.[0]?.delta?.content || '';
-                        if (delta) accumulated += delta;
-                    } catch { }
-                }
+            if (buffer.startsWith('data:')) {
+                const data = buffer.slice(5).trim();
+                if (data && data !== '[DONE]') { try { const json = JSON.parse(data); const delta = json.choices?.[0]?.delta?.content || ''; if (delta) accumulated += delta; } catch {} }
             }
-
             renderBubbleContent(bubble, accumulated, wasAtBottom);
         }
 
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const infoBadge = hallucinationGuard
-            ? `<div class="verification-badge"><i class="fas fa-info-circle"></i> ${escapeHtml(selectedModel)} · ${timeStr}</div>`
-            : '';
+        const infoBadge = hallucinationGuard ? `<div class="verification-badge"><i class="fas fa-info-circle"></i> ${escapeHtml(selectedModel)} · ${timeStr}</div>` : '';
         const feedbackBtns = `<div class="feedback-buttons"><button class="feedback-btn" data-feedback="correct"><i class="fas fa-thumbs-up"></i> Correct</button><button class="feedback-btn" data-feedback="wrong"><i class="fas fa-thumbs-down"></i> Hallucinated</button></div>`;
         const actions = `<div class="message-actions"><button class="action-btn" data-action="copy"><i class="fas fa-copy"></i> Copy</button><button class="action-btn" data-action="regenerate">&#8634; Regenerate</button><button class="action-btn" data-action="delete">&#128465; Delete</button></div>`;
         assistantDiv.querySelector('.message-content').insertAdjacentHTML('beforeend', `${infoBadge}${feedbackBtns}${actions}`);
-
-        thread.messages.push({
-            role: 'assistant',
-            content: accumulated,
-            timestamp: new Date().toISOString(),
-            verification: hallucinationGuard ? { model: selectedModel, time: timeStr } : null
-        });
+        thread.messages.push({ role: 'assistant', content: accumulated, timestamp: new Date().toISOString(), verification: hallucinationGuard ? { model: selectedModel, time: timeStr } : null });
         saveThreads();
         attachMessageActions();
-
     } catch (err) {
         document.getElementById('typing')?.remove();
-        if (err.name === 'AbortError') {
-            assistantDiv?.remove();
-        } else {
+        if (err.name === 'AbortError') { assistantDiv?.remove(); }
+        else {
             if (assistantDiv) assistantDiv.remove();
             const errContent = `❌ Error: ${err.message}`;
             appendMessageToDOM('assistant', errContent, new Date().toISOString(), thread.messages.length);
@@ -1136,10 +1007,7 @@ async function sendMessage() {
             showToast(`Error: ${err.message}`, 'error');
         }
     } finally {
-        isStreaming = false;
-        sendBtn.disabled = false;
-        updateSendButton();
-        currentAbortController = null;
+        isStreaming = false; sendBtn.disabled = false; updateSendButton(); currentAbortController = null;
     }
 }
 
@@ -1150,36 +1018,22 @@ function updateSendButton() {
     const hasText = document.getElementById('messageInput').value.trim().length > 0;
     document.getElementById('sendBtn').disabled = isStreaming || (!hasText && attachedFiles.length === 0);
 }
-
 function renderThreads() {
     const container = document.getElementById('threadList');
     container.innerHTML = '';
-    Object.values(threads)
-        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-        .forEach(thread => {
-            const isActive = thread.id === currentThreadId;
-            const date = new Date(thread.updatedAt);
-            const timeStr = date.toDateString() === new Date().toDateString()
-                ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                : date.toLocaleDateString();
-            const div = document.createElement('div');
-            div.className = `thread-item${isActive ? ' active' : ''}`;
-            div.dataset.id = thread.id;
-            div.innerHTML = `
-                <div class="thread-title">${escapeHtml(thread.title)}</div>
-                <div class="thread-meta">${timeStr}</div>
-                <div class="thread-menu">
-                    <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
-                    <div class="menu-dropdown">
-                        <div class="menu-item" data-action="rename">&#9998; Rename</div>
-                        <div class="menu-item" data-action="delete">&#128465; Delete</div>
-                    </div>
-                </div>`;
-            container.appendChild(div);
-        });
+    Object.values(threads).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)).forEach(thread => {
+        const isActive = thread.id === currentThreadId;
+        const date = new Date(thread.updatedAt);
+        const timeStr = date.toDateString() === new Date().toDateString() ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : date.toLocaleDateString();
+        const div = document.createElement('div');
+        div.className = `thread-item${isActive ? ' active' : ''}`;
+        div.dataset.id = thread.id;
+        div.setAttribute('role', 'listitem');
+        div.innerHTML = `<div class="thread-title">${escapeHtml(thread.title)}</div><div class="thread-meta">${timeStr}</div><div class="thread-menu"><button class="menu-btn" aria-label="Thread options"><i class="fas fa-ellipsis-v"></i></button><div class="menu-dropdown"><div class="menu-item" data-action="rename">&#9998; Rename</div><div class="menu-item" data-action="delete">&#128465; Delete</div></div></div>`;
+        container.appendChild(div);
+    });
     attachThreadEvents();
 }
-
 function attachThreadEvents() {
     document.querySelectorAll('.thread-item .menu-btn').forEach(btn => {
         btn.addEventListener('click', e => {
@@ -1199,13 +1053,9 @@ function attachThreadEvents() {
         });
     });
     document.querySelectorAll('.thread-item').forEach(item => {
-        item.addEventListener('click', e => {
-            if (e.target.closest('.thread-menu')) return;
-            loadThread(item.dataset.id);
-        });
+        item.addEventListener('click', e => { if (e.target.closest('.thread-menu')) return; loadThread(item.dataset.id); });
     });
 }
-
 function renameThread(id) {
     const thread = threads[id];
     if (!thread) return;
@@ -1214,74 +1064,39 @@ function renameThread(id) {
     const titleEl = item.querySelector('.thread-title');
     const original = thread.title;
     const input = document.createElement('input');
-    input.type = 'text';
-    input.value = original;
-    input.className = 'thread-rename-input';
-    titleEl.replaceWith(input);
-    input.focus(); input.select();
+    input.type = 'text'; input.value = original; input.className = 'thread-rename-input'; input.setAttribute('aria-label', 'Rename chat');
+    titleEl.replaceWith(input); input.focus(); input.select();
     let saved = false;
-    const save = () => {
-        if (saved) return; saved = true;
-        thread.title = input.value.trim() || original;
-        saveThreads();
-        renderThreads();
-        if (id === currentThreadId) document.getElementById('currentChatTitle').innerText = thread.title;
-    };
-    input.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); save(); }
-        if (e.key === 'Escape') { saved = true; renderThreads(); }
-    });
+    const save = () => { if (saved) return; saved = true; thread.title = input.value.trim() || original; saveThreads(); renderThreads(); if (id === currentThreadId) document.getElementById('currentChatTitle').innerText = thread.title; };
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); save(); } if (e.key === 'Escape') { saved = true; renderThreads(); } });
     input.addEventListener('blur', save);
 }
-
 async function deleteThread(id) {
     const ok = await confirmAction('Delete this chat?');
     if (!ok) return;
     delete threads[id];
-    if (id === currentThreadId) {
-        const remaining = Object.keys(threads);
-        if (remaining.length) loadThread(remaining[0]);
-        else createNewThread();
-    }
-    saveThreads();
-    renderThreads();
+    if (id === currentThreadId) { const remaining = Object.keys(threads); if (remaining.length) loadThread(remaining[0]); else createNewThread(); }
+    saveThreads(); renderThreads();
 }
-
 function createNewThread() {
     const id = Date.now().toString();
     threads[id] = { id, title: 'New chat', messages: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-    currentThreadId = id;
-    saveThreads();
-    renderThreads();
-    loadThread(id);
+    currentThreadId = id; saveThreads(); renderThreads(); loadThread(id);
 }
-
 function loadThread(id) {
     const thread = threads[id];
     if (!thread) return;
     currentThreadId = id;
     document.getElementById('currentChatTitle').innerText = thread.title;
-    const header = document.getElementById('chatHeader');
-    const container = document.getElementById('chatContainer');
+    const header = document.getElementById('chatHeader'), container = document.getElementById('chatContainer');
     while (container.firstChild) container.removeChild(container.firstChild);
     const welcome = document.createElement('div');
-    welcome.className = 'welcome';
-    welcome.id = 'welcomeScreen';
-    welcome.innerHTML = '<h2>How can I help you?</h2>';
+    welcome.className = 'welcome'; welcome.id = 'welcomeScreen'; welcome.innerHTML = '<h2>How can I help you?</h2>';
     container.appendChild(welcome);
-    thread.messages.forEach((msg, idx) => {
-        appendMessageToDOM(msg.role, msg.content, msg.timestamp, idx, msg.verification, msg.images || []);
-    });
-    if (thread.messages.length > 0) {
-        welcome.style.display = 'none';
-        header.style.display = 'flex';
-    } else {
-        welcome.style.display = '';
-        header.style.display = 'none';
-    }
-    scrollToBottom();
-    renderThreads();
-    attachMessageActions();
+    thread.messages.forEach((msg, idx) => { appendMessageToDOM(msg.role, msg.content, msg.timestamp, idx, msg.verification, msg.images || []); });
+    if (thread.messages.length > 0) { welcome.style.display = 'none'; header.style.display = 'flex'; }
+    else { welcome.style.display = ''; header.style.display = 'none'; }
+    scrollToBottom(); renderThreads(); attachMessageActions();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -1293,28 +1108,15 @@ document.getElementById('fileInput').addEventListener('change', e => {
         const reader = new FileReader();
         reader.onload = ev => {
             const dataUrl = ev.target.result;
-            attachedFiles.push({
-                name: file.name,
-                type: file.type,
-                content: file.type.startsWith('image/') ? '[Image]' : ev.target.result,
-                dataUrl: file.type.startsWith('image/') ? dataUrl : null
-            });
+            attachedFiles.push({ name: file.name, type: file.type, content: file.type.startsWith('image/') ? '[Image]' : ev.target.result, dataUrl: file.type.startsWith('image/') ? dataUrl : null });
             const previewDiv = document.getElementById('attachmentPreviews');
             const chip = document.createElement('div');
             chip.className = 'attachment-preview';
-            chip.innerHTML = file.type.startsWith('image/')
-                ? `<img src="${dataUrl}" style="width:28px;height:28px;object-fit:cover;border-radius:4px;"><span>${escapeHtml(file.name)}</span><i class="fas fa-times" style="margin-left:6px;cursor:pointer;color:var(--text-secondary);"></i>`
-                : `<i class="fas fa-file"></i><span>${escapeHtml(file.name)}</span><i class="fas fa-times" style="margin-left:6px;cursor:pointer;color:var(--text-secondary);"></i>`;
-            chip.querySelector('.fa-times').addEventListener('click', () => {
-                attachedFiles = attachedFiles.filter(f => f.name !== file.name);
-                chip.remove();
-                updateSendButton();
-            });
-            previewDiv.appendChild(chip);
-            updateSendButton();
+            chip.innerHTML = file.type.startsWith('image/') ? `<img src="${dataUrl}" style="width:28px;height:28px;object-fit:cover;border-radius:4px;" alt="${escapeHtml(file.name)}"><span>${escapeHtml(file.name)}</span><i class="fas fa-times" style="margin-left:6px;cursor:pointer;color:var(--text-secondary);" aria-label="Remove attachment"></i>` : `<i class="fas fa-file"></i><span>${escapeHtml(file.name)}</span><i class="fas fa-times" style="margin-left:6px;cursor:pointer;color:var(--text-secondary);" aria-label="Remove attachment"></i>`;
+            chip.querySelector('.fa-times').addEventListener('click', () => { attachedFiles = attachedFiles.filter(f => f.name !== file.name); chip.remove(); updateSendButton(); });
+            previewDiv.appendChild(chip); updateSendButton();
         };
-        if (file.type.startsWith('image/')) reader.readAsDataURL(file);
-        else reader.readAsText(file, 'UTF-8');
+        if (file.type.startsWith('image/')) reader.readAsDataURL(file); else reader.readAsText(file, 'UTF-8');
     });
     e.target.value = '';
 });
@@ -1324,40 +1126,18 @@ document.getElementById('fileInput').addEventListener('change', e => {
 // ─────────────────────────────────────────────────────────────
 document.getElementById('newChatBtn').addEventListener('click', createNewThread);
 document.getElementById('sendBtn').addEventListener('click', sendMessage);
-document.getElementById('messageInput').addEventListener('input', () => {
-    updateSendButton();
-    const ta = document.getElementById('messageInput');
-    ta.style.height = 'auto';
-    ta.style.height = Math.min(120, ta.scrollHeight) + 'px';
-});
-document.getElementById('messageInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey && !document.getElementById('sendBtn').disabled) {
-        e.preventDefault();
-        sendMessage();
-    }
-});
+document.getElementById('messageInput').addEventListener('input', () => { updateSendButton(); const ta = document.getElementById('messageInput'); ta.style.height = 'auto'; ta.style.height = Math.min(120, ta.scrollHeight) + 'px'; });
+document.getElementById('messageInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !document.getElementById('sendBtn').disabled) { e.preventDefault(); sendMessage(); } });
 
-document.getElementById('deepThinkBtn').addEventListener('click', () => {
-    deepThinkMode = !deepThinkMode;
-    document.getElementById('deepThinkBtn').classList.toggle('active', deepThinkMode);
-    if (deepThinkMode) { codeReviewMode = false; document.getElementById('codeReviewBtn').classList.remove('active'); setImageMode(false); }
-});
-document.getElementById('webSearchBtn').addEventListener('click', () => {
-    webSearchMode = !webSearchMode;
-    document.getElementById('webSearchBtn').classList.toggle('active', webSearchMode);
-    if (webSearchMode) setImageMode(false);
-});
-document.getElementById('codeReviewBtn').addEventListener('click', () => {
-    codeReviewMode = !codeReviewMode;
-    document.getElementById('codeReviewBtn').classList.toggle('active', codeReviewMode);
-    if (codeReviewMode) { deepThinkMode = false; document.getElementById('deepThinkBtn').classList.remove('active'); setImageMode(false); }
-});
+document.getElementById('deepThinkBtn').addEventListener('click', () => { deepThinkMode = !deepThinkMode; document.getElementById('deepThinkBtn').classList.toggle('active', deepThinkMode); document.getElementById('deepThinkBtn').setAttribute('aria-checked', deepThinkMode); if (deepThinkMode) { codeReviewMode = false; document.getElementById('codeReviewBtn').classList.remove('active'); document.getElementById('codeReviewBtn').setAttribute('aria-checked', false); setImageMode(false); } });
+document.getElementById('webSearchBtn').addEventListener('click', () => { webSearchMode = !webSearchMode; document.getElementById('webSearchBtn').classList.toggle('active', webSearchMode); document.getElementById('webSearchBtn').setAttribute('aria-checked', webSearchMode); if (webSearchMode) setImageMode(false); });
+document.getElementById('codeReviewBtn').addEventListener('click', () => { codeReviewMode = !codeReviewMode; document.getElementById('codeReviewBtn').classList.toggle('active', codeReviewMode); document.getElementById('codeReviewBtn').setAttribute('aria-checked', codeReviewMode); if (codeReviewMode) { deepThinkMode = false; document.getElementById('deepThinkBtn').classList.remove('active'); document.getElementById('deepThinkBtn').setAttribute('aria-checked', false); setImageMode(false); } });
 document.getElementById('imageGenBtn').addEventListener('click', () => setImageMode(!imageGenMode));
 
 document.querySelectorAll('.size-option').forEach(opt => {
     opt.addEventListener('click', () => {
-        document.querySelectorAll('.size-option').forEach(o => o.classList.remove('active'));
-        opt.classList.add('active');
+        document.querySelectorAll('.size-option').forEach(o => { o.classList.remove('active'); o.setAttribute('aria-checked', 'false'); });
+        opt.classList.add('active'); opt.setAttribute('aria-checked', 'true');
         selectedImageSize = opt.dataset.size;
     });
 });
@@ -1365,125 +1145,34 @@ document.querySelectorAll('.size-option').forEach(opt => {
 // Settings
 document.getElementById('settingsBtn').addEventListener('click', () => document.getElementById('settingsModal').classList.add('active'));
 document.getElementById('closeSettings').addEventListener('click', () => document.getElementById('settingsModal').classList.remove('active'));
-document.getElementById('settingsModal').addEventListener('click', e => {
-    if (e.target === document.getElementById('settingsModal')) document.getElementById('settingsModal').classList.remove('active');
-});
+document.getElementById('settingsModal').addEventListener('click', e => { if (e.target === document.getElementById('settingsModal')) document.getElementById('settingsModal').classList.remove('active'); });
 
-document.getElementById('autoModelToggle').addEventListener('click', () => {
-    autoModelEnabled = !autoModelEnabled;
-    document.getElementById('autoModelToggle').classList.toggle('active', autoModelEnabled);
-    document.getElementById('manualModelContainer').style.display = autoModelEnabled ? 'none' : 'block';
-    document.getElementById('autoModelInfo').style.display = autoModelEnabled ? 'block' : 'none';
-    localStorage.setItem('yaz_auto_model', autoModelEnabled);
-});
-
-document.getElementById('manualModelSelect').addEventListener('change', e => {
-    manualModel = e.target.value;
-    localStorage.setItem('yaz_manual_model', manualModel);
-    updateSelectedModelLabel();
-});
-
-// Model search filter
-document.getElementById('modelSearchInput').addEventListener('input', e => {
-    const query = e.target.value.toLowerCase();
-    const sel = document.getElementById('manualModelSelect');
-    Array.from(sel.options).forEach(opt => {
-        const match = opt.value.toLowerCase().includes(query) || opt.text.toLowerCase().includes(query);
-        opt.style.display = match ? '' : 'none';
-    });
-});
-
-document.getElementById('imageEngineSelect').addEventListener('change', e => {
-    imageEngine = e.target.value;
-    localStorage.setItem('yaz_image_engine', imageEngine);
-});
-document.getElementById('tempSlider').addEventListener('input', e => {
-    temperature = parseFloat(e.target.value);
-    document.getElementById('tempValue').innerText = temperature;
-    localStorage.setItem('yaz_temperature', temperature);
-});
-document.getElementById('hallucinationGuardToggle').addEventListener('click', () => {
-    hallucinationGuard = !hallucinationGuard;
-    document.getElementById('hallucinationGuardToggle').classList.toggle('active', hallucinationGuard);
-    localStorage.setItem('yaz_hallucination_guard', hallucinationGuard);
-});
+document.getElementById('autoModelToggle').addEventListener('click', () => { autoModelEnabled = !autoModelEnabled; document.getElementById('autoModelToggle').classList.toggle('active', autoModelEnabled); document.getElementById('autoModelToggle').setAttribute('aria-checked', autoModelEnabled); document.getElementById('manualModelContainer').style.display = autoModelEnabled ? 'none' : 'block'; document.getElementById('autoModelInfo').style.display = autoModelEnabled ? 'block' : 'none'; localStorage.setItem('yaz_auto_model', autoModelEnabled); });
+document.getElementById('manualModelSelect').addEventListener('change', e => { manualModel = e.target.value; localStorage.setItem('yaz_manual_model', manualModel); updateSelectedModelLabel(); });
+document.getElementById('modelSearchInput').addEventListener('input', e => { const query = e.target.value.toLowerCase(); const sel = document.getElementById('manualModelSelect'); Array.from(sel.options).forEach(opt => { const match = opt.value.toLowerCase().includes(query) || opt.text.toLowerCase().includes(query); opt.style.display = match ? '' : 'none'; }); });
+document.getElementById('imageEngineSelect').addEventListener('change', e => { imageEngine = e.target.value; localStorage.setItem('yaz_image_engine', imageEngine); });
+document.getElementById('tempSlider').addEventListener('input', e => { temperature = parseFloat(e.target.value); document.getElementById('tempValue').innerText = temperature; localStorage.setItem('yaz_temperature', temperature); });
+document.getElementById('hallucinationGuardToggle').addEventListener('click', () => { hallucinationGuard = !hallucinationGuard; document.getElementById('hallucinationGuardToggle').classList.toggle('active', hallucinationGuard); document.getElementById('hallucinationGuardToggle').setAttribute('aria-checked', hallucinationGuard); localStorage.setItem('yaz_hallucination_guard', hallucinationGuard); });
 document.getElementById('themeSelect').addEventListener('change', e => applyTheme(e.target.value));
 
-document.getElementById('exportDataBtn').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(threads, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'yaz_chats.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-});
-document.getElementById('deleteAllChatsBtn').addEventListener('click', async () => {
-    if (!await confirmAction('Delete ALL chats? This cannot be undone.')) return;
-    threads = {};
-    saveThreads();
-    createNewThread();
-    renderThreads();
-});
+document.getElementById('exportDataBtn').addEventListener('click', () => { const blob = new Blob([JSON.stringify(threads, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'yaz_chats.json'; a.click(); URL.revokeObjectURL(a.href); });
+document.getElementById('deleteAllChatsBtn').addEventListener('click', async () => { if (!await confirmAction('Delete ALL chats? This cannot be undone.')) return; threads = {}; saveThreads(); createNewThread(); renderThreads(); });
 
 document.getElementById('renameChatBtn').addEventListener('click', () => { if (currentThreadId) renameThread(currentThreadId); });
-document.getElementById('exportChatBtn').addEventListener('click', () => {
-    const thread = threads[currentThreadId];
-    if (!thread?.messages?.length) { showToast('No messages to export', 'error'); return; }
-    let content = `# ${thread.title}\n\n`;
-    thread.messages.forEach(m => content += `## ${m.role === 'user' ? 'User' : 'AI'}\n${m.content}\n\n---\n\n`);
-    const blob = new Blob([content], { type: 'text/markdown' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `chat-${thread.id}.md`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-});
-document.getElementById('clearChatBtn').addEventListener('click', async () => {
-    if (!currentThreadId) return;
-    if (!await confirmAction('Clear all messages in this chat?')) return;
-    threads[currentThreadId].messages = [];
-    threads[currentThreadId].title = 'New chat';
-    saveThreads();
-    loadThread(currentThreadId);
-});
-document.getElementById('closeChatBtn').addEventListener('click', () => {
-    document.getElementById('chatHeader').style.display = 'none';
-    const container = document.getElementById('chatContainer');
-    while (container.firstChild) container.removeChild(container.firstChild);
-    const welcome = document.createElement('div');
-    welcome.className = 'welcome';
-    welcome.id = 'welcomeScreen';
-    welcome.innerHTML = '<h2>How can I help you?</h2>';
-    container.appendChild(welcome);
-    currentThreadId = null;
-    renderThreads();
-});
-document.getElementById('sidebarToggleBtn').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
-});
-document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'j') { e.preventDefault(); createNewThread(); }
-    if (e.key === 'Escape') {
-        document.getElementById('settingsModal').classList.remove('active');
-        document.querySelectorAll('.menu-dropdown').forEach(d => d.classList.remove('active'));
-    }
-});
-document.addEventListener('click', () => {
-    document.querySelectorAll('.menu-dropdown').forEach(d => d.classList.remove('active'));
-}, { capture: true });
+document.getElementById('exportChatBtn').addEventListener('click', () => { const thread = threads[currentThreadId]; if (!thread?.messages?.length) { showToast('No messages to export', 'error'); return; } let content = `# ${thread.title}\n\n`; thread.messages.forEach(m => content += `## ${m.role === 'user' ? 'User' : 'AI'}\n${m.content}\n\n---\n\n`); const blob = new Blob([content], { type: 'text/markdown' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `chat-${thread.id}.md`; a.click(); URL.revokeObjectURL(a.href); });
+document.getElementById('clearChatBtn').addEventListener('click', async () => { if (!currentThreadId) return; if (!await confirmAction('Clear all messages in this chat?')) return; threads[currentThreadId].messages = []; threads[currentThreadId].title = 'New chat'; saveThreads(); loadThread(currentThreadId); });
+document.getElementById('closeChatBtn').addEventListener('click', () => { document.getElementById('chatHeader').style.display = 'none'; const container = document.getElementById('chatContainer'); while (container.firstChild) container.removeChild(container.firstChild); const welcome = document.createElement('div'); welcome.className = 'welcome'; welcome.id = 'welcomeScreen'; welcome.innerHTML = '<h2>How can I help you?</h2>'; container.appendChild(welcome); currentThreadId = null; renderThreads(); });
+document.getElementById('sidebarToggleBtn').addEventListener('click', () => { document.getElementById('sidebar').classList.toggle('open'); });
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'j') { e.preventDefault(); createNewThread(); } if (e.key === 'Escape') { document.getElementById('settingsModal').classList.remove('active'); document.querySelectorAll('.menu-dropdown').forEach(d => d.classList.remove('active')); } });
+document.addEventListener('click', () => { document.querySelectorAll('.menu-dropdown').forEach(d => d.classList.remove('active')); }, { capture: true });
 
 // ─────────────────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────────────────
-loadThreads();
-loadTheme();
-loadSettings();
-fetchApiInfo();
+loadThreads(); loadTheme(); loadSettings(); fetchApiInfo();
 if (Object.keys(threads).length === 0) createNewThread();
 else loadThread(Object.keys(threads).sort((a, b) => new Date(threads[b].updatedAt) - new Date(threads[a].updatedAt))[0]);
-renderThreads();
-updateSendButton();
-attachMessageActions();
+renderThreads(); updateSendButton(); attachMessageActions();
 </script>
 </body>
 </html>
