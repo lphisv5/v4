@@ -724,6 +724,58 @@ footer a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow
 }
 ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, var(--secondary), var(--primary)); }
 ::selection { background: var(--primary); color: white; }
+
+/* ========== LIVE INDICATOR ========== */
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 20px;
+    padding: 0.45rem 1.1rem;
+    flex-shrink: 0;
+}
+
+.live-dot {
+    width: 8px; height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: blink 1s infinite;
+    flex-shrink: 0;
+}
+
+.live-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    color: var(--success);
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.live-meta {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+.live-countdown {
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+/* Flash when a card's data changes */
+@keyframes flashUpdate {
+    0%   { box-shadow: 0 0 0 2px rgba(16,185,129,0); }
+    30%  { box-shadow: 0 0 0 3px rgba(16,185,129,0.7), 0 0 20px rgba(16,185,129,0.3); }
+    100% { box-shadow: 0 0 0 2px rgba(16,185,129,0); }
+}
+
+.exec-card.updated {
+    animation: flashUpdate 1.5s ease forwards;
+}
 </style>
 </head>
 <body>
@@ -860,11 +912,8 @@ class ParticleBG {
     }
 }
 
-// ============================================================
-//  Config
-// ============================================================
 const API_URL        = 'https://executors-one.vercel.app/executors';
-const UPDATE_INTERVAL = 60 * 1000; // refresh every 60s (API caches 10min anyway)
+const UPDATE_INTERVAL = 60 * 1000;
 const PLATFORMS      = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
 const PLATFORM_ICONS = {
     Android:  '<i class="fab fa-android"           aria-hidden="true"></i>',
@@ -880,11 +929,6 @@ let searchTerm   = '';
 let isFetching   = false;
 let streamInterval = null;
 
-// ============================================================
-//  Helpers
-// ============================================================
-
-/** Normalise any status string → 'online' | 'offline' | 'updating' | 'unknown' */
 function normaliseStatus(raw) {
     if (!raw) return 'unknown';
     const s = String(raw).toLowerCase().trim();
@@ -893,22 +937,19 @@ function normaliseStatus(raw) {
     if (['updating', 'update'].includes(s))                   return 'updating';
     return 'unknown';
 }
-
-/** CSS class for status */
+  
 function statusClass(raw) {
     const n = normaliseStatus(raw);
     const map = { online: 'status-online', offline: 'status-offline', updating: 'status-updating', unknown: 'status-unknown' };
     return map[n] || 'status-unknown';
 }
 
-/** Human-readable status label */
 function statusLabel(raw) {
     const n = normaliseStatus(raw);
     const map = { online: 'Online', offline: 'Offline', updating: 'Updating', unknown: 'Unknown' };
     return map[n];
 }
 
-/** Format the versions object → array of tags HTML */
 function versionsHTML(versions) {
     if (!versions || !Object.keys(versions).length) {
         return '<span class="version-tag"><i class="fas fa-code-branch" aria-hidden="true"></i> N/A</span>';
@@ -922,7 +963,6 @@ function versionsHTML(versions) {
     ).join('');
 }
 
-/** Logo HTML with fallback placeholder */
 function logoHTML(ex) {
     const initial = String(ex.name || '?').charAt(0).toUpperCase();
     if (ex.logo) {
@@ -945,9 +985,6 @@ function debounce(fn, wait) {
     return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
 }
 
-// ============================================================
-//  Toast
-// ============================================================
 function toast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -959,9 +996,6 @@ function toast(message, type = 'success') {
     setTimeout(() => { if (el.parentNode) el.remove(); }, 3000);
 }
 
-// ============================================================
-//  Stats
-// ============================================================
 function renderStats() {
     if (!fullData) return;
     let total = 0, online = 0, offline = 0;
@@ -977,9 +1011,6 @@ function renderStats() {
     set('offlineCount', offline);
 }
 
-// ============================================================
-//  Filtered data
-// ============================================================
 function getFilteredData() {
     const result = {};
     PLATFORMS.forEach(plat => {
@@ -994,9 +1025,6 @@ function getFilteredData() {
     return result;
 }
 
-// ============================================================
-//  Render cards
-// ============================================================
 function renderCards() {
     const container = document.getElementById('platformsContainer');
     if (!container) return;
@@ -1101,21 +1129,20 @@ function renderCards() {
     container.innerHTML = html;
 }
 
-// ============================================================
-//  Fetch
-// ============================================================
-async function fetchWithRetry(url, retries = 3, backoff = 1000) {
+async function fetchWithRetry(url, retries = 3, backoff = 1500) {
     for (let i = 0; i < retries; i++) {
         try {
             const timeout = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Request timeout')), 10000)
+                setTimeout(() => reject(new Error('Request timeout')), 30000)
             );
-            const res = await Promise.race([fetch(url), timeout]);
+            const res = await Promise.race([
+                fetch(url, { method: 'GET', mode: 'cors', cache: 'no-cache' }),
+                timeout
+            ]);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const ct = res.headers.get('content-type') || '';
-            if (!ct.includes('application/json')) throw new Error('Non-JSON response');
             return await res.json();
         } catch (err) {
+            console.warn(`[Executor API] Attempt ${i + 1}/${retries} failed:`, err.message);
             if (i === retries - 1) throw err;
             await new Promise(r => setTimeout(r, backoff * Math.pow(2, i)));
         }
@@ -1127,7 +1154,6 @@ async function fetchData(showToast = false) {
     isFetching = true;
     try {
         const data = await fetchWithRetry(API_URL);
-        // Normalise: API returns { Android: [...], iOS: [...], ... }
         fullData = {
             Android:  data.Android  || [],
             iOS:      data.iOS      || [],
@@ -1135,6 +1161,7 @@ async function fetchData(showToast = false) {
             MacOS:    data.MacOS    || [],
             External: data.External || []
         };
+        clearWarmupTimers();
         renderStats();
         renderCards();
         if (showToast) toast('Data refreshed ✨');
@@ -1154,9 +1181,6 @@ async function fetchData(showToast = false) {
     }
 }
 
-// ============================================================
-//  Stream (periodic refresh)
-// ============================================================
 function startStream() {
     fetchData(false);
     if (!streamInterval) streamInterval = setInterval(() => fetchData(false), UPDATE_INTERVAL);
@@ -1165,9 +1189,52 @@ function stopStream() {
     if (streamInterval) { clearInterval(streamInterval); streamInterval = null; }
 }
 
-// ============================================================
-//  Controls
-// ============================================================
+const WARMUP_MESSAGES = [
+    { after: 0,     icon: 'fa-coffee',       text: 'Warming up API...',           sub: 'กำลังปลุกตัวเอง ☕' },
+    { after: 5000,  icon: 'fa-hourglass-half', text: 'Almost there...',           sub: 'Cold start ใช้เวลานิดนึงนะครับ' },
+    { after: 12000, icon: 'fa-sync fa-spin',  text: 'Taking a bit longer...',     sub: 'ยังรออยู่นะ อย่าเพิ่งปิดครับ 🙏' },
+    { after: 22000, icon: 'fa-exclamation-triangle', text: 'Still connecting...', sub: 'ถ้านานเกินไป ลอง refresh ครับ' }
+];
+
+let warmupTimers = [];
+
+function showWarmupUI() {
+    const c = document.getElementById('platformsContainer');
+    if (!c || fullData) return;
+    const { icon, text, sub } = WARMUP_MESSAGES[0];
+    c.innerHTML = `
+        <div class="no-results" id="warmupBox">
+            <i class="fas ${icon}" id="warmupIcon" aria-hidden="true"></i>
+            <p id="warmupText">${text}</p>
+            <small id="warmupSub" style="color:var(--text-muted);font-size:0.8rem;margin-top:0.4rem;display:block">${sub}</small>
+        </div>`;
+
+    warmupTimers.forEach(clearTimeout);
+    warmupTimers = [];
+
+    WARMUP_MESSAGES.slice(1).forEach(({ after, icon: ic, text: tx, sub: sb }) => {
+        warmupTimers.push(setTimeout(() => {
+            if (fullData) return;
+            const iconEl = document.getElementById('warmupIcon');
+            const textEl = document.getElementById('warmupText');
+            const subEl  = document.getElementById('warmupSub');
+            if (iconEl) iconEl.className = `fas ${ic}`;
+            if (textEl) textEl.textContent = tx;
+            if (subEl)  subEl.textContent  = sb;
+        }, after));
+    });
+}
+
+function clearWarmupTimers() {
+    warmupTimers.forEach(clearTimeout);
+    warmupTimers = [];
+}
+
+function warmupPing() {
+    console.log('[Executor API] 🔥 Warmup ping sent');
+    fetch(API_URL, { method: 'GET', mode: 'cors', cache: 'no-cache' }).catch(() => {});
+}
+
 function bindControls() {
     const input = document.getElementById('searchInput');
     if (input) {
@@ -1193,9 +1260,6 @@ function bindControls() {
     });
 }
 
-// ============================================================
-//  Lifecycle
-// ============================================================
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopStream();
     else if (!streamInterval) startStream();
@@ -1207,7 +1271,12 @@ function init() {
     const canvas = document.getElementById('bg-canvas');
     if (canvas) new ParticleBG(canvas);
     bindControls();
-    startStream();
+
+    showWarmupUI();
+
+    warmupPing();
+
+    setTimeout(() => startStream(), 800);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
