@@ -42,6 +42,7 @@
     --accent: #f59e0b;
     --success: #10b981;
     --danger: #ef4444;
+    --warning: #f59e0b;
     --text: #e2e8f0;
     --text-muted: #94a3b8;
     --border: rgba(100, 120, 180, 0.3);
@@ -65,7 +66,7 @@ body {
     line-height: 1.6;
 }
 
-/* ========== 🎨 BACKGROUND ========== */
+/* ========== BACKGROUND ========== */
 #bg-canvas {
     position: fixed;
     top: 0; left: 0;
@@ -112,24 +113,22 @@ body {
 
 .visually-hidden {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
 }
 
-/* ========== 🏗️ LAYOUT ========== */
+/* ========== LAYOUT ========== */
 .container {
     max-width: 1600px;
     margin: 0 auto;
     padding: 1.5rem;
 }
 
-/* ========== ✨ HEADER ========== */
+/* ========== HEADER ========== */
 .header {
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
@@ -194,7 +193,7 @@ body {
     letter-spacing: 1px;
 }
 
-/* ========== 📊 STATS PANEL ========== */
+/* ========== STATS PANEL ========== */
 .stats-panel {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -227,11 +226,7 @@ body {
     transition: transform 0.3s ease;
 }
 
-.stat-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--border-hover);
-    box-shadow: var(--shadow-card);
-}
+.stat-card:hover { transform: translateY(-4px); border-color: var(--border-hover); box-shadow: var(--shadow-card); }
 .stat-card:hover::after { transform: scaleX(1); }
 
 .stat-icon {
@@ -257,7 +252,7 @@ body {
     letter-spacing: 1px;
 }
 
-/* ========== 🔍 CONTROL BAR ========== */
+/* ========== CONTROL BAR ========== */
 .control-bar {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -303,12 +298,6 @@ body {
 }
 .search-box input::placeholder { color: var(--text-muted); }
 
-.search-box input:focus-visible {
-    outline: 2px solid var(--secondary);
-    outline-offset: 2px;
-    border-radius: 14px;
-}
-
 .filter-chips {
     display: flex;
     flex-wrap: wrap;
@@ -329,10 +318,7 @@ body {
     gap: 6px;
 }
 
-.filter-chip:hover {
-    background: rgba(50, 70, 120, 0.6);
-    border-color: var(--secondary);
-}
+.filter-chip:hover { background: rgba(50, 70, 120, 0.6); border-color: var(--secondary); }
 
 .filter-chip.active {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -342,14 +328,11 @@ body {
     animation: chipActivate 0.3s ease;
 }
 
-.filter-chip:focus-visible {
-    outline: 2px solid var(--secondary);
-    outline-offset: 2px;
-}
+.filter-chip:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
 
 @keyframes chipActivate { 0% { transform: scale(0.95); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-/* ========== 🎴 PLATFORM SECTIONS ========== */
+/* ========== PLATFORM SECTIONS ========== */
 .platform-section {
     margin-bottom: 2.5rem;
     animation: fadeIn 0.5s ease-out both;
@@ -390,7 +373,7 @@ body {
     border: 1px solid var(--border);
 }
 
-/* ========== 🗂️ CARD GRID ========== */
+/* ========== CARD GRID ========== */
 .card-grid {
     grid-template-columns: repeat(auto-fill, minmax(min(320px, 100vw - 2rem), 1fr));
     gap: 1.2rem;
@@ -477,6 +460,7 @@ body {
     font-size: 1.1rem;
     color: white;
     border: 1px solid var(--border);
+    flex-shrink: 0;
 }
 
 .executor-name {
@@ -502,6 +486,7 @@ body {
 
 @keyframes sparkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; filter: brightness(1.2); } }
 
+/* ========== STATUS BADGES ========== */
 .status-badge {
     font-size: 0.7rem;
     padding: 0.3rem 0.8rem;
@@ -512,6 +497,8 @@ body {
     display: flex;
     align-items: center;
     gap: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .status-online {
@@ -534,21 +521,50 @@ body {
     border: 1px solid var(--danger);
 }
 
+.status-updating {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.status-unknown {
+    background: rgba(100, 120, 180, 0.15);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ========== VERSION TAGS ========== */
+.version-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0.5rem 0;
+}
 
 .version-tag {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     background: rgba(0,0,0,0.3);
-    padding: 0.3rem 0.7rem;
+    padding: 0.25rem 0.6rem;
     border-radius: 10px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-family: monospace;
-    margin: 0.5rem 0;
     border: 1px solid var(--border);
+    color: var(--secondary);
 }
 
+.version-tag .plat-label {
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* ========== ACTION BUTTONS ========== */
 .action-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -572,6 +588,7 @@ body {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    font-family: inherit;
 }
 
 .btn::after {
@@ -590,40 +607,21 @@ body {
     border-color: transparent;
     transform: translateY(-2px);
     box-shadow: 0 5px 20px rgba(124,58,237,0.4);
-}
-
-.btn:focus-visible {
-    outline: 2px solid var(--secondary);
-    outline-offset: 2px;
-}
-
-.btn-download { color: var(--secondary); }
-.btn-purchase { color: var(--accent); }
-.btn-copy { color: var(--primary); }
-
-.btn.copied {
-    background: var(--success);
-    border-color: var(--success);
     color: white;
 }
 
-.vng-section {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px dashed var(--border);
-    font-size: 0.8rem;
-}
+.btn:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
 
-.vng-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 0.5rem;
-    color: var(--secondary);
-    font-weight: 600;
-}
+.btn-website  { color: var(--secondary); }
+.btn-discord  { color: #5865F2; }
+.btn-telegram { color: #26a5e4; }
+.btn-purchase { color: var(--accent); }
 
-/* ========== 📭 EMPTY STATE ========== */
+.btn-discord:hover  { background: linear-gradient(135deg, #5865F2, #7289da) !important; }
+.btn-telegram:hover { background: linear-gradient(135deg, #26a5e4, #1d96d4) !important; }
+.btn-purchase:hover { background: linear-gradient(135deg, var(--accent), #fbbf24) !important; color: #000 !important; }
+
+/* ========== EMPTY / LOADING STATES ========== */
 .no-results {
     text-align: center;
     padding: 3rem 2rem;
@@ -641,8 +639,10 @@ body {
     background-clip: text;
     color: transparent;
     animation: float 3s ease-in-out infinite;
+    display: block;
 }
 
+/* ========== TOAST ========== */
 #toast-container {
     position: fixed;
     bottom: max(2rem, env(safe-area-inset-bottom));
@@ -676,9 +676,10 @@ body {
 .toast.error { border-left-color: var(--danger); }
 .toast i { font-size: 1.1rem; }
 
-@keyframes toastIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastIn  { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes toastOut { to { opacity: 0; transform: translateY(-10px) scale(0.95); } }
 
+/* ========== FOOTER ========== */
 footer {
     text-align: center;
     padding: 2rem;
@@ -689,17 +690,10 @@ footer {
     animation: fadeIn 0.6s ease 0.4s both;
 }
 
-footer a {
-    color: var(--secondary);
-    text-decoration: none;
-    transition: var(--transition);
-}
+footer a { color: var(--secondary); text-decoration: none; transition: var(--transition); }
+footer a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
 
-footer a:hover {
-    color: var(--primary);
-    text-shadow: 0 0 10px var(--primary-glow);
-}
-
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .container { padding: 1rem; }
     .header { padding: 1rem 1.5rem; flex-direction: column; text-align: center; }
@@ -720,6 +714,7 @@ footer a:hover {
     .logo h1 { font-size: 1.3rem; }
 }
 
+/* ========== SCROLLBAR ========== */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-dark); }
 ::-webkit-scrollbar-thumb {
@@ -727,10 +722,7 @@ footer a:hover {
     border-radius: 10px;
     border: 2px solid var(--bg-dark);
 }
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, var(--secondary), var(--primary));
-}
-
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, var(--secondary), var(--primary)); }
 ::selection { background: var(--primary); color: white; }
 </style>
 </head>
@@ -750,26 +742,26 @@ footer a:hover {
         </div>
     </header>
 
-<!-- ========== 📊 STATS PANEL ========== -->
-<div class="stats-panel" id="statsPanel" role="region" aria-label="Statistics">
-    <div class="stat-card">
-        <div class="stat-icon" aria-hidden="true"><i class="fas fa-cube"></i></div>
-        <span class="stat-value" id="totalExec">0</span>
-        <span class="stat-label">All Executors</span>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" aria-hidden="true"><i class="fas fa-signal"></i></div>
-        <span class="stat-value" id="onlineCount">0</span>
-        <span class="stat-label">Online Now</span>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" aria-hidden="true" style="color: var(--danger);">
-            <i class="fas fa-power-off"></i>
+    <!-- Stats Panel -->
+    <div class="stats-panel" id="statsPanel" role="region" aria-label="Statistics">
+        <div class="stat-card">
+            <div class="stat-icon" aria-hidden="true"><i class="fas fa-cube"></i></div>
+            <span class="stat-value" id="totalExec">—</span>
+            <span class="stat-label">All Executors</span>
         </div>
-        <span class="stat-value" id="offlineCount">0</span>
-        <span class="stat-label">Offline Now</span>
+        <div class="stat-card">
+            <div class="stat-icon" aria-hidden="true"><i class="fas fa-signal"></i></div>
+            <span class="stat-value" id="onlineCount">—</span>
+            <span class="stat-label">Online Now</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" aria-hidden="true" style="background:linear-gradient(135deg,var(--danger),#ff6b6b);-webkit-background-clip:text;background-clip:text;">
+                <i class="fas fa-power-off"></i>
+            </div>
+            <span class="stat-value" id="offlineCount">—</span>
+            <span class="stat-label">Offline Now</span>
+        </div>
     </div>
-</div>
 
     <!-- Control Bar -->
     <div class="control-bar">
@@ -779,32 +771,20 @@ footer a:hover {
             <input type="text" id="searchInput" placeholder="Search executors..." aria-label="Search executors" autocomplete="off">
         </div>
         <div class="filter-chips" role="group" aria-label="Platform filters">
-            <div class="filter-chip active" data-filter="all" role="radio" aria-checked="true" tabindex="0">
-                <i class="fas fa-globe" aria-hidden="true"></i> All
-            </div>
-            <div class="filter-chip" data-filter="Android" role="radio" aria-checked="false" tabindex="0">
-                <i class="fab fa-android" aria-hidden="true"></i> Android
-            </div>
-            <div class="filter-chip" data-filter="iOS" role="radio" aria-checked="false" tabindex="0">
-                <i class="fab fa-apple" aria-hidden="true"></i> iOS
-            </div>
-            <div class="filter-chip" data-filter="Windows" role="radio" aria-checked="false" tabindex="0">
-                <i class="fab fa-windows" aria-hidden="true"></i> Windows
-            </div>
-            <div class="filter-chip" data-filter="MacOS" role="radio" aria-checked="false" tabindex="0">
-                <i class="fas fa-desktop" aria-hidden="true"></i> macOS
-            </div>
-            <div class="filter-chip" data-filter="External" role="radio" aria-checked="false" tabindex="0">
-                <i class="fas fa-external-link-alt" aria-hidden="true"></i> External
-            </div>
+            <div class="filter-chip active" data-filter="all"      role="radio" aria-checked="true"  tabindex="0"><i class="fas fa-globe" aria-hidden="true"></i> All</div>
+            <div class="filter-chip"        data-filter="Android"  role="radio" aria-checked="false" tabindex="0"><i class="fab fa-android" aria-hidden="true"></i> Android</div>
+            <div class="filter-chip"        data-filter="iOS"      role="radio" aria-checked="false" tabindex="0"><i class="fab fa-apple" aria-hidden="true"></i> iOS</div>
+            <div class="filter-chip"        data-filter="Windows"  role="radio" aria-checked="false" tabindex="0"><i class="fab fa-windows" aria-hidden="true"></i> Windows</div>
+            <div class="filter-chip"        data-filter="MacOS"    role="radio" aria-checked="false" tabindex="0"><i class="fas fa-desktop" aria-hidden="true"></i> macOS</div>
+            <div class="filter-chip"        data-filter="External" role="radio" aria-checked="false" tabindex="0"><i class="fas fa-external-link-alt" aria-hidden="true"></i> External</div>
         </div>
     </div>
 
     <div id="platformsContainer" role="main" aria-live="polite"></div>
 
     <footer>
-        <i class="fab fa-discord" aria-hidden="true"></i> 
-        <a href="https://discord.gg/mNGeUVcjKB" target="_blank" rel="noopener noreferrer">Join Discord</a> 
+        <i class="fab fa-discord" aria-hidden="true"></i>
+        <a href="https://discord.gg/mNGeUVcjKB" target="_blank" rel="noopener noreferrer">Join Discord</a>
         | Created by <strong>_lphisv5</strong> • © 2026 YANZ
     </footer>
 </div>
@@ -812,378 +792,330 @@ footer a:hover {
 <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
 
 <script>
+// ============================================================
+//  Particle Background
+// ============================================================
 class ParticleBG {
     constructor(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.particles = [];
         this.mouse = { x: null, y: null, radius: 150 };
-        
         this.resize();
         this.init();
         this.animate();
-        
         window.addEventListener('resize', () => this.resize(), { passive: true });
-        window.addEventListener('mousemove', (e) => {
-            this.mouse.x = e.x;
-            this.mouse.y = e.y;
-        }, { passive: true });
+        window.addEventListener('mousemove', (e) => { this.mouse.x = e.x; this.mouse.y = e.y; }, { passive: true });
     }
-    
     resize() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
     }
-    
     init() {
-        const particleCount = Math.min(80, Math.floor(window.innerWidth / 20));
-        for (let i = 0; i < particleCount; i++) {
+        const count = Math.min(80, Math.floor(window.innerWidth / 20));
+        for (let i = 0; i < count; i++) {
             this.particles.push({
                 x: Math.random() * this.canvas.width,
                 y: Math.random() * this.canvas.height,
                 vx: (Math.random() - 0.5) * 0.5,
                 vy: (Math.random() - 0.5) * 0.5,
                 size: Math.random() * 2 + 1,
-                color: `hsla(${Math.random() * 60 + 240}, 70%, 60%, ${Math.random() * 0.5 + 0.3})`
+                color: `hsla(${Math.random() * 60 + 240},70%,60%,${Math.random() * 0.5 + 0.3})`
             });
         }
     }
-    
     animate() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
         this.particles.forEach((p, i) => {
-            p.x += p.vx;
-            p.y += p.vy;
-            
+            p.x += p.vx; p.y += p.vy;
             if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
             if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
-            
             if (this.mouse.x) {
-                const dx = p.x - this.mouse.x;
-                const dy = p.y - this.mouse.y;
+                const dx = p.x - this.mouse.x, dy = p.y - this.mouse.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 if (dist < this.mouse.radius) {
-                    const force = (this.mouse.radius - dist) / this.mouse.radius;
-                    p.vx += dx * force * 0.01;
-                    p.vy += dy * force * 0.01;
+                    const f = (this.mouse.radius - dist) / this.mouse.radius;
+                    p.vx += dx * f * 0.01; p.vy += dy * f * 0.01;
                 }
             }
-            
             this.ctx.beginPath();
             this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             this.ctx.fillStyle = p.color;
             this.ctx.fill();
-            
             for (let j = i + 1; j < this.particles.length; j++) {
                 const p2 = this.particles[j];
-                const dx = p.x - p2.x;
-                const dy = p.y - p2.y;
+                const dx = p.x - p2.x, dy = p.y - p2.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
-                
                 if (dist < 120) {
                     this.ctx.beginPath();
                     this.ctx.moveTo(p.x, p.y);
                     this.ctx.lineTo(p2.x, p2.y);
-                    this.ctx.strokeStyle = `rgba(100, 120, 180, ${0.15 * (1 - dist/120)})`;
+                    this.ctx.strokeStyle = `rgba(100,120,180,${0.15*(1-dist/120)})`;
                     this.ctx.lineWidth = 0.5;
                     this.ctx.stroke();
                 }
             }
         });
-        
         requestAnimationFrame(() => this.animate());
     }
 }
 
-const API_URL = "https://executors-one.vercel.app/executors";
-const UPDATE_INTERVAL = 1000;
+// ============================================================
+//  Config
+// ============================================================
+const API_URL        = 'https://executors-one.vercel.app/executors';
+const UPDATE_INTERVAL = 60 * 1000; // refresh every 60s (API caches 10min anyway)
+const PLATFORMS      = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
+const PLATFORM_ICONS = {
+    Android:  '<i class="fab fa-android"           aria-hidden="true"></i>',
+    iOS:      '<i class="fab fa-apple"             aria-hidden="true"></i>',
+    Windows:  '<i class="fab fa-windows"           aria-hidden="true"></i>',
+    MacOS:    '<i class="fas fa-desktop"           aria-hidden="true"></i>',
+    External: '<i class="fas fa-external-link-alt" aria-hidden="true"></i>'
+};
 
-let fullData = null;
-let activeFilter = "all";
-let searchTerm = "";
-let isFetching = false;
+let fullData     = null;
+let activeFilter = 'all';
+let searchTerm   = '';
+let isFetching   = false;
 let streamInterval = null;
 
-const canvas = document.getElementById('bg-canvas');
-if (canvas) new ParticleBG(canvas);
+// ============================================================
+//  Helpers
+// ============================================================
 
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
+/** Normalise any status string → 'online' | 'offline' | 'updating' | 'unknown' */
+function normaliseStatus(raw) {
+    if (!raw) return 'unknown';
+    const s = String(raw).toLowerCase().trim();
+    if (['online', 'up', 'updated', 'working'].includes(s)) return 'online';
+    if (['offline', 'down', 'not updated'].includes(s))      return 'offline';
+    if (['updating', 'update'].includes(s))                   return 'updating';
+    return 'unknown';
 }
 
-function handleImageError(img, initial) {
-    try {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'executor-logo-placeholder';
-        placeholder.textContent = initial;
-        placeholder.setAttribute('aria-label', `${initial} logo`);
-        placeholder.style.flexShrink = '0';
-        img.replaceWith(placeholder);
-    } catch (e) {
-        console.warn('Error handling image fallback:', e);
+/** CSS class for status */
+function statusClass(raw) {
+    const n = normaliseStatus(raw);
+    const map = { online: 'status-online', offline: 'status-offline', updating: 'status-updating', unknown: 'status-unknown' };
+    return map[n] || 'status-unknown';
+}
+
+/** Human-readable status label */
+function statusLabel(raw) {
+    const n = normaliseStatus(raw);
+    const map = { online: 'Online', offline: 'Offline', updating: 'Updating', unknown: 'Unknown' };
+    return map[n];
+}
+
+/** Format the versions object → array of tags HTML */
+function versionsHTML(versions) {
+    if (!versions || !Object.keys(versions).length) {
+        return '<span class="version-tag"><i class="fas fa-code-branch" aria-hidden="true"></i> N/A</span>';
     }
-}
-function handleCopyCommand(btn) {
-    const command = btn?.dataset?.command;
-    if (command) {
-        copyText(command, btn);
-    }
+    return Object.entries(versions).map(([plat, ver]) =>
+        `<span class="version-tag">
+            <span class="plat-label">${plat}</span>
+            <i class="fas fa-code-branch" aria-hidden="true"></i>
+            ${ver}
+        </span>`
+    ).join('');
 }
 
+/** Logo HTML with fallback placeholder */
+function logoHTML(ex) {
+    const initial = String(ex.name || '?').charAt(0).toUpperCase();
+    if (ex.logo) {
+        return `<img src="${ex.logo}" alt="${ex.name} logo" class="executor-logo"
+                    onerror="this.parentNode.replaceChild(mkPlaceholder('${initial}'), this)">`;
+    }
+    return `<div class="executor-logo-placeholder" aria-label="${ex.name} logo">${initial}</div>`;
+}
+
+window.mkPlaceholder = function(initial) {
+    const d = document.createElement('div');
+    d.className = 'executor-logo-placeholder';
+    d.textContent = initial;
+    d.setAttribute('aria-label', initial + ' logo');
+    return d;
+};
+
+function debounce(fn, wait) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+}
+
+// ============================================================
+//  Toast
+// ============================================================
 function toast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     if (!container) return;
-    
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = `
-        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}" aria-hidden="true"></i>
-        <span>${message}</span>
-    `;
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.remove();
-        }
-    }, 2000);
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.setAttribute('role', 'alert');
+    el.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}" aria-hidden="true"></i><span>${message}</span>`;
+    container.appendChild(el);
+    setTimeout(() => { if (el.parentNode) el.remove(); }, 3000);
 }
 
-async function copyText(text, btn) {
-    try {
-        await navigator.clipboard.writeText(text);
-        const original = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
-        btn.classList.add('copied');
-        btn.setAttribute('aria-label', 'Copied to clipboard');
-        
-        setTimeout(() => {
-            btn.innerHTML = original;
-            btn.classList.remove('copied');
-            btn.setAttribute('aria-label', 'Copy command to clipboard');
-        }, 1500);
-        toast('Command copied! ✨');
-    } catch {
-        toast('Failed to copy', 'error');
-    }
-}
-
-function getLogoHTML(exec) {
-    const name = exec?.name || '?';
-    const initial = String(name).charAt(0).toUpperCase();
-    
-    if (exec?.logo) {
-        return `<img src="${exec.logo}" alt="${name} logo" class="executor-logo" 
-            onerror="handleImageError(this, '${initial}')">`;
-    }
-    return `<div class="executor-logo-placeholder" aria-label="${name} logo">${initial}</div>`;
-}
-
+// ============================================================
+//  Stats
+// ============================================================
 function renderStats() {
     if (!fullData) return;
-    
-    const platforms = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
     let total = 0, online = 0, offline = 0;
-    
-    platforms.forEach(plat => {
+    PLATFORMS.forEach(plat => {
         const execs = fullData[plat] || [];
-        total += execs.length;
-        online += execs.filter(e => e.status === 'Online').length;
-        offline += execs.filter(e => e.status !== 'Online').length;
+        total  += execs.length;
+        online  += execs.filter(e => normaliseStatus(e.status) === 'online').length;
+        offline += execs.filter(e => normaliseStatus(e.status) !== 'online').length;
     });
-    
-    const totalEl = document.getElementById('totalExec');
-    const onlineEl = document.getElementById('onlineCount');
-    const offlineEl = document.getElementById('offlineCount');
-    
-    if (totalEl) totalEl.textContent = total;
-    if (onlineEl) onlineEl.textContent = online;
-    if (offlineEl) offlineEl.textContent = offline;
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('totalExec',   total);
+    set('onlineCount', online);
+    set('offlineCount', offline);
 }
 
+// ============================================================
+//  Filtered data
+// ============================================================
 function getFilteredData() {
-    if (!fullData) return {};
     const result = {};
-    const platforms = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
-    
-    for (const plat of platforms) {
-        if (activeFilter !== 'all' && activeFilter !== plat) {
-            result[plat] = [];
-            continue;
-        }
-        let execs = fullData[plat] || [];
+    PLATFORMS.forEach(plat => {
+        if (activeFilter !== 'all' && activeFilter !== plat) { result[plat] = []; return; }
+        let execs = (fullData && fullData[plat]) ? fullData[plat] : [];
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
-            execs = execs.filter(e => e.name?.toLowerCase().includes(term));
+            execs = execs.filter(e => (e.name || '').toLowerCase().includes(term));
         }
         result[plat] = execs;
-    }
+    });
     return result;
 }
 
+// ============================================================
+//  Render cards
+// ============================================================
 function renderCards() {
     const container = document.getElementById('platformsContainer');
     if (!container) return;
-    
+
     if (!fullData) {
-        container.innerHTML = '<div class="no-results"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i><p>Connecting to live stream...</p></div>';
+        container.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                <p>Connecting to API...</p>
+            </div>`;
         return;
     }
-    
+
     const filtered = getFilteredData();
-    const platforms = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
-    const icons = {
-        Android: '<i class="fab fa-android" aria-hidden="true"></i>',
-        iOS: '<i class="fab fa-apple" aria-hidden="true"></i>',
-        Windows: '<i class="fab fa-windows" aria-hidden="true"></i>',
-        MacOS: '<i class="fas fa-desktop" aria-hidden="true"></i>',
-        External: '<i class="fas fa-external-link-alt" aria-hidden="true"></i>'
-    };
-    
     let html = '';
     let hasResults = false;
-    
-    for (const plat of platforms) {
-        const execs = filtered[plat];
-        if (activeFilter !== 'all' && activeFilter !== plat) continue;
-        if (!execs.length && activeFilter === 'all') continue;
-        
+
+    PLATFORMS.forEach(plat => {
+        if (activeFilter !== 'all' && activeFilter !== plat) return;
+        const execs   = filtered[plat] || [];
+        const allExec = (fullData[plat] || []);
+        if (!execs.length && activeFilter === 'all') return;
+
         hasResults = true;
-        const total = fullData[plat]?.length || 0;
-        const online = fullData[plat]?.filter(e => e.status === 'Online').length || 0;
-        
+        const onlineCount = allExec.filter(e => normaliseStatus(e.status) === 'online').length;
+
         html += `
         <div class="platform-section" data-platform="${plat}">
             <div class="section-header">
-                <div class="section-title">
-                    ${icons[plat]} ${plat}
-                </div>
-                <div class="section-count" aria-label="${execs.length} of ${total} executors, ${online} online">
-                    ${execs.length}/${total} • 🟢 ${online}
+                <div class="section-title">${PLATFORM_ICONS[plat]} ${plat}</div>
+                <div class="section-count" aria-label="${execs.length} of ${allExec.length} executors, ${onlineCount} online">
+                    ${execs.length}/${allExec.length} • 🟢 ${onlineCount}
                 </div>
             </div>
             <div class="card-grid" role="list">`;
-        
-        for (const ex of execs) {
-            const isOnline = ex.status === 'Online';
-            const isPremium = ex.type === 'Premium' || ex.purchaseLink;
-            const escapedCommand = (ex.installCommand || '').toString()
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-            
+
+        execs.forEach(ex => {
+            const norm    = normaliseStatus(ex.status);
+            const isPremium = !!ex.purchaseLink;
+
             html += `
             <div class="exec-card" role="listitem">
                 <div class="card-content">
                     <div class="card-header">
                         <div class="executor-info">
-                            ${getLogoHTML(ex)}
-                            <div>
+                            ${logoHTML(ex)}
+                            <div style="min-width:0">
                                 <div class="executor-name">
                                     ${ex.name || '?'}
-                                    ${isPremium ? '<span class="premium-badge" aria-label="Premium executor"><i class="fas fa-gem" aria-hidden="true"></i> Premium</span>' : ''}
+                                    ${isPremium ? '<span class="premium-badge" aria-label="Premium"><i class="fas fa-gem" aria-hidden="true"></i> Premium</span>' : ''}
                                 </div>
-                                <div class="version-tag"><i class="fas fa-code-branch" aria-hidden="true"></i> ${ex.version || 'N/A'}</div>
                             </div>
                         </div>
-                        <div class="status-badge ${isOnline ? 'status-online' : 'status-offline'}" aria-label="Status: ${ex.status || 'Offline'}">
-                            ${ex.status || 'Offline'}
+                        <div class="status-badge ${statusClass(ex.status)}" aria-label="Status: ${statusLabel(ex.status)}">
+                            ${statusLabel(ex.status)}
                         </div>
                     </div>
-                    
+
+                    <div class="version-list">
+                        ${versionsHTML(ex.versions)}
+                    </div>
+
                     <div class="action-buttons">
-                        ${ex.downloadLink ? `<a href="${ex.downloadLink}" target="_blank" rel="noopener noreferrer" class="btn btn-download"><i class="fas fa-download" aria-hidden="true"></i> Download</a>` : ''}
-                        ${ex.purchaseLink ? `<a href="${ex.purchaseLink}" target="_blank" rel="noopener noreferrer" class="btn btn-purchase"><i class="fas fa-shopping-cart" aria-hidden="true"></i> Purchase</a>` : ''}
-                        ${ex.installCommand ? `<button class="btn btn-copy" data-command="${escapedCommand}" onclick="handleCopyCommand(this)" aria-label="Copy install command"><i class="fas fa-terminal" aria-hidden="true"></i> Copy Cmd</button>` : ''}
-                        ${!ex.downloadLink && !ex.purchaseLink && !ex.installCommand ? '<span class="btn" aria-label="No link available">No link</span>' : ''}
+                        ${ex.website
+                            ? `<a href="${ex.website}" target="_blank" rel="noopener noreferrer" class="btn btn-website">
+                                   <i class="fas fa-globe" aria-hidden="true"></i> Website
+                               </a>`
+                            : ''}
+                        ${ex.discord
+                            ? `<a href="${ex.discord}" target="_blank" rel="noopener noreferrer" class="btn btn-discord">
+                                   <i class="fab fa-discord" aria-hidden="true"></i> Discord
+                               </a>`
+                            : ''}
+                        ${ex.telegram
+                            ? `<a href="${ex.telegram}" target="_blank" rel="noopener noreferrer" class="btn btn-telegram">
+                                   <i class="fab fa-telegram" aria-hidden="true"></i> Telegram
+                               </a>`
+                            : ''}
+                        ${ex.purchaseLink
+                            ? `<a href="${ex.purchaseLink}" target="_blank" rel="noopener noreferrer" class="btn btn-purchase">
+                                   <i class="fas fa-shopping-cart" aria-hidden="true"></i> Purchase
+                               </a>`
+                            : ''}
+                        ${!ex.website && !ex.discord && !ex.telegram && !ex.purchaseLink
+                            ? '<span class="btn" style="opacity:.5;cursor:default">No link</span>'
+                            : ''}
                     </div>
-                    
-                    ${plat === 'Android' && (ex.vngVersion || ex.vngDownloadLink) ? `
-                    <div class="vng-section">
-                        <div class="vng-header"><i class="fas fa-code-branch" aria-hidden="true"></i> VNG Version</div>
-                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                            <span>${ex.vngVersion || '?'}</span>
-                            ${ex.vngStatus ? `<span class="status-badge ${ex.vngStatus==='Online'?'status-online':'status-offline'}">${ex.vngStatus}</span>` : ''}
-                            ${ex.vngDownloadLink ? `<a href="${ex.vngDownloadLink}" target="_blank" rel="noopener noreferrer" class="btn btn-download" style="padding:0.25rem 0.6rem;font-size:0.75rem;"><i class="fas fa-download" aria-hidden="true"></i> VNG</a>` : ''}
-                        </div>
-                    </div>` : ''}
                 </div>
             </div>`;
-        }
+        });
+
         html += `</div></div>`;
-    }
-    
+    });
+
     if (!hasResults) {
         html = `<div class="no-results" role="status">
             <i class="fas fa-search" aria-hidden="true"></i>
-            <p>No executors found matching "${searchTerm}"</p>
+            <p>No executors found${searchTerm ? ` for "<strong>${searchTerm}</strong>"` : ''}</p>
         </div>`;
     }
-    
+
     container.innerHTML = html;
 }
 
-function updateCards() {
-    if (!fullData) return;
-    const filtered = getFilteredData();
-    const platforms = ['Android', 'iOS', 'Windows', 'MacOS', 'External'];
-    let offline = 0;
-    platforms.forEach(plat => {
-        const execs = fullData[plat] || [];
-        offline += execs.filter(e => e.status !== 'Online').length;
-    });
-    const offlineEl = document.getElementById('offlineCount');
-    if (offlineEl) offlineEl.textContent = offline;
-    
-    document.querySelectorAll('.section-count').forEach(el => {
-        const plat = el.closest('.platform-section')?.dataset?.platform;
-        if (plat && filtered[plat]) {
-            const total = fullData[plat]?.length || 0;
-            const online = fullData[plat]?.filter(e => e.status === 'Online').length || 0;
-            el.textContent = `${filtered[plat].length}/${total} • 🟢 ${online}`;
-            el.setAttribute('aria-label', `${filtered[plat].length} of ${total} executors, ${online} online`);
-        }
-    });
-}
-
-async function fetchWithRetry(url, options = {}, retries = 3, backoff = 1000) {
+// ============================================================
+//  Fetch
+// ============================================================
+async function fetchWithRetry(url, retries = 3, backoff = 1000) {
     for (let i = 0; i < retries; i++) {
         try {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 7000);
-            
-            const res = await fetch(url, { ...options, signal: controller.signal });
-            clearTimeout(timeout);
-            
-            if (!res.ok) {
-                if (res.status >= 500 && i < retries - 1) {
-                    await new Promise(r => setTimeout(r, backoff * Math.pow(2, i)));
-                    continue;
-                }
-                throw new Error(`HTTP ${res.status}`);
-            }
-            
-            const contentType = res.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error('Invalid response format: expected JSON');
-            }
-            
+            const timeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Request timeout')), 10000)
+            );
+            const res = await Promise.race([fetch(url), timeout]);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const ct = res.headers.get('content-type') || '';
+            if (!ct.includes('application/json')) throw new Error('Non-JSON response');
             return await res.json();
         } catch (err) {
-            if (err.name === 'AbortError') {
-                throw new Error('Request timeout');
-            }
             if (i === retries - 1) throw err;
             await new Promise(r => setTimeout(r, backoff * Math.pow(2, i)));
         }
@@ -1193,28 +1125,28 @@ async function fetchWithRetry(url, options = {}, retries = 3, backoff = 1000) {
 async function fetchData(showToast = false) {
     if (isFetching) return;
     isFetching = true;
-    
     try {
-        fullData = await fetchWithRetry(API_URL);
+        const data = await fetchWithRetry(API_URL);
+        // Normalise: API returns { Android: [...], iOS: [...], ... }
+        fullData = {
+            Android:  data.Android  || [],
+            iOS:      data.iOS      || [],
+            Windows:  data.Windows  || [],
+            MacOS:    data.MacOS    || [],
+            External: data.External || []
+        };
         renderStats();
-        
-        if (!document.querySelector('.exec-card')) {
-            renderCards();
-        } else {
-            updateCards();
-        }
-        
+        renderCards();
         if (showToast) toast('Data refreshed ✨');
     } catch (err) {
-        console.warn('Fetch error:', err);
+        console.warn('Fetch error:', err.message);
         if (showToast) toast(`Connection error: ${err.message}`, 'error');
-        
-        const container = document.getElementById('platformsContainer');
-        if (!fullData && container) {
-            container.innerHTML = 
-                `<div class="no-results" role="alert">
+        if (!fullData) {
+            const c = document.getElementById('platformsContainer');
+            if (c) c.innerHTML = `
+                <div class="no-results" role="alert">
                     <i class="fas fa-wifi" aria-hidden="true"></i>
-                    <p>Cannot connect to API<br><small>Retrying in ${UPDATE_INTERVAL/1000}s...</small></p>
+                    <p>Cannot connect to API<br><small>${err.message}</small></p>
                 </div>`;
         }
     } finally {
@@ -1222,31 +1154,31 @@ async function fetchData(showToast = false) {
     }
 }
 
+// ============================================================
+//  Stream (periodic refresh)
+// ============================================================
 function startStream() {
     fetchData(false);
-    if (!streamInterval) {
-        streamInterval = setInterval(() => fetchData(false), UPDATE_INTERVAL);
-    }
+    if (!streamInterval) streamInterval = setInterval(() => fetchData(false), UPDATE_INTERVAL);
 }
-
 function stopStream() {
-    if (streamInterval) {
-        clearInterval(streamInterval);
-        streamInterval = null;
-    }
+    if (streamInterval) { clearInterval(streamInterval); streamInterval = null; }
 }
 
+// ============================================================
+//  Controls
+// ============================================================
 function bindControls() {
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', debounce((e) => {
-            searchTerm = e.target.value;
+    const input = document.getElementById('searchInput');
+    if (input) {
+        input.addEventListener('input', debounce(e => {
+            searchTerm = e.target.value.trim();
             renderCards();
         }, 300));
     }
-    
+
     document.querySelectorAll('.filter-chip').forEach(chip => {
-        const handleClick = () => {
+        const activate = () => {
             document.querySelectorAll('.filter-chip').forEach(c => {
                 c.classList.remove('active');
                 c.setAttribute('aria-checked', 'false');
@@ -1256,39 +1188,30 @@ function bindControls() {
             activeFilter = chip.dataset.filter;
             renderCards();
         };
-        
-        chip.addEventListener('click', handleClick);
-        chip.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleClick();
-            }
-        });
+        chip.addEventListener('click', activate);
+        chip.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
     });
 }
 
+// ============================================================
+//  Lifecycle
+// ============================================================
 document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        stopStream();
-    } else if (!streamInterval) {
-        startStream();
-    }
+    if (document.hidden) stopStream();
+    else if (!streamInterval) startStream();
 });
 
-window.addEventListener('beforeunload', () => {
-    stopStream();
-});
+window.addEventListener('beforeunload', stopStream);
 
 function init() {
+    const canvas = document.getElementById('bg-canvas');
+    if (canvas) new ParticleBG(canvas);
     bindControls();
     startStream();
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
 </script>
 </body>
 </html>
