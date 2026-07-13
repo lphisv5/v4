@@ -280,7 +280,7 @@
         </div>
         <div class="api-card-body">
           <div class="endpoint-block"><div class="endpoint-label">Base URL</div><div class="endpoint-row"><span class="endpoint-method method-get">GET</span><span class="endpoint-url">https://yanz-api.vercel.app/api/version?platform={ios|android|windows|macos}</span><button class="endpoint-copy" onclick="copyText('https://yanz-api.vercel.app/api/version?platform=ios', this)">Copy</button></div></div>
-          <div class="params-block"><div class="params-label">Platforms</div><table class="params-table"><thead><tr><th>platform value</th><th>Example</th></tr></thead><tbody><tr><td>ios</td><td><code>?platform=ios</code></td></tr><tr><td>android</td><td><code>?platform=android</code></td></tr><tr><td>windows</td><td><code>?platform=windows</code></td></tr><tr><td>macos</td><td><code>?platform=macos</code></td></tr></tbody></table></div>
+          <div class="params-block"><div class="params-label">Platforms</div><table class="params-table"><thead><tr><th>platform value</th><th>Example</th></tr></thead><tbody><tr><td>ios</td><td><code>?platform=ios</code></td></tr><tr><td>android</td><td><code>?platform=android</code></td></tr><tr><td>windows</td><td><code>?platform=windows</code></td></tr><tr><td>macos</td><td><code>?platform=macos</code></td></tr><tr><td>all</td><td><code>?platform=all</code> — returns every platform</td></tr></tbody></table></div>
         </div>
       </div>
     </section>
@@ -306,21 +306,25 @@
 
     <!-- EXECUTORS API V2.1.5 — UPDATED -->
     <section id="utility-apis">
-      <div class="section-header"><h2>Executors API V2.1.5 Fast! ver.2</h2><span class="section-tag">Online</span></div>
+      <div class="section-header"><h2>Executors API V2.1.5 Fast! ver.3</h2><span class="section-tag">Online</span></div>
       <div class="api-card" id="api-executors">
         <div class="api-card-header">
-          <div class="api-name-block"><div class="api-icon">⚡</div><div class="api-title-wrapper"><div class="api-title">Executors API V2.1.5</div><div class="api-subtitle">Roblox executor list &amp; metadata — Fast! ver.2</div></div></div>
+          <div class="api-name-block"><div class="api-icon">⚡</div><div class="api-title-wrapper"><div class="api-title">Executors API V2.1.5</div><div class="api-subtitle">Roblox executor list &amp; metadata — Fast! ver.3</div></div></div>
           <div class="api-badges"><span class="badge badge-get">GET</span><span class="badge badge-fast">⚡ Fast</span><span class="badge badge-online">Online</span></div>
         </div>
         <div class="api-card-body">
-          <p class="api-desc">Returns a structured list of script executors, version info and compatibility. Two endpoints available — Railway is the primary fast host, Render is the fallback.</p>
+          <p class="api-desc">Returns a structured list of script executors, version info and compatibility. Three endpoints available — use the primary container host first, and fall back to the alternates if it's unreachable.</p>
           <div class="endpoint-block">
-            <div class="endpoint-label">Primary — Railway (Fast)</div>
-            <div class="endpoint-row"><span class="endpoint-method method-get">GET</span><span class="endpoint-url">https://yanz.up.railway.app/executors</span><button class="endpoint-copy" onclick="copyText('https://yanz.up.railway.app/executors', this)">Copy</button></div>
+            <div class="endpoint-label">Primary — SnapDeploy (Container)</div>
+            <div class="endpoint-row"><span class="endpoint-method method-get">GET</span><span class="endpoint-url">https://executors.containers.snapdeploy.app/executors</span><button class="endpoint-copy" onclick="copyText('https://executors.containers.snapdeploy.app/executors', this)">Copy</button></div>
           </div>
           <div class="endpoint-block">
             <div class="endpoint-label">Fallback — Render</div>
             <div class="endpoint-row"><span class="endpoint-method method-get">GET</span><span class="endpoint-url">https://executors-fpk3.onrender.com/executors</span><button class="endpoint-copy" onclick="copyText('https://executors-fpk3.onrender.com/executors', this)">Copy</button></div>
+          </div>
+          <div class="endpoint-block">
+            <div class="endpoint-label">Fallback — Vercel</div>
+            <div class="endpoint-row"><span class="endpoint-method method-get">GET</span><span class="endpoint-url">https://executors-indol.vercel.app/executors</span><button class="endpoint-copy" onclick="copyText('https://executors-indol.vercel.app/executors', this)">Copy</button></div>
           </div>
         </div>
       </div>
