@@ -192,6 +192,58 @@ body {
     letter-spacing: 1px;
 }
 
+/* ========== HEADER ACTIONS ========== */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+
+.icon-btn {
+    position: relative;
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    background: rgba(30, 40, 70, 0.6);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.icon-btn:hover {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(124,58,237,0.4);
+    color: white;
+}
+
+.icon-btn:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
+
+.icon-btn .badge-dot {
+    position: absolute;
+    top: -3px; right: -3px;
+    min-width: 18px; height: 18px;
+    padding: 0 4px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #000;
+    font-size: 0.62rem;
+    font-weight: 800;
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-dark);
+    animation: sparkle 2s infinite;
+}
+
 /* ========== STATS PANEL ========== */
 .stats-panel {
     display: grid;
@@ -697,6 +749,7 @@ footer a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow
     .container { padding: 1rem; }
     .header { padding: 1rem 1.5rem; flex-direction: column; text-align: center; }
     .logo h1 { font-size: 1.4rem; }
+    .header-actions { justify-content: center; }
     .control-bar { flex-direction: column; align-items: stretch; }
     .search-box { max-width: 100%; }
     .filter-chips { justify-content: center; }
@@ -762,6 +815,236 @@ footer a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow
 .exec-card.updated {
     animation: flashUpdate 1.5s ease forwards;
 }
+
+/* ========== UPDATES MODAL ========== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 4, 10, 0.75);
+    backdrop-filter: blur(6px);
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-panel {
+    background: linear-gradient(180deg, rgba(18,24,48,0.98), rgba(10,14,28,0.98));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    width: min(560px, 100%);
+    max-height: min(80vh, 720px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-card), 0 0 60px rgba(124,58,237,0.15);
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.modal-overlay.open .modal-panel {
+    transform: translateY(0) scale(1);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.3rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.modal-title i {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.modal-close {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(30, 40, 70, 0.6);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.modal-close:hover {
+    background: var(--danger);
+    border-color: transparent;
+    color: white;
+    transform: rotate(90deg);
+}
+
+.modal-close:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
+
+.modal-body {
+    padding: 1.3rem 1.5rem 1.6rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.update-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.update-item {
+    display: flex;
+    gap: 12px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0.9rem 1.1rem;
+    position: relative;
+    transition: var(--transition);
+    animation: cardEnter 0.35s ease-out both;
+}
+
+.update-item:hover {
+    border-color: var(--border-hover);
+    background: rgba(20, 28, 55, 0.5);
+    transform: translateX(2px);
+}
+
+.update-dot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    padding-top: 3px;
+}
+
+.update-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    flex-shrink: 0;
+}
+
+.update-dot.status-offline-dot { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+.update-dot.status-updating-dot { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+.update-dot.status-unknown-dot { background: var(--text-muted); box-shadow: none; }
+
+.update-line {
+    width: 2px;
+    flex: 1;
+    background: linear-gradient(180deg, var(--border), transparent);
+    margin-top: 4px;
+}
+
+.update-content { flex: 1; min-width: 0; }
+
+.update-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 0.35rem;
+}
+
+.update-name-plat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.update-plat-tag {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem;
+    border-radius: 8px;
+}
+
+.update-time {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.update-version-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+}
+
+.update-version-old {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.update-version-arrow {
+    color: var(--secondary);
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.update-version-new {
+    color: var(--secondary);
+    font-weight: 700;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.3);
+    padding: 0.1rem 0.5rem;
+    border-radius: 8px;
+}
+
+.update-status-inline {
+    margin-left: auto;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.15rem 0.55rem;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+    .modal-panel { border-radius: 20px; max-height: 85vh; }
+    .modal-header { padding: 1.1rem 1.2rem; }
+    .modal-body { padding: 1.1rem 1.2rem 1.4rem; }
+    .update-version-row { font-size: 0.78rem; }
+}
 </style>
 </head>
 <body>
@@ -776,6 +1059,12 @@ footer a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow
         <div class="logo">
             <div class="logo-icon"><i class="fas fa-bolt" aria-hidden="true"></i></div>
             <h1>YANZ <span style="color:var(--secondary)"> EXECUTORS</span></h1>
+        </div>
+        <div class="header-actions">
+            <button type="button" class="icon-btn" id="updatesBtn" aria-haspopup="dialog" aria-controls="updatesModal" title="Recent Updates">
+                <i class="fas fa-bookmark" aria-hidden="true"></i>
+                <span class="badge-dot" id="updatesBadge" style="display:none;">0</span>
+            </button>
         </div>
     </header>
 
@@ -824,6 +1113,27 @@ footer a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow
         <a href="https://discord.gg/mNGeUVcjKB" target="_blank" rel="noopener noreferrer">Join Discord</a>
         | Created by <strong>_lphisv5</strong> • © 2026 YANZ
     </footer>
+</div>
+
+<!-- Updates Modal -->
+<div class="modal-overlay" id="updatesModal" role="dialog" aria-modal="true" aria-labelledby="updatesModalTitle">
+    <div class="modal-panel">
+        <div class="modal-header">
+            <div class="modal-title" id="updatesModalTitle">
+                <i class="fas fa-bookmark" aria-hidden="true"></i>
+                Recent Updates
+            </div>
+            <button type="button" class="modal-close" id="updatesCloseBtn" aria-label="Close updates">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body" id="updatesBody">
+            <div class="no-results" style="padding:2rem 1rem;">
+                <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                <p>Loading updates...</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
@@ -895,7 +1205,9 @@ class ParticleBG {
 }
 
 const API_URL = 'https://executors-indol.vercel.app/executors';
+const UPDATES_API_URL = 'https://executors-indol.vercel.app/updates';
 const UPDATE_INTERVAL = 120 * 1000;
+const UPDATES_POLL_INTERVAL = 120 * 1000;
 
 const PLATFORMS = ['Android', 'iOS', 'Windows', 'MacOS', 'External', 'Linux'];
 
@@ -913,6 +1225,12 @@ let activeFilter = 'all';
 let searchTerm = '';
 let isFetching = false;
 let streamInterval = null;
+
+let updatesData = [];
+let isFetchingUpdates = false;
+let updatesInterval = null;
+let seenUpdateKeys = new Set();
+let updatesModalHasOpened = false;
 
 function normaliseStatus(raw) {
     if (!raw) return 'unknown';
@@ -991,6 +1309,16 @@ function toast(message, type = 'success') {
     el.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}" aria-hidden="true"></i><span>${message}</span>`;
     container.appendChild(el);
     setTimeout(() => { if (el.parentNode) el.remove(); }, 3000);
+}
+
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 function processAPIResponse(data) {
@@ -1255,6 +1583,208 @@ async function fetchData(showToast = false) {
     }
 }
 
+/* ---------- UPDATES ---------- */
+
+function updateKeyOf(u) {
+    return [u.Executors, u.Platform, u.Version, u.UpdatedAt].join('|');
+}
+
+function formatRelativeTime(iso) {
+    if (!iso) return '';
+    const then = new Date(iso).getTime();
+    if (Number.isNaN(then)) return '';
+    const diffMs = Date.now() - then;
+    const sec = Math.floor(diffMs / 1000);
+    if (sec < 5) return 'just now';
+    if (sec < 60) return `${sec}s ago`;
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}m ago`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}h ago`;
+    const day = Math.floor(hr / 24);
+    if (day < 30) return `${day}d ago`;
+    try {
+        return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (e) {
+        return '';
+    }
+}
+
+function splitVersionArrow(versionStr) {
+    if (!versionStr || typeof versionStr !== 'string') return { old: null, current: 'N/A' };
+    const parts = versionStr.split(/→|->/).map(s => s.trim()).filter(Boolean);
+    if (parts.length >= 2) return { old: parts[0], current: parts[1] };
+    return { old: null, current: parts[0] || versionStr.trim() };
+}
+
+function renderUpdatesBadge() {
+    const badge = document.getElementById('updatesBadge');
+    if (!badge) return;
+    const count = updatesData.length;
+    if (count > 0 && !updatesModalHasOpened) {
+        badge.style.display = 'flex';
+        badge.textContent = count > 9 ? '9+' : String(count);
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function renderUpdatesModal() {
+    const body = document.getElementById('updatesBody');
+    if (!body) return;
+
+    if (!updatesData.length) {
+        body.innerHTML = `
+            <div class="no-results" style="padding:2rem 1rem;">
+                <i class="fas fa-inbox" aria-hidden="true"></i>
+                <p style="margin:0;">No recent updates</p>
+            </div>`;
+        return;
+    }
+
+    const sorted = [...updatesData].sort((a, b) => {
+        const ta = new Date(a.UpdatedAt || 0).getTime();
+        const tb = new Date(b.UpdatedAt || 0).getTime();
+        return tb - ta;
+    });
+
+    const items = sorted.map((u, idx) => {
+        const name = escapeHTML(u.Executors || 'Unknown');
+        const plat = escapeHTML(u.Platform || '');
+        const { old, current } = splitVersionArrow(u.Version);
+        const statusCls = statusClass(u.Status);
+        const dotCls = statusCls.replace('status-', 'status-') + '-dot';
+        const isLast = idx === sorted.length - 1;
+
+        return `
+        <div class="update-item">
+            <div class="update-dot-col">
+                <div class="update-dot ${dotCls}"></div>
+                ${!isLast ? '<div class="update-line"></div>' : ''}
+            </div>
+            <div class="update-content">
+                <div class="update-top-row">
+                    <div class="update-name-plat">
+                        ${escapeHTML(name)}
+                        ${plat ? `<span class="update-plat-tag">${plat}</span>` : ''}
+                    </div>
+                    <span class="update-time">${escapeHTML(formatRelativeTime(u.UpdatedAt))}</span>
+                </div>
+                <div class="update-version-row">
+                    ${old ? `<span class="update-version-old">${escapeHTML(old)}</span><span class="update-version-arrow"><i class="fas fa-arrow-right" aria-hidden="true"></i></span>` : ''}
+                    <span class="update-version-new">${escapeHTML(current)}</span>
+                    <span class="update-status-inline ${statusCls}" style="border:1px solid currentColor;">${statusLabel(u.Status)}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    body.innerHTML = `<div class="update-timeline">${items}</div>`;
+}
+
+async function fetchUpdates(showToast = false) {
+    if (isFetchingUpdates) return;
+    isFetchingUpdates = true;
+
+    try {
+        const raw = await fetchWithRetry(UPDATES_API_URL, 2, 1200);
+        const list = Array.isArray(raw?.updates) ? raw.updates : [];
+
+        const newOnes = list.filter(u => !seenUpdateKeys.has(updateKeyOf(u)));
+        if (newOnes.length && seenUpdateKeys.size > 0) {
+            toast(`${newOnes.length} new update${newOnes.length > 1 ? 's' : ''} available 🔖`);
+            updatesModalHasOpened = false;
+        }
+        list.forEach(u => seenUpdateKeys.add(updateKeyOf(u)));
+
+        updatesData = list;
+        renderUpdatesBadge();
+
+        const modal = document.getElementById('updatesModal');
+        if (modal && modal.classList.contains('open')) {
+            renderUpdatesModal();
+        }
+
+        if (showToast && !newOnes.length) toast('Updates refreshed ✨');
+
+    } catch (err) {
+        console.warn('Updates fetch error:', err.message);
+        if (showToast) toast(`Could not load updates: ${err.message}`, 'error');
+        if (!updatesData.length) {
+            const body = document.getElementById('updatesBody');
+            if (body) body.innerHTML = `
+                <div class="no-results" role="alert" style="padding:2rem 1rem;">
+                    <i class="fas fa-wifi" aria-hidden="true"></i>
+                    <p style="margin:0;">Cannot load updates</p>
+                    <button onclick="fetchUpdates(true)" style="margin-top:1rem;padding:0.5rem 1.5rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);color:var(--text);cursor:pointer;font-family:inherit;">
+                        <i class="fas fa-redo" aria-hidden="true"></i> Retry
+                    </button>
+                </div>`;
+        }
+    } finally {
+        isFetchingUpdates = false;
+    }
+}
+
+function openUpdatesModal() {
+    const overlay = document.getElementById('updatesModal');
+    if (!overlay) return;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    updatesModalHasOpened = true;
+    renderUpdatesBadge();
+    renderUpdatesModal();
+    const closeBtn = document.getElementById('updatesCloseBtn');
+    if (closeBtn) closeBtn.focus();
+    fetchUpdates(false);
+}
+
+function closeUpdatesModal() {
+    const overlay = document.getElementById('updatesModal');
+    if (!overlay) return;
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    const trigger = document.getElementById('updatesBtn');
+    if (trigger) trigger.focus();
+}
+
+function bindUpdatesControls() {
+    const trigger = document.getElementById('updatesBtn');
+    const overlay = document.getElementById('updatesModal');
+    const closeBtn = document.getElementById('updatesCloseBtn');
+
+    if (trigger) trigger.addEventListener('click', openUpdatesModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeUpdatesModal);
+
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeUpdatesModal();
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+            closeUpdatesModal();
+        }
+    });
+}
+
+function startUpdatesStream() {
+    fetchUpdates(false);
+    if (!updatesInterval) {
+        updatesInterval = setInterval(() => fetchUpdates(false), UPDATES_POLL_INTERVAL);
+    }
+}
+
+function stopUpdatesStream() {
+    if (updatesInterval) {
+        clearInterval(updatesInterval);
+        updatesInterval = null;
+    }
+}
+
+/* ---------- MAIN STREAM ---------- */
+
 function startStream() {
     fetchData(false);
     if (!streamInterval) {
@@ -1297,17 +1827,24 @@ function bindControls() {
             }
         });
     });
+
+    bindUpdatesControls();
 }
 
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         stopStream();
-    } else if (!streamInterval) {
-        startStream();
+        stopUpdatesStream();
+    } else {
+        if (!streamInterval) startStream();
+        if (!updatesInterval) startUpdatesStream();
     }
 });
 
-window.addEventListener('beforeunload', stopStream);
+window.addEventListener('beforeunload', () => {
+    stopStream();
+    stopUpdatesStream();
+});
 
 function init() {
     const canvas = document.getElementById('bg-canvas');
@@ -1325,6 +1862,7 @@ function init() {
     }
     
     startStream();
+    startUpdatesStream();
 }
 
 if (document.readyState === 'loading') {
