@@ -12,14 +12,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="YANZ Executors">
   <link rel="canonical" href="https://lphisv5.github.io/v4/executors">
-  <link rel="icon" href="https://i.postimg.cc/zGdBB2n9/file-00000000515c71faafcd117a160847f9.png" type="image/png" alt="YANZ" />
-  <link rel="apple-touch-icon" href="https://i.postimg.cc/zGdBB2n9/file-00000000515c71faafcd117a160847f9.png">
+  <link rel="icon" href="https://i.postimg.cc/bJF6GQvc/file-000000004ec481fa8bcb2a44e06c6546.png" type="image/png" alt="YANZ" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/bJF6GQvc/file-000000004ec481fa8bcb2a44e06c6546.png">
   <link rel="manifest" href="manifest.json">
   <meta name="author" content="YANZ" />
-  <title>YANZ EXECUTORS</title>
+  <title>YANZ - EXECUTORS</title>
   <meta name="description" content="YANZ - Dive into our hub of web tools and scripts. Fast, reliable, and continuously updated for your productivity." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://i.postimg.cc/jSLXxBS3/cf51de944668431b1c81c0b340577063.gif" />
+  <meta property="og:image" content="https://i.postimg.cc/90ZNvDWr/3aa46f5701fc6ed92234ea0a9f86e2cd.gif" />
   <meta property="og:url" content="https://lphisv5.github.io/v4/executors" />
   <meta property="og:title" content="YANZ - EXECUTORS" />
   <meta property="og:description" content="YANZ - Dive into our hub of web tools and scripts. Fast, reliable, and continuously updated for your productivity." />
@@ -66,7 +66,6 @@ body {
     line-height: 1.6;
 }
 
-/* ========== BACKGROUND ========== */
 #bg-canvas {
     position: fixed;
     top: 0; left: 0;
@@ -801,7 +800,6 @@ footer a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow
         </div>
     </div>
 
-    <!-- Control Bar -->
     <div class="control-bar">
         <div class="search-box">
             <i class="fas fa-search" aria-hidden="true"></i>
@@ -831,9 +829,6 @@ footer a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow
 <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
 
 <script>
-// ============================================================
-//  Particle Background
-// ============================================================
 class ParticleBG {
     constructor(canvas) {
         this.canvas = canvas;
@@ -899,13 +894,9 @@ class ParticleBG {
     }
 }
 
-// ============================================================
-//  Main Application
-// ============================================================
 const API_URL = 'https://executors-indol.vercel.app/executors';
-const UPDATE_INTERVAL = 60 * 1000; // 1 minute
+const UPDATE_INTERVAL = 120 * 1000;
 
-// Define all supported platforms (must match API response)
 const PLATFORMS = ['Android', 'iOS', 'Windows', 'MacOS', 'External', 'Linux'];
 
 const PLATFORM_ICONS = {
@@ -923,9 +914,6 @@ let searchTerm = '';
 let isFetching = false;
 let streamInterval = null;
 
-// ============================================================
-//  Utility Functions
-// ============================================================
 function normaliseStatus(raw) {
     if (!raw) return 'unknown';
     const s = String(raw).toLowerCase().trim();
@@ -1005,20 +993,13 @@ function toast(message, type = 'success') {
     setTimeout(() => { if (el.parentNode) el.remove(); }, 3000);
 }
 
-// ============================================================
-//  Data Processing
-// ============================================================
 function processAPIResponse(data) {
-    // The API returns an object with platform keys
-    // Each platform key maps to an array of executor objects
     const result = {};
     
     PLATFORMS.forEach(plat => {
-        // Check if platform exists in response
         if (data[plat] && Array.isArray(data[plat])) {
             result[plat] = data[plat];
         } else {
-            // Check for "Available {Platform}" count keys
             const countKey = `Available ${plat}`;
             if (data[countKey] !== undefined && Array.isArray(data[plat])) {
                 result[plat] = data[plat];
@@ -1070,7 +1051,6 @@ function getFilteredData() {
             const term = searchTerm.toLowerCase();
             execs = execs.filter(e => {
                 const name = (e.name || '').toLowerCase();
-                // Also search in versions if available
                 let versionMatch = false;
                 if (e.versions && typeof e.versions === 'object') {
                     versionMatch = Object.values(e.versions).some(v => 
@@ -1112,7 +1092,6 @@ function renderCards() {
         
         if (!execs.length && activeFilter === 'all') return;
         if (!execs.length && activeFilter !== 'all') {
-            // Show empty section for filtered platform with no results
             hasResults = true;
             html += `
             <div class="platform-section" data-platform="${plat}">
@@ -1207,9 +1186,6 @@ function renderCards() {
     container.innerHTML = html;
 }
 
-// ============================================================
-//  API Fetch
-// ============================================================
 async function fetchWithRetry(url, retries = 3, backoff = 1500) {
     for (let i = 0; i < retries; i++) {
         try {
@@ -1242,10 +1218,8 @@ async function fetchData(showToast = false) {
     try {
         const rawData = await fetchWithRetry(API_URL);
         
-        // Process the API response
         const processedData = processAPIResponse(rawData);
         
-        // Check if we got any data
         const hasData = PLATFORMS.some(plat => 
             processedData[plat] && processedData[plat].length > 0
         );
@@ -1281,9 +1255,6 @@ async function fetchData(showToast = false) {
     }
 }
 
-// ============================================================
-//  Stream Control
-// ============================================================
 function startStream() {
     fetchData(false);
     if (!streamInterval) {
@@ -1298,9 +1269,6 @@ function stopStream() {
     }
 }
 
-// ============================================================
-//  UI Controls
-// ============================================================
 function bindControls() {
     const input = document.getElementById('searchInput');
     if (input) {
@@ -1331,9 +1299,6 @@ function bindControls() {
     });
 }
 
-// ============================================================
-//  Init
-// ============================================================
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         stopStream();
@@ -1350,7 +1315,6 @@ function init() {
     
     bindControls();
     
-    // Show loading state
     const container = document.getElementById('platformsContainer');
     if (container) {
         container.innerHTML = `
@@ -1360,11 +1324,9 @@ function init() {
             </div>`;
     }
     
-    // Start fetching
     startStream();
 }
 
-// Run on DOM ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
