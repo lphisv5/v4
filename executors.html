@@ -1636,98 +1636,180 @@ function renderUpdatesModal() {
     if (!updatesData.length) {
         body.innerHTML = `
             <div class="no-results" style="padding:2rem 1rem;">
-                <i class="fas fa-box-open" aria-hidden="true"></i>
-                <p>No recent updates</p>
+                <i class="fas fa-inbox" aria-hidden="true"></i>
+                <p style="margin:0;">No recent updates</p>
             </div>`;
         return;
     }
 
-    let html = '<div class="update-timeline">';
-    updatesData.forEach(u => {
-        const isNew = !seenUpdateKeys.has(updateKeyOf(u));
+    const sorted = [...updatesData].sort((a, b) => {
+        const ta = new Date(a.UpdatedAt || 0).getTime();
+        const tb = new Date(b.UpdatedAt || 0).getTime();
+        return tb - ta;
+    });
+
+    const items = sorted.map((u, idx) => {
+        const name = escapeHTML(u.Executors || 'Unknown');
+        const plat = escapeHTML(u.Platform || '');
         const { old, current } = splitVersionArrow(u.Version);
-        const sClass = statusClass(u.Status);
-        const sLabel = statusLabel(u.Status);
-        
-        html += `
-        <div class="update-item ${isNew ? 'updated' : ''}">
+        const statusCls = statusClass(u.Status);
+        const dotCls = statusCls.replace('status-', 'status-') + '-dot';
+        const isLast = idx === sorted.length - 1;
+
+        return `
+        <div class="update-item">
             <div class="update-dot-col">
-                <div class="update-dot ${sClass}-dot"></div>
-                <div class="update-line"></div>
+                <div class="update-dot ${dotCls}"></div>
+                ${!isLast ? '<div class="update-line"></div>' : ''}
             </div>
             <div class="update-content">
                 <div class="update-top-row">
                     <div class="update-name-plat">
-                        <span>${escapeHTML(u.Executors)}</span>
-                        <span class="update-plat-tag">${escapeHTML(u.Platform)}</span>
+                        ${escapeHTML(name)}
+                        ${plat ? `<span class="update-plat-tag">${plat}</span>` : ''}
                     </div>
-                    <div class="update-time">${formatRelativeTime(u.UpdatedAt)}</div>
+                    <span class="update-time">${escapeHTML(formatRelativeTime(u.UpdatedAt))}</span>
                 </div>
                 <div class="update-version-row">
-                    ${old ? `<span class="update-version-old">${escapeHTML(old)}</span> <i class="fas fa-long-arrow-alt-right update-version-arrow" aria-hidden="true"></i>` : ''}
+                    ${old ? `<span class="update-version-old">${escapeHTML(old)}</span><span class="update-version-arrow"><i class="fas fa-arrow-right" aria-hidden="true"></i></span>` : ''}
                     <span class="update-version-new">${escapeHTML(current)}</span>
-                    <span class="update-status-inline ${sClass}">${sLabel}</span>
+                    <span class="update-status-inline ${statusCls}" style="border:1px solid currentColor;">${statusLabel(u.Status)}</span>
                 </div>
             </div>
         </div>`;
-        
-        seenUpdateKeys.add(updateKeyOf(u));
-    });
-    html += '</div>';
-    
-    body.innerHTML = html;
+    }).join('');
+
+    body.innerHTML = `<div class="update-timeline">${items}</div>`;
 }
 
-async function fetchUpdates() {
+async function fetchUpdates(showToast = false) {
     if (isFetchingUpdates) return;
     isFetchingUpdates = true;
+
     try {
-        const res = await fetchWithRetry(UPDATES_API_URL);
-        if (res && res.updates && Array.isArray(res.updates)) {
-            // Sort by recent dates first
-            res.updates.sort((a, b) => new Date(b.UpdatedAt).getTime() - new Date(a.UpdatedAt).getTime());
-            
-            let newUpdatesCount = 0;
-            if (updatesData.length > 0) {
-                res.updates.forEach(u => {
-                    if (!seenUpdateKeys.has(updateKeyOf(u))) {
-                        newUpdatesCount++;
-                    }
-                });
-            }
-            
-            updatesData = res.updates;
-            renderUpdatesBadge();
-            
-            if (document.getElementById('updatesModal').classList.contains('open')) {
-                renderUpdatesModal();
-            }
-            
-            if (newUpdatesCount > 0) {
-                toast(`${newUpdatesCount} new update${newUpdatesCount > 1 ? 's' : ''} available!`, 'success');
-            }
+        const raw = await fetchWithRetry(UPDATES_API_URL, 2, 1200);
+        const list = Array.isArray(raw?.updates) ? raw.updates : [];
+
+        const newOnes = list.filter(u => !seenUpdateKeys.has(updateKeyOf(u)));
+        if (newOnes.length && seenUpdateKeys.size > 0) {
+            toast(`${newOnes.length} new update${newOnes.length > 1 ? 's' : ''} available 🔖`);
+            updatesModalHasOpened = false;
         }
+        list.forEach(u => seenUpdateKeys.add(updateKeyOf(u)));
+
+        updatesData = list;
+        renderUpdatesBadge();
+
+        const modal = document.getElementById('updatesModal');
+        if (modal && modal.classList.contains('open')) {
+            renderUpdatesModal();
+        }
+
+        if (showToast && !newOnes.length) toast('Updates refreshed ✨');
+
     } catch (err) {
-        console.warn('Failed to fetch updates:', err.message);
+        console.warn('Updates fetch error:', err.message);
+        if (showToast) toast(`Could not load updates: ${err.message}`, 'error');
+        if (!updatesData.length) {
+            const body = document.getElementById('updatesBody');
+            if (body) body.innerHTML = `
+                <div class="no-results" role="alert" style="padding:2rem 1rem;">
+                    <i class="fas fa-wifi" aria-hidden="true"></i>
+                    <p style="margin:0;">Cannot load updates</p>
+                    <button onclick="fetchUpdates(true)" style="margin-top:1rem;padding:0.5rem 1.5rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);color:var(--text);cursor:pointer;font-family:inherit;">
+                        <i class="fas fa-redo" aria-hidden="true"></i> Retry
+                    </button>
+                </div>`;
+        }
     } finally {
         isFetchingUpdates = false;
     }
 }
 
-/* ========== INITIALIZATION ========== */
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize interactive background
-    new ParticleBG(document.getElementById('bg-canvas'));
+function openUpdatesModal() {
+    const overlay = document.getElementById('updatesModal');
+    if (!overlay) return;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    updatesModalHasOpened = true;
+    renderUpdatesBadge();
+    renderUpdatesModal();
+    const closeBtn = document.getElementById('updatesCloseBtn');
+    if (closeBtn) closeBtn.focus();
+    fetchUpdates(false);
+}
 
-    // Search Box Listener
-    document.getElementById('searchInput').addEventListener('input', debounce((e) => {
-        searchTerm = e.target.value.trim();
-        renderCards();
-    }, 300));
+function closeUpdatesModal() {
+    const overlay = document.getElementById('updatesModal');
+    if (!overlay) return;
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    const trigger = document.getElementById('updatesBtn');
+    if (trigger) trigger.focus();
+}
 
-    // Platform Filter Chips
+function bindUpdatesControls() {
+    const trigger = document.getElementById('updatesBtn');
+    const overlay = document.getElementById('updatesModal');
+    const closeBtn = document.getElementById('updatesCloseBtn');
+
+    if (trigger) trigger.addEventListener('click', openUpdatesModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeUpdatesModal);
+
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeUpdatesModal();
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+            closeUpdatesModal();
+        }
+    });
+}
+
+function startUpdatesStream() {
+    fetchUpdates(false);
+    if (!updatesInterval) {
+        updatesInterval = setInterval(() => fetchUpdates(false), UPDATES_POLL_INTERVAL);
+    }
+}
+
+function stopUpdatesStream() {
+    if (updatesInterval) {
+        clearInterval(updatesInterval);
+        updatesInterval = null;
+    }
+}
+
+/* ---------- MAIN STREAM ---------- */
+
+function startStream() {
+    fetchData(false);
+    if (!streamInterval) {
+        streamInterval = setInterval(() => fetchData(false), UPDATE_INTERVAL);
+    }
+}
+
+function stopStream() {
+    if (streamInterval) {
+        clearInterval(streamInterval);
+        streamInterval = null;
+    }
+}
+
+function bindControls() {
+    const input = document.getElementById('searchInput');
+    if (input) {
+        input.addEventListener('input', debounce(e => {
+            searchTerm = e.target.value.trim();
+            renderCards();
+        }, 300));
+    }
+
     document.querySelectorAll('.filter-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
+        const activate = () => {
             document.querySelectorAll('.filter-chip').forEach(c => {
                 c.classList.remove('active');
                 c.setAttribute('aria-checked', 'false');
@@ -1736,55 +1818,58 @@ document.addEventListener('DOMContentLoaded', () => {
             chip.setAttribute('aria-checked', 'true');
             activeFilter = chip.dataset.filter;
             renderCards();
-        });
-        
-        chip.addEventListener('keydown', (e) => {
+        };
+        chip.addEventListener('click', activate);
+        chip.addEventListener('keydown', e => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                chip.click();
+                activate();
             }
         });
     });
 
-    // Modals
-    const updatesModal = document.getElementById('updatesModal');
-    const updatesBtn = document.getElementById('updatesBtn');
-    const updatesCloseBtn = document.getElementById('updatesCloseBtn');
+    bindUpdatesControls();
+}
 
-    function openUpdates() {
-        updatesModal.classList.add('open');
-        updatesModalHasOpened = true;
-        renderUpdatesBadge(); // Clears unread badge
-        renderUpdatesModal();
-        updatesCloseBtn.focus();
-        document.body.style.overflow = 'hidden';
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        stopStream();
+        stopUpdatesStream();
+    } else {
+        if (!streamInterval) startStream();
+        if (!updatesInterval) startUpdatesStream();
     }
-
-    function closeUpdates() {
-        updatesModal.classList.remove('open');
-        updatesBtn.focus();
-        document.body.style.overflow = '';
-    }
-
-    updatesBtn.addEventListener('click', openUpdates);
-    updatesCloseBtn.addEventListener('click', closeUpdates);
-    updatesModal.addEventListener('click', (e) => {
-        if (e.target === updatesModal) closeUpdates();
-    });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && updatesModal.classList.contains('open')) {
-            closeUpdates();
-        }
-    });
-
-    // Initial API Fetch calls
-    fetchData();
-    fetchUpdates();
-
-    // Data Polling logic
-    setInterval(() => fetchData(false), UPDATE_INTERVAL);
-    setInterval(() => fetchUpdates(), UPDATES_POLL_INTERVAL);
 });
+
+window.addEventListener('beforeunload', () => {
+    stopStream();
+    stopUpdatesStream();
+});
+
+function init() {
+    const canvas = document.getElementById('bg-canvas');
+    if (canvas) new ParticleBG(canvas);
+    
+    bindControls();
+    
+    const container = document.getElementById('platformsContainer');
+    if (container) {
+        container.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                <p>Loading executors...</p>
+            </div>`;
+    }
+    
+    startStream();
+    startUpdatesStream();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 </script>
 </body>
 </html>
